@@ -1,0 +1,54 @@
+﻿<Window x:Class="LATravelManager.UI.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
+        Loaded="MainWindow_OnLoaded"
+        xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel"
+        xmlns:views="clr-namespace:LATravelManager.UI.Views"
+        d:DataContext="{d:DesignInstance viewmodels:MainViewModel}"
+        Title="{Binding ControlName}"
+        Height="780"
+        Width="1200"
+        WindowStartupLocation="CenterScreen">
+    <Window.IsEnabled>
+        <Binding Path="BindableProperty"
+                 Source="{StaticResource MessageListener}" />
+    </Window.IsEnabled>
+    <Window.Visibility>
+        <Binding Path="Visibility" />
+    </Window.Visibility>
+    <Window.Resources>
+        <converters:UserToVisibility x:Key="UserToVisibilityConverter" />
+        <DataTemplate DataType="{x:Type viewmodels:Login_ViewModel}">
+            <views:Login_UserControl />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:MainUserControl_ViewModel}">
+            <views:Main_UserControl />
+        </DataTemplate>
+    </Window.Resources>
+    <Grid>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="Tools">
+                <MenuItem Header="Open Child" />
+                <MenuItem Header="Add Person" />
+            </MenuItem>
+            <MenuItem Header="Διαχείριση"
+                      Visibility="{Binding MenuVisibility}">
+                <MenuItem Command="{Binding OpenHotelEditCommand}"
+                          Header="Ξενοδοχεία" />
+                <MenuItem Command="{Binding OpenCitiesEditCommand}"
+                          Header="Πόλεις" />
+                <MenuItem Command="{Binding OpenCountriesEditCommand}"
+                          Header="Χώρες" />
+                <MenuItem Command="{Binding OpenExcursionsEditCommand}"
+                          Header="Εκδρομές" />
+                <MenuItem Command="{Binding OpenUsersEditCommand}"
+                          Header="Χρήστες" />
+            </MenuItem>
+        </Menu>
+        <ContentControl Content="{Binding CurrentViewModel}" />
+    </Grid>
+</Window>

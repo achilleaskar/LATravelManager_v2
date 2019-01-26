@@ -1,0 +1,428 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2B60FAA5-C679-40BD-A8CB-8DF107A7760B}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>LATravelManager.UI</RootNamespace>
+    <AssemblyName>LATravelManager.UI</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autofac, Version=4.8.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.4.8.1\lib\net45\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="CommonServiceLocator, Version=2.0.2.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.2.0.2\lib\net47\CommonServiceLocator.dll</HintPath>
+    </Reference>
+    <Reference Include="ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net462\ControlzEx.dll</HintPath>
+    </Reference>
+    <Reference Include="DeltaCompressionDotNet, Version=2.0.0.0, Culture=neutral, PublicKeyToken=1d14d6e5194e7f4a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DeltaCompressionDotNet.2.0.0.0\lib\net20\DeltaCompressionDotNet.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus, Version=4.5.3.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.4.5.3\lib\net40\EPPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight, Version=5.4.1.0, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.Extras, Version=5.4.1.0, Culture=neutral, PublicKeyToken=669f0b5e8f868abf, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Extras.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.4.1.0, Culture=neutral, PublicKeyToken=5f873c45e98af8a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Protobuf.3.5.1\lib\net45\Google.Protobuf.dll</HintPath>
+    </Reference>
+    <Reference Include="MahApps.Metro, Version=1.6.5.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MahApps.Metro.1.6.5\lib\net47\MahApps.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil, Version=0.9.6.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.9.6.1\lib\net45\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Mdb, Version=0.9.6.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.9.6.1\lib\net45\Mono.Cecil.Mdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Pdb, Version=0.9.6.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.9.6.1\lib\net45\Mono.Cecil.Pdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Rocks, Version=0.9.6.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.9.6.1\lib\net45\Mono.Cecil.Rocks.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data, Version=6.10.8.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.6.10.8\lib\net452\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data.Entity.EF6, Version=6.10.8.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.Entity.6.10.8\lib\net452\MySql.Data.Entity.EF6.dll</HintPath>
+    </Reference>
+    <Reference Include="NuGet.Squirrel, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ppy.squirrel.windows.1.9.0.3\lib\Net45\NuGet.Squirrel.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpCompress, Version=0.17.1.0, Culture=neutral, PublicKeyToken=afb0a02973931d96, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpCompress.0.17.1\lib\net45\SharpCompress.dll</HintPath>
+    </Reference>
+    <Reference Include="Splat, Version=1.6.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Splat.1.6.2\lib\Net45\Splat.dll</HintPath>
+    </Reference>
+    <Reference Include="Squirrel, Version=1.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ppy.squirrel.windows.1.9.0.3\lib\Net45\Squirrel.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Design" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="Xceed.Wpf.AvalonDock, Version=3.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.3.4.0\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero, Version=3.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.3.4.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro, Version=3.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.3.4.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010, Version=3.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.3.4.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.DataGrid, Version=3.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.3.4.0\lib\net40\Xceed.Wpf.DataGrid.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit, Version=3.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.3.4.0\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="MessageListener.cs" />
+    <Compile Include="Message\ChangeVisibilityMessage.cs" />
+    <Compile Include="Message\IsBusyChangedMessage.cs" />
+    <Compile Include="Message\ResetNavigationTabsMessage.cs" />
+    <Compile Include="Message\SetChildViewModelMessage.cs" />
+    <Compile Include="Repositories\old\EntityFrameworkReadOnlyRepository.cs" />
+    <Compile Include="Repositories\old\EntityFrameworkRepository.cs" />
+    <Compile Include="Repositories\old\IReadOnlyRepository.cs" />
+    <Compile Include="Repositories\old\IRepository.cs" />
+    <Compile Include="Security\PasswordHashing.cs" />
+    <Compile Include="Security\SecureStringManipulation.cs" />
+    <Compile Include="StartUp\Bootstrapper.cs" />
+    <Compile Include="ViewModel\BaseViewModels\ExcursionCategory_ViewModelBase.cs" />
+    <Compile Include="ViewModel\BaseViewModels\INavigationViewModel.cs" />
+    <Compile Include="ViewModel\BaseViewModels\IViewModel.cs" />
+    <Compile Include="ViewModel\BaseViewModels\MainUserControl_ViewModel.cs" />
+    <Compile Include="ViewModel\BaseViewModels\MyViewModelBase.cs" />
+    <Compile Include="ViewModel\BaseViewModels\TabsBaseViewModel.cs" />
+    <Compile Include="ViewModel\CategoriesViewModels\Bansko\BanskoParent_ViewModel.cs" />
+    <Compile Include="ViewModel\CategoriesViewModels\ChildViewModel.cs" />
+    <Compile Include="ViewModel\CategoriesViewModels\IChildViewModel.cs" />
+    <Compile Include="ViewModel\CategoriesViewModels\ParentViewModel.cs" />
+    <Compile Include="ViewModel\Tabs\AddRoomsTab.cs" />
+    <Compile Include="ViewModel\Tabs\SettingsTab.cs" />
+    <Compile Include="ViewModel\Tabs\AddRooms_ViewModel.cs" />
+    <Compile Include="ViewModel\Tabs\Settings_Viewmodel.cs" />
+    <Compile Include="ViewModel\Window_ViewModels\LoginViewModel.cs" />
+    <Compile Include="ViewModel\Window_ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModel\BaseViewModels\NavigationViewModel.cs" />
+    <Compile Include="ViewModel\BaseViewModels\ViewModelLocator.cs" />
+    <Compile Include="Views\AddRooms_UserControl.xaml.cs">
+      <DependentUpon>AddRooms_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Bansko\EditBooking_Window.xaml.cs">
+      <DependentUpon>EditBooking_Window.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Bansko\Lists_Bankso_UserControl.xaml.cs">
+      <DependentUpon>Lists_Bankso_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Bansko\MoveReservation_Bansko_UserControl.xaml.cs">
+      <DependentUpon>MoveReservation_Bansko_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Bansko\NewReservation_Bansko_UserControl.xaml.cs">
+      <DependentUpon>NewReservation_Bansko_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Bansko\OptionalActivities_Bansko_UserControl.xaml.cs">
+      <DependentUpon>OptionalActivities_Bansko_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Bansko\Search_Bansko_UserControl.xaml.cs">
+      <DependentUpon>Search_Bansko_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Bansko_UserControl.xaml.cs">
+      <DependentUpon>Bansko_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\GroupExcursions_UserControl.xaml.cs">
+      <DependentUpon>GroupExcursions_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Group\NewReservation_Group_UserControl.xaml.cs">
+      <DependentUpon>NewReservation_Group_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Group\Search_Group_UserControl.xaml.cs">
+      <DependentUpon>Search_Group_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Login_UserControl.xaml.cs">
+      <DependentUpon>Login_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Main_UserControl.xaml.cs">
+      <DependentUpon>Main_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Management\CitiesManagement_Window.xaml.cs">
+      <DependentUpon>CitiesManagement_Window.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Management\CountriesManagement_Window.xaml.cs">
+      <DependentUpon>CountriesManagement_Window.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Management\ExcursionsManagement_Window.xaml.cs">
+      <DependentUpon>ExcursionsManagement_Window.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Management\HotelsManagement_Window.xaml.cs">
+      <DependentUpon>HotelsManagement_Window.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Management\UsersManagement_Window.xaml.cs">
+      <DependentUpon>UsersManagement_Window.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\NavigationSide_UserControl.xaml.cs">
+      <DependentUpon>NavigationSide_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PersonalExcursions_UserControl.xaml.cs">
+      <DependentUpon>PersonalExcursions_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Skiathos_UserControl.xaml.cs">
+      <DependentUpon>Skiathos_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ThirdPartyExcursions_UserControl.xaml.cs">
+      <DependentUpon>ThirdPartyExcursions_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Wrapper\ModelWrapper.cs" />
+    <Compile Include="Wrapper\NotifyDataErrorInfoBase.cs" />
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AttachedProperties\PasswordBoxMVVMAttachedProperties.cs" />
+    <Compile Include="Converters\BrushColorConverter.cs" />
+    <Compile Include="Converters\DictionaryToCategoryConverter.cs" />
+    <Compile Include="Converters\SelectedIndexToForegroundConverter.cs" />
+    <Compile Include="Converters\TabSizeConverter.cs" />
+    <Compile Include="Converters\UserToVisdibilityConverter.cs" />
+    <Compile Include="Data\Workers\RoomsManager.cs" />
+    <Compile Include="Helpers\BindingProxy.cs" />
+    <Compile Include="Helpers\Definitions.cs" />
+    <Compile Include="Helpers\DisplayNameHelper.cs" />
+    <Compile Include="Helpers\NewReservationHelper.cs" />
+    <Compile Include="Helpers\RowDataInfoValidationRule.cs" />
+    <Compile Include="Helpers\SearchBookingsHelper.cs" />
+    <Compile Include="Helpers\StaticResources.cs" />
+    <Compile Include="Helpers\VouchersManagement.cs" />
+    <Page Include="Views\AddRooms_UserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Bansko\EditBooking_Window.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Bansko\Lists_Bankso_UserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Bansko\MoveReservation_Bansko_UserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Bansko\NewReservation_Bansko_UserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Bansko\OptionalActivities_Bansko_UserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Bansko\Search_Bansko_UserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Bansko_UserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\GroupExcursions_UserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Group\NewReservation_Group_UserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Group\Search_Group_UserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Login_UserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Main_UserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Management\CitiesManagement_Window.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Management\CountriesManagement_Window.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Management\ExcursionsManagement_Window.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Management\HotelsManagement_Window.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Management\UsersManagement_Window.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\NavigationSide_UserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PersonalExcursions_UserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Skiathos_UserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ThirdPartyExcursions_UserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Message\ChangeViewModelMessage.cs" />
+    <Compile Include="Message\OpenChildWindowCommand.cs" />
+    <Compile Include="Message\SelectedTabChangedMessage.cs" />
+    <Compile Include="Message\SetNaviGationTabMessage.cs" />
+    <Compile Include="Message\ShowExceptionMessage_Message.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Sources\protypo_leoforeia.xlsx" />
+    <None Include="Sources\Voucher_afirmo.docx" />
+    <None Include="Sources\Voucher_enfirmo_larissas.docx" />
+    <None Include="Sources\Voucher_enfirmo_thess.docx" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\01_latravel_logo1.jpg" />
+    <Resource Include="Images\gobansko.jpg" />
+    <Resource Include="Images\gotoskiathos.jpg" />
+    <Resource Include="Images\icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data\Lookups\" />
+    <Folder Include="Data\Repositories\" />
+    <Folder Include="ViewModel\CategoriesViewModels\Group\" />
+    <Folder Include="ViewModel\CategoriesViewModels\Personal\" />
+    <Folder Include="ViewModel\CategoriesViewModels\Skiathos\" />
+    <Folder Include="ViewModel\CategoriesViewModels\ThirdParty\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LATravelManager.DataAccess\LATravelManager.DataAccess.csproj">
+      <Project>{55666D1D-EEC1-481A-AB05-5EE49C7E29AB}</Project>
+      <Name>LATravelManager.DataAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LATravelManager.Model\LATravelManager.Model.csproj">
+      <Project>{C98AFCAD-18B7-4072-999F-E285382BAFC1}</Project>
+      <Name>LATravelManager.Model</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

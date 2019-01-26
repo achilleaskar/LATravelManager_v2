@@ -1,0 +1,74 @@
+﻿<UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:views="clr-namespace:LATravelManager.UI.Views"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:viewmodels="clr-namespace:LATravelManager.ViewModel"
+             x:Class="LATravelManager.UI.Views.Main_UserControl"
+             mc:Ignorable="d"
+             d:DesignHeight="450"
+             d:DesignWidth="800">
+    <UserControl.Resources>
+        <DataTemplate DataType="{x:Type viewmodels:Bansko_ViewModel}">
+            <views:Bansko_UserControl />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:Skiathos_ViewModel}">
+            <views:Skiathos_UserControl />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:PersonalExcursion_ViewModel}">
+            <views:PersonalExcursions_UserControl />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:GroupExcursion_ViewModel}">
+            <views:GroupExcursions_UserControl />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:ThirdPartyExcursions_ViewModel}">
+            <views:ThirdPartyExcursions_UserControl />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:AddRooms_ViewModel}">
+            <views:AddRooms_UserControl />
+        </DataTemplate>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackPanel HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Background="White"
+                    Orientation="Horizontal">
+            <Border BorderBrush="DimGray"
+                    BorderThickness="1"
+                    Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}">
+                <iconPacks:PackIconFontAwesome Kind="SpinnerSolid"
+                                               VerticalAlignment="Center"
+                                               Spin="True"
+                                               Margin="5" />
+            </Border>
+            <Label Content="{Binding UserName}" />
+            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+            <Label Content="Προβολη" />
+            <ComboBox ItemsSource="{Binding Templates}"
+                      DisplayMemberPath="Name"
+                      VerticalAlignment="Center"
+                      SelectedIndex="{Binding SelectedTemplateIndex}" />
+            <Button Content="Αποσύνδεση"
+                    Margin="5"
+                    Command="{Binding LogOutCommand}" />
+        </StackPanel>
+        <Grid Grid.Row="1"
+              VerticalAlignment="Stretch"
+              HorizontalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <views:NavigationSide_UserControl VerticalAlignment="Stretch"/>
+            <ContentControl Content="{Binding SelectedViewModel}"
+                            VerticalAlignment="Stretch"
+                            HorizontalAlignment="Stretch"
+                            Grid.Column="1" />
+        </Grid>
+    </Grid>
+</UserControl>

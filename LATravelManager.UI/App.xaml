@@ -1,0 +1,75 @@
+<Application x:Class="LATravelManager.UI.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:LATravelManager.UI"
+             xmlns:toolkit="http://schemas.xceed.com/wpf/xaml/toolkit"
+             Startup="Application_Startup"
+             DispatcherUnhandledException="Application_DispatcherUnhandledException"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             d1p1:Ignorable="d"
+             xmlns:d1p1="http://schemas.openxmlformats.org/markup-compatibility/2006">
+    <Application.Resources>
+        <ResourceDictionary>
+            <vm:ViewModelLocator x:Key="Locator"
+                                 d:IsDataSource="True"
+                                 xmlns:vm="clr-namespace:LATravelManager.UI.ViewModel" />
+            <BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" />
+            <Style TargetType="TextBox"
+                   BasedOn="{StaticResource {x:Type TextBox}}">
+                <Setter Property="FontSize"
+                        Value="20" />
+                <Setter Property="Validation.ErrorTemplate">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <StackPanel>
+                                <AdornedElementPlaceholder x:Name="placeholder" />
+                                <TextBlock FontSize="12"
+                                           Foreground="White"
+                                           Text="{Binding ElementName=placeholder,
+                Path=AdornedElement.(Validation.Errors)[0].ErrorContent}" />
+                            </StackPanel>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="Validation.HasError"
+                             Value="True">
+                        <Setter Property="Background"
+                                Value="DarkRed" />
+                        <Setter Property="ToolTip"
+                                Value="{Binding RelativeSource={RelativeSource Self},
+            Path=(Validation.Errors)[0].ErrorContent}" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style x:Key="DataGridColumnStyle"
+                   TargetType="TextBlock">
+                <Style.Triggers>
+                    <Trigger Property="Validation.HasError"
+                             Value="True">
+                        <Setter Property="Background"
+                                Value="DarkRed" />
+                        <Setter Property="ToolTip"
+                                Value="{Binding RelativeSource={RelativeSource Self},
+            Path=(Validation.Errors)[0].ErrorContent}" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style x:Key="DataGridEditingColumnStyle"
+                   TargetType="TextBox">
+                <Style.Triggers>
+                    <Trigger Property="Validation.HasError"
+                             Value="True">
+                        <Setter Property="Background"
+                                Value="DarkRed" />
+                        <Setter Property="ToolTip"
+                                Value="{Binding RelativeSource={RelativeSource Self},
+            Path=(Validation.Errors)[0].ErrorContent}" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
