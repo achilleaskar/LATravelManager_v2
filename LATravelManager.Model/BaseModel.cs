@@ -9,7 +9,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows;
 
-namespace LATravelManager.BaseTypes
+namespace LATravelManager.Model
 {
     public abstract class BaseModel : ObservableObject, IDataErrorInfo
     {

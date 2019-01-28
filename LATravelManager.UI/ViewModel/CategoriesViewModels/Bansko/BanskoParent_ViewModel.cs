@@ -1,16 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using LATravelManager.UI.ViewModel.BaseViewModels;
+using LATravelManager.UI.ViewModel.Tabs;
 
 namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
 {
-    public class BanskoParent_ViewModel : ParentViewModel
+    public class BanskoParent_ViewModel : ExcursionCategory_ViewModelBase
     {
         public BanskoParent_ViewModel()
         {
+            Tabs.Add(new MakeReservationTab());
+            Tabs.Add(new SearchTab());
+            Tabs.Add(new MoveTab());
+            Tabs.Add(new ListManagementTab());
+            Tabs.Add(new OptionalActivitiesTab());
+            LoadChildViewModels();
+        }
 
+        public  void LoadChildViewModels()
+        {
+            Childs.Add(new NewReservation_Bansko_ViewModel());
+            Childs.Add(new Search_Bansko_ViewModel());
+            Childs.Add(new MoveReservation_Bansko_ViewModel());
+            Childs.Add(new Lists_Bansko_ViewModel());
+            Childs.Add(new OptionalActivities_Bansko_ViewModel());
         }
     }
 }

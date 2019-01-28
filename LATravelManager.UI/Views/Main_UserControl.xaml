@@ -10,7 +10,7 @@
              d:DesignHeight="450"
              d:DesignWidth="800">
     <UserControl.Resources>
-        <DataTemplate DataType="{x:Type viewmodels:Bansko_ViewModel}">
+        <DataTemplate DataType="{x:Type viewmodels:BanskoParent_ViewModel}">
             <views:Bansko_UserControl />
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewmodels:Skiathos_ViewModel}">
@@ -65,7 +65,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <views:NavigationSide_UserControl VerticalAlignment="Stretch"/>
-            <ContentControl Content="{Binding SelectedViewModel}"
+            <ContentControl Content="{Binding SelectedExcursionType}"
                             VerticalAlignment="Stretch"
                             HorizontalAlignment="Stretch"
                             Grid.Column="1" />

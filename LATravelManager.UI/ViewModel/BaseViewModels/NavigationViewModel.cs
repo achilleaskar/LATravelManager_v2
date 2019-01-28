@@ -68,9 +68,6 @@ namespace LATravelManager.UI.ViewModel
             {
                 MessengerInstance.Send(new ChangeViewModelMessage(tab.TabName));
             }
-
-            if (SelectedTabIndex >= 0)
-                Tabs[SelectedTabIndex].IsSelected = false;
         }
 
         private TabsBaseViewModel _SelectedTab;
@@ -197,21 +194,17 @@ namespace LATravelManager.UI.ViewModel
 
         private List<MyViewModelBase> SecondaryViewModels;
 
-        private async void SetProperSecondaryViewModel(int index)
-        {
-        }
-
-        private void SetProperViewModel()
-        {
-            if (SelectedTabIndex >= 0)
-            {
-                if (!(ServiceLocator.Current.GetInstance<MainUserControl_ViewModel>().SelectedExcursionType is MainExcursionCategoryViewModelBase))
-                    ServiceLocator.Current.GetInstance<MainUserControl_ViewModel>().SetProperViewModel();
-                MessengerInstance.Send(new SelectedTabChangedMessage(SelectedTabIndex));
-                if (SelectedSecondaryTabIndex >= 0)
-                    SecondaryTabs[SelectedSecondaryTabIndex].IsSelected = false;
-            }
-        }
+        //private void SetProperViewModel()
+        //{
+        //    if (SelectedTabIndex >= 0)
+        //    {
+        //        if (!(ServiceLocator.Current.GetInstance<MainUserControl_ViewModel>().SelectedExcursionType is MainExcursionCategoryViewModelBase))
+        //            ServiceLocator.Current.GetInstance<MainUserControl_ViewModel>().SetProperViewModel();
+        //        MessengerInstance.Send(new SelectedTabChangedMessage(SelectedTabIndex));
+        //        if (SelectedSecondaryTabIndex >= 0)
+        //            SecondaryTabs[SelectedSecondaryTabIndex].IsSelected = false;
+        //    }
+        //}
 
         #endregion Methods
     }

@@ -1,11 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LATravelManager.UI.Message;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LATravelManager.UI.ViewModel.BaseViewModels
 {
@@ -14,13 +9,22 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         public TabsBaseViewModel()
         {
             ChangeViewModelCommand = new RelayCommand(TabItemClicked);
+            MessengerInstance.Register<DeselectAllOtherTabsMessage>(this, (msg) =>
+            {
+                if (!IsSelected && GetType().Name != msg.NewTab)
+                {
+                    IsSelected = false;
+                }
+            });
         }
 
         private void TabItemClicked()
         {
             if (!IsSelected)
-                MessengerInstance.Send(new SelectedTabChangedMessage(Name,IsChild));
+                MessengerInstance.Send(new SelectedTabChangedMessage(Name, IsChild));
+            IsSelected = true;
         }
+
         public bool IsChild;
         public string Name { get; set; }
         public RelayCommand ChangeViewModelCommand { get; set; }
@@ -49,6 +53,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 RaisePropertyChanged();
             }
         }
+
         public string IconName { get; protected set; }
 
         private int _Level;
@@ -75,9 +80,5 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 RaisePropertyChanged();
             }
         }
-
-
-
-
     }
 }

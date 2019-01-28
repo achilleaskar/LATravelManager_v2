@@ -19,7 +19,7 @@ namespace LATravelManager.UI.StartUp
 
             builder.RegisterType<NavigationViewModel>().As<INavigationViewModel>();
             builder.RegisterType<MainViewModel>().AsSelf();
-            builder.RegisterType<LoginTab>().AsSelf();
+            builder.RegisterType<LoginViewModel>().AsSelf();
 
 
             return builder.Build();

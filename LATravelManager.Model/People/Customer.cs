@@ -1,4 +1,4 @@
-﻿using LATravelManager.BaseTypes;
+﻿using LATravelManager.Model;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;

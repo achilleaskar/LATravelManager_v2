@@ -153,9 +153,14 @@
     </ApplicationDefinition>
     <Compile Include="MessageListener.cs" />
     <Compile Include="Message\ChangeVisibilityMessage.cs" />
+    <Compile Include="Message\DeselectAllTabsMessage.cs" />
     <Compile Include="Message\IsBusyChangedMessage.cs" />
     <Compile Include="Message\ResetNavigationTabsMessage.cs" />
     <Compile Include="Message\SetChildViewModelMessage.cs" />
+    <Compile Include="Repositories\BanskoRepository.cs" />
+    <Compile Include="Repositories\GenericRepository.cs" />
+    <Compile Include="Repositories\IBanskoRepository.cs" />
+    <Compile Include="Repositories\IGenericRepository.cs" />
     <Compile Include="Repositories\old\EntityFrameworkReadOnlyRepository.cs" />
     <Compile Include="Repositories\old\EntityFrameworkRepository.cs" />
     <Compile Include="Repositories\old\IReadOnlyRepository.cs" />
@@ -163,6 +168,7 @@
     <Compile Include="Security\PasswordHashing.cs" />
     <Compile Include="Security\SecureStringManipulation.cs" />
     <Compile Include="StartUp\Bootstrapper.cs" />
+    <Compile Include="ViewModel\BaseViewModels\Bansko_BaseViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModels\ExcursionCategory_ViewModelBase.cs" />
     <Compile Include="ViewModel\BaseViewModels\INavigationViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModels\IViewModel.cs" />
@@ -170,13 +176,18 @@
     <Compile Include="ViewModel\BaseViewModels\MyViewModelBase.cs" />
     <Compile Include="ViewModel\BaseViewModels\TabsBaseViewModel.cs" />
     <Compile Include="ViewModel\CategoriesViewModels\Bansko\BanskoParent_ViewModel.cs" />
+    <Compile Include="ViewModel\CategoriesViewModels\Bansko\NewReservation_Bansko_ViewModel.cs" />
     <Compile Include="ViewModel\CategoriesViewModels\ChildViewModel.cs" />
     <Compile Include="ViewModel\CategoriesViewModels\IChildViewModel.cs" />
-    <Compile Include="ViewModel\CategoriesViewModels\ParentViewModel.cs" />
     <Compile Include="ViewModel\Tabs\AddRoomsTab.cs" />
+    <Compile Include="ViewModel\Tabs\ListManagementTab.cs" />
+    <Compile Include="ViewModel\Tabs\MakeReservationTab.cs" />
+    <Compile Include="ViewModel\Tabs\MoveTab.cs" />
+    <Compile Include="ViewModel\Tabs\OptionalActivitiesTab.cs" />
+    <Compile Include="ViewModel\Tabs\SearchTab.cs" />
     <Compile Include="ViewModel\Tabs\SettingsTab.cs" />
-    <Compile Include="ViewModel\Tabs\AddRooms_ViewModel.cs" />
-    <Compile Include="ViewModel\Tabs\Settings_Viewmodel.cs" />
+    <Compile Include="ViewModel\Tabs\TabViewmodels\AddRooms_ViewModel.cs" />
+    <Compile Include="ViewModel\Tabs\TabViewmodels\Settings_Viewmodel.cs" />
     <Compile Include="ViewModel\Window_ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModel\Window_ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModels\NavigationViewModel.cs" />

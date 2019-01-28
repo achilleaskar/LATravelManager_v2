@@ -1,22 +1,20 @@
-﻿using LATravelManager.BaseTypes;
+﻿using GalaSoft.MvvmLight;
 using System.ComponentModel.DataAnnotations;
 using static LATravelManager.Model.Enums;
 
 namespace LATravelManager.Models
 {
-    public class ExcursionCategory : BaseModel
+    public class ExcursionCategory : ViewModelBase
     {
         #region Constructors
 
         public ExcursionCategory()
         {
-            Tittle = "Ο τύπος εκδρομής";
         }
 
         #endregion Constructors
 
         #region Fields
-
 
         private ExcursionTypeEnum _Category;
         private int _IndexNum;
@@ -26,10 +24,6 @@ namespace LATravelManager.Models
 
         #region Properties
 
-        /// <summary>
-        /// Sets and gets the Category property. Changes to that property's value raise the
-        /// PropertyChanged event.
-        /// </summary>
         [Required]
         public ExcursionTypeEnum Category
         {
@@ -50,10 +44,6 @@ namespace LATravelManager.Models
             }
         }
 
-        /// <summary>
-        /// Sets and gets the IndexNum property. Changes to that property's value raise the
-        /// PropertyChanged event.
-        /// </summary>
         public int IndexNum
         {
             get
@@ -72,11 +62,6 @@ namespace LATravelManager.Models
                 RaisePropertyChanged();
             }
         }
-
-        /// <summary>
-        /// Sets and gets the Name property. Changes to that property's value raise the
-        /// PropertyChanged event.
-        /// </summary>
 
         [StringLength(30)]
         public string Name
@@ -109,6 +94,4 @@ namespace LATravelManager.Models
 
         #endregion Methods
     }
-
-
 }

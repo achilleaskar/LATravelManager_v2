@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace LATravelManager.UI.ViewModel.BaseViewModels
 {
-    public class ExcursionCategory_ViewModelBase : MyViewModelBase
+    public class ExcursionCategory_ViewModelBase : ViewModelBase
     {
         public ExcursionCategory_ViewModelBase()
         {
@@ -15,17 +16,14 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         }
         public List<TabsBaseViewModel> Tabs { get; internal set; }
 
+
         internal void SetProperChildViewModel(string name)
         {
             var child = Childs.Find(x => x.GetType().Name == name);
             if (child != null)
                 SelectedChildViewModel = child;
         }
-
-        public override Task LoadAsync()
-        {
-            throw new NotImplementedException();
-        }
+       
 
         private MyViewModelBase _SelectedChildViewModel;
 
@@ -77,5 +75,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         {
             throw new NotImplementedException();
         }
+
+        
     }
 }
