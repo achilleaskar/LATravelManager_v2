@@ -1,9 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LATravelManager.UI.ViewModel.BaseViewModels
@@ -14,16 +11,19 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         {
             Childs = new List<MyViewModelBase>();
         }
+
         public List<TabsBaseViewModel> Tabs { get; internal set; }
 
-
-        internal void SetProperChildViewModel(string name)
+        internal async Task SetProperChildViewModel(string name)
         {
             var child = Childs.Find(x => x.GetType().Name == name);
             if (child != null)
+            {
                 SelectedChildViewModel = child;
+                if (!SelectedChildViewModel.IsLoaded)
+                    await SelectedChildViewModel.LoadAsync();
+            }
         }
-       
 
         private MyViewModelBase _SelectedChildViewModel;
 
@@ -46,9 +46,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 ChildChanged();
             }
         }
-
-
-
 
         private List<MyViewModelBase> _Childs;
 
@@ -75,7 +72,5 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         {
             throw new NotImplementedException();
         }
-
-        
     }
 }

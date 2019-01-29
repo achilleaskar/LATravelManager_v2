@@ -7,9 +7,14 @@ using System.Threading.Tasks;
 
 namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
 {
-    public class NewReservation_Bansko_ViewModel : Bansko_BaseViewModel
+    public class NewReservation_Bansko_ViewModel : BanskoChilds_BaseViewModel
     {
         public override Task LoadAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task ReloadAsync()
         {
             throw new NotImplementedException();
         }

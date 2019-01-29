@@ -7,6 +7,7 @@ using LATravelManager.Models;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.CategoriesViewModels;
+using LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -129,14 +130,16 @@ namespace LATravelManager.UI.ViewModel
             }
         }
 
+        public bool IsLoaded { get; set; }
+
         private void SetProperViewModel()
         {
             switch (SelectedTemplateIndex + 1)
             {
                 case 1:
-                    if (!SimpleIoc.Default.IsRegistered<Bansko_ViewModel>())
-                        SimpleIoc.Default.Register<Bansko_ViewModel>();
-                    SelectedExcursionType = ServiceLocator.Current.GetInstance<Bansko_ViewModel>();
+                    if (!SimpleIoc.Default.IsRegistered<BanskoParent_ViewModel>())
+                        SimpleIoc.Default.Register<BanskoParent_ViewModel>();
+                    SelectedExcursionType = ServiceLocator.Current.GetInstance<BanskoParent_ViewModel>();
                     break;
 
                 case 2:
@@ -169,6 +172,11 @@ namespace LATravelManager.UI.ViewModel
                 Messenger.Default.Send(new ResetNavigationTabsMessage());
                 (SelectedExcursionType as ExcursionCategory_ViewModelBase).SetProperChildViewModel(0);
             }
+        }
+
+        public Task ReloadAsync()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

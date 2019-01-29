@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using LATravelManager.DataAccess;
+using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Views;
@@ -20,6 +21,7 @@ namespace LATravelManager.UI.StartUp
             builder.RegisterType<NavigationViewModel>().As<INavigationViewModel>();
             builder.RegisterType<MainViewModel>().AsSelf();
             builder.RegisterType<LoginViewModel>().AsSelf();
+            builder.RegisterType<BanskoRepository>().As<IBanskoRepository>();
 
 
             return builder.Build();

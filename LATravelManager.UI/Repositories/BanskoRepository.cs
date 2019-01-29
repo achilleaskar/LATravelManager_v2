@@ -1,11 +1,8 @@
 ﻿using LATravelManager.DataAccess;
-using LATravelManager.Model;
 using LATravelManager.Models;
-using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LATravelManager.UI.Repositories
@@ -16,12 +13,10 @@ namespace LATravelManager.UI.Repositories
         protected BanskoRepository(MainDatabase context) : base(context)
         {
         }
-       
 
         public async Task<IEnumerable<Hotel>> GetAllHotelsInBanskoAsync()
         {
             return await Context.Hotels.Where(x => x.City.Id == 2).ToListAsync();
         }
-
     }
 }
