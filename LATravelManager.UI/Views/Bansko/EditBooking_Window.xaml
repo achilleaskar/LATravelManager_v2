@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
-        xmlns:helpers="clr-namespace:LATravelManager.Helpers"
+        xmlns:helpers="clr-namespace:LATravelManager.UI.Helpers"
         xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         mc:Ignorable="d"

@@ -1,4 +1,4 @@
-﻿using LATravelManager.BaseTypes;
+﻿using LATravelManager.Model;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -6,7 +6,6 @@ namespace LATravelManager.Models
 {
     public class RoomOption : BaseModel
     {
-
         #region Fields
 
         public const string EnabledPropertyName = nameof(Enabled);
@@ -94,6 +93,5 @@ namespace LATravelManager.Models
         }
 
         #endregion Properties
-
     }
 }

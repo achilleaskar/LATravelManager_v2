@@ -1,4 +1,4 @@
-﻿using LATravelManager.BaseTypes;
+﻿using LATravelManager.Model;
 using System.ComponentModel.DataAnnotations;
 
 namespace LATravelManager.Models
@@ -9,7 +9,6 @@ namespace LATravelManager.Models
 
         public HotelCategory()
         {
-            Tittle = "Η Κατηγορία Ξενοδοχείου";
         }
 
         #endregion Constructors

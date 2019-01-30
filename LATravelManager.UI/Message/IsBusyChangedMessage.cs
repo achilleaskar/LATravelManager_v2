@@ -2,11 +2,11 @@
 {
     public class IsBusyChangedMessage
     {
-        public IsBusyChangedMessage(bool visible)
+        public IsBusyChangedMessage(bool isBusy)
         {
-            IsVisible = visible;
+            IsBusy= isBusy;
         }
 
-        public bool IsVisible { get; }
+        public bool IsBusy { get; }
     }
 }

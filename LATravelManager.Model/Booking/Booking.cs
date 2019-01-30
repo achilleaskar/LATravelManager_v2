@@ -1,4 +1,4 @@
-﻿using LATravelManager.BaseTypes;
+﻿using LATravelManager.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,6 +22,12 @@ namespace LATravelManager.Models
             Customers.CollectionChanged += Customers_CollectionChanged;
             ReservationsInBooking.CollectionChanged += ReservationsCollectionChanged;
             CheckIn = DateTime.Today;
+        }
+
+        public Booking(Booking booking, object uOW)
+        {
+            this.booking = booking;
+            this.uOW = uOW;
         }
 
         //public Booking(Booking tmpBooking, UnitOfWork uOW)
@@ -127,6 +133,8 @@ namespace LATravelManager.Models
         private User _User;
 
         private bool Calculating;
+        private Booking booking;
+        private object uOW;
 
         #endregion Fields
 
@@ -195,7 +203,7 @@ namespace LATravelManager.Models
                     }
                 }
 
-                RaisePropertyChanged(CheckOutPropertyName);
+                RaisePropertyChanged();
             }
         }
 
@@ -866,7 +874,7 @@ namespace LATravelManager.Models
             CalculateRemainingAmount();
         }
 
-        internal bool AreDatesValid()
+        public bool AreDatesValid()
         {
             return CheckIn.Year > 2010 && CheckOut.Year > 2010;
         }

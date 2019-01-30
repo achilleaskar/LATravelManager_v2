@@ -80,5 +80,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 RaisePropertyChanged();
             }
         }
+
+        public int Index { get; set; }
     }
 }

@@ -1,10 +1,10 @@
-﻿using LATravelManager.BaseTypes;
+﻿using LATravelManager.Model;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LATravelManager.Models
 {
-    public class Country : BaseModel
+    public class Country : BaseModel, INamed
     {
         #region Constructors
 

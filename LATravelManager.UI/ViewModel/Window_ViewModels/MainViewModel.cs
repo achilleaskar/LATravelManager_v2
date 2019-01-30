@@ -12,7 +12,7 @@ using System.Windows;
 
 namespace LATravelManager.UI.ViewModel
 {
-    public class MainViewModel : ViewModelBase, IViewModel
+    public class MainViewModel : ViewModelBase
     {
 
         #region Constructors
@@ -25,7 +25,7 @@ namespace LATravelManager.UI.ViewModel
             OpenExcursionsEditCommand = new RelayCommand(OpenExcursionsWindow, CanEditWindows);
             OpenUsersEditCommand = new RelayCommand(OpenUsersWindow, CanEditWindows);
             Messenger.Default.Register<ChangeVisibilityMessage>(this, msg => { Visibility = msg.Visible ? Visibility.Visible : Visibility.Collapsed; });
-            Messenger.Default.Register<IsBusyChangedMessage>(this, msg => { IsBusy = msg.IsVisible; });
+            Messenger.Default.Register<IsBusyChangedMessage>(this, msg => { IsBusy = msg.IsBusy; });
         }
 
         #endregion Constructors

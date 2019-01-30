@@ -1,12 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-using LATravelManager.BaseTypes;
+﻿using LATravelManager.Model;
+using System.ComponentModel.DataAnnotations;
 
 namespace LATravelManager.Models
 {
-    public class Leader : BaseModel
+    public class Leader : BaseModel,INamed
     {
-
-
         #region Fields + Constructors
 
         private string _Name = string.Empty;
@@ -20,7 +18,7 @@ namespace LATravelManager.Models
 
         /// <summary>
         /// Sets and gets the Name property.
-        /// Changes to that property's value raise the PropertyChanged event. 
+        /// Changes to that property's value raise the PropertyChanged event.
         /// </summary>
         [StringLength(20)]
         public string Name
@@ -44,7 +42,7 @@ namespace LATravelManager.Models
 
         /// <summary>
         /// Sets and gets the Tel property.
-        /// Changes to that property's value raise the PropertyChanged event. 
+        /// Changes to that property's value raise the PropertyChanged event.
         /// </summary>
         [StringLength(20)]
         public string Tel

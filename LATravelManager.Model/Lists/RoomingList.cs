@@ -1,19 +1,17 @@
-﻿using LATravelManager.BaseTypes;
+﻿using LATravelManager.Model;
 using System.Collections.Generic;
 
 namespace LATravelManager.Models
 {
-    public class RoomingList: BaseModel
+    public class RoomingList : BaseModel
     {
-
-
         public const string hotelPropertyName = nameof(Hotel);
 
-        private Hotel _hotel     ;
+        private Hotel _hotel;
 
         /// <summary>
         /// Sets and gets the hotel property.
-        /// Changes to that property's value raise the PropertyChanged event. 
+        /// Changes to that property's value raise the PropertyChanged event.
         /// </summary>
         public Hotel Hotel
         {
@@ -34,14 +32,13 @@ namespace LATravelManager.Models
             }
         }
 
-
         public const string ReservationsPropertyName = nameof(Reservations);
 
         private List<Reservation> _Reservations = new List<Reservation>();
 
         /// <summary>
         /// Sets and gets the Reservations property.
-        /// Changes to that property's value raise the PropertyChanged event. 
+        /// Changes to that property's value raise the PropertyChanged event.
         /// </summary>
         public List<Reservation> Reservations
         {

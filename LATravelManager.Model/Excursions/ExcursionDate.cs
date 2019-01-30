@@ -1,4 +1,4 @@
-﻿using LATravelManager.BaseTypes;
+﻿using LATravelManager.Model;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -50,7 +50,7 @@ namespace LATravelManager.Models
                 }
 
                 _CheckIn = value;
-                RaisePropertyChanged(CheckInPropertyName);
+                RaisePropertyChanged();
                 if (CheckIn > CheckOut)
                 {
                     CheckOut = CheckIn.AddDays(3);
@@ -77,7 +77,7 @@ namespace LATravelManager.Models
                 }
 
                 _CheckOut = value;
-                RaisePropertyChanged(CheckOutPropertyName);
+                RaisePropertyChanged();
                 if (CheckIn > CheckOut)
                 {
                     CheckOut = CheckIn.AddDays(3);
@@ -106,7 +106,7 @@ namespace LATravelManager.Models
                 }
 
                 _Name = value;
-                RaisePropertyChanged(NamePropertyName);
+                RaisePropertyChanged();
             }
         }
 

@@ -1,15 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
-using LATravelManager.BaseTypes;
+﻿using LATravelManager.Model;
+using System.ComponentModel.DataAnnotations;
 
 namespace LATravelManager.Models
 {
     public class Department : BaseModel
     {
-
         #region Fields + Constructors
 
         private bool _IsChecked = false;
-        private int _Quantity =1;
+        private int _Quantity = 1;
         private string _StartingPlace = string.Empty;
         public const string IsCheckedPropertyName = nameof(IsChecked);
         public const string QuantityPropertyName = nameof(Quantity);
@@ -22,7 +21,7 @@ namespace LATravelManager.Models
 
         /// <summary>
         /// Sets and gets the IsChecked property.
-        /// Changes to that property's value raise the PropertyChanged event. 
+        /// Changes to that property's value raise the PropertyChanged event.
         /// </summary>
         public bool IsChecked
         {
@@ -42,9 +41,10 @@ namespace LATravelManager.Models
                 RaisePropertyChanged(IsCheckedPropertyName);
             }
         }
+
         /// <summary>
         /// Sets and gets the Quantity property.
-        /// Changes to that property's value raise the PropertyChanged event. 
+        /// Changes to that property's value raise the PropertyChanged event.
         /// </summary>
         public int Quantity
         {
@@ -67,7 +67,7 @@ namespace LATravelManager.Models
 
         /// <summary>
         /// Sets and gets the StartingPlace property.
-        /// Changes to that property's value raise the PropertyChanged event. 
+        /// Changes to that property's value raise the PropertyChanged event.
         /// </summary>
         [StringLength(20)]
         public string StartingPlace

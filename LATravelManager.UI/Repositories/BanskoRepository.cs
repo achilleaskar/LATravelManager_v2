@@ -10,7 +10,7 @@ namespace LATravelManager.UI.Repositories
     public class BanskoRepository : GenericRepository<MainDatabase>,
                                     IBanskoRepository
     {
-        protected BanskoRepository(MainDatabase context) : base(context)
+        public BanskoRepository() : base(new MainDatabase())
         {
         }
 

@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LATravelManager.Models
 {
-    public class Hotel : BaseModel
+    public class Hotel : BaseModel, INamed
     {
 
         #region Constructors

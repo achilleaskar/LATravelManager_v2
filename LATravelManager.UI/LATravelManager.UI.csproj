@@ -47,6 +47,9 @@
     <Reference Include="DeltaCompressionDotNet, Version=2.0.0.0, Culture=neutral, PublicKeyToken=1d14d6e5194e7f4a, processorArchitecture=MSIL">
       <HintPath>..\packages\DeltaCompressionDotNet.2.0.0.0\lib\net20\DeltaCompressionDotNet.dll</HintPath>
     </Reference>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.9.0.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentFormat.OpenXml.2.9.0\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -109,7 +112,16 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Design" />
+    <Reference Include="System.IO.FileSystem.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.FileSystem.Primitives.4.3.0\lib\net46\System.IO.FileSystem.Primitives.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.Packaging, Version=4.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Packaging.4.5.0\lib\net46\System.IO.Packaging.dll</HintPath>
+    </Reference>
     <Reference Include="System.Management" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -151,9 +163,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Helpers\RoomManager.cs" />
     <Compile Include="MessageListener.cs" />
     <Compile Include="Message\ChangeVisibilityMessage.cs" />
     <Compile Include="Message\DeselectAllTabsMessage.cs" />
+    <Compile Include="Message\ExcursionCategoryChanged.cs" />
     <Compile Include="Message\IsBusyChangedMessage.cs" />
     <Compile Include="Message\ResetNavigationTabsMessage.cs" />
     <Compile Include="Message\SetChildViewModelMessage.cs" />
@@ -161,10 +175,6 @@
     <Compile Include="Repositories\GenericRepository.cs" />
     <Compile Include="Repositories\IBanskoRepository.cs" />
     <Compile Include="Repositories\IGenericRepository.cs" />
-    <Compile Include="Repositories\old\EntityFrameworkReadOnlyRepository.cs" />
-    <Compile Include="Repositories\old\EntityFrameworkRepository.cs" />
-    <Compile Include="Repositories\old\IReadOnlyRepository.cs" />
-    <Compile Include="Repositories\old\IRepository.cs" />
     <Compile Include="Security\PasswordHashing.cs" />
     <Compile Include="Security\SecureStringManipulation.cs" />
     <Compile Include="StartUp\Bootstrapper.cs" />

@@ -1,23 +1,13 @@
 ﻿namespace LATravelManager.UI.Message
 {
-    public class ChangeViewModelMessage
+    public class ChangeChildViewModelMessage
     {
-        #region constructors and destructors
 
-        public ChangeViewModelMessage(string nameOfViewModel)
+        public ChangeChildViewModelMessage(int ViewModelindex)
         {
-            NameOfViewModel = nameOfViewModel;
+            this.ViewModelindex = ViewModelindex;
         }
 
-        #endregion constructors and destructors
-
-        #region properties
-
-        /// <summary>
-        /// Just some text that comes from the sender.
-        /// </summary>
-        public string NameOfViewModel { get; private set; }
-
-        #endregion properties
+        public int ViewModelindex { get; }
     }
 }

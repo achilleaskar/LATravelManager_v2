@@ -1,4 +1,4 @@
-﻿using LATravelManager.BaseTypes;
+﻿using LATravelManager.Model;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -23,8 +23,8 @@ namespace LATravelManager.Models
 
         public Payment()
         {
-
         }
+
         public Payment(Payment p)
         {
             Amount = p.Amount;
@@ -127,7 +127,6 @@ namespace LATravelManager.Models
                 RaisePropertyChanged(AmountStringPropertyName);
             }
         }
-
 
         /// <summary>
         /// Sets and gets the Comment property. Changes to that property's value raise the
@@ -246,6 +245,5 @@ namespace LATravelManager.Models
         }
 
         #endregion Methods
-
     }
 }

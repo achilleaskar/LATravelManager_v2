@@ -40,12 +40,12 @@ namespace LATravelManager.UI.ViewModel
                     case nameof(AddRooms_ViewModel):
                         viewmodelIndex = SecondaryViewModels.FindIndex(x => x.GetType() == typeof(AddRooms_ViewModel));
                         if (viewmodelIndex >= 0)
-                            MessengerInstance.Send(new SetChildViewModelMessage(SecondaryViewModels[viewmodelIndex]));
+                            MessengerInstance.Send(new SetSecondaryChildViewModelMessage(SecondaryViewModels[viewmodelIndex]));
                         else
                         {
                             var addRoomsViewModel = new AddRooms_ViewModel();
                             SecondaryViewModels.Add(addRoomsViewModel);
-                            MessengerInstance.Send(new SetChildViewModelMessage(addRoomsViewModel));
+                            MessengerInstance.Send(new SetSecondaryChildViewModelMessage(addRoomsViewModel));
                             await addRoomsViewModel.LoadAsync();
                         }
                         break;
@@ -53,12 +53,12 @@ namespace LATravelManager.UI.ViewModel
                     case nameof(Settings_Viewmodel):
                         viewmodelIndex = SecondaryViewModels.FindIndex(x => x.GetType() == typeof(Settings_Viewmodel));
                         if (viewmodelIndex >= 0)
-                            MessengerInstance.Send(new SetChildViewModelMessage(SecondaryViewModels[viewmodelIndex]));
+                            MessengerInstance.Send(new SetSecondaryChildViewModelMessage(SecondaryViewModels[viewmodelIndex]));
                         else
                         {
                             var settingsViewModel = new Settings_Viewmodel();
                             SecondaryViewModels.Add(settingsViewModel);
-                            MessengerInstance.Send(new SetChildViewModelMessage(settingsViewModel));
+                            MessengerInstance.Send(new SetSecondaryChildViewModelMessage(settingsViewModel));
                             await settingsViewModel.LoadAsync();
                         }
                         break;
@@ -66,7 +66,7 @@ namespace LATravelManager.UI.ViewModel
             }
             else
             {
-                MessengerInstance.Send(new ChangeViewModelMessage(tab.TabName));
+                MessengerInstance.Send(new ChangeChildViewModelMessage(tab.TabName));
             }
         }
 

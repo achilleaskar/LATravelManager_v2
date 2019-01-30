@@ -1,6 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using LATravelManager.Model;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
-using LATravelManager.BaseTypes;
 
 namespace LATravelManager.Models
 {
@@ -71,8 +71,6 @@ namespace LATravelManager.Models
                 RaisePropertyChanged(ExcursionPropertyName);
             }
         }
-
-
 
         /// <summary>
         /// Sets and gets the Name property. Changes to that property's value raise the

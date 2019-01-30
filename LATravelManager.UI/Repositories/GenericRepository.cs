@@ -21,6 +21,12 @@ namespace LATravelManager.UI.Repositories
         {
             Context.Set<TEntity>().Add(model);
         }
+        public async Task<IEnumerable<TEntity>> GetAllAsyncSortedByName<TEntity>() where TEntity : BaseModel,INamed
+        {
+            return await Context.Set<TEntity>().OrderBy(x=>x.Name).ToListAsync();
+        }
+       
+
 
         public virtual async Task<TEntity> GetByIdAsync<TEntity>(int id) where TEntity : BaseModel
         {

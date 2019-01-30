@@ -1,9 +1,9 @@
-﻿using LATravelManager.BaseTypes;
+﻿using LATravelManager.Model;
 using System.ComponentModel.DataAnnotations;
 
 namespace LATravelManager.Models
 {
-    public class StartingPlace : BaseModel
+    public class StartingPlace : BaseModel,INamed
     {
         #region Fields + Constructors
 

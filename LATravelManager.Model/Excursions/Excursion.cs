@@ -1,4 +1,4 @@
-﻿using LATravelManager.BaseTypes;
+﻿using LATravelManager.Model;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -6,7 +6,6 @@ namespace LATravelManager.Models
 {
     public class Excursion : BaseModel
     {
-
         #region Constructors
 
         public Excursion()
@@ -304,6 +303,5 @@ namespace LATravelManager.Models
         }
 
         #endregion Methods
-
     }
 }

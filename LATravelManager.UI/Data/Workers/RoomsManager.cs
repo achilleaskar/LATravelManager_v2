@@ -157,8 +157,8 @@ namespace LATravelManager.UI.Data.Workers
                 DateTime MinDay = planStart, MaxDay = planEnd, tmpDate;
                 MinDay = MinDay.AddDays(-10);
                 MaxDay = MaxDay.AddDays(10);
-                //Hotels = await UOW.GetHotelsFull(hotelFilter, roomtypeFilter, cityFilter, peopleCount);
-               // Bookings = (await UOW.GenericRepository.GetAsync<Booking>(filter: c => c.Excursion.Id == excursionfilter.Id && c.CheckIn <= MaxDay && c.CheckOut > MinDay, includeProperties: "Excursion, Partner, Payments, ReservationsInBooking, User, ReservationsInBooking.CustomersList")).ToList();
+                Hotels = await UOW.GetHotelsFull(hotelFilter, roomtypeFilter, cityFilter, peopleCount);
+                Bookings = (await UOW.GenericRepository.GetAsync<Booking>(filter: c => c.Excursion.Id == excursionfilter.Id && c.CheckIn <= MaxDay && c.CheckOut > MinDay, includeProperties: "Excursion, Partner, Payments, ReservationsInBooking, User, ReservationsInBooking.CustomersList")).ToList();
                 if (unSavedBooking.Id > 0)
                 {
                     Bookings = Bookings.Where(x => x.Id != unSavedBooking.Id).ToList();

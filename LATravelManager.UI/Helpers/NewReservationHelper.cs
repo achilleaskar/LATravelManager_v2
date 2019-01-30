@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using LATravelManager.Models;
+using LATravelManager.UI.Data.Workers;
 using System;
 using System.Linq;
 using System.Windows.Media;

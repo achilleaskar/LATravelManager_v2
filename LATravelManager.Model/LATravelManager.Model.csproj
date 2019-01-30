@@ -71,6 +71,7 @@
     <Compile Include="Booking\Booking.cs" />
     <Compile Include="Definitions.cs" />
     <Compile Include="Enums.cs" />
+    <Compile Include="INamed.cs" />
     <Compile Include="LookUpItem.cs" />
     <Compile Include="Plan\BookingInfoPerDay.cs" />
     <Compile Include="Lists\Bus.cs" />

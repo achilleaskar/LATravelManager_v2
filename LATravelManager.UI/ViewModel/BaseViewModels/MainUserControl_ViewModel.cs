@@ -1,64 +1,50 @@
-﻿using CommonServiceLocator;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using LATravelManager.Models;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.ViewModel.BaseViewModels;
-using LATravelManager.UI.ViewModel.CategoriesViewModels;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace LATravelManager.UI.ViewModel
 {
     public class MainUserControl_ViewModel : ViewModelBase, IViewModel
     {
+        #region Constructors
+
         public MainUserControl_ViewModel()
         {
             LogOutCommand = new RelayCommand(TryLogOut, CanLogout);
+
+            Templates = new ObservableCollection<ExcursionCategory>();
+            TemplateViewmodels = new List<ExcursionCategory_ViewModelBase>();
+
             MessengerInstance.Register<IsBusyChangedMessage>(this, msg => { IsBusy = msg.IsVisible; });
-            MessengerInstance.Register<SetChildViewModelMessage>(this, tab => { SelectedExcursionType.SelectedChildViewModel = tab.Viewmodel; });
-            MessengerInstance.Register<ChangeViewModelMessage>(this, name => { SelectedExcursionType.SetProperChildViewModel(name.NameOfViewModel); });
+            MessengerInstance.Register<SetSecondaryChildViewModelMessage>(this, tab => { SelectedExcursionType.SelectedChildViewModel = tab.Viewmodel; });
+            MessengerInstance.Register<ChangeChildViewModelMessage>(this, async vm => { await SelectedExcursionType.SetProperChildViewModel(vm.ViewModelindex); });
+            MessengerInstance.Register<ExcursionCategoryChanged>(this, async index => { await SetProperViewModel(); });
         }
 
-        public ExcursionCategory_ViewModelBase SelectedExcursionType
-        {
-            get
-            {
-                return _SelectedExcursionType;
-            }
+        #endregion Constructors
 
-            set
-            {
-                if (_SelectedExcursionType == value)
-                {
-                    return;
-                }
+        #region Fields
 
-                _SelectedExcursionType = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public void TryLogOut()
-        {
-            //TODO
-            //MessengerInstance.Send(new ChangeViewModelMessage(nameof(Login_ViewModel)));
-        }
-
-        private bool CanLogout()
-        {
-            //ToDO
-            return true;
-        }
-
-        public RelayCommand LogOutCommand { get; set; }
-
-        public string Username => Helpers.StaticResources.User.Name;
+        public List<ExcursionCategory_ViewModelBase> TemplateViewmodels { get; set; }
 
         private bool _IsBusy = false;
+
+        private ExcursionCategory_ViewModelBase _SelectedExcursionType;
+
+        private int _SelectedTemplateIndex;
+
+        private ObservableCollection<ExcursionCategory> _Templates;
+
+        #endregion Fields
+
+        #region Properties
 
         public bool IsBusy
         {
@@ -79,30 +65,25 @@ namespace LATravelManager.UI.ViewModel
             }
         }
 
-        public Task LoadAsync()
-        {
-            throw new System.NotImplementedException();
-        }
+        public bool IsLoaded { get; set; }
 
-        private int _SelectedTemplateIndex;
-        private List<ExcursionCategory> _Templates;
-        private ExcursionCategory_ViewModelBase _SelectedExcursionType;
+        public RelayCommand LogOutCommand { get; set; }
 
-        public List<ExcursionCategory> Templates
+        public ExcursionCategory_ViewModelBase SelectedExcursionType
         {
             get
             {
-                return _Templates;
+                return _SelectedExcursionType;
             }
 
             set
             {
-                if (_Templates == value)
+                if (_SelectedExcursionType == value)
                 {
                     return;
                 }
 
-                _Templates = value;
+                _SelectedExcursionType = value;
                 RaisePropertyChanged();
             }
         }
@@ -124,59 +105,125 @@ namespace LATravelManager.UI.ViewModel
                 _SelectedTemplateIndex = value;
                 if (value >= 0 && value <= Templates.Count)
                 {
-                    SetProperViewModel();
+                    MessengerInstance.Send(new ExcursionCategoryChanged(value));
                 }
                 RaisePropertyChanged();
             }
         }
 
-        public bool IsLoaded { get; set; }
-
-        private void SetProperViewModel()
+        public ObservableCollection<ExcursionCategory> Templates
         {
-            switch (SelectedTemplateIndex + 1)
+            get
             {
-                case 1:
-                    if (!SimpleIoc.Default.IsRegistered<BanskoParent_ViewModel>())
-                        SimpleIoc.Default.Register<BanskoParent_ViewModel>();
-                    SelectedExcursionType = ServiceLocator.Current.GetInstance<BanskoParent_ViewModel>();
-                    break;
-
-                case 2:
-                    if (!SimpleIoc.Default.IsRegistered<GroupExcursion_ViewModel>())
-                        SimpleIoc.Default.Register<GroupExcursion_ViewModel>();
-                    SelectedExcursionType = ServiceLocator.Current.GetInstance<GroupExcursion_ViewModel>();
-                    break;
-
-                case 3:
-                    if (!SimpleIoc.Default.IsRegistered<PersonalExcursion_ViewModel>())
-                        SimpleIoc.Default.Register<PersonalExcursion_ViewModel>();
-                    SelectedExcursionType = ServiceLocator.Current.GetInstance<PersonalExcursion_ViewModel>();
-                    break;
-
-                case 4:
-                    if (!SimpleIoc.Default.IsRegistered<ThirdPartyExcursions_ViewModel>())
-                        SimpleIoc.Default.Register<ThirdPartyExcursions_ViewModel>();
-                    SelectedExcursionType = ServiceLocator.Current.GetInstance<ThirdPartyExcursions_ViewModel>();
-                    break;
-
-                case 5:
-                    if (!SimpleIoc.Default.IsRegistered<Skiathos_ViewModel>())
-                        SimpleIoc.Default.Register<Skiathos_ViewModel>();
-                    SelectedExcursionType = ServiceLocator.Current.GetInstance<Skiathos_ViewModel>();
-                    break;
+                return _Templates;
             }
-            //set to default tab
-            if (SelectedExcursionType is ExcursionCategory_ViewModelBase)
+
+            set
             {
-                Messenger.Default.Send(new ResetNavigationTabsMessage());
-                (SelectedExcursionType as ExcursionCategory_ViewModelBase).SetProperChildViewModel(0);
+                if (_Templates == value)
+                {
+                    return;
+                }
+
+                _Templates = value;
+                RaisePropertyChanged();
             }
+        }
+
+        public string Username => Helpers.StaticResources.User.Name;
+
+        #endregion Properties
+
+        #region Methods
+
+        public Task LoadAsync()
+        {
+            throw new System.NotImplementedException();
         }
 
         public Task ReloadAsync()
         {
             throw new System.NotImplementedException();
         }
+
+        public void TryLogOut()
+        {
+            //TODO
+            //MessengerInstance.Send(new ChangeViewModelMessage(nameof(Login_ViewModel)));
+        }
+
+        private bool CanLogout()
+        {
+            //ToDO
+            return true;
+        }
+
+        private async void SetProperViewModel()
+        {
+            var index = -1;
+            switch (SelectedTemplateIndex + 1)
+            {
+                case 1:
+                    index = TemplateViewmodels.FindIndex(x => x.GetType() == typeof(BanskoParent_ViewModel));
+                    if (index >= 0)
+                        SelectedExcursionType = TemplateViewmodels[index];
+                    else
+                    {
+                        SelectedExcursionType = new BanskoParent_ViewModel();
+                    }
+                    break;
+
+                case 2:
+
+                    index = TemplateViewmodels.FindIndex(x => x.GetType() == typeof(GroupExcursion_ViewModel));
+                    if (index >= 0)
+                        SelectedExcursionType = TemplateViewmodels[index];
+                    else
+                    {
+                        SelectedExcursionType = new GroupExcursion_ViewModel();
+                    }
+                    break;
+
+                case 3:
+                    index = TemplateViewmodels.FindIndex(x => x.GetType() == typeof(PersonalExcursion_ViewModel));
+                    if (index >= 0)
+                        SelectedExcursionType = TemplateViewmodels[index];
+                    else
+                    {
+                        SelectedExcursionType = new PersonalExcursion_ViewModel();
+                    }
+                    break;
+
+                case 4:
+                    index = TemplateViewmodels.FindIndex(x => x.GetType() == typeof(ThirdPartyExcursions_ViewModel));
+                    if (index >= 0)
+                        SelectedExcursionType = TemplateViewmodels[index];
+                    else
+                    {
+                        SelectedExcursionType = new ThirdPartyExcursions_ViewModel();
+                    }
+
+                    break;
+
+                case 5:
+                    index = TemplateViewmodels.FindIndex(x => x.GetType() == typeof(Skiathos_ViewModel));
+                    if (index >= 0)
+                        SelectedExcursionType = TemplateViewmodels[index];
+                    else
+                    {
+                        SelectedExcursionType = new Skiathos_ViewModel();
+                    }
+
+                    break;
+            }
+            //set to default tab
+            if (SelectedExcursionType is ExcursionCategory_ViewModelBase)
+            {
+                Messenger.Default.Send(new ResetNavigationTabsMessage());
+                await (SelectedExcursionType as ExcursionCategory_ViewModelBase).SetProperChildViewModel(0);
+            }
+        }
+
+        #endregion Methods
     }
 }

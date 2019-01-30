@@ -39,7 +39,7 @@ namespace LATravelManager.Models
                 }
 
                 _Date = value;
-                RaisePropertyChanged(DatePropertyName);
+                RaisePropertyChanged();
             }
         }
 
@@ -63,7 +63,7 @@ namespace LATravelManager.Models
                 }
 
                 _Note = value;
-                RaisePropertyChanged(NotePropertyName);
+                RaisePropertyChanged();
             }
         }
 

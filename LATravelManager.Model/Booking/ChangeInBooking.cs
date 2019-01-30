@@ -1,4 +1,4 @@
-﻿using LATravelManager.BaseTypes;
+﻿using LATravelManager.Model;
 using System;
 
 namespace LATravelManager.Models
@@ -47,7 +47,7 @@ namespace LATravelManager.Models
                     return;
                 }
                 _Description = value;
-                RaisePropertyChanged(DescriptionPropertyName);
+                RaisePropertyChanged();
             }
         }
 
@@ -70,7 +70,7 @@ namespace LATravelManager.Models
                 }
 
                 _ItemId = value;
-                RaisePropertyChanged(ItemIdPropertyName);
+                RaisePropertyChanged();
             }
         }
 
@@ -93,7 +93,7 @@ namespace LATravelManager.Models
                 }
 
                 _Type = value;
-                RaisePropertyChanged(TypePropertyName);
+                RaisePropertyChanged();
             }
         }
 
@@ -116,7 +116,7 @@ namespace LATravelManager.Models
                 }
 
                 _User = value;
-                RaisePropertyChanged(UserPropertyName);
+                RaisePropertyChanged();
             }
         }
 

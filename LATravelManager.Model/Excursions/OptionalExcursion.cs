@@ -51,7 +51,7 @@ namespace LATravelManager.Models
                 }
 
                 _Customers = value;
-                RaisePropertyChanged(CustomersPropertyName);
+                RaisePropertyChanged();
             }
         }
 
@@ -74,7 +74,7 @@ namespace LATravelManager.Models
                 }
 
                 _Date = value;
-                RaisePropertyChanged(DatePropertyName);
+                RaisePropertyChanged();
             }
         }
 
@@ -97,7 +97,7 @@ namespace LATravelManager.Models
                 }
 
                 _Excursion = value;
-                RaisePropertyChanged(ExcursionPropertyName);
+                RaisePropertyChanged();
             }
         }
 
@@ -121,7 +121,7 @@ namespace LATravelManager.Models
                 }
 
                 _Name = value;
-                RaisePropertyChanged(NamePropertyName);
+                RaisePropertyChanged();
             }
         }
 

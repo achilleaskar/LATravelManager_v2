@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace LATravelManager.UI.Message
 {
-    public class SetChildViewModelMessage
+    public class SetSecondaryChildViewModelMessage
     {
-        public SetChildViewModelMessage(MyViewModelBase viewmodel)
+        public SetSecondaryChildViewModelMessage(MyViewModelBase viewmodel)
         {
             Viewmodel = viewmodel;
         }

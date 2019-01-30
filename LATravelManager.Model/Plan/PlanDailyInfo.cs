@@ -1,4 +1,4 @@
-﻿using LATravelManager.BaseTypes;
+﻿using LATravelManager.Model;
 using System;
 using static LATravelManager.Model.Enums;
 
@@ -6,7 +6,6 @@ namespace LATravelManager.Models
 {
     public class PlanDailyInfo : BaseModel
     {
-
         #region Fields
 
         public const string DatePropertyName = nameof(Date);
@@ -118,6 +117,5 @@ namespace LATravelManager.Models
         }
 
         #endregion Properties
-
     }
 }

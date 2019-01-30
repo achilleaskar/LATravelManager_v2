@@ -8,7 +8,7 @@ using System.Windows.Media;
 
 namespace LATravelManager.Models
 {
-    public class Customer : BaseModel
+    public class Customer : BaseModel,INamed
     {
         #region Fields + Constructors
 

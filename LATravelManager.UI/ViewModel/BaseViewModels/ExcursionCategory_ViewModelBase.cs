@@ -10,16 +10,16 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         public ExcursionCategory_ViewModelBase()
         {
             Childs = new List<MyViewModelBase>();
+            Tabs = new List<TabsBaseViewModel>();
         }
 
         public List<TabsBaseViewModel> Tabs { get; internal set; }
 
-        internal async Task SetProperChildViewModel(string name)
+        internal async Task SetProperChildViewModel(int index)
         {
-            var child = Childs.Find(x => x.GetType().Name == name);
-            if (child != null)
+            if (index <= Childs.Count)
             {
-                SelectedChildViewModel = child;
+                SelectedChildViewModel = Childs[index];
                 if (!SelectedChildViewModel.IsLoaded)
                     await SelectedChildViewModel.LoadAsync();
             }

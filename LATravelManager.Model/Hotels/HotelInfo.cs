@@ -48,7 +48,7 @@ namespace LATravelManager.Models
                 }
 
                 _CheckIn = value;
-                RaisePropertyChanged(CheckInPropertyName);
+                RaisePropertyChanged();
             }
         }
 
@@ -71,7 +71,7 @@ namespace LATravelManager.Models
                 }
 
                 _CheckOut = value;
-                RaisePropertyChanged(CheckOutPropertyName);
+                RaisePropertyChanged();
             }
         }
 
@@ -95,7 +95,7 @@ namespace LATravelManager.Models
                 }
 
                 _Hotel = value;
-                RaisePropertyChanged(HotelPropertyName);
+                RaisePropertyChanged();
             }
         }
 

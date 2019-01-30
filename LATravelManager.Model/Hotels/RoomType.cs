@@ -1,4 +1,4 @@
-﻿using LATravelManager.BaseTypes;
+﻿using LATravelManager.Model;
 using System.ComponentModel.DataAnnotations;
 
 namespace LATravelManager.Models
@@ -103,12 +103,14 @@ namespace LATravelManager.Models
         public string Capacity => GetPeopleLimit();
 
         #region Methods
+
         public string GetPeopleLimit()
         {
             if (MinCapacity == MaxCapacity)
                 return MinCapacity.ToString();
             return MinCapacity + " - " + MaxCapacity;
         }
+
         public override string ToString()
         {
             return Name;
