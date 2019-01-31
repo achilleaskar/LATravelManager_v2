@@ -1,22 +1,32 @@
 ﻿using LATravelManager.Models;
+using LATravelManager.UI.Repositories;
 using System;
+using System.Threading.Tasks;
 
 namespace LATravelManager.UI.Helpers
 {
     public class SearchBookingsHelper
     {
-        public UnitOfWork UOW
+
+        public SearchBookingsHelper(GenericRepository context)
         {
-            get
-            {
-                return ServiceLocator.Current.GetInstance<UnitOfWork>(Definitions.UnitOfWorkKey);
-            }
+            Context = context;
         }
 
-        internal void DeleteBooking(Booking selectedBooking)
+        public GenericRepository Context { get; }
+
+        //    public UnitOfWork UOW
+        //    {
+        //        get
+        //        {
+        //            return ServiceLocator.Current.GetInstance<UnitOfWork>(Definitions.UnitOfWorkKey);
+        //        }
+        //    }
+
+        internal async Task DeleteBooking(Booking selectedBooking)
         {
-            UOW.GenericRepository.Delete(selectedBooking);
-            UOW.Complete();
+            Context.Delete(selectedBooking);
+            await Context.SaveAsync();
         }
 
         internal DateTime GetDateLimit(string parameter)

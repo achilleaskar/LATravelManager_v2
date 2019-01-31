@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using LATravelManager.Models;
+using LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko;
 
 namespace LATravelManager.UI.Views.Bansko
 {

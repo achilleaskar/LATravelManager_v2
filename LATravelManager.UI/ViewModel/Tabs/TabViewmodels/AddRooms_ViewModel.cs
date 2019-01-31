@@ -14,5 +14,10 @@ namespace LATravelManager.UI.ViewModel.Tabs
         {
             throw new NotImplementedException();
         }
+
+        public override Task ReloadAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

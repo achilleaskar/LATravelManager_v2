@@ -1,8 +1,11 @@
 ﻿using GalaSoft.MvvmLight;
 using LATravelManager.Models;
 using LATravelManager.UI.Data.Workers;
+using LATravelManager.UI.Message;
+using LATravelManager.UI.Repositories;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Media;
 
 public class NewReservationHelper : ViewModelBase
@@ -11,19 +14,14 @@ public class NewReservationHelper : ViewModelBase
 
     private readonly RoomsManager RoomsManager = new RoomsManager();
 
-    #endregion Fields
-
-    #region Properties
-
-    public UnitOfWork UOW
+    public NewReservationHelper(GenericRepository Context)
     {
-        get
-        {
-            return ServiceLocator.Current.GetInstance<UnitOfWork>(Definitions.UnitOfWorkKey);
-        }
+        Context = Context;
     }
 
-    #endregion Properties
+    public GenericRepository Context { get; }
+
+    #endregion Fields
 
     #region Methods
 
@@ -81,15 +79,15 @@ public class NewReservationHelper : ViewModelBase
         }
     }
 
-    public void OverBookHotel(Booking booking, Hotel hotel, RoomType roomType, bool all, bool onlyStay, bool hb)
+    public async Task OverBookHotelAsync( Booking booking, Hotel hotel, RoomType roomType, bool all, bool onlyStay, bool hb)
     {
         bool hasCustomers = false;
         Reservation newRes = new Reservation
         {
             ReservationType = Reservation.ReservationTypeEnum.Overbooked,
             FirstHotel = hotel.Name,
-            Hotel = UOW.GenericRepository.GetById<Hotel>(hotel.Id),
-            NoNameRoomType = UOW.GenericRepository.GetById<RoomType>(roomType.Id),
+            Hotel = await Context.GetByIdAsync<Hotel>(hotel.Id),
+            NoNameRoomType = await Context.GetByIdAsync<RoomType>(roomType.Id),
             OnlyStay = onlyStay,
             HB = hb
         };
@@ -129,14 +127,14 @@ public class NewReservationHelper : ViewModelBase
         }
     }
 
-    public void PutCustomersInRoom(Booking booking, Room SelectedRoom, bool all, bool onlyStay, bool hb)
+    public async Task PutCustomersInRoomAsync(Booking booking, Room SelectedRoom, bool all, bool onlyStay, bool hb)
     {
         bool hasCustomers = false;
         Reservation newRes = new Reservation
         {
             ReservationType = Reservation.ReservationTypeEnum.Normal,
             OnlyStay = onlyStay,
-            Room = UOW.GenericRepository.GetById<Room>(SelectedRoom.Id),
+            Room = await Context.GetByIdAsync<Room>(SelectedRoom.Id),
             FirstHotel = SelectedRoom.Hotel.Name,
             HB = hb
         };
@@ -182,36 +180,36 @@ public class NewReservationHelper : ViewModelBase
         }
     }
 
-    public Booking Save(Payment Payment, Booking Booking, Booking startingBooking)
+    public async Task<Booking> SaveAsync(Payment Payment, Booking Booking, Booking startingBooking)
     {
         //UOW.Reload();
         Booking tmpBooking;
         if (startingBooking == null)
         {
-            Booking.User = UOW.GenericRepository.GetById<User>(Booking.User.Id);
+            Booking.User = await Context.GetByIdAsync<User>(Booking.User.Id);
         }
 
         if (Payment.Amount > 0)
         {
-            Booking.Payments.Add(new Payment { Amount = Payment.Amount, Comment = Payment.Comment, Date = DateTime.Now, PaymentMethod = Payment.PaymentMethod, User = UOW.GenericRepository.GetById<User>(Booking.User.Id) });
+            Booking.Payments.Add(new Payment { Amount = Payment.Amount, Comment = Payment.Comment, Date = DateTime.Now, PaymentMethod = Payment.PaymentMethod, User = await Context.GetByIdAsync<User>(Booking.User.Id) });
         }
 
         if (Booking.Id == 0)
         {
-            UOW.GenericRepository.Create(Booking);
+            Context.Add(Booking);
             tmpBooking = Booking;
         }
         else
         {
             // CalculateDiferences(startingBooking, Booking);
-            tmpBooking = new Booking(Booking, UOW);
+            tmpBooking = new Booking(Booking, Context);
 
-            UOW.GenericRepository.Create(tmpBooking);
-            UOW.GenericRepository.Save();
-            UOW.GenericRepository.Delete<Booking>(Booking.Id);
+            Context.Add(tmpBooking);
+            await Context.SaveAsync();
+            Context.RemoveById<Booking>(Booking.Id);
             Booking = tmpBooking;
         }
-        UOW.Complete();
+        await Context.SaveAsync();
 
         Payment = new Payment();
         return tmpBooking;
@@ -258,10 +256,10 @@ public class NewReservationHelper : ViewModelBase
         }
     }
 
-    private void CalculateDiferences(Booking Dbbooking, Booking newBooking)
+    private async Task CalculateDiferencesAsync(Booking Dbbooking, Booking newBooking)
     {
-        var tmpBooking = UOW.GenericRepository.GetById<Booking>(newBooking.Id);
-        UOW.GenericRepository.UpdateValues(tmpBooking, newBooking);
+        var tmpBooking = await Context.GetByIdAsync<Booking>(newBooking.Id);
+        Context.UpdateValues(tmpBooking, newBooking);
         tmpBooking.Payments.Clear();
         tmpBooking.ReservationsInBooking.Clear();
 

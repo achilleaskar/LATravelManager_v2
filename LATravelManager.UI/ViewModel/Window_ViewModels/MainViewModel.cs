@@ -5,8 +5,6 @@ using LATravelManager.Models;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
-using LATravelManager.UI.Views;
-using LATravelManager.UI.Views.Management;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -14,16 +12,15 @@ namespace LATravelManager.UI.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
-
         #region Constructors
 
         public MainViewModel()
         {
-            OpenHotelEditCommand = new RelayCommand(OpenHotelsWindow, CanEditWindows);
-            OpenCitiesEditCommand = new RelayCommand(OpenCitiesWindow, CanEditWindows);
-            OpenCountriesEditCommand = new RelayCommand(OpenCountriesWindow, CanEditWindows);
-            OpenExcursionsEditCommand = new RelayCommand(OpenExcursionsWindow, CanEditWindows);
-            OpenUsersEditCommand = new RelayCommand(OpenUsersWindow, CanEditWindows);
+            //OpenHotelEditCommand = new RelayCommand(OpenHotelsWindow, CanEditWindows);
+            //OpenCitiesEditCommand = new RelayCommand(OpenCitiesWindow, CanEditWindows);
+            //OpenCountriesEditCommand = new RelayCommand(OpenCountriesWindow, CanEditWindows);
+            //OpenExcursionsEditCommand = new RelayCommand(OpenExcursionsWindow, CanEditWindows);
+            //OpenUsersEditCommand = new RelayCommand(OpenUsersWindow, CanEditWindows);
             Messenger.Default.Register<ChangeVisibilityMessage>(this, msg => { Visibility = msg.Visible ? Visibility.Visible : Visibility.Collapsed; });
             Messenger.Default.Register<IsBusyChangedMessage>(this, msg => { IsBusy = msg.IsBusy; });
         }
@@ -123,26 +120,26 @@ namespace LATravelManager.UI.ViewModel
                 SelectedViewmodel = new LoginViewModel();//TODO
             else
                 SelectedViewmodel = new MainUserControl_ViewModel();//TODO
-            await SelectedViewmodel.LoadAsync();
+          //  await SelectedViewmodel.LoadAsync();
         }
 
-        public void OpenCitiesWindow()
-        {
-            //SimpleIoc.Default.Register<HotelsManagement_ViewModel>();
-            MessengerInstance.Send(new OpenChildWindowCommand(new CitiesManagement_Window()));
-        }
+        //public void OpenCitiesWindow()
+        //{
+        //    //SimpleIoc.Default.Register<HotelsManagement_ViewModel>();
+        //    MessengerInstance.Send(new OpenChildWindowCommand(new CitiesManagement_Window()));
+        //}
 
-        public void OpenCountriesWindow()
-        {
-            //SimpleIoc.Default.Register<HotelsManagement_ViewModel>();
-            MessengerInstance.Send(new OpenChildWindowCommand(new CountriesManagement_Window()));
-        }
+        //public void OpenCountriesWindow()
+        //{
+        //    //SimpleIoc.Default.Register<HotelsManagement_ViewModel>();
+        //    MessengerInstance.Send(new OpenChildWindowCommand(new CountriesManagement_Window()));
+        //}
 
-        public void OpenHotelsWindow()
-        {
-            //SimpleIoc.Default.Register<HotelsManagement_ViewModel>();
-            MessengerInstance.Send(new OpenChildWindowCommand(new HotelsManagement_Window()));
-        }
+        //public void OpenHotelsWindow()
+        //{
+        //    //SimpleIoc.Default.Register<HotelsManagement_ViewModel>();
+        //    MessengerInstance.Send(new OpenChildWindowCommand(new HotelsManagement_Window()));
+        //}
 
         private bool CanEditWindows()
         {
@@ -156,17 +153,16 @@ namespace LATravelManager.UI.ViewModel
             Visibility = msg.Visible ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        private void OpenExcursionsWindow()
-        {
-            MessengerInstance.Send(new OpenChildWindowCommand(new ExcursionsManagement_Window()));
-        }
+        //private void OpenExcursionsWindow()
+        //{
+        //    MessengerInstance.Send(new OpenChildWindowCommand(new ExcursionsManagement_Window()));
+        //}
 
-        private void OpenUsersWindow()
-        {
-            MessengerInstance.Send(new OpenChildWindowCommand(new UsersManagement_Window()));
-        }
+        //private void OpenUsersWindow()
+        //{
+        //    MessengerInstance.Send(new OpenChildWindowCommand(new UsersManagement_Window()));
+        //}
 
         #endregion Methods
-
     }
 }

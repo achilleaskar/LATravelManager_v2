@@ -19,7 +19,7 @@ namespace LATravelManager.UI.StartUp
 
             builder.RegisterType<MainWindow>().AsSelf();
 
-            builder.RegisterType<NavigationViewModel>().As<INavigationViewModel>();
+            builder.RegisterType<NavigationViewModel>().AsSelf() ;
             builder.RegisterType<MainViewModel>().AsSelf();
             builder.RegisterType<LoginViewModel>().AsSelf();
             builder.RegisterType<RoomManager>().AsSelf().SingleInstance();

@@ -1,8 +1,11 @@
-﻿using LATravelManager.Models;
+﻿using DocumentFormat.OpenXml.Packaging;
+using LATravelManager.Models;
+using LATravelManager.UI.Repositories;
 using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Xceed.Wpf.Toolkit;
 
 namespace LATravelManager.UI.Helpers
@@ -10,14 +13,12 @@ namespace LATravelManager.UI.Helpers
     public class VouchersManagement : IDisposable
     {
         private string folderNameVouchers;
-
-        public UnitOfWork UOW
+        public VouchersManagement(BanskoRepository context)
         {
-            get
-            {
-                return ServiceLocator.Current.GetInstance<UnitOfWork>(Definitions.UnitOfWorkKey);
-            }
+            Context = context;
         }
+
+        public BanskoRepository Context { get; }
 
         public string CreateFolder(DateTime date, string folderName, string city)
         {
@@ -103,7 +104,8 @@ namespace LATravelManager.UI.Helpers
             return "";
         }
 
-        private void CreateWordVoucher(string saveAs, Reservation reservation, Booking booking)
+
+        private async Task CreateWordVoucher(string saveAs, Reservation reservation, Booking booking)
         {
             string fileName;
 
@@ -117,7 +119,7 @@ namespace LATravelManager.UI.Helpers
                 fileName = @"Sources\Voucher_enfirmo_thess.docx";
             File.Copy(fileName, saveAs, true);
             var c = reservation.CustomersList[0];
-            StartingPlace customerStartingPlace = UOW.GenericRepository.Get<StartingPlace>(filter: x => x.Name == c.StartingPlace).FirstOrDefault();
+            StartingPlace customerStartingPlace = await Context.GetByNameAsync<StartingPlace>(c.StartingPlace);
 
             if (customerStartingPlace == null || customerStartingPlace.Id == 19)
             {

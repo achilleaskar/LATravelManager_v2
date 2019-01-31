@@ -1,5 +1,6 @@
 ﻿using LATravelManager.DataAccess;
 using LATravelManager.Models;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace LATravelManager.UI.Repositories
 {
-    public class BanskoRepository : GenericRepository<MainDatabase>,
+    public class BanskoRepository : GenericRepository,
                                     IBanskoRepository
     {
         public BanskoRepository() : base(new MainDatabase())
@@ -18,5 +19,7 @@ namespace LATravelManager.UI.Repositories
         {
             return await Context.Hotels.Where(x => x.City.Id == 2).ToListAsync();
         }
+
+      
     }
 }

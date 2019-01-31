@@ -1,8 +1,9 @@
 ﻿using LATravelManager.Models;
 using LATravelManager.UI.ViewModel.BaseViewModels;
+using LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko;
 using LATravelManager.UI.ViewModel.Tabs;
 
-namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
+namespace LATravelManager.UI.ViewModel.Parents
 {
     public class BanskoParent_ViewModel : ExcursionCategory_ViewModelBase
     {

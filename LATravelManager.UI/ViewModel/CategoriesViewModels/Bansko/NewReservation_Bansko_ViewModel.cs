@@ -15,7 +15,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Data;
-using System.Windows.Input;
 using System.Windows.Media;
 using static LATravelManager.Model.Enums;
 
@@ -28,7 +27,6 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
         [PreferredConstructor]
         public NewReservation_Bansko_ViewModel()
         {
-            ResetViewModelAsync();
         }
 
         public NewReservation_Bansko_ViewModel(Booking booking) : this()
@@ -348,6 +346,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
         public RelayCommand PrintVoucherCommand { get; set; }
         public RelayCommand PutCustomersInRoomCommand { get; set; }
         public RelayCommand ReadNextLineCommand { get; set; }
+        public BanskoRepository RefreshableContext { get; set; }
         public RoomsManager RoomManager { get; set; }
 
         public ObservableCollection<RoomType> RoomTypes
@@ -384,6 +383,8 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
                 RaisePropertyChanged(nameof(IsAnyReservationResSelected));
             }
         }
+
+        public Excursion SelectedExcursion { get; set; }
 
         public int SelectedHotelIndex
         {
@@ -516,30 +517,26 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
             try
             {
                 BanskoRepository = new BanskoRepository();
-                NewReservationHelper = new NewReservationHelper();
+                NewReservationHelper = new NewReservationHelper(RefreshableContext);
                 SelectedExcursion = await BanskoRepository.GetByIdAsync<Excursion>(2);
 
+                await ResetAllRefreshableDataASync();
+
                 //Commands
-                ShowFilteredRoomsCommand = new RelayCommand(async () => { await ShowFilteredRooms(true); }, CanShowFilteredRooms);
+                ShowFilteredRoomsCommand = new RelayCommand(async () => { await ShowFilteredRoomsAsync(true); }, CanShowFilteredRooms);
                 ClearBookingCommand = new RelayCommand(ClearBooking);
                 ReadNextLineCommand = new RelayCommand(ReadNextLine);
                 AddCustomerCommand = new RelayCommand(AddRandomCustomer);
                 AddFromFileCommand = new RelayCommand(AddFromFile);
                 BookRoomNoNameCommand = new RelayCommand(MakeNonameReservation, CanMakeNoNameReservation);
-                OverBookHotelCommand = new RelayCommand(OverBookHotel, CanOverBookHotel);
-                PutCustomersInRoomCommand = new RelayCommand(PutCustomersInRoom, CanPutCustomersInRoom);
-                SaveCommand = new RelayCommand(Save, CanSave);
+                OverBookHotelCommand = new RelayCommand(async () => { await OverBookHotelAsync(); }, CanOverBookHotel);
+                PutCustomersInRoomCommand = new RelayCommand(async () => { await PutCustomersInRoomAsync(); }, CanPutCustomersInRoom);
+                SaveCommand = new RelayCommand(async () => { await SaveAsync(); }, CanSave);
                 CheckOutCommand = new RelayCommand(CheckOut, CanCheckOut);
                 AddTransferCommand = new RelayCommand(AddTransfer, CanAddTransfer);
                 PrintVoucherCommand = new RelayCommand(PrintVoucher, CanPrintVoucher);
 
                 FilteredRoomList = new ObservableCollection<Room>();
-
-                RoomTypes = new ObservableCollection<RoomType>(await RefreshableContext.GetAllAsync<RoomType>());
-                StartingPlaces = new ObservableCollection<StartingPlace>(await RefreshableContext.GetAllAsyncSortedByName<StartingPlace>());
-                Users = new ObservableCollection<User>(await RefreshableContext.GetAllAsyncSortedByName<User>());
-                Partners = new ObservableCollection<Partner>(await RefreshableContext.GetAllAsyncSortedByName<Partner>());
-                Hotels = new ObservableCollection<Hotel>(await RefreshableContext.GetAllHotelsInBanskoAsync());
             }
             catch (Exception ex)
             {
@@ -614,9 +611,6 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
             }
         }
 
-        public BanskoRepository RefreshableContext { get; set; }
-        public Excursion SelectedExcursion { get; set; }
-
         public void ResetBooking()//logika dn tha xreiastei afth
         {
             //Booking = new Booking(StartingBooking, UOW);
@@ -647,15 +641,18 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
             Booking.PropertyChanged += Booking_PropertyChanged;
         }
 
-        public async Task ShowFilteredRooms(bool reset = true)
+        public async Task ShowFilteredRoomsAsync(bool reset = true)
         {
             MessengerInstance.Send(new IsBusyChangedMessage(true));
             try
             {
                 if (reset)
                 {
-                    RefreshableContext = new BanskoRepository();
+                    await ResetAllRefreshableDataASync();
                 }
+
+                #region comments
+
                 //  Booking = new Booking(Booking, UOW);
 
                 //if (Booking.Id > 0)
@@ -700,9 +697,12 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
                 //else
                 //{
                 //}
+                #endregion comments
+
+                
 
                 //TODO Name To be changed
-                AvailableHotels = await RoomManager.MakePlan(Booking.CheckIn, Booking.CheckOut, SelectedExcursion.Destinations[0], SelectedExcursion, unSavedBooking: Booking);
+                AvailableHotels = await RoomManager.MakePlan(RefreshableContext,Booking.CheckIn, Booking.CheckOut, SelectedExcursion.Destinations[0], SelectedExcursion, unSavedBooking: Booking);
                 FilteredRoomList = new ObservableCollection<Room>();
                 int allotmentDays = 0;
                 bool addThis = false;
@@ -759,6 +759,28 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
                 CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(FilteredRoomList);
                 PropertyGroupDescription groupDescription = new PropertyGroupDescription(nameof(Hotel));
                 view.GroupDescriptions.Add(groupDescription);
+            }
+            catch (Exception ex)
+            {
+                MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
+            }
+            finally
+            {
+                MessengerInstance.Send(new IsBusyChangedMessage(false));
+            }
+        }
+
+        private async Task ResetAllRefreshableDataASync()
+        {
+            try
+            {
+                MessengerInstance.Send(new IsBusyChangedMessage(true));
+                RefreshableContext = new BanskoRepository();
+                RoomTypes = new ObservableCollection<RoomType>(await RefreshableContext.GetAllAsync<RoomType>());
+                StartingPlaces = new ObservableCollection<StartingPlace>(await RefreshableContext.GetAllAsyncSortedByName<StartingPlace>());
+                Users = new ObservableCollection<User>(await RefreshableContext.GetAllAsyncSortedByName<User>());
+                Partners = new ObservableCollection<Partner>(await RefreshableContext.GetAllAsyncSortedByName<Partner>());
+                Hotels = new ObservableCollection<Hotel>(await RefreshableContext.GetAllHotelsInBanskoAsync());
             }
             catch (Exception ex)
             {
@@ -924,7 +946,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
 
         private void Booking_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            //TODO mporei na mporei na ginei kalytera vazontas to mesa sto checkin 
+            //TODO mporei na mporei na ginei kalytera vazontas to mesa sto checkin
             //episis na to kanw na vazei ws epistrofi thn epomenh kyriakh ektos apo xristugenna
             if (e.PropertyName == Booking.CheckInPropertyName || e.PropertyName == Booking.CheckOutPropertyName)
             {
@@ -1014,15 +1036,10 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
 
         private bool CanShowFilteredRooms()
         {
-            if (IsInDesignMode)
-            {
-                return true;
-            }
-
             return SelectedHotelIndex >= 0 && SelectedRoomType >= 0 && Booking.AreDatesValid();
         }
 
-        private void CheckOut()
+        private void CheckOut()//να το δω
         {//thelei veltiwsh
             List<Reservation> toRemove = new List<Reservation>();
             foreach (Customer c in Booking.Customers)
@@ -1107,9 +1124,9 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
             }
         }
 
-        private void OverBookHotel()
+        private async Task OverBookHotelAsync()
         {
-            NewReservationHelper.OverBookHotel(Booking, Hotels[SelectedHotelIndex - 1], RoomTypes[SelectedRoomType - 1], All, OnlyStay, HB);
+           await NewReservationHelper.OverBookHotelAsync(Booking, Hotels[SelectedHotelIndex - 1], RoomTypes[SelectedRoomType - 1], All, OnlyStay, HB);
             if (All)
             {
                 FilteredRoomList.Clear();
@@ -1122,15 +1139,15 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
 
         private void PrintVoucher()
         {
-            using (VouchersManagement vm = new VouchersManagement())
+            using (VouchersManagement vm = new VouchersManagement(RefreshableContext))
             {
                 vm.PrintSingleBookingVoucher(Booking);
             }
         }
 
-        private void PutCustomersInRoom()
+        private async Task PutCustomersInRoomAsync()
         {
-            NewReservationHelper.PutCustomersInRoom(Booking, SelectedRoom, All, OnlyStay, HB);
+           await NewReservationHelper.PutCustomersInRoomAsync(Booking, SelectedRoom, All, OnlyStay, HB);
             if (All)
             {
                 FilteredRoomList.Clear();
@@ -1252,9 +1269,9 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
         //    SelectedExcursion = UOW.GenericRepository.GetById<Excursion>(SelectedExcursion.Id);
         //}
 
-        private void Save()
+        private async Task SaveAsync()
         {
-            Booking = NewReservationHelper.Save(Payment, Booking, StartingBooking);
+            Booking = await NewReservationHelper.SaveAsync(Payment, Booking, StartingBooking);
             FilteredRoomList.Clear();
             Payment = new Payment();
             OnlyStay = false;

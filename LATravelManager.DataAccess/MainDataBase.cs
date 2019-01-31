@@ -1,5 +1,6 @@
 ﻿using LATravelManager.Models;
 using MySql.Data.Entity;
+using System;
 using System.Data.Entity;
 
 namespace LATravelManager.DataAccess
@@ -48,6 +49,11 @@ namespace LATravelManager.DataAccess
             //Database.Connection.Open();
             base.OnModelCreating(modelBuilder);
             // SetExecutionStrategy(MySqlProviderInvariantName.ProviderName, () => new MySqlExecutionStrategy());
+        }
+
+        public object GetStartingPlace<T>(Func<object, bool> filter)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion Methods

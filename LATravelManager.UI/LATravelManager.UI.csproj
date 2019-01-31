@@ -74,6 +74,9 @@
     <Reference Include="MahApps.Metro, Version=1.6.5.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.6.5\lib\net47\MahApps.Metro.dll</HintPath>
     </Reference>
+    <Reference Include="MahApps.Metro.IconPacks, Version=2.3.0.4, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MahApps.Metro.IconPacks.2.3.0\lib\net46\MahApps.Metro.IconPacks.dll</HintPath>
+    </Reference>
     <Reference Include="Mono.Cecil, Version=0.9.6.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <HintPath>..\packages\Mono.Cecil.0.9.6.1\lib\net45\Mono.Cecil.dll</HintPath>
     </Reference>
@@ -163,6 +166,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ViewModel\CategoriesViewModels\Group\GroupParent_ViewModel.cs" />
     <Compile Include="Helpers\RoomManager.cs" />
     <Compile Include="MessageListener.cs" />
     <Compile Include="Message\ChangeVisibilityMessage.cs" />
@@ -185,10 +189,13 @@
     <Compile Include="ViewModel\BaseViewModels\MainUserControl_ViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModels\MyViewModelBase.cs" />
     <Compile Include="ViewModel\BaseViewModels\TabsBaseViewModel.cs" />
-    <Compile Include="ViewModel\CategoriesViewModels\Bansko\BanskoParent_ViewModel.cs" />
+    <Compile Include="ViewModel\Parents\BanskoParent_ViewModel.cs" />
     <Compile Include="ViewModel\CategoriesViewModels\Bansko\NewReservation_Bansko_ViewModel.cs" />
     <Compile Include="ViewModel\CategoriesViewModels\ChildViewModel.cs" />
     <Compile Include="ViewModel\CategoriesViewModels\IChildViewModel.cs" />
+    <Compile Include="ViewModel\CategoriesViewModels\Personal\PersonalParent_ViewModel.cs" />
+    <Compile Include="ViewModel\CategoriesViewModels\Skiathos\SkiathosParent_ViewModel.cs" />
+    <Compile Include="ViewModel\CategoriesViewModels\ThirdParty\ThirdPartyParent_ViewModel.cs" />
     <Compile Include="ViewModel\Tabs\AddRoomsTab.cs" />
     <Compile Include="ViewModel\Tabs\ListManagementTab.cs" />
     <Compile Include="ViewModel\Tabs\MakeReservationTab.cs" />
@@ -202,9 +209,6 @@
     <Compile Include="ViewModel\Window_ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModels\NavigationViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModels\ViewModelLocator.cs" />
-    <Compile Include="Views\AddRooms_UserControl.xaml.cs">
-      <DependentUpon>AddRooms_UserControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Bansko\EditBooking_Window.xaml.cs">
       <DependentUpon>EditBooking_Window.xaml</DependentUpon>
     </Compile>
@@ -226,50 +230,14 @@
     <Compile Include="Views\Bansko_UserControl.xaml.cs">
       <DependentUpon>Bansko_UserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\GroupExcursions_UserControl.xaml.cs">
-      <DependentUpon>GroupExcursions_UserControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Group\NewReservation_Group_UserControl.xaml.cs">
-      <DependentUpon>NewReservation_Group_UserControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Group\Search_Group_UserControl.xaml.cs">
-      <DependentUpon>Search_Group_UserControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Login_UserControl.xaml.cs">
-      <DependentUpon>Login_UserControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Main_UserControl.xaml.cs">
       <DependentUpon>Main_UserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Management\CitiesManagement_Window.xaml.cs">
-      <DependentUpon>CitiesManagement_Window.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Management\CountriesManagement_Window.xaml.cs">
-      <DependentUpon>CountriesManagement_Window.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Management\ExcursionsManagement_Window.xaml.cs">
-      <DependentUpon>ExcursionsManagement_Window.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Management\HotelsManagement_Window.xaml.cs">
-      <DependentUpon>HotelsManagement_Window.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Management\UsersManagement_Window.xaml.cs">
-      <DependentUpon>UsersManagement_Window.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\NavigationSide_UserControl.xaml.cs">
       <DependentUpon>NavigationSide_UserControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\PersonalExcursions_UserControl.xaml.cs">
-      <DependentUpon>PersonalExcursions_UserControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Skiathos_UserControl.xaml.cs">
-      <DependentUpon>Skiathos_UserControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ThirdPartyExcursions_UserControl.xaml.cs">
-      <DependentUpon>ThirdPartyExcursions_UserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Wrapper\ModelWrapper.cs" />
     <Compile Include="Wrapper\NotifyDataErrorInfoBase.cs" />
@@ -292,10 +260,6 @@
     <Compile Include="Helpers\SearchBookingsHelper.cs" />
     <Compile Include="Helpers\StaticResources.cs" />
     <Compile Include="Helpers\VouchersManagement.cs" />
-    <Page Include="Views\AddRooms_UserControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\Bansko\EditBooking_Window.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -324,22 +288,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\GroupExcursions_UserControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Group\NewReservation_Group_UserControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Group\Search_Group_UserControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Login_UserControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -348,39 +296,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Management\CitiesManagement_Window.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Management\CountriesManagement_Window.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Management\ExcursionsManagement_Window.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Management\HotelsManagement_Window.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Management\UsersManagement_Window.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\NavigationSide_UserControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\PersonalExcursions_UserControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Skiathos_UserControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\ThirdPartyExcursions_UserControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -430,10 +346,6 @@
   <ItemGroup>
     <Folder Include="Data\Lookups\" />
     <Folder Include="Data\Repositories\" />
-    <Folder Include="ViewModel\CategoriesViewModels\Group\" />
-    <Folder Include="ViewModel\CategoriesViewModels\Personal\" />
-    <Folder Include="ViewModel\CategoriesViewModels\Skiathos\" />
-    <Folder Include="ViewModel\CategoriesViewModels\ThirdParty\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LATravelManager.DataAccess\LATravelManager.DataAccess.csproj">

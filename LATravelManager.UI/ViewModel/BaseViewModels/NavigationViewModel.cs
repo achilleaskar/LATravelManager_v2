@@ -66,7 +66,7 @@ namespace LATravelManager.UI.ViewModel
             }
             else
             {
-                MessengerInstance.Send(new ChangeChildViewModelMessage(tab.TabName));
+                MessengerInstance.Send(new ChangeChildViewModelMessage(viewmodelIndex));
             }
         }
 

@@ -463,7 +463,7 @@ namespace LATravelManager.Models
             return false;
         }
 
-        internal void SelectAll()
+        public void SelectAll()
         {
             foreach (Customer c in CustomersList)
             {

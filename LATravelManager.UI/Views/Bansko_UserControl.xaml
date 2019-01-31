@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:LATravelManager.UI.Views"
-             xmlns:viewmodels="clr-namespace:LATravelManager.ViewModel.Bansko"
+             xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko"
              xmlns:views="clr-namespace:LATravelManager.UI.Views.Bansko"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d"
@@ -19,7 +19,7 @@
         <DataTemplate DataType="{x:Type viewmodels:NewReservation_Bansko_ViewModel}">
             <views:NewReservation_Bansko_UserControl />
         </DataTemplate>
-        <DataTemplate DataType="{x:Type viewmodels:Search_Bansko_ViewModel}">
+        <!--<DataTemplate DataType="{x:Type viewmodels:Search_Bansko_ViewModel}">
             <views:Search_Bansko_UserControl />
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewmodels:MoveReservation_Bansko_ViewModel}">
@@ -30,7 +30,7 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewmodels:OptionalActivities_Bansko_ViewModel}">
             <views:OptionalActivities_Bansko_UserControl />
-        </DataTemplate>
+        </DataTemplate>-->
     </UserControl.Resources>
     <Grid>
         <ContentControl Content="{Binding SelectedChildViewModel}" />

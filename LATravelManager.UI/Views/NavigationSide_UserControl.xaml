@@ -3,8 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:LATravelManager.UI.Views"
-             xmlns:tabs="clr-namespace:LATravelManager.BaseTypes"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d"
              Width="Auto"
@@ -35,7 +33,7 @@
                             <iconPacks:PackIconMaterial Kind="{Binding IconName}"
                                                         Height="30"
                                                         Width="30" />
-                            <Label Content="{Binding ControlName}" />
+                            <Label Content="" />
                         </StackPanel>
                     </ControlTemplate>
                 </Button.Template>

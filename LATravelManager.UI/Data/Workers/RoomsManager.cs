@@ -1,10 +1,12 @@
 ﻿using LATravelManager.Models;
+using LATravelManager.UI.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using System.Windows;
 using static LATravelManager.Model.Enums;
 
 namespace LATravelManager.UI.Data.Workers
@@ -148,7 +150,7 @@ namespace LATravelManager.UI.Data.Workers
             booking.Customers = tmpList;
         }
 
-        public async Task<ObservableCollection<Hotel>> MakePlan(DateTime planStart, DateTime planEnd, City cityFilter = null, Excursion excursionfilter = null, RoomType roomtypeFilter = null, Hotel hotelFilter = null, int peopleCount = 0, Booking unSavedBooking = null)
+        public async Task<ObservableCollection<Hotel>> MakePlan(BanskoRepository context, DateTime planStart, DateTime planEnd, City cityFilter = null, Excursion excursionfilter = null, RoomType roomtypeFilter = null, Hotel hotelFilter = null, int peopleCount = 0, Booking unSavedBooking = null)
         {
             try
             {
@@ -157,8 +159,8 @@ namespace LATravelManager.UI.Data.Workers
                 DateTime MinDay = planStart, MaxDay = planEnd, tmpDate;
                 MinDay = MinDay.AddDays(-10);
                 MaxDay = MaxDay.AddDays(10);
-                Hotels = await UOW.GetHotelsFull(hotelFilter, roomtypeFilter, cityFilter, peopleCount);
-                Bookings = (await UOW.GenericRepository.GetAsync<Booking>(filter: c => c.Excursion.Id == excursionfilter.Id && c.CheckIn <= MaxDay && c.CheckOut > MinDay, includeProperties: "Excursion, Partner, Payments, ReservationsInBooking, User, ReservationsInBooking.CustomersList")).ToList();
+               // Hotels = await UOW.GetHotelsFull(hotelFilter, roomtypeFilter, cityFilter, peopleCount);
+                //Bookings = (await UOW.GenericRepository.GetAsync<Booking>(filter: c => c.Excursion.Id == excursionfilter.Id && c.CheckIn <= MaxDay && c.CheckOut > MinDay, includeProperties: "Excursion, Partner, Payments, ReservationsInBooking, User, ReservationsInBooking.CustomersList")).ToList();
                 if (unSavedBooking.Id > 0)
                 {
                     Bookings = Bookings.Where(x => x.Id != unSavedBooking.Id).ToList();

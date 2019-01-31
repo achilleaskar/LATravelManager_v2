@@ -5,6 +5,11 @@ using LATravelManager.Models;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko;
+using LATravelManager.UI.ViewModel.CategoriesViewModels.Group;
+using LATravelManager.UI.ViewModel.CategoriesViewModels.Personal;
+using LATravelManager.UI.ViewModel.CategoriesViewModels.Skiathos;
+using LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty;
+using LATravelManager.UI.ViewModel.Parents;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -22,10 +27,18 @@ namespace LATravelManager.UI.ViewModel
             Templates = new ObservableCollection<ExcursionCategory>();
             TemplateViewmodels = new List<ExcursionCategory_ViewModelBase>();
 
-            MessengerInstance.Register<IsBusyChangedMessage>(this, msg => { IsBusy = msg.IsVisible; });
+            MessengerInstance.Register<IsBusyChangedMessage>(this, msg => { ManageIsBusy(msg.IsBusy); });
             MessengerInstance.Register<SetSecondaryChildViewModelMessage>(this, tab => { SelectedExcursionType.SelectedChildViewModel = tab.Viewmodel; });
             MessengerInstance.Register<ChangeChildViewModelMessage>(this, async vm => { await SelectedExcursionType.SetProperChildViewModel(vm.ViewModelindex); });
             MessengerInstance.Register<ExcursionCategoryChanged>(this, async index => { await SetProperViewModel(); });
+        }
+
+        public int IsBusyCounter { get; set; }
+
+        private void ManageIsBusy(bool add)
+        {
+            _ = add ? IsBusyCounter++ : IsBusyCounter--;
+            IsBusy = IsBusyCounter > 0;
         }
 
         #endregion Constructors
@@ -105,7 +118,7 @@ namespace LATravelManager.UI.ViewModel
                 _SelectedTemplateIndex = value;
                 if (value >= 0 && value <= Templates.Count)
                 {
-                    MessengerInstance.Send(new ExcursionCategoryChanged(value));
+                    MessengerInstance.Send(new ExcursionCategoryChanged());
                 }
                 RaisePropertyChanged();
             }
@@ -158,7 +171,7 @@ namespace LATravelManager.UI.ViewModel
             return true;
         }
 
-        private async void SetProperViewModel()
+        private async Task SetProperViewModel()
         {
             var index = -1;
             switch (SelectedTemplateIndex + 1)
@@ -175,43 +188,43 @@ namespace LATravelManager.UI.ViewModel
 
                 case 2:
 
-                    index = TemplateViewmodels.FindIndex(x => x.GetType() == typeof(GroupExcursion_ViewModel));
+                    index = TemplateViewmodels.FindIndex(x => x.GetType() == typeof(GroupParent_ViewModel));
                     if (index >= 0)
                         SelectedExcursionType = TemplateViewmodels[index];
                     else
                     {
-                        SelectedExcursionType = new GroupExcursion_ViewModel();
+                        SelectedExcursionType = new GroupParent_ViewModel();
                     }
                     break;
 
                 case 3:
-                    index = TemplateViewmodels.FindIndex(x => x.GetType() == typeof(PersonalExcursion_ViewModel));
+                    index = TemplateViewmodels.FindIndex(x => x.GetType() == typeof(PersonalParent_ViewModel));
                     if (index >= 0)
                         SelectedExcursionType = TemplateViewmodels[index];
                     else
                     {
-                        SelectedExcursionType = new PersonalExcursion_ViewModel();
+                        SelectedExcursionType = new PersonalParent_ViewModel();
                     }
                     break;
 
                 case 4:
-                    index = TemplateViewmodels.FindIndex(x => x.GetType() == typeof(ThirdPartyExcursions_ViewModel));
+                    index = TemplateViewmodels.FindIndex(x => x.GetType() == typeof(ThirdPartyParent_ViewModel));
                     if (index >= 0)
                         SelectedExcursionType = TemplateViewmodels[index];
                     else
                     {
-                        SelectedExcursionType = new ThirdPartyExcursions_ViewModel();
+                        SelectedExcursionType = new ThirdPartyParent_ViewModel();
                     }
 
                     break;
 
                 case 5:
-                    index = TemplateViewmodels.FindIndex(x => x.GetType() == typeof(Skiathos_ViewModel));
+                    index = TemplateViewmodels.FindIndex(x => x.GetType() == typeof(SkiathosParent_ViewModel));
                     if (index >= 0)
                         SelectedExcursionType = TemplateViewmodels[index];
                     else
                     {
-                        SelectedExcursionType = new Skiathos_ViewModel();
+                        SelectedExcursionType = new SkiathosParent_ViewModel();
                     }
 
                     break;

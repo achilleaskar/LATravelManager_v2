@@ -4,7 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:views="clr-namespace:LATravelManager.UI.Views"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-             xmlns:viewmodels="clr-namespace:LATravelManager.ViewModel"
+             xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.Parents"
              x:Class="LATravelManager.UI.Views.Main_UserControl"
              mc:Ignorable="d"
              d:DesignHeight="450"
@@ -13,7 +13,7 @@
         <DataTemplate DataType="{x:Type viewmodels:BanskoParent_ViewModel}">
             <views:Bansko_UserControl />
         </DataTemplate>
-        <DataTemplate DataType="{x:Type viewmodels:Skiathos_ViewModel}">
+        <!--<DataTemplate DataType="{x:Type viewmodels:Skiathos_ViewModel}">
             <views:Skiathos_UserControl />
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewmodels:PersonalExcursion_ViewModel}">
@@ -27,7 +27,7 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewmodels:AddRooms_ViewModel}">
             <views:AddRooms_UserControl />
-        </DataTemplate>
+        </DataTemplate>-->
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>

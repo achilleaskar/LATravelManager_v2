@@ -12,8 +12,9 @@
         <ResourceDictionary>
             <vm:ViewModelLocator x:Key="Locator"
                                  d:IsDataSource="True"
-                                 xmlns:vm="clr-namespace:LATravelManager.UI.ViewModel" />
+                                 xmlns:vm="clr-namespace:LATravelManager.UI.ViewModel.BaseViewModels" />
             <BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" />
+            <local:MessageListener x:Key="MessageListener" />
             <Style TargetType="TextBox"
                    BasedOn="{StaticResource {x:Type TextBox}}">
                 <Setter Property="FontSize"

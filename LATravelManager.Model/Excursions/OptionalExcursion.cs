@@ -1,7 +1,7 @@
-﻿using System;
+﻿using LATravelManager.Model;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
-using LATravelManager.BaseTypes;
 
 namespace LATravelManager.Models
 {
@@ -19,9 +19,7 @@ namespace LATravelManager.Models
 
         public OptionalExcursion()
         {
-
         }
-
 
         public const string CustomersPropertyName = nameof(Customers);
         public const string DatePropertyName = nameof(Date);
@@ -34,7 +32,7 @@ namespace LATravelManager.Models
 
         /// <summary>
         /// Sets and gets the Customers property.
-        /// Changes to that property's value raise the PropertyChanged event. 
+        /// Changes to that property's value raise the PropertyChanged event.
         /// </summary>
         public virtual ObservableCollection<Customer> Customers
         {
@@ -57,7 +55,7 @@ namespace LATravelManager.Models
 
         /// <summary>
         /// Sets and gets the Date property.
-        /// Changes to that property's value raise the PropertyChanged event. 
+        /// Changes to that property's value raise the PropertyChanged event.
         /// </summary>
         public DateTime Date
         {
@@ -80,7 +78,7 @@ namespace LATravelManager.Models
 
         /// <summary>
         /// Sets and gets the Excursion property.
-        /// Changes to that property's value raise the PropertyChanged event. 
+        /// Changes to that property's value raise the PropertyChanged event.
         /// </summary>
         public Excursion Excursion
         {
@@ -103,7 +101,7 @@ namespace LATravelManager.Models
 
         /// <summary>
         /// Sets and gets the Name property.
-        /// Changes to that property's value raise the PropertyChanged event. 
+        /// Changes to that property's value raise the PropertyChanged event.
         /// </summary>
         [StringLength(20)]
         public string Name
