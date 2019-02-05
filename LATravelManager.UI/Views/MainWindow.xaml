@@ -48,6 +48,6 @@
                           Header="Χρήστες" />
             </MenuItem>
         </Menu>
-        <ContentControl Content="{Binding CurrentViewModel}" />
+        <ContentControl Content="{Binding SelectedViewmodel}" />
     </Grid>
 </Window>

@@ -15,7 +15,9 @@ namespace LATravelManager.UI.ViewModel.Tabs
             IsChild = true;
             Level = 1;
             Name = nameof(AddRooms_ViewModel);
+            Content = "Πρ. Δωματίων";
+
         }
-      
+
     }
 }

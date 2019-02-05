@@ -19,13 +19,13 @@ namespace LATravelManager.UI.Helpers
             StringBuilder error = new StringBuilder();
             foreach (var item in group.Items)
             {
-                if (item is Customer cust)
-                {
-                    if (!cust.IsOk)
-                    {
-                        error.Append("Exume provlima");
-                    }
-                }
+                //if (item is Customer cust)
+                //{
+                //    if (!cust.IsOk)
+                //    {
+                //        error.Append("Exume provlima");
+                //    }
+                //}
 
                 //// aggregate errors
                 //if (item is IDataErrorInfo info)

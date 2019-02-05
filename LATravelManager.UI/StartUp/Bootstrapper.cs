@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using LATravelManager.DataAccess;
+using LATravelManager.UI.Data.Workers;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel;
@@ -22,10 +23,9 @@ namespace LATravelManager.UI.StartUp
             builder.RegisterType<NavigationViewModel>().AsSelf() ;
             builder.RegisterType<MainViewModel>().AsSelf();
             builder.RegisterType<LoginViewModel>().AsSelf();
-            builder.RegisterType<RoomManager>().AsSelf().SingleInstance();
+            builder.RegisterType<RoomsManager>().AsSelf().SingleInstance();
             builder.RegisterType<NewReservationHelper>().AsSelf().SingleInstance();
             builder.RegisterType<BanskoRepository>().As<IBanskoRepository>();
-
 
             return builder.Build();
         }

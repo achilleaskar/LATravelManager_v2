@@ -10,7 +10,6 @@ namespace LATravelManager.Models
 
         public User()
         {
-            Tittle = "Ο τύπος δωματίου";
         }
 
         #endregion Constructors

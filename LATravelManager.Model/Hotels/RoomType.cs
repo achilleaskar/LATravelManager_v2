@@ -9,7 +9,6 @@ namespace LATravelManager.Models
 
         public RoomType()
         {
-            Tittle = "Ο τύπος δωματίου";
         }
 
         #endregion Constructors

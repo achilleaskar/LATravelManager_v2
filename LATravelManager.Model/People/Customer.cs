@@ -8,7 +8,7 @@ using System.Windows.Media;
 
 namespace LATravelManager.Models
 {
-    public class Customer : BaseModel,INamed
+    public class Customer : BaseModel, INamed
     {
         #region Fields + Constructors
 
@@ -41,8 +41,7 @@ namespace LATravelManager.Models
 
         public Customer()
         {
-            Tittle = "Ο πελάτης";
-            ValidationProperties = new string[] { NamePropertyName, SurenamePropertyName, EmailPropertyName, TelPropertyName, AgePropertyName, AgePropertyName, StartingPlacePropertyName, PassportNumPropertyName };
+            //ValidationProperties = new string[] { NamePropertyName, SurenamePropertyName, EmailPropertyName, TelPropertyName, AgePropertyName, AgePropertyName, StartingPlacePropertyName, PassportNumPropertyName };
         }
 
         public string AgeText => Age < 18 ? Age.ToString() : "";
@@ -113,7 +112,6 @@ namespace LATravelManager.Models
 
         public const string RoomNumberPropertyName = nameof(RoomNumber);
 
-        public const string RoomPropertyName = nameof(Room);
 
         public const string RoomTypeNamePropertyName = nameof(RoomTypeName);
 
@@ -621,29 +619,7 @@ namespace LATravelManager.Models
             }
         }
 
-        /// <summary>
-        /// Sets and gets the Room property. Changes to that property's value raise the
-        /// PropertyChanged event.
-        /// </summary>
-        [StringLength(20)]
-        public virtual Room Room
-        {
-            get
-            {
-                return _Room;
-            }
-
-            set
-            {
-                if (_Room == value)
-                {
-                    return;
-                }
-
-                _Room = value;
-                RaisePropertyChanged(RoomPropertyName);
-            }
-        }
+       
 
         /// <summary>
         /// Sets and gets the RoomColor property. Changes to that property's value raise the
@@ -810,7 +786,7 @@ namespace LATravelManager.Models
                     return "NO NAME";
 
                 case Reservation.ReservationTypeEnum.Normal:
-                    return (Room != null) ? Room.Hotel.Name : "ERROR";
+                    return (Reservation.Hotel != null) ? Reservation.Hotel.Name : "ERROR";
 
                 case Reservation.ReservationTypeEnum.NoRoom:
                     return "NoRoom";
@@ -819,7 +795,7 @@ namespace LATravelManager.Models
                     return (Reservation.Hotel != null) ? Reservation.Hotel.Name : "ERROR";
 
                 case Reservation.ReservationTypeEnum.Transfer:
-                    return (Reservation.Hotel != null) ? Reservation.Hotel.Name : "TRANSFER";
+                    return "TRANSFER";
             }
             return "ERROR";
         }
@@ -832,13 +808,13 @@ namespace LATravelManager.Models
                     return Reservation.NoNameRoomType.Name;
 
                 case Reservation.ReservationTypeEnum.Normal:
-                    return (Room != null) ? Room.RoomType.Name : "ERROR";
+                    return (Reservation.Room != null) ? Reservation.Room.RoomType.Name : "ERROR";
 
                 case Reservation.ReservationTypeEnum.NoRoom:
                     return "NoRoom";
 
                 case Reservation.ReservationTypeEnum.Transfer:
-                    return (Reservation.Hotel != null) ? Reservation.Hotel.Name : "TRANSFER";
+                    return "TRANSFER";
 
                 case Reservation.ReservationTypeEnum.Overbooked:
                     return (Reservation.NoNameRoomType != null) ? Reservation.NoNameRoomType.Name : "ERROR";

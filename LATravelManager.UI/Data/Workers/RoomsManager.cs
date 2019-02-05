@@ -1,5 +1,6 @@
 ﻿using LATravelManager.Models;
 using LATravelManager.UI.Repositories;
+using LATravelManager.UI.Wrapper;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -41,7 +42,7 @@ namespace LATravelManager.UI.Data.Workers
         public async Task<List<Hotel>> BuildHotelsInCity(Expression<Func<Hotel, bool>> filter = null,
             Func<IQueryable<Hotel>, IOrderedQueryable<Hotel>> orderBy = null)
         {
-           // Hotels.AddRange(await UOW.GenericRepository.GetAsync(filter: filter, orderBy: orderBy));
+            // Hotels.AddRange(await UOW.GenericRepository.GetAsync(filter: filter, orderBy: orderBy));
             return Hotels;
         }
 
@@ -130,7 +131,7 @@ namespace LATravelManager.UI.Data.Workers
             return Hotels;
         }
 
-        internal void SortCustomers(Booking booking)
+        internal void SortCustomers(BookingWrapper booking)
         {
             ObservableCollection<Customer> tmpList = new ObservableCollection<Customer>();
             foreach (Customer customer in booking.Customers)
@@ -150,7 +151,10 @@ namespace LATravelManager.UI.Data.Workers
             booking.Customers = tmpList;
         }
 
-        public async Task<ObservableCollection<Hotel>> MakePlan(BanskoRepository context, DateTime planStart, DateTime planEnd, City cityFilter = null, Excursion excursionfilter = null, RoomType roomtypeFilter = null, Hotel hotelFilter = null, int peopleCount = 0, Booking unSavedBooking = null)
+        public async Task<ObservableCollection<Hotel>> GetAllAvailableRooms(
+            BanskoRepository context, DateTime planStart, DateTime planEnd,
+            Excursion excursionfilter = null,
+             Booking unSavedBooking = null)
         {
             try
             {
@@ -159,8 +163,9 @@ namespace LATravelManager.UI.Data.Workers
                 DateTime MinDay = planStart, MaxDay = planEnd, tmpDate;
                 MinDay = MinDay.AddDays(-10);
                 MaxDay = MaxDay.AddDays(10);
-               // Hotels = await UOW.GetHotelsFull(hotelFilter, roomtypeFilter, cityFilter, peopleCount);
-                //Bookings = (await UOW.GenericRepository.GetAsync<Booking>(filter: c => c.Excursion.Id == excursionfilter.Id && c.CheckIn <= MaxDay && c.CheckOut > MinDay, includeProperties: "Excursion, Partner, Payments, ReservationsInBooking, User, ReservationsInBooking.CustomersList")).ToList();
+                Hotels = (await context.GetAllHotelsWithRoomsInBanskoAsync(MinDay,MaxDay));
+                Bookings = (await context.GetAllBookingInPeriod(MinDay, MaxDay, excursionfilter.Id)).ToList();
+
                 if (unSavedBooking.Id > 0)
                 {
                     Bookings = Bookings.Where(x => x.Id != unSavedBooking.Id).ToList();
@@ -171,7 +176,6 @@ namespace LATravelManager.UI.Data.Workers
                 {
                     foreach (Reservation reservation in booking.ReservationsInBooking)
                     {
-
                         if (reservation.ReservationType == Reservation.ReservationTypeEnum.Noname)
                         {
                             NonamesList.Add(new NoName { Reservation = reservation });
@@ -188,9 +192,12 @@ namespace LATravelManager.UI.Data.Workers
                     }
                 }
 
+
                 Hotel tmpHotel;//-------------
                 Room tmpRoom;//-------------
                 int d = 0;//-------------
+                          //maybe parallel here
+
                 foreach (Hotel hotel in Hotels)
                 {
                     tmpHotel = new Hotel//-------------
@@ -251,12 +258,9 @@ namespace LATravelManager.UI.Data.Workers
                     {
                         foreach (Reservation reservation in booking.ReservationsInBooking)
                         {
-                            if (reservation.Id == 432)
-                            {
-
-                            }
                             if (reservation.ReservationType == Reservation.ReservationTypeEnum.Normal)
                             {
+
                                 reservation.Room.MakeReservation(reservation);
                             }
                         }
@@ -264,10 +268,11 @@ namespace LATravelManager.UI.Data.Workers
                 }
                 catch (Exception ex)
                 {
-
                     MessageBox.Show(ex.Message);
                 }
                 UpdateNoNames();
+
+                #region nonames
 
                 NonamesList = NonamesList.OrderBy(o => o.Reservation.Nights).ToList();
                 bool changed = false;
@@ -275,6 +280,7 @@ namespace LATravelManager.UI.Data.Workers
                 {
                     //step 1 - put only choice
                     changed = false;
+                    //maybe can be done in paralel
                     foreach (NoName noName in NonamesList)
                     {
                         if (!noName.Handled && noName.AvailableRooms.Count == 1)
@@ -497,6 +503,8 @@ namespace LATravelManager.UI.Data.Workers
                         MessageBox.Show("Η κράτηση " + noName.Reservation.CustomersList[0] + " " + ((noName.Reservation.Room != null) ? noName.Reservation.Room.RoomType.ToString() : "") + " " + noName.Reservation.Dates + " δεν έχει δωμάτιο.", "Λάθος");
                     }
                 }
+
+                #endregion nonames
 
                 ObservableCollection<Hotel> PlanCroped = new ObservableCollection<Hotel>();
 

@@ -13,6 +13,8 @@ namespace LATravelManager.UI.ViewModel.Tabs
         {
             Level = 20;
             IconName = "Plus";
+            Content = "Νέα Κράτηση";
+
         }
     }
 }

@@ -10,7 +10,6 @@ namespace LATravelManager.Models
 
         public HotelInfo()
         {
-            Tittle = "Η πληροφορία ξενοδοχείου";
         }
 
         #endregion Constructors

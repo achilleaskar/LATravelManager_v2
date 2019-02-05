@@ -11,18 +11,14 @@
              d:DesignHeight="450"
              Background="AliceBlue"
              d:DesignWidth="800">
-    <UserControl.DataContext>
-        <Binding Path="Bansko"
-                 Source="{StaticResource Locator}" />
-    </UserControl.DataContext>
     <UserControl.Resources>
         <DataTemplate DataType="{x:Type viewmodels:NewReservation_Bansko_ViewModel}">
             <views:NewReservation_Bansko_UserControl />
         </DataTemplate>
-        <!--<DataTemplate DataType="{x:Type viewmodels:Search_Bansko_ViewModel}">
+        <DataTemplate DataType="{x:Type viewmodels:Search_Bansko_ViewModel}">
             <views:Search_Bansko_UserControl />
         </DataTemplate>
-        <DataTemplate DataType="{x:Type viewmodels:MoveReservation_Bansko_ViewModel}">
+        <!--<DataTemplate DataType="{x:Type viewmodels:MoveReservation_Bansko_ViewModel}">
             <views:MoveReservation_Bansko_UserControl />
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewmodels:Lists_Bansko_ViewModel}">

@@ -21,7 +21,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             {
                 SelectedChildViewModel = Childs[index];
                 if (!SelectedChildViewModel.IsLoaded)
-                    await SelectedChildViewModel.LoadAsync();
+                    await SelectedChildViewModel.LoadAsync(0);
             }
         }
 
@@ -70,7 +70,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         private void ChildChanged()
         {
-            throw new NotImplementedException();
+
         }
     }
 }

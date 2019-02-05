@@ -13,6 +13,8 @@ namespace LATravelManager.UI.ViewModel.Tabs
         {
             IconName = "AccountSearch";
             Level = 20;
+            Content = "Αναζήτηση";
+
         }
     }
 }

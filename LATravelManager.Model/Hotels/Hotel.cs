@@ -13,7 +13,6 @@ namespace LATravelManager.Models
 
         public Hotel()
         {
-            Tittle = "Το ξενοδοχείο";
             Rooms = new List<Room>();
         }
 

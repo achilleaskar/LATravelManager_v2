@@ -9,13 +9,10 @@
              Background="White"
              d:DesignHeight="450"
              d:DesignWidth="250">
-    <UserControl.DataContext>
-        <Binding Path="Navigation"
-                 Source="{StaticResource Locator}" />
-    </UserControl.DataContext>
+    
     <UserControl.Resources>
         <DataTemplate x:Key="SidePaneListViewTemplate">
-            <Button Command="{Binding ChangeViewModelCommand}">
+            <Button Command="{Binding ChangeViewModelCommand}" Margin="5 5 5 0">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <ControlTemplate.Triggers>
@@ -33,7 +30,7 @@
                             <iconPacks:PackIconMaterial Kind="{Binding IconName}"
                                                         Height="30"
                                                         Width="30" />
-                            <Label Content="" />
+                            <Label Content="{Binding Content}" />
                         </StackPanel>
                     </ControlTemplate>
                 </Button.Template>

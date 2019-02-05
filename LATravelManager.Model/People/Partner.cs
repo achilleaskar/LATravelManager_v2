@@ -10,7 +10,6 @@ namespace LATravelManager.Models
 
         public Partner()
         {
-            Tittle = "Ο συνεργάτης";
         }
 
         #endregion Constructors

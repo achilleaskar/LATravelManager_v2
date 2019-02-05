@@ -10,7 +10,6 @@ namespace LATravelManager.Models
 
         public Excursion()
         {
-            Tittle = "Η Εκδρομή";
             ExcursionDates = new ObservableCollection<ExcursionDate>();
         }
 

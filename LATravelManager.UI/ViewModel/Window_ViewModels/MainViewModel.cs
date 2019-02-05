@@ -1,8 +1,10 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
+using LATravelManager.DataAccess;
 using LATravelManager.Models;
 using LATravelManager.UI.Message;
+using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 using System.Threading.Tasks;
@@ -22,17 +24,48 @@ namespace LATravelManager.UI.ViewModel
             //OpenExcursionsEditCommand = new RelayCommand(OpenExcursionsWindow, CanEditWindows);
             //OpenUsersEditCommand = new RelayCommand(OpenUsersWindow, CanEditWindows);
             Messenger.Default.Register<ChangeVisibilityMessage>(this, msg => { Visibility = msg.Visible ? Visibility.Visible : Visibility.Collapsed; });
-            Messenger.Default.Register<IsBusyChangedMessage>(this, msg => { IsBusy = msg.IsBusy; });
+            Messenger.Default.Register<IsBusyChangedMessage>(this, msg => { ManageIsBusy(msg.IsBusy); });
+        }
+
+        private void ManageIsBusy(bool add)
+        {
+            _ = add ? IsBusyCounter++ : IsBusyCounter--;
+            IsBusy = IsBusyCounter > 0;
         }
 
         #endregion Constructors
 
         #region Fields
 
-        public IViewModel SelectedViewmodel;
         private bool _IsBusy = false;
         private Visibility _Visibility;
-        private ViewModelBase CurrentViewModel;
+
+
+
+
+
+        private IViewModel _SelectedViewmodel;
+
+        public IViewModel SelectedViewmodel
+        {
+            get
+            {
+                return _SelectedViewmodel;
+            }
+
+            set
+            {
+                if (_SelectedViewmodel == value)
+                {
+                    return;
+                }
+
+                _SelectedViewmodel = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
 
         #endregion Fields
 
@@ -106,21 +139,25 @@ namespace LATravelManager.UI.ViewModel
             }
         }
 
+        public int IsBusyCounter { get; private set; }
+
         #endregion Properties
+
+        GenericRepository StartingRepository;
 
         #region Methods
 
         public async Task LoadAsync()
         {
+            StartingRepository = new GenericRepository();
 #if DEBUG
             Helpers.StaticResources.User = new User { Name = "Admin", Id = -12, BaseLocation = User.GrafeiaXriston.Thessalonikis, Level = 0 };
 #endif
-
             if (Helpers.StaticResources.User == null)
-                SelectedViewmodel = new LoginViewModel();//TODO
+                SelectedViewmodel = new LoginViewModel(StartingRepository);//TODO
             else
-                SelectedViewmodel = new MainUserControl_ViewModel();//TODO
-          //  await SelectedViewmodel.LoadAsync();
+                SelectedViewmodel = new MainUserControl_ViewModel(StartingRepository);//TODO
+            await SelectedViewmodel.LoadAsync(0);
         }
 
         //public void OpenCitiesWindow()

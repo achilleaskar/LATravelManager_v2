@@ -16,7 +16,6 @@ namespace LATravelManager.Models
 
         public Room()
         {
-            Tittle = "Το δωμάτιο";
             Options = new ObservableCollection<Option>();
         }
 
@@ -90,7 +89,6 @@ namespace LATravelManager.Models
         /// Sets and gets the EndDate property. Changes to that property's value raise the
         /// PropertyChanged event.
         /// </summary>
-        [NotMapped]
         public DateTime EndDate
         {
             get
@@ -297,7 +295,6 @@ namespace LATravelManager.Models
         /// Sets and gets the StartDate property. Changes to that property's value raise the
         /// PropertyChanged event.
         /// </summary>
-        [NotMapped]
         public DateTime StartDate
         {
             get
@@ -352,13 +349,13 @@ namespace LATravelManager.Models
         public bool CanAddReservationToRoom(Reservation reservation, bool includeSelf = false, bool includeAllotment = false)
         {
             DateTime tmpDate = reservation.CheckIn;
-            var positive = false;
             for (var i = 0; i < PlanDailyInfo.Count; i++)
             {
                 if (PlanDailyInfo[i].Date > reservation.CheckOut)
                     return false;
                 if (tmpDate == PlanDailyInfo[i].Date)
                 {
+                    bool positive;
                     if ((PlanDailyInfo[i].RoomState == RoomStateEnum.Available && (!PlanDailyInfo[i].IsAllotment || includeAllotment)) ||
                        (PlanDailyInfo[i].RoomState == RoomStateEnum.MovaBleNoName && includeSelf))
                     // || (includeSelf && DailyBookingInfo[i].Reservation != null &&

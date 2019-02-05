@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using LATravelManager.Model;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 
 namespace LATravelManager.UI.Wrapper
 {
-    public class ModelWrapper<T> : NotifyDataErrorInfoBase
+    public class ModelWrapper<T> : NotifyDataErrorInfoBase where T : BaseModel
     {
         public ModelWrapper(T model)
         {
@@ -12,6 +13,8 @@ namespace LATravelManager.UI.Wrapper
         }
 
         public T Model { get; }
+
+        public int Id { get { return Model.Id; } }
 
         protected virtual void SetValue<TValue>(TValue value,
           [CallerMemberName]string propertyName = null)

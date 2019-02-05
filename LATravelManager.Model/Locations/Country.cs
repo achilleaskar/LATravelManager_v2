@@ -10,7 +10,6 @@ namespace LATravelManager.Models
 
         public Country()
         {
-            Tittle = "Η χώρα";
         }
 
         #endregion Constructors

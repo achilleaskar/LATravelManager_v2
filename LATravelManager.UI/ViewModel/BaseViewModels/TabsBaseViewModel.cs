@@ -6,30 +6,59 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 {
     public class TabsBaseViewModel : ViewModelBase
     {
+        #region Constructors
+
         public TabsBaseViewModel()
         {
             ChangeViewModelCommand = new RelayCommand(TabItemClicked);
             MessengerInstance.Register<DeselectAllOtherTabsMessage>(this, (msg) =>
             {
-                if (!IsSelected && GetType().Name != msg.NewTab)
+                if (IsSelected && GetType().Name != msg.NewTab)
                 {
                     IsSelected = false;
                 }
             });
         }
 
-        private void TabItemClicked()
-        {
-            if (!IsSelected)
-                MessengerInstance.Send(new SelectedTabChangedMessage(Name, IsChild));
-            IsSelected = true;
-        }
+        #endregion Constructors
+
+        #region Fields
 
         public bool IsChild;
-        public string Name { get; set; }
-        public RelayCommand ChangeViewModelCommand { get; set; }
+        private string _Content = string.Empty;
 
         private bool _IsSelected = false;
+
+        private int _Level;
+
+        #endregion Fields
+
+        #region Properties
+
+        public RelayCommand ChangeViewModelCommand { get; set; }
+
+        public string Content
+        {
+            get
+            {
+                return _Content;
+            }
+
+            set
+            {
+                if (_Content == value)
+                {
+                    return;
+                }
+
+                _Content = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string IconName { get; protected set; }
+
+        public int Index { get; set; }
 
         /// <summary>
         /// Sets and gets the IsSelected property. Changes to that property's value raise the
@@ -54,10 +83,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
-        public string IconName { get; protected set; }
-
-        private int _Level;
-
         /// <summary>
         /// Sets and gets the Level property.
         /// Changes to that property's value raise the PropertyChanged event.
@@ -81,6 +106,22 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
-        public int Index { get; set; }
+        public string Name { get; set; }
+
+        #endregion Properties
+
+        #region Methods
+
+        private void TabItemClicked()
+        {
+            if (!IsSelected)
+            {
+                MessengerInstance.Send(new SelectedTabChangedMessage(Name, IsChild,Index));
+                MessengerInstance.Send(new DeselectAllOtherTabsMessage(Name));
+            }
+            IsSelected = true;
+        }
+
+        #endregion Methods
     }
 }

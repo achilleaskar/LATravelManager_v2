@@ -10,7 +10,6 @@ namespace LATravelManager.Models
 
         public City()
         {
-            Tittle = "Η πόλη";
         }
 
         #endregion Constructors

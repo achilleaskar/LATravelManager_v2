@@ -15,6 +15,7 @@ namespace LATravelManager.UI.ViewModel.Tabs
             Level = 1;
             IsChild = true;
             Name = nameof(Settings_Viewmodel);
+            Content = "΄Ρυθμίσεις";
         }
     }
 }

@@ -20,8 +20,7 @@ namespace LATravelManager.Models
 
         public Reservation()
         {
-            Tittle = "Η κράτηση";
-            CustomersList.CollectionChanged += CustomersCollectionChanged;
+            //CustomersList.CollectionChanged += CustomersCollectionChanged;
         }
 
         //public Reservation(Reservation r, DataBaseManipulation.UnitOfWork uOW)
@@ -61,7 +60,7 @@ namespace LATravelManager.Models
         public const string RoomPropertyName = nameof(Room);
         public const string TransferPropertyName = nameof(Transfer);
         private Booking _Booking;
-        private ObservableCollection<Customer> _CustomersList = new ObservableCollection<Customer>();
+        private List<Customer> _CustomersList = new List<Customer>();
         private string _FirstHotel;
         private bool _HB = false;
 
@@ -173,7 +172,7 @@ namespace LATravelManager.Models
         /// Sets and gets the CustomersList property. Changes to that property's value raise the
         /// PropertyChanged event.
         /// </summary>
-        public virtual ObservableCollection<Customer> CustomersList
+        public virtual List<Customer> CustomersList
         {
             get
             {

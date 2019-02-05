@@ -3,6 +3,7 @@ using LATravelManager.Models;
 using LATravelManager.UI.Data.Workers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
+using LATravelManager.UI.Wrapper;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -38,20 +39,31 @@ public class NewReservationHelper : ViewModelBase
         return new Customer { Age = 12, Name = name, Surename = surename, Price = 35, Tel = "6981001676", StartingPlace = "Αθήνα", PassportNum = passport };
     }
 
-    public void MakeNonameReservation(Booking booking, RoomType roomType, bool hb, bool all, bool onlystay)
+    public void MakeNonameReservation(BookingWrapper booking, RoomType roomType, bool hb, bool all, bool onlystay)
     {
         bool hasCustomers = false;
-        Reservation newRes = new Reservation { ReservationType = Reservation.ReservationTypeEnum.Noname, FirstHotel = "ΝΟ ΝΑΜΕ", HB = hb, NoNameRoomType = roomType, OnlyStay = onlystay };
+        Reservation newRes = new Reservation
+        {
+            ReservationType = Reservation.ReservationTypeEnum.Noname,
+            FirstHotel = "ΝΟ ΝΑΜΕ",
+            HB = hb,
+            NoNameRoomType = roomType,
+            OnlyStay = onlystay
+        };
         foreach (Customer customer in booking.Customers)
         {
+            if (customer.Handled)
+            {
+                MessengerInstance.Send(new ShowExceptionMessage_Message($"Ο {customer.Surename} {customer.Name} έχει μπεί ήδη σε άλλη κράτηση"));
+                continue;
+            }
             if (customer.IsSelected || all)
             {
                 hasCustomers = true;
+                customer.Handled = true;
                 customer.RoomNumber = "NN" + (booking.ReservationsInBooking.Count + 1).ToString();
                 customer.HotelName = "NO NAME";
-                customer.Handled = true;
                 customer.RoomTypeName = roomType.Name;
-                newRes.CustomersList.Add(customer);
                 if (booking.ReservationsInBooking.Count() % 2 == 0)
                     customer.RoomColor = new SolidColorBrush(Colors.LightPink);
                 else
@@ -61,13 +73,14 @@ public class NewReservationHelper : ViewModelBase
                     customer.CheckIn = booking.CheckIn;
                     customer.CheckOut = booking.CheckOut;
                 }
+                newRes.CustomersList.Add(customer);
             }
         }
         if (hasCustomers)
         {
             //check if can addNoName
             booking.ReservationsInBooking.Add(newRes);
-            booking.Customers.OrderBy(x => x.RoomNumber);
+            RoomsManager.SortCustomers(booking);
             foreach (Customer customer in booking.Customers)
             {
                 customer.IsSelected = false;
@@ -79,20 +92,25 @@ public class NewReservationHelper : ViewModelBase
         }
     }
 
-    public async Task OverBookHotelAsync( Booking booking, Hotel hotel, RoomType roomType, bool all, bool onlyStay, bool hb)
+    public async Task OverBookHotelAsync(BookingWrapper booking, Hotel hotel, RoomType roomType, bool all, bool onlyStay, bool hb)
     {
         bool hasCustomers = false;
         Reservation newRes = new Reservation
         {
             ReservationType = Reservation.ReservationTypeEnum.Overbooked,
             FirstHotel = hotel.Name,
-            Hotel = await Context.GetByIdAsync<Hotel>(hotel.Id),
-            NoNameRoomType = await Context.GetByIdAsync<RoomType>(roomType.Id),
+            Hotel = hotel,
+            NoNameRoomType = roomType,
             OnlyStay = onlyStay,
             HB = hb
         };
         foreach (Customer customer in booking.Customers)
         {
+            if (customer.Handled)
+            {
+                MessengerInstance.Send(new ShowExceptionMessage_Message($"Ο {customer.Surename} {customer.Name} έχει μπεί ήδη σε άλλη κράτηση"));
+                continue;
+            }
             if (customer.IsSelected || all)
             {
                 hasCustomers = true;
@@ -115,59 +133,6 @@ public class NewReservationHelper : ViewModelBase
         if (hasCustomers)
         {
             booking.ReservationsInBooking.Add(newRes);
-            booking.Customers.OrderBy(x => x.RoomNumber);
-            foreach (Customer customer in booking.Customers)
-            {
-                customer.IsSelected = false;
-            }
-        }
-        else
-        {
-            MessengerInstance.Send(new ShowExceptionMessage_Message("Παρακαλώ επιλέξτε πελάτες"));
-        }
-    }
-
-    public async Task PutCustomersInRoomAsync(Booking booking, Room SelectedRoom, bool all, bool onlyStay, bool hb)
-    {
-        bool hasCustomers = false;
-        Reservation newRes = new Reservation
-        {
-            ReservationType = Reservation.ReservationTypeEnum.Normal,
-            OnlyStay = onlyStay,
-            Room = await Context.GetByIdAsync<Room>(SelectedRoom.Id),
-            FirstHotel = SelectedRoom.Hotel.Name,
-            HB = hb
-        };
-        foreach (Customer customer in booking.Customers)
-        {
-            if (customer.IsSelected || all)
-            {
-                hasCustomers = true;
-                customer.Handled = true;
-                customer.RoomNumber = (booking.ReservationsInBooking.Count + 1).ToString();
-                if (booking.ReservationsInBooking.Count() % 2 == 0)
-                    customer.RoomColor = new SolidColorBrush(Colors.LightPink);
-                else
-                    customer.RoomColor = new SolidColorBrush(Colors.LightBlue);
-                if (!booking.DifferentDates)
-                {
-                    customer.CheckIn = booking.CheckIn;
-                    customer.CheckOut = booking.CheckOut;
-                }
-                customer.Room = SelectedRoom;
-                customer.HotelName = newRes.Room.Hotel.Name;
-                customer.RoomTypeName = newRes.Room.RoomType.Name;
-
-                newRes.CustomersList.Add(customer);
-            }
-        }
-        if (hasCustomers)
-        {
-            if (SelectedRoom.CanAddReservationToRoom(newRes))
-            {
-                SelectedRoom.MakeReservation(newRes);
-            }
-            booking.ReservationsInBooking.Add(newRes);
             RoomsManager.SortCustomers(booking);
             foreach (Customer customer in booking.Customers)
             {
@@ -180,10 +145,70 @@ public class NewReservationHelper : ViewModelBase
         }
     }
 
-    public async Task<Booking> SaveAsync(Payment Payment, Booking Booking, Booking startingBooking)
+    public void PutCustomersInRoomAsync(BookingWrapper booking, Room SelectedRoom, bool all, bool onlyStay, bool hb)
     {
+        bool hasCustomers = false;
+        Reservation newRes = new Reservation
+        {
+            ReservationType = Reservation.ReservationTypeEnum.Normal,
+            OnlyStay = onlyStay,
+            Room = SelectedRoom,
+            FirstHotel = SelectedRoom.Hotel.Name,
+            HB = hb
+        };
+        foreach (Customer customer in booking.Customers)
+        {
+            if (customer.Handled)
+            {
+                MessengerInstance.Send(new ShowExceptionMessage_Message($"Ο {customer.Surename} {customer.Name} έχει μπεί ήδη σε άλλη κράτηση"));
+                continue;
+            }
+            if (customer.IsSelected || all)
+            {
+                hasCustomers = true;
+                customer.Handled = true;
+                customer.RoomNumber = (booking.ReservationsInBooking.Count + 1).ToString();
+                customer.HotelName = newRes.Room.Hotel.Name;
+                customer.RoomTypeName = newRes.Room.RoomType.Name;
+                if (booking.ReservationsInBooking.Count() % 2 == 0)
+                    customer.RoomColor = new SolidColorBrush(Colors.LightPink);
+                else
+                    customer.RoomColor = new SolidColorBrush(Colors.LightBlue);
+                if (!booking.DifferentDates)
+                {
+                    customer.CheckIn = booking.CheckIn;
+                    customer.CheckOut = booking.CheckOut;
+                }
+
+                newRes.CustomersList.Add(customer);
+            }
+        }
+        if (hasCustomers)
+        {
+            if (SelectedRoom.CanAddReservationToRoom(newRes))
+            {
+                SelectedRoom.MakeReservation(newRes);
+            }
+            booking.ReservationsInBooking.Add(newRes);
+
+
+            RoomsManager.SortCustomers(booking);
+            foreach (Customer customer in booking.Customers)
+            {
+                customer.IsSelected = false;
+            }
+        }
+        else
+        {
+            MessengerInstance.Send(new ShowExceptionMessage_Message("Παρακαλώ επιλέξτε πελάτες"));
+        }
+    }
+
+    public async Task<BookingWrapper> SaveAsync(Payment Payment, BookingWrapper Booking, BookingWrapper startingBooking)
+    {
+        //TODO oti na nai exw kanei edw
         //UOW.Reload();
-        Booking tmpBooking;
+        BookingWrapper tmpBooking;
         if (startingBooking == null)
         {
             Booking.User = await Context.GetByIdAsync<User>(Booking.User.Id);
@@ -196,31 +221,39 @@ public class NewReservationHelper : ViewModelBase
 
         if (Booking.Id == 0)
         {
-            Context.Add(Booking);
+            Context.Add(Booking.Model);
             tmpBooking = Booking;
         }
         else
         {
             // CalculateDiferences(startingBooking, Booking);
-            tmpBooking = new Booking(Booking, Context);
+            tmpBooking = new BookingWrapper(Booking.Model);
 
-            Context.Add(tmpBooking);
+            Context.Add(tmpBooking.Model);
             await Context.SaveAsync();
             Context.RemoveById<Booking>(Booking.Id);
             Booking = tmpBooking;
         }
         await Context.SaveAsync();
 
-        Payment = new Payment();
         return tmpBooking;
     }
 
-    internal void AddTransfer(Booking booking, bool all)
+    internal void AddTransfer(BookingWrapper booking, bool all)
     {
         bool hasCustomers = false;
-        Reservation newRes = new Reservation { ReservationType = Reservation.ReservationTypeEnum.Transfer, FirstHotel = "TRANSFER" };
+        Reservation newRes = new Reservation
+        {
+            ReservationType = Reservation.ReservationTypeEnum.Transfer,
+            FirstHotel = "TRANSFER"
+        };
         foreach (Customer customer in booking.Customers)
         {
+            if (customer.Handled)
+            {
+                MessengerInstance.Send(new ShowExceptionMessage_Message($"Ο {customer.Surename} {customer.Name} έχει μπεί ήδη σε άλλη κράτηση"));
+                continue;
+            }
             if (customer.IsSelected || all)
             {
                 hasCustomers = true;

@@ -10,17 +10,18 @@ using System.Threading.Tasks;
 
 namespace LATravelManager.UI.ViewModel
 {
-    public class NavigationViewModel : ViewModelBase
+    public class NavigationViewModel : ViewModelBase, IViewModel
     {
-        public NavigationViewModel()
+        public NavigationViewModel(MainUserControl_ViewModel mainUserControl_ViewModel)
         {
             try
             {
+                MainUserControl_ViewModel = mainUserControl_ViewModel;
+                _SecondaryTabs = new List<TabsBaseViewModel>();
+                SecondaryViewModels = new List<MyViewModelBase>();
                 SecondaryTabs.Add(new AddRoomsTab());
                 SecondaryTabs.Add(new SettingsTab());
                 SetTabs(null);
-                _SecondaryTabs = new List<TabsBaseViewModel>();
-                SecondaryViewModels = new List<MyViewModelBase>();
                 MessengerInstance.Register<ResetNavigationTabsMessage>(this, msg => SetTabs(msg));
                 MessengerInstance.Register<SelectedTabChangedMessage>(this, async tab => await SelectTab(tab));
             }
@@ -28,6 +29,7 @@ namespace LATravelManager.UI.ViewModel
             {
                 MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
             }
+
         }
 
         private async Task SelectTab(SelectedTabChangedMessage tab)
@@ -46,7 +48,7 @@ namespace LATravelManager.UI.ViewModel
                             var addRoomsViewModel = new AddRooms_ViewModel();
                             SecondaryViewModels.Add(addRoomsViewModel);
                             MessengerInstance.Send(new SetSecondaryChildViewModelMessage(addRoomsViewModel));
-                            await addRoomsViewModel.LoadAsync();
+                            await addRoomsViewModel.LoadAsync(0);
                         }
                         break;
 
@@ -59,14 +61,14 @@ namespace LATravelManager.UI.ViewModel
                             var settingsViewModel = new Settings_Viewmodel();
                             SecondaryViewModels.Add(settingsViewModel);
                             MessengerInstance.Send(new SetSecondaryChildViewModelMessage(settingsViewModel));
-                            await settingsViewModel.LoadAsync();
+                            await settingsViewModel.LoadAsync(0);
                         }
                         break;
                 }
             }
             else
             {
-                MessengerInstance.Send(new ChangeChildViewModelMessage(viewmodelIndex));
+                MessengerInstance.Send(new ChangeChildViewModelMessage(tab.Index));
             }
         }
 
@@ -93,17 +95,27 @@ namespace LATravelManager.UI.ViewModel
 
         private void SetTabs(ResetNavigationTabsMessage obj)
         {
-            parent = ServiceLocator.Current.GetInstance<MainUserControl_ViewModel>().SelectedExcursionType;
+            parent = MainUserControl_ViewModel.SelectedExcursionType;
             List<TabsBaseViewModel> tabs;
             if (parent is ExcursionCategory_ViewModelBase)
             {
                 Tabs.Clear();
                 tabs = (parent as ExcursionCategory_ViewModelBase).Tabs ?? new List<TabsBaseViewModel>();
-                foreach (var tab in tabs)
+                foreach (TabsBaseViewModel tab in tabs)
                 {
                     Tabs.Add(tab);
                 }
             }
+        }
+
+        public async Task LoadAsync(int id)
+        {
+            return;
+        }
+
+        public Task ReloadAsync()
+        {
+            throw new NotImplementedException();
         }
 
         #region Fields
@@ -187,6 +199,9 @@ namespace LATravelManager.UI.ViewModel
                 RaisePropertyChanged();
             }
         }
+
+        public bool IsLoaded { get; set; }
+        public MainUserControl_ViewModel MainUserControl_ViewModel { get; }
 
         #endregion Properties
 

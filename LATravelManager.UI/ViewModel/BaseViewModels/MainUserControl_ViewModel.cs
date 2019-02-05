@@ -3,8 +3,8 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using LATravelManager.Models;
 using LATravelManager.UI.Message;
+using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
-using LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Group;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Personal;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Skiathos;
@@ -16,11 +16,12 @@ using System.Threading.Tasks;
 
 namespace LATravelManager.UI.ViewModel
 {
-    public class MainUserControl_ViewModel : ViewModelBase, IViewModel
+    public class MainUserControl_ViewModel : MyViewModelBase
     {
+
         #region Constructors
 
-        public MainUserControl_ViewModel()
+        public MainUserControl_ViewModel(GenericRepository startingRepository)
         {
             LogOutCommand = new RelayCommand(TryLogOut, CanLogout);
 
@@ -31,23 +32,15 @@ namespace LATravelManager.UI.ViewModel
             MessengerInstance.Register<SetSecondaryChildViewModelMessage>(this, tab => { SelectedExcursionType.SelectedChildViewModel = tab.Viewmodel; });
             MessengerInstance.Register<ChangeChildViewModelMessage>(this, async vm => { await SelectedExcursionType.SetProperChildViewModel(vm.ViewModelindex); });
             MessengerInstance.Register<ExcursionCategoryChanged>(this, async index => { await SetProperViewModel(); });
-        }
-
-        public int IsBusyCounter { get; set; }
-
-        private void ManageIsBusy(bool add)
-        {
-            _ = add ? IsBusyCounter++ : IsBusyCounter--;
-            IsBusy = IsBusyCounter > 0;
+            StartingRepository = startingRepository;
         }
 
         #endregion Constructors
 
         #region Fields
 
-        public List<ExcursionCategory_ViewModelBase> TemplateViewmodels { get; set; }
-
         private bool _IsBusy = false;
+        private NavigationViewModel _NavigationViewModel;
 
         private ExcursionCategory_ViewModelBase _SelectedExcursionType;
 
@@ -78,10 +71,30 @@ namespace LATravelManager.UI.ViewModel
             }
         }
 
+        public int IsBusyCounter { get; set; }
+
         public bool IsLoaded { get; set; }
 
         public RelayCommand LogOutCommand { get; set; }
 
+        public NavigationViewModel NavigationViewModel
+        {
+            get
+            {
+                return _NavigationViewModel;
+            }
+
+            set
+            {
+                if (_NavigationViewModel == value)
+                {
+                    return;
+                }
+
+                _NavigationViewModel = value;
+                RaisePropertyChanged();
+            }
+        }
         public ExcursionCategory_ViewModelBase SelectedExcursionType
         {
             get
@@ -119,10 +132,13 @@ namespace LATravelManager.UI.ViewModel
                 if (value >= 0 && value <= Templates.Count)
                 {
                     MessengerInstance.Send(new ExcursionCategoryChanged());
+                    MessengerInstance.Send(new ResetNavigationTabsMessage());
                 }
                 RaisePropertyChanged();
             }
         }
+
+        public Repositories.GenericRepository StartingRepository { get; }
 
         public ObservableCollection<ExcursionCategory> Templates
         {
@@ -143,18 +159,24 @@ namespace LATravelManager.UI.ViewModel
             }
         }
 
+        public List<ExcursionCategory_ViewModelBase> TemplateViewmodels { get; set; }
+
         public string Username => Helpers.StaticResources.User.Name;
 
         #endregion Properties
 
         #region Methods
 
-        public Task LoadAsync()
+        public override async  Task LoadAsync(int id)
         {
-            throw new System.NotImplementedException();
+            NavigationViewModel = new NavigationViewModel(this);
+            await NavigationViewModel.LoadAsync(0);
+            Templates = new ObservableCollection<ExcursionCategory>(await StartingRepository.GetAllAsync<ExcursionCategory>());
+            MessengerInstance.Send(new ExcursionCategoryChanged());
+            MessengerInstance.Send(new ResetNavigationTabsMessage());
         }
 
-        public Task ReloadAsync()
+        public override async Task ReloadAsync()
         {
             throw new System.NotImplementedException();
         }
@@ -171,10 +193,15 @@ namespace LATravelManager.UI.ViewModel
             return true;
         }
 
+        private void ManageIsBusy(bool add)
+        {
+            _ = add ? IsBusyCounter++ : IsBusyCounter--;
+            IsBusy = IsBusyCounter > 0;
+        }
         private async Task SetProperViewModel()
         {
             var index = -1;
-            switch (SelectedTemplateIndex + 1)
+            switch (SelectedTemplateIndex+1)
             {
                 case 1:
                     index = TemplateViewmodels.FindIndex(x => x.GetType() == typeof(BanskoParent_ViewModel));
@@ -229,6 +256,10 @@ namespace LATravelManager.UI.ViewModel
 
                     break;
             }
+            if (index < 0)
+            {
+                TemplateViewmodels.Add(SelectedExcursionType);
+            }
             //set to default tab
             if (SelectedExcursionType is ExcursionCategory_ViewModelBase)
             {
@@ -238,5 +269,6 @@ namespace LATravelManager.UI.ViewModel
         }
 
         #endregion Methods
+
     }
 }

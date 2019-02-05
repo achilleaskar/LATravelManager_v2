@@ -40,7 +40,7 @@
                     Orientation="Horizontal">
             <Border BorderBrush="DimGray"
                     BorderThickness="1"
-                    Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}">
+                    Visibility="{Binding IsBusy, Converter={StaticResource booleanToVisibilityConverter}}">
                 <iconPacks:PackIconFontAwesome Kind="SpinnerSolid"
                                                VerticalAlignment="Center"
                                                Spin="True"
@@ -64,7 +64,8 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <views:NavigationSide_UserControl VerticalAlignment="Stretch"/>
+            <views:NavigationSide_UserControl VerticalAlignment="Stretch"
+                                              DataContext="{Binding NavigationViewModel}" />
             <ContentControl Content="{Binding SelectedExcursionType}"
                             VerticalAlignment="Stretch"
                             HorizontalAlignment="Stretch"

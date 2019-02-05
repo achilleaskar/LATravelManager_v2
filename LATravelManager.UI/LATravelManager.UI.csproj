@@ -166,8 +166,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Helpers\DocumentsManagement.cs" />
+    <Compile Include="ViewModel\CategoriesViewModels\Bansko\Search_Bansko_ViewModel.cs" />
     <Compile Include="ViewModel\CategoriesViewModels\Group\GroupParent_ViewModel.cs" />
-    <Compile Include="Helpers\RoomManager.cs" />
     <Compile Include="MessageListener.cs" />
     <Compile Include="Message\ChangeVisibilityMessage.cs" />
     <Compile Include="Message\DeselectAllTabsMessage.cs" />
@@ -239,6 +240,7 @@
     <Compile Include="Views\NavigationSide_UserControl.xaml.cs">
       <DependentUpon>NavigationSide_UserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Wrapper\BookingWrapper.cs" />
     <Compile Include="Wrapper\ModelWrapper.cs" />
     <Compile Include="Wrapper\NotifyDataErrorInfoBase.cs" />
     <Compile Include="App.xaml.cs">
@@ -259,7 +261,6 @@
     <Compile Include="Helpers\RowDataInfoValidationRule.cs" />
     <Compile Include="Helpers\SearchBookingsHelper.cs" />
     <Compile Include="Helpers\StaticResources.cs" />
-    <Compile Include="Helpers\VouchersManagement.cs" />
     <Page Include="Views\Bansko\EditBooking_Window.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -328,6 +329,9 @@
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Sources\protypo kratiseon.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Sources\protypo_leoforeia.xlsx" />
     <None Include="Sources\Voucher_afirmo.docx" />

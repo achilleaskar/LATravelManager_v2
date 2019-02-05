@@ -14,7 +14,6 @@
         d:DesignHeight="800"
         d:DesignWidth="1200">
     <Window.Resources>
-        <xcad:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <converters:UserToVisibility x:Key="UserToVisibilityConverter" />
         <converters:BrushColorConverter x:Key="BrushColorConverter" />
         <converters:SelectedIndexToForegroundConverter x:Key="SelectedIndexToForegroundConverter" />
@@ -175,7 +174,7 @@
                                 </DataGridComboBoxColumn.EditingElementStyle>
                             </DataGridComboBoxColumn>
                             <DataGridTemplateColumn Header="Λεωφορείο"
-                                                    Visibility="{Binding DataContext.SelectedExcursion.IncludesBus, Source={x:Reference dummyElement}, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                    Visibility="{Binding DataContext.SelectedExcursion.IncludesBus, Source={x:Reference dummyElement}, Converter={StaticResource booleanToVisibilityConverter}}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <ComboBox SelectedIndex="{Binding CustomerHasBusIndex,UpdateSourceTrigger=PropertyChanged}"
@@ -189,7 +188,7 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <DataGridTemplateColumn Header="CheckIn"
-                                                    Visibility="{Binding DataContext.Booking.DifferentDates, Source={x:Reference dummyElement}, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                    Visibility="{Binding DataContext.Booking.DifferentDates, Source={x:Reference dummyElement}, Converter={StaticResource booleanToVisibilityConverter}}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <DatePicker SelectedDate="{Binding CheckIn}" />
@@ -197,7 +196,7 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <DataGridTemplateColumn Header="CheckOut"
-                                                    Visibility="{Binding DataContext.Booking.DifferentDates, Source={x:Reference dummyElement}, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                    Visibility="{Binding DataContext.Booking.DifferentDates, Source={x:Reference dummyElement}, Converter={StaticResource booleanToVisibilityConverter}}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <DatePicker SelectedDate="{Binding CheckOut}" />
@@ -670,7 +669,7 @@
                             </StackPanel>
                             <StackPanel Orientation="Horizontal"
                                         Margin="0,5,0,0"
-                                        Visibility="{Binding Booking.IsPartners,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource BoolToVisibilityConverter}}">
+                                        Visibility="{Binding Booking.IsPartners,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource booleanToVisibilityConverter}}">
                                 <ComboBox Width="140"
                                           ItemsSource="{Binding Partners}"
                                           SelectedItem="{Binding Booking.Partner,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
@@ -688,7 +687,7 @@
                                                                    VerticalAlignment="Center" />
                                 </Button>
                             </StackPanel>
-                            <Grid Visibility="{Binding IsChecked, ElementName=IsPartnerCheckBox, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <Grid Visibility="{Binding IsChecked, ElementName=IsPartnerCheckBox, Converter={StaticResource booleanToVisibilityConverter}}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
@@ -746,13 +745,13 @@
                                 </Grid.ColumnDefinitions>
                                 <Label Content="Σύνολο:"
                                        Grid.Row="2"
-                                       Visibility="{Binding Booking.IsNotPartners,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource BoolToVisibilityConverter}}"
+                                       Visibility="{Binding Booking.IsNotPartners,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource booleanToVisibilityConverter}}"
                                        Grid.Column="0"
                                        Margin="0,0,5,0" />
                                 <TextBlock Grid.Row="2"
                                            VerticalAlignment="Center"
                                            Width="50"
-                                           Visibility="{Binding Booking.IsNotPartners,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource BoolToVisibilityConverter}}"
+                                           Visibility="{Binding Booking.IsNotPartners,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource booleanToVisibilityConverter}}"
                                            Grid.Column="1"
                                            Text="{Binding Booking.FullPrice,UpdateSourceTrigger=PropertyChanged}"
                                            Margin="0,0,5,0" />

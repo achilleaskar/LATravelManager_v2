@@ -1,27 +1,23 @@
-﻿using GalaSoft.MvvmLight;
-using LATravelManager.UI.Repositories;
-using LATravelManager.UI.ViewModel.BaseViewModels;
+﻿using LATravelManager.UI.ViewModel.BaseViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LATravelManager.UI.ViewModel.Tabs
+namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
 {
-    public class AddRooms_ViewModel : MyViewModelBase
+    public class Search_Bansko_ViewModel : BanskoChilds_BaseViewModel
     {
-        public AddRooms_ViewModel()
-        {
-        }
-
         public override async Task LoadAsync(int id)
         {
+            return;
             throw new NotImplementedException();
         }
 
-        public override Task ReloadAsync()
+        public override async Task ReloadAsync()
         {
+            return;
             throw new NotImplementedException();
         }
     }

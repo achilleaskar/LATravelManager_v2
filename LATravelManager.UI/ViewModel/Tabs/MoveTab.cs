@@ -13,6 +13,8 @@ namespace LATravelManager.UI.ViewModel.Tabs
         {
             Level = 1;
             IconName = "SwapHorizontal";
+            Content = "Μετακινήσεις";
+
         }
     }
 }

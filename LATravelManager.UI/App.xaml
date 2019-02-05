@@ -17,8 +17,7 @@
             <local:MessageListener x:Key="MessageListener" />
             <Style TargetType="TextBox"
                    BasedOn="{StaticResource {x:Type TextBox}}">
-                <Setter Property="FontSize"
-                        Value="20" />
+                
                 <Setter Property="Validation.ErrorTemplate">
                     <Setter.Value>
                         <ControlTemplate>

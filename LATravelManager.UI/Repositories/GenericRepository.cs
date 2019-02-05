@@ -1,5 +1,6 @@
 ﻿using LATravelManager.DataAccess;
 using LATravelManager.Model;
+using LATravelManager.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -8,15 +9,26 @@ using System.Threading.Tasks;
 
 namespace LATravelManager.UI.Repositories
 {
-    public class GenericRepository : IGenericRepository
+    public class GenericRepository : IGenericRepository,IDisposable
     {
         protected readonly MainDatabase Context;
 
-        protected GenericRepository(MainDatabase context)
+        public GenericRepository()
         {
-            this.Context = context;
+            this.Context = new MainDatabase();
         }
 
+        public async Task<IEnumerable<Booking>> GetAllBookingInPeriod(DateTime minDay, DateTime maxDay, int excursionId)
+        {
+            return await Context.Bookings.Where(c => c.Excursion.Id == excursionId && c.CheckIn <= maxDay && c.CheckOut > minDay)
+                .Include(f => f.Partner)
+                .Include(f => f.User)
+                .Include(f => f.ReservationsInBooking.Select(i => i.CustomersList))
+                .Include(f => f.ReservationsInBooking.Select(i => i.Room))
+                .Include(f => f.ReservationsInBooking.Select(i => i.NoNameRoomType))
+                .Include(f => f.ReservationsInBooking.Select(i => i.Hotel))
+                .ToListAsync(); ;
+        }
         public void Add<TEntity>(TEntity model) where TEntity : BaseModel
         {
             Context.Set<TEntity>().Add(model);
@@ -74,6 +86,11 @@ namespace LATravelManager.UI.Repositories
         {
             entity.ModifiedDate = DateTime.Now;
             Context.Entry(entity).CurrentValues.SetValues(newEntity);
+        }
+
+        public void Dispose()
+        {
+            Context.Dispose();
         }
     }
 }

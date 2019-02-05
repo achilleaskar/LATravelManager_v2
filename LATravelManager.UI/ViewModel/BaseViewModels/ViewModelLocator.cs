@@ -4,14 +4,13 @@
       <vm:ViewModelLocator xmlns:vm="clr-namespace:LATravelManager_v2"
                            x:Key="Locator" />
   </Application.Resources>
-  
+
   In the View:
   DataContext="{Binding Source={StaticResource Locator}, Path=ViewModelName}"
 
   You can also use Blend to do all this with the tool's support.
   See http://www.galasoft.ch/mvvm
 */
-
 
 using CommonServiceLocator;
 using GalaSoft.MvvmLight.Ioc;
@@ -30,13 +29,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         public ViewModelLocator()
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
-
-            SimpleIoc.Default.Register<NavigationViewModel>();
-
-
         }
-
-        public NavigationViewModel Navigation => ServiceLocator.Current.GetInstance<NavigationViewModel>();
 
         public static void Cleanup()
         {

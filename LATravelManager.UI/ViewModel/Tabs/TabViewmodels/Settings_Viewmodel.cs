@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
+using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,11 @@ namespace LATravelManager.UI.ViewModel.Tabs
 {
     public class Settings_Viewmodel : MyViewModelBase
     {
-        public override Task LoadAsync()
+        public Settings_Viewmodel()
+        {
+        }
+
+        public override Task LoadAsync(int id)
         {
             throw new NotImplementedException();
         }
