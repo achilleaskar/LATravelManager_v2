@@ -19,15 +19,18 @@ namespace LATravelManager.UI.Wrapper
 
         public IEnumerable GetErrors(string propertyName)
         {
-            return _errorsByPropertyName.ContainsKey(propertyName)
+        
+
+            return ((propertyName != null)&& _errorsByPropertyName.ContainsKey(propertyName))
               ? _errorsByPropertyName[propertyName]
               : null;
+            
         }
 
         protected virtual void OnErrorsChanged(string propertyName)
         {
             ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
-            base.RaisePropertyChanged(nameof(HasErrors));
+            RaisePropertyChanged(nameof(HasErrors));
         }
 
         protected void AddError(string propertyName, string error)

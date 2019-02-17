@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Windows.Media;
 
 namespace LATravelManager.UI.Wrapper
 {
@@ -16,20 +17,68 @@ namespace LATravelManager.UI.Wrapper
 
         public BookingWrapper(Booking model) : base(model)
         {
-            Customers = new ObservableCollection<Customer>();
+            Customers = new ObservableCollection<CustomerWrapper>();
             Customers.CollectionChanged += Customers_CollectionChanged;
+            Payments.CollectionChanged += Payments_CollectionChanged;
             InitializeBookingWrapper();
+        }
+
+        private void Payments_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            CalculateRemainingAmount();
+
         }
 
         private void InitializeBookingWrapper()
         {
+            CustomerWrapper c;
+            int counter = 0;
             foreach (var res in ReservationsInBooking)
             {
+                counter++;
                 foreach (var customer in res.CustomersList)
                 {
-                    Customers.Add(customer);
+                    c = new CustomerWrapper(customer);
+                    if (res.ReservationType == Reservation.ReservationTypeEnum.Overbooked)
+                    {
+                        c.RoomNumber = counter + "-OB";
+                    }
+                    else if (res.ReservationType == Reservation.ReservationTypeEnum.Normal)
+                    {
+                        c.RoomNumber = counter.ToString();
+                    }
+                    else if (res.ReservationType == Reservation.ReservationTypeEnum.Noname)
+                    {
+                        c.RoomNumber = counter + "-NN";
+                    }
+                    else if (res.ReservationType == Reservation.ReservationTypeEnum.Transfer)
+                    {
+                        c.RoomNumber = "TRNS-" + counter;
+                    }
+                    if (counter % 2 == 0)
+                    {
+                        c.RoomColor = new SolidColorBrush(Colors.LightPink);
+                    }
+                    else
+                    {
+                        c.RoomColor = new SolidColorBrush(Colors.LightBlue);
+                    }
+                    c.Handled = true;
+                    Customers.Add(c);
                 }
             }
+            if (IsPartners && string.IsNullOrEmpty(FullPriceString))
+            {
+                CommisionString = Commision.ToString();
+                FullPriceString = FullPrice.ToString();
+                FullPrice = (Commision == 100) ? 0 : (float)Math.Round(100 * NetPrice / (100 - Commision), 2);
+
+            }
+            if (Id == 0)
+            {
+                Commision = 10;
+            }
+            CalculateRemainingAmount();
         }
 
         #endregion Constructors
@@ -55,6 +104,7 @@ namespace LATravelManager.UI.Wrapper
             set
             {
                 SetValue(value);
+                DateChanged = true;
                 if (CheckOut < CheckIn)
                 {
                     CheckOut = CheckIn;
@@ -68,6 +118,7 @@ namespace LATravelManager.UI.Wrapper
             set
             {
                 SetValue(value);
+                DateChanged = true;
                 if (CheckOut < CheckIn)
                 {
                     CheckIn = CheckOut;
@@ -154,15 +205,9 @@ namespace LATravelManager.UI.Wrapper
             }
         }
 
-        public DateTime CreatedDate
-        {
-            get { return GetValue<DateTime>(); }
-            set { SetValue(value); }
-        }
+        private ObservableCollection<CustomerWrapper> _Customers;
 
-        private ObservableCollection<Customer> _Customers;
-
-        public ObservableCollection<Customer> Customers
+        public ObservableCollection<CustomerWrapper> Customers
         {
             get
             {
@@ -215,14 +260,6 @@ namespace LATravelManager.UI.Wrapper
                         NetPrice = _FullPrice;
                     }
                 }
-                Calculating = true;
-                if (IsPartners && _FullPrice > 0)
-                {
-                    float tmpPrice = _FullPrice / Customers.Count;
-                    foreach (var customer in Customers)
-                        customer.Price = tmpPrice;
-                }
-                Calculating = false;
             }
         }
 
@@ -265,6 +302,30 @@ namespace LATravelManager.UI.Wrapper
             }
         }
 
+
+
+
+        private bool _DateChanged = false;
+
+        public bool DateChanged
+        {
+            get
+            {
+                return _DateChanged;
+            }
+
+            set
+            {
+                if (_DateChanged == value)
+                {
+                    return;
+                }
+
+                _DateChanged = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public bool HasManyReservations
         {
             get
@@ -286,11 +347,12 @@ namespace LATravelManager.UI.Wrapper
                 if (!value)
                 {
                     Partner = null;
+
                     Calculating = true;
                     if (FullPrice > 0)
                     {
                         float tmpPrice = FullPrice / Customers.Count;
-                        foreach (Customer customer in Customers)
+                        foreach (CustomerWrapper customer in Customers)
                             customer.Price = tmpPrice;
                     }
                     Calculating = false;
@@ -303,12 +365,6 @@ namespace LATravelManager.UI.Wrapper
         }
 
         public string Locations => GetLocations();
-
-        public DateTime? ModifiedDate
-        {
-            get { return GetValue<DateTime>(); }
-            set { SetValue(value); }
-        }
 
         public string Names => GetNames();
 
@@ -449,7 +505,7 @@ namespace LATravelManager.UI.Wrapper
             float total = 0;
             if (IsNotPartners)
             {
-                foreach (Customer customer in Customers)
+                foreach (CustomerWrapper customer in Customers)
                 {
                     total += customer.Price;
                 }
@@ -458,7 +514,12 @@ namespace LATravelManager.UI.Wrapper
             }
             else
             {
+                if (NetPrice != FullPrice - FullPrice * Commision / 100)
+                {
+                    FullPrice = (Commision == 100) ? 0 : (float)Math.Round(100 * FullPrice / (100 - Commision), 2);
+                }
                 Remaining = NetPrice - Recieved;
+
             }
         }
 
@@ -485,19 +546,21 @@ namespace LATravelManager.UI.Wrapper
             return false;
         }
 
-        //ΤΟΔΟ ψηεψκ τηισ
+        int IdCounter;
+
+        //ΤΟΔΟ 
         public void EntityViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            //if (e.PropertyName == Customer.PriceStringPropertyName && !Calculating)
-            //    CalculateRemainingAmount();
+            if (e.PropertyName == nameof(CustomerWrapper.Price) && !Calculating)
+                CalculateRemainingAmount();
 
             //afto einai gia otan vazw atoma apo arxeio thelw vazontas topothesia ston prwto na paei se olus
-            if (e.PropertyName == Customer.StartingPlacePropertyName)
+            if (e.PropertyName == nameof(CustomerWrapper.StartingPlace))
                 if (Customers.Count > 0)
                 {
                     if (!string.IsNullOrEmpty(Customers[0].StartingPlace))
                     {
-                        foreach (Customer customer in Customers)
+                        foreach (CustomerWrapper customer in Customers)
                         {
                             if (string.IsNullOrEmpty(customer.StartingPlace))
                             {
@@ -506,6 +569,7 @@ namespace LATravelManager.UI.Wrapper
                         }
                     }
                 }
+            RaisePropertyChanged(nameof(Customers));
         }
 
         //public void PaymentCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -533,17 +597,8 @@ namespace LATravelManager.UI.Wrapper
         {
             if (e.Action == NotifyCollectionChangedAction.Remove)
             {
-                foreach (Customer customer in e.OldItems)
+                foreach (CustomerWrapper customer in e.OldItems)
                 {
-                    foreach (Reservation r in ReservationsInBooking)
-                    {
-                        r.CustomersList.Remove(r.CustomersList.Where(i => i.Id == customer.Id).Single());
-                        if (r.CustomersList.Count == 0)
-                        {
-                            ReservationsInBooking.Remove(r);
-                            break;
-                        }
-                    }
                     //Removed items
                     customer.PropertyChanged -= EntityViewModelPropertyChanged;
                 }
@@ -562,8 +617,13 @@ namespace LATravelManager.UI.Wrapper
                     }
                 }
 
-                foreach (Customer customer in e.NewItems)
+                foreach (CustomerWrapper customer in e.NewItems)
                 {
+                    if (customer.Id == 0)
+                    {
+                        IdCounter--;
+                        customer.Id = --IdCounter;
+                    }
                     customer.PropertyChanged += EntityViewModelPropertyChanged;
                 }
             }
@@ -606,7 +666,7 @@ namespace LATravelManager.UI.Wrapper
         private string GetLocations()
         {
             List<string> locations = new List<string>();
-            foreach (Customer customer in Customers)
+            foreach (CustomerWrapper customer in Customers)
             {
                 if (!locations.Contains(customer.StartingPlace))
                     locations.Add(customer.StartingPlace);
@@ -617,7 +677,7 @@ namespace LATravelManager.UI.Wrapper
         private string GetNames()
         {
             StringBuilder sb = new StringBuilder();
-            foreach (Customer customer in Customers)
+            foreach (CustomerWrapper customer in Customers)
             {
                 sb.Append(customer.Surename + " " + customer.Name + ", ");
             }

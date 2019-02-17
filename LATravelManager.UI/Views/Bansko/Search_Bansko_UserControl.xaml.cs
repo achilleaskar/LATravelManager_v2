@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace LATravelManager.UI.Views.Bansko
@@ -15,7 +16,7 @@ namespace LATravelManager.UI.Views.Bansko
 
         private void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-           //((Search_Bansko_ViewModel)DataContext).EditBookingCommand.Execute(null);
+           ((Search_Bansko_ViewModel)DataContext).EditBookingCommand.Execute(null);
         }
 
 

@@ -37,14 +37,14 @@ namespace LATravelManager.UI.Views.Bansko
             {
                 if (tb.DataContext is Reservation r)
                 {
-                    r.SelectAll();
+                   // r.SelectAll();
                 }
             }
             else if (e.OriginalSource is Border b)
             {
                 if (b.DataContext is Reservation r)
                 {
-                    r.SelectAll();
+                  //  r.SelectAll();
                 }
             }
             e.Handled = true;

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LATravelManager.Models
 {
-    public class Partner : BaseModel,INamed
+    public class Partner : EditTracker, INamed
     {
 
         #region Constructors

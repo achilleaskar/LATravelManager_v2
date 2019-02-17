@@ -7,9 +7,12 @@
         xmlns:helpers="clr-namespace:LATravelManager.UI.Helpers"
         xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko"
+        d:DataContext="{d:DesignInstance viewmodels:NewReservation_Bansko_ViewModel}"
         mc:Ignorable="d"
+        Closing="Window_Closing"
         Background="White"
-        WindowStartupLocation="CenterScreen"
+        WindowStartupLocation="CenterOwner"
         SizeToContent="WidthAndHeight"
         d:DesignHeight="800"
         d:DesignWidth="1200">
@@ -98,7 +101,7 @@
                               KeyUp="DataGrid_KeyUp"
                               HorizontalAlignment="Left"
                               RowStyle="{StaticResource RowStyle}"
-                              ItemsSource="{Binding Booking.Customers,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                              ItemsSource="{Binding BookingWr.Customers,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                               AutoGenerateColumns="False"
                               SelectedItem="{Binding SelectedCustomer}"
                               CanUserAddRows="True">
@@ -144,7 +147,7 @@
                                                   MinWidth="60"
                                                   SelectedItem="StartingPLace"
                                                   Text="{Binding StartingPlace,UpdateSourceTrigger=PropertyChanged}"
-                                                  ItemsSource="{Binding DataContext.StartingPlaces,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                                                  ItemsSource="{x:Static helpers:StaticResources.StartingPlaces}"
                                                   DisplayMemberPath="Name" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
@@ -188,7 +191,7 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <DataGridTemplateColumn Header="CheckIn"
-                                                    Visibility="{Binding DataContext.Booking.DifferentDates, Source={x:Reference dummyElement}, Converter={StaticResource booleanToVisibilityConverter}}">
+                                                    Visibility="{Binding DataContext.BookingWr.DifferentDates, Source={x:Reference dummyElement}, Converter={StaticResource booleanToVisibilityConverter}}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <DatePicker SelectedDate="{Binding CheckIn}" />
@@ -196,7 +199,7 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <DataGridTemplateColumn Header="CheckOut"
-                                                    Visibility="{Binding DataContext.Booking.DifferentDates, Source={x:Reference dummyElement}, Converter={StaticResource booleanToVisibilityConverter}}">
+                                                    Visibility="{Binding DataContext.BookingWr.DifferentDates, Source={x:Reference dummyElement}, Converter={StaticResource booleanToVisibilityConverter}}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <DatePicker SelectedDate="{Binding CheckOut}" />
@@ -248,10 +251,10 @@
                                     VerticalAlignment="Top">
                             <Label Content="Πωλητής:"
                                    Padding="0" />
-                            <TextBlock Text="{Binding Booking.User.UserName }" />
+                            <TextBlock Text="{Binding BookingWr.User.UserName }" />
                             <Label Content="Προστέθηκε:"
                                    Padding="0" />
-                            <TextBlock Text="{Binding Booking.CreatedDate, StringFormat='{}{0:dd/MM/yyyy}' }" />
+                            <TextBlock Text="{Binding BookingWr.CreatedDate, StringFormat='{}{0:dd/MM/yyyy}' }" />
                         </StackPanel  >
                         <StackPanel Grid.Row="1"
                                     VerticalAlignment="Center">
@@ -281,7 +284,7 @@
                                       IsChecked="{Binding SelectedCustomer.Reservation.HB}" />
                             <CheckBox Content="Διαφ. Ημερομηνίες"
                                       HorizontalAlignment="Left"
-                                      IsChecked="{Binding Booking.DifferentDates}" />
+                                      IsChecked="{Binding BookingWr.DifferentDates}" />
                         </StackPanel>
                         <!--<Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -402,7 +405,7 @@
                                       Height="142"
                                       SelectedItem="{Binding SelectedPayment}"
                                       Width="425"
-                                      ItemsSource="{Binding Booking.Payments}">
+                                      ItemsSource="{Binding BookingWr.Payments}">
                                 <ListView.Resources>
                                     <ContextMenu x:Key="ItemContextMenu">
                                         <MenuItem Header="Διαγραφη"
@@ -469,13 +472,13 @@
                                 <StackPanel>
                                     <Label Content="Check In:"
                                            Padding="0" />
-                                    <DatePicker SelectedDate="{Binding Booking.CheckIn}"
+                                    <DatePicker SelectedDate="{Binding BookingWr.CheckIn}"
                                                 Margin="0,0,5,0" />
                                 </StackPanel>
                                 <StackPanel>
                                     <Label Content="Check Out:"
                                            Padding="0" />
-                                    <DatePicker SelectedDate="{Binding Booking.CheckOut}" />
+                                    <DatePicker SelectedDate="{Binding BookingWr.CheckOut}" />
                                 </StackPanel>
                                 <StackPanel Margin="5,0,5,0">
                                     <Label Content="Ξενοδοχείο:"
@@ -484,7 +487,7 @@
                                     <ComboBox MinWidth="45"
                                               Width="90"
                                               x:Name="FilterSelectedHotelComboBox"
-                                              SelectedIndex="{Binding SelectedHotel}"
+                                              SelectedIndex="{Binding SelectedHotelIndex}"
                                               VerticalAlignment="Center">
                                         <ComboBox.Resources>
                                             <CollectionViewSource x:Key="HotelsList"
@@ -504,7 +507,7 @@
                                            Content="Τύπος Δωματίου:" />
                                     <ComboBox VerticalAlignment="Center"
                                               Width="90"
-                                              SelectedIndex="{Binding SelectedRoomType}">
+                                              SelectedIndex="{Binding SelectedRoomTypeIndex}">
                                         <ComboBox.Resources>
                                             <CollectionViewSource x:Key="RoomTypesList"
                                                                   Source="{Binding RoomTypes}" />
@@ -663,16 +666,16 @@
                                 <CheckBox Name="IsPartnerCheckBox"
                                           Checked="IsPartnerCheckBox_Checked"
                                           Unchecked="IsPartnerCheckBox_Unchecked"
-                                          IsChecked="{Binding Booking.IsPartners,UpdateSourceTrigger=PropertyChanged}"
+                                          IsChecked="{Binding BookingWr.IsPartners,UpdateSourceTrigger=PropertyChanged}"
                                           HorizontalAlignment="Left"
                                           VerticalAlignment="Center" />
                             </StackPanel>
                             <StackPanel Orientation="Horizontal"
                                         Margin="0,5,0,0"
-                                        Visibility="{Binding Booking.IsPartners,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource booleanToVisibilityConverter}}">
+                                        Visibility="{Binding BookingWr.IsPartners,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource booleanToVisibilityConverter}}">
                                 <ComboBox Width="140"
                                           ItemsSource="{Binding Partners}"
-                                          SelectedItem="{Binding Booking.Partner,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                          SelectedIndex="{Binding SelectedPartnerIndex,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                           DisplayMemberPath="Name"
                                           VerticalAlignment="Center"
                                           Margin="5,0,5,5" />
@@ -699,7 +702,7 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Text="Σύνολο:"
                                            HorizontalAlignment="Left" />
-                                <TextBox Text="{Binding Booking.FullPriceString,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                <TextBox Text="{Binding BookingWr.FullPriceString,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                          Margin="5,0,5,5"
                                          VerticalAlignment="Center"
                                          MinWidth="40"
@@ -708,7 +711,7 @@
                                 <TextBlock Text="Προμήθεια (%):"
                                            Grid.Row="1"
                                            HorizontalAlignment="Left" />
-                                <TextBox Text="{Binding Booking.CommisionString,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                <TextBox Text="{Binding BookingWr.CommisionString,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                          Margin="5,0,5,5"
                                          VerticalAlignment="Center"
                                          MinWidth="40"
@@ -718,7 +721,7 @@
                                 <TextBlock Text="Νet τιμή:"
                                            Grid.Row="2"
                                            HorizontalAlignment="Left" />
-                                <TextBlock Text="{Binding Booking.NetPriceString,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                <TextBlock Text="{Binding BookingWr.NetPriceString,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                            Margin="5,0,5,5"
                                            VerticalAlignment="Center"
                                            MinWidth="40"
@@ -745,15 +748,15 @@
                                 </Grid.ColumnDefinitions>
                                 <Label Content="Σύνολο:"
                                        Grid.Row="2"
-                                       Visibility="{Binding Booking.IsNotPartners,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource booleanToVisibilityConverter}}"
+                                       Visibility="{Binding BookingWr.IsNotPartners,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource booleanToVisibilityConverter}}"
                                        Grid.Column="0"
                                        Margin="0,0,5,0" />
                                 <TextBlock Grid.Row="2"
                                            VerticalAlignment="Center"
                                            Width="50"
-                                           Visibility="{Binding Booking.IsNotPartners,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource booleanToVisibilityConverter}}"
+                                           Visibility="{Binding BookingWr.IsNotPartners,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource booleanToVisibilityConverter}}"
                                            Grid.Column="1"
-                                           Text="{Binding Booking.FullPrice,UpdateSourceTrigger=PropertyChanged}"
+                                           Text="{Binding BookingWr.FullPriceString,UpdateSourceTrigger=PropertyChanged}"
                                            Margin="0,0,5,0" />
                                 <Label Content="Προκαταβολή:"
                                        Grid.Row="3"
@@ -763,7 +766,7 @@
                                            VerticalAlignment="Center"
                                            Width="50"
                                            Grid.Column="1"
-                                           Text="{Binding Booking.Recieved,UpdateSourceTrigger=PropertyChanged}"
+                                           Text="{Binding BookingWr.Recieved,UpdateSourceTrigger=PropertyChanged}"
                                            Margin="0,0,5,0" />
                                 <Label Content="Υπόλοιπο:"
                                        Grid.Row="4"
@@ -771,7 +774,7 @@
                                        Margin="0,0,5,0" />
                                 <TextBlock Grid.Row="4"
                                            Width="50"
-                                           Text="{Binding Booking.Remaining,UpdateSourceTrigger=PropertyChanged}"
+                                           Text="{Binding BookingWr.Remaining,UpdateSourceTrigger=PropertyChanged}"
                                            VerticalAlignment="Center"
                                            Grid.Column="1"
                                            Margin="0,0,5,0" />
@@ -785,19 +788,19 @@
                                          TextWrapping="Wrap"
                                          Height="65"
                                          Margin="6,0"
-                                         Text="{Binding Booking.Comment,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                                         Text="{Binding BookingWr.Comment,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                                          VerticalAlignment="Bottom" />
                             </Grid>
                             <StackPanel Orientation="Horizontal">
                                 <Label Content="Δεύτερη Αναχώρηση" />
-                                <CheckBox IsChecked="{Binding Booking.SecondDepart}"
+                                <CheckBox IsChecked="{Binding BookingWr.SecondDepart}"
                                           VerticalAlignment="Center" />
                                 <TextBox Text="{Binding Line,UpdateSourceTrigger=PropertyChanged}"
                                          Margin="0,0,5,0" />
                             </StackPanel>
 
                             <ComboBox ItemsSource="{Binding Users}"
-                                      SelectedItem="{Binding Booking.User}"
+                                      SelectedItem="{Binding SelectedUser}"
                                       DisplayMemberPath="UserName"
                                       Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}"
                                       Margin="0"
@@ -844,7 +847,7 @@
                               Height="252"
                               Margin="5,5,5,0"
                               Width="545"
-                              ItemsSource="{Binding Booking.Edits}">
+                              ItemsSource="{Binding BookingWr.Edits}">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="{x:Type ListViewItem}">
                                 <Setter Property="BorderBrush"

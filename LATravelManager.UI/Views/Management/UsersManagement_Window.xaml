@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LATravelManager.UI.Views.Management"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-        xmlns:ap="clr-namespace:LATravelManager.AttachedProperties"
+        xmlns:ap="clr-namespace:LATravelManager.UI.AttachedProperties"
         mc:Ignorable="d"
         FontSize="14"
         WindowStartupLocation="CenterOwner"

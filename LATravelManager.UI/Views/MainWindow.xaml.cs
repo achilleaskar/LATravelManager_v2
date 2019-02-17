@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Windows;
+using LATravelManager.Models;
+using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel;
+using LATravelManager.UI.ViewModel.Window_ViewModels;
 using Squirrel;
 
 namespace LATravelManager.UI.Views
@@ -12,18 +16,25 @@ namespace LATravelManager.UI.Views
     {
         private MainViewModel _viewModel;
 
+        public GenericRepository StartingRepository;
+
         public MainWindow(MainViewModel viewModel)
         {
             InitializeComponent();
             _viewModel = viewModel;
             DataContext = _viewModel;
             Loaded += MainWindow_Loaded;
+            StartingRepository = new GenericRepository();
+#if DEBUG
+            Helpers.StaticResources.StartingPlaces = new ObservableCollection<StartingPlace>(StartingRepository.GetAllSortedByName<StartingPlace>());
+#endif
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            await _viewModel.LoadAsync();
+            await _viewModel.LoadAsync(StartingRepository);
         }
+
 
         private async void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {

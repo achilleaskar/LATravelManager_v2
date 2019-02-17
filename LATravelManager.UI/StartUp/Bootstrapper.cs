@@ -25,7 +25,7 @@ namespace LATravelManager.UI.StartUp
             builder.RegisterType<LoginViewModel>().AsSelf();
             builder.RegisterType<RoomsManager>().AsSelf().SingleInstance();
             builder.RegisterType<NewReservationHelper>().AsSelf().SingleInstance();
-            builder.RegisterType<BanskoRepository>().As<IBanskoRepository>();
+            builder.RegisterType<GenericRepository>().As<IGenericRepository>();
 
             return builder.Build();
         }

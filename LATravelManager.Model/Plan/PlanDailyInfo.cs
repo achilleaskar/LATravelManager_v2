@@ -17,7 +17,7 @@ namespace LATravelManager.Models
 
         private bool _IsAllotment = false;
         private Reservation _Reservation;
-
+        public DayStateEnum DayState { get; set; }
         private RoomStateEnum _RoomState;
 
         #endregion Fields

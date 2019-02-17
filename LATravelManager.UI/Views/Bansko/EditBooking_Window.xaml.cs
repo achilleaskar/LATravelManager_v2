@@ -84,5 +84,18 @@ namespace LATravelManager.UI.Views.Bansko
                     (DataContext as NewReservation_Bansko_ViewModel).PutCustomersInRoomCommand.Execute(null);
             }
         }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (((NewReservation_Bansko_ViewModel)DataContext).HasChanges)
+            {
+                MessageBoxResult result = MessageBox.Show("Υπάρχουν μη αποθηκευμένες αλλαγές, θέλετε σίγουρα να κλείσετε?", "Προσοχή", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (result == MessageBoxResult.No)
+                {
+                    e.Cancel = true;
+                }
+
+            }
+        }
     }
 }

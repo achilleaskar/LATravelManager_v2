@@ -247,6 +247,38 @@
     <Compile Include="Migrations\201902051221526_54.Designer.cs">
       <DependentUpon>201902051221526_54.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201902150236216_epitelousgamw.cs" />
+    <Compile Include="Migrations\201902150236216_epitelousgamw.Designer.cs">
+      <DependentUpon>201902150236216_epitelousgamw.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902152000087_101.cs" />
+    <Compile Include="Migrations\201902152000087_101.Designer.cs">
+      <DependentUpon>201902152000087_101.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902152001065_102.cs" />
+    <Compile Include="Migrations\201902152001065_102.Designer.cs">
+      <DependentUpon>201902152001065_102.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902152003286_103.cs" />
+    <Compile Include="Migrations\201902152003286_103.Designer.cs">
+      <DependentUpon>201902152003286_103.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902152032429_104.cs" />
+    <Compile Include="Migrations\201902152032429_104.Designer.cs">
+      <DependentUpon>201902152032429_104.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902152038268_105.cs" />
+    <Compile Include="Migrations\201902152038268_105.Designer.cs">
+      <DependentUpon>201902152038268_105.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902152045027_106.cs" />
+    <Compile Include="Migrations\201902152045027_106.Designer.cs">
+      <DependentUpon>201902152045027_106.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902152159155_152.cs" />
+    <Compile Include="Migrations\201902152159155_152.Designer.cs">
+      <DependentUpon>201902152159155_152.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -398,6 +430,30 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201902051221526_54.resx">
       <DependentUpon>201902051221526_54.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902150236216_epitelousgamw.resx">
+      <DependentUpon>201902150236216_epitelousgamw.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902152000087_101.resx">
+      <DependentUpon>201902152000087_101.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902152001065_102.resx">
+      <DependentUpon>201902152001065_102.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902152003286_103.resx">
+      <DependentUpon>201902152003286_103.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902152032429_104.resx">
+      <DependentUpon>201902152032429_104.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902152038268_105.resx">
+      <DependentUpon>201902152038268_105.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902152045027_106.resx">
+      <DependentUpon>201902152045027_106.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902152159155_152.resx">
+      <DependentUpon>201902152159155_152.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

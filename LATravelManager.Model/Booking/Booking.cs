@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LATravelManager.Models
 {
-    public class Booking : BaseModel
+    public class Booking : EditTracker
     {
         public Booking()
         {

@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.Tabs;
+using LATravelManager.UI.ViewModel.Window_ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -108,9 +109,10 @@ namespace LATravelManager.UI.ViewModel
             }
         }
 
+
         public async Task LoadAsync(int id)
         {
-            return;
+            await Task.Delay(0);
         }
 
         public Task ReloadAsync()

@@ -5,6 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
+             xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko"
+             d:DataContext="{d:DesignInstance viewmodels:Search_Bansko_ViewModel}"
              mc:Ignorable="d"
              Background="White"
              d:DesignHeight="450"
@@ -12,11 +14,7 @@
     <UserControl.Resources>
         <converters:UserToVisibility x:Key="UserToVisibilityConverter" />
     </UserControl.Resources>
-    <UserControl.DataContext>
-        <Binding Path="SearchBansko"
-                 Source="{StaticResource Locator}" />
-    </UserControl.DataContext>
-    <Grid IsEnabled="{Binding IsAnyExcursionSelected}">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -32,6 +30,7 @@
                 <StackPanel VerticalAlignment="Stretch"
                             Orientation="Vertical">
                     <StackPanel Orientation="Horizontal"
+                                Margin="0 0 0 5"
                                 HorizontalAlignment="Center">
                         <StackPanel Margin="0,0,5,0">
                             <StackPanel Orientation="Horizontal">
@@ -41,7 +40,8 @@
                                 <CheckBox Margin="5,0"
                                           IsChecked="{Binding EnableCheckInFilter}" />
                             </StackPanel>
-                            <DatePicker SelectedDate="{Binding CheckIn}" />
+                            <DatePicker SelectedDate="{Binding CheckIn}"
+                                        Width="118" />
                         </StackPanel>
                         <StackPanel>
                             <StackPanel Orientation="Horizontal">
@@ -51,7 +51,8 @@
                                 <CheckBox Margin="5,0"
                                           IsChecked="{Binding EnableCheckOutFilter}" />
                             </StackPanel>
-                            <DatePicker SelectedDate="{Binding CheckOut}" />
+                            <DatePicker SelectedDate="{Binding CheckOut}"
+                                        Width="118" />
                         </StackPanel>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
@@ -118,8 +119,7 @@
                         </CompositeCollection>
                     </ComboBox.ItemsSource>
                 </ComboBox>
-                <CheckBox Content="Δέυτερη"
-                          IsChecked="{Binding secondDepart}" />
+
             </StackPanel>
         </StackPanel>
         <DataGrid Grid.Row="1"
@@ -161,31 +161,31 @@
             </DataGrid.RowStyle>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Ξενοδοχείο"
-                                    MaxWidth="95"
-                                    Binding="{Binding Room.Hotel.Name}" />
+                                    Width="95"
+                                    Binding="{Binding HotelName}" />
                 <DataGridTextColumn Header="Τύπος Δωμ."
-                                    MaxWidth="90"
-                                    Binding="{Binding Room.RoomType}" />
+                                    Width="90"
+                                    Binding="{Binding RoomTypeName}" />
                 <DataGridTextColumn Header="Αναχ."
-                                    MaxWidth="70"
+                                    Width="45"
                                     Binding="{Binding CheckIn ,StringFormat='{}{0:dd/MM}'}" />
                 <DataGridTextColumn Header="Επιστ."
-                                    MaxWidth="80"
+                                    Width="45"
                                     Binding="{Binding CheckOut ,StringFormat='{}{0:dd/MM}'}" />
                 <DataGridTextColumn Header="Ονόματα"
                                     Width="250"
                                     CanUserResize="True"
                                     Binding="{Binding Names}" />
                 <DataGridTextColumn Header="Τηλέφωνο"
-                                    MaxWidth="105"
+                                    Width="105"
                                     MinWidth="85"
                                     Binding="{Binding Tel}" />
                 <DataGridTextColumn Header="Γραφείο"
-                                    MaxWidth="105"
+                                    Width="125"
                                     MinWidth="85"
                                     Binding="{Binding Booking.Partner.Name}" />
                 <DataGridTextColumn Header="Σημείωση"
-                                    MaxWidth="190"
+                                    Width="190"
                                     Binding="{Binding Booking.Comment}" />
             </DataGrid.Columns>
         </DataGrid>

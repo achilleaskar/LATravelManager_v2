@@ -6,7 +6,7 @@
         mc:Ignorable="d"
         xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
         Loaded="MainWindow_OnLoaded"
-        xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel"
+        xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.Window_ViewModels"
         xmlns:views="clr-namespace:LATravelManager.UI.Views"
         d:DataContext="{d:DesignInstance viewmodels:MainViewModel}"
         Height="780"
@@ -21,9 +21,9 @@
     </Window.Visibility>
     <Window.Resources>
         <converters:UserToVisibility x:Key="UserToVisibilityConverter" />
-        <!--<DataTemplate DataType="{x:Type viewmodels:Login_ViewModel}">
+        <DataTemplate DataType="{x:Type viewmodels:LoginViewModel}">
             <views:Login_UserControl />
-        </DataTemplate>-->
+        </DataTemplate>
         <DataTemplate DataType="{x:Type viewmodels:MainUserControl_ViewModel}">
             <views:Main_UserControl />
         </DataTemplate>

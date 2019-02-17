@@ -13,7 +13,7 @@ namespace LATravelManager.UI.Message
             Window = window;
         }
 
-        public OpenChildWindowCommand(Window window, ViewModelBase viewModel)
+        public OpenChildWindowCommand(Window window, MyViewModelBase viewModel)
         {
             Window = window;
             ViewModel = viewModel;
@@ -22,6 +22,6 @@ namespace LATravelManager.UI.Message
         #endregion constructors and destructors
 
         public Window Window { get; set; }
-        public ViewModelBase ViewModel { get; set; }
+        public MyViewModelBase ViewModel { get; set; }
     }
 }

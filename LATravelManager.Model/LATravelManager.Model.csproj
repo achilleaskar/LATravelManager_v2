@@ -69,7 +69,9 @@
   <ItemGroup>
     <Compile Include="BaseModel.cs" />
     <Compile Include="Booking\Booking.cs" />
+    <Compile Include="ChangeLog.cs" />
     <Compile Include="Definitions.cs" />
+    <Compile Include="EditTracker.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="INamed.cs" />
     <Compile Include="LookUpItem.cs" />

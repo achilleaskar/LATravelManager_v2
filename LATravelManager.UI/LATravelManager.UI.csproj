@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\squirrel.windows.1.9.1\build\squirrel.windows.props" Condition="Exists('..\packages\squirrel.windows.1.9.1\build\squirrel.windows.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -14,6 +15,8 @@
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -44,8 +47,14 @@
     <Reference Include="ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net462\ControlzEx.dll</HintPath>
     </Reference>
-    <Reference Include="DeltaCompressionDotNet, Version=2.0.0.0, Culture=neutral, PublicKeyToken=1d14d6e5194e7f4a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DeltaCompressionDotNet.2.0.0.0\lib\net20\DeltaCompressionDotNet.dll</HintPath>
+    <Reference Include="DeltaCompressionDotNet, Version=1.1.0.0, Culture=neutral, PublicKeyToken=1d14d6e5194e7f4a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DeltaCompressionDotNet.1.1.0\lib\net20\DeltaCompressionDotNet.dll</HintPath>
+    </Reference>
+    <Reference Include="DeltaCompressionDotNet.MsDelta, Version=1.1.0.0, Culture=neutral, PublicKeyToken=46b2138a390abf55, processorArchitecture=MSIL">
+      <HintPath>..\packages\DeltaCompressionDotNet.1.1.0\lib\net20\DeltaCompressionDotNet.MsDelta.dll</HintPath>
+    </Reference>
+    <Reference Include="DeltaCompressionDotNet.PatchApi, Version=1.1.0.0, Culture=neutral, PublicKeyToken=3e8888ee913ed789, processorArchitecture=MSIL">
+      <HintPath>..\packages\DeltaCompressionDotNet.1.1.0\lib\net20\DeltaCompressionDotNet.PatchApi.dll</HintPath>
     </Reference>
     <Reference Include="DocumentFormat.OpenXml, Version=2.9.0.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
       <HintPath>..\packages\DocumentFormat.OpenXml.2.9.0\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
@@ -96,7 +105,7 @@
       <HintPath>..\packages\MySql.Data.Entity.6.10.8\lib\net452\MySql.Data.Entity.EF6.dll</HintPath>
     </Reference>
     <Reference Include="NuGet.Squirrel, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ppy.squirrel.windows.1.9.0.3\lib\Net45\NuGet.Squirrel.dll</HintPath>
+      <HintPath>..\packages\squirrel.windows.1.9.1\lib\Net45\NuGet.Squirrel.dll</HintPath>
     </Reference>
     <Reference Include="SharpCompress, Version=0.17.1.0, Culture=neutral, PublicKeyToken=afb0a02973931d96, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpCompress.0.17.1\lib\net45\SharpCompress.dll</HintPath>
@@ -104,8 +113,8 @@
     <Reference Include="Splat, Version=1.6.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Splat.1.6.2\lib\Net45\Splat.dll</HintPath>
     </Reference>
-    <Reference Include="Squirrel, Version=1.9.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ppy.squirrel.windows.1.9.0.3\lib\Net45\Squirrel.dll</HintPath>
+    <Reference Include="Squirrel, Version=1.9.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\squirrel.windows.1.9.1\lib\Net45\Squirrel.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel" />
@@ -142,23 +151,20 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="Xceed.Wpf.AvalonDock, Version=3.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
-      <HintPath>..\packages\Extended.Wpf.Toolkit.3.4.0\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
+    <Reference Include="Xceed.Wpf.AvalonDock, Version=3.5.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.3.5.0\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
     </Reference>
-    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero, Version=3.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
-      <HintPath>..\packages\Extended.Wpf.Toolkit.3.4.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero, Version=3.5.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.3.5.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
     </Reference>
-    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro, Version=3.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
-      <HintPath>..\packages\Extended.Wpf.Toolkit.3.4.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro, Version=3.5.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.3.5.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
     </Reference>
-    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010, Version=3.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
-      <HintPath>..\packages\Extended.Wpf.Toolkit.3.4.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010, Version=3.5.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.3.5.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
     </Reference>
-    <Reference Include="Xceed.Wpf.DataGrid, Version=3.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
-      <HintPath>..\packages\Extended.Wpf.Toolkit.3.4.0\lib\net40\Xceed.Wpf.DataGrid.dll</HintPath>
-    </Reference>
-    <Reference Include="Xceed.Wpf.Toolkit, Version=3.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
-      <HintPath>..\packages\Extended.Wpf.Toolkit.3.4.0\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
+    <Reference Include="Xceed.Wpf.Toolkit, Version=3.5.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.3.5.0\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -166,9 +172,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Message\ChangeChildViewModelMessage.cs" />
     <Compile Include="Helpers\DocumentsManagement.cs" />
+    <Compile Include="Message\LoginLogOutMessage.cs" />
+    <Compile Include="NotifyTaskCompletion.cs" />
+    <Compile Include="ViewModel\BaseViewModels\GroupChilds_BaseViewModel.cs" />
     <Compile Include="ViewModel\CategoriesViewModels\Bansko\Search_Bansko_ViewModel.cs" />
-    <Compile Include="ViewModel\CategoriesViewModels\Group\GroupParent_ViewModel.cs" />
+    <Compile Include="ViewModel\CategoriesViewModels\Group\NewReservation_Group_ViewModel.cs" />
+    <Compile Include="ViewModel\CategoriesViewModels\Group\Search_Group_ViewModel.cs" />
+    <Compile Include="ViewModel\Parents\GroupParent_ViewModel.cs" />
     <Compile Include="MessageListener.cs" />
     <Compile Include="Message\ChangeVisibilityMessage.cs" />
     <Compile Include="Message\DeselectAllTabsMessage.cs" />
@@ -176,9 +188,7 @@
     <Compile Include="Message\IsBusyChangedMessage.cs" />
     <Compile Include="Message\ResetNavigationTabsMessage.cs" />
     <Compile Include="Message\SetChildViewModelMessage.cs" />
-    <Compile Include="Repositories\BanskoRepository.cs" />
     <Compile Include="Repositories\GenericRepository.cs" />
-    <Compile Include="Repositories\IBanskoRepository.cs" />
     <Compile Include="Repositories\IGenericRepository.cs" />
     <Compile Include="Security\PasswordHashing.cs" />
     <Compile Include="Security\SecureStringManipulation.cs" />
@@ -187,7 +197,7 @@
     <Compile Include="ViewModel\BaseViewModels\ExcursionCategory_ViewModelBase.cs" />
     <Compile Include="ViewModel\BaseViewModels\INavigationViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModels\IViewModel.cs" />
-    <Compile Include="ViewModel\BaseViewModels\MainUserControl_ViewModel.cs" />
+    <Compile Include="ViewModel\Window_ViewModels\MainUserControl_ViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModels\MyViewModelBase.cs" />
     <Compile Include="ViewModel\BaseViewModels\TabsBaseViewModel.cs" />
     <Compile Include="ViewModel\Parents\BanskoParent_ViewModel.cs" />
@@ -210,6 +220,9 @@
     <Compile Include="ViewModel\Window_ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModels\NavigationViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModels\ViewModelLocator.cs" />
+    <Compile Include="Views\AddRooms_UserControl.xaml.cs">
+      <DependentUpon>AddRooms_UserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Bansko\EditBooking_Window.xaml.cs">
       <DependentUpon>EditBooking_Window.xaml</DependentUpon>
     </Compile>
@@ -231,16 +244,44 @@
     <Compile Include="Views\Bansko_UserControl.xaml.cs">
       <DependentUpon>Bansko_UserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\GroupExcursions_UserControl.xaml.cs">
+      <DependentUpon>GroupExcursions_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Group\NewReservation_Group_UserControl.xaml.cs">
+      <DependentUpon>NewReservation_Group_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Group\Search_Group_UserControl.xaml.cs">
+      <DependentUpon>Search_Group_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Login_UserControl.xaml.cs">
+      <DependentUpon>Login_UserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Main_UserControl.xaml.cs">
       <DependentUpon>Main_UserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Management\CitiesManagement_Window.xaml.cs">
+      <DependentUpon>CitiesManagement_Window.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Management\CountriesManagement_Window.xaml.cs">
+      <DependentUpon>CountriesManagement_Window.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Management\ExcursionsManagement_Window.xaml.cs">
+      <DependentUpon>ExcursionsManagement_Window.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Management\HotelsManagement_Window.xaml.cs">
+      <DependentUpon>HotelsManagement_Window.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Management\UsersManagement_Window.xaml.cs">
+      <DependentUpon>UsersManagement_Window.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\NavigationSide_UserControl.xaml.cs">
       <DependentUpon>NavigationSide_UserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Wrapper\BookingWrapper.cs" />
+    <Compile Include="Wrapper\CustomerWrapper.cs" />
     <Compile Include="Wrapper\ModelWrapper.cs" />
     <Compile Include="Wrapper\NotifyDataErrorInfoBase.cs" />
     <Compile Include="App.xaml.cs">
@@ -261,6 +302,10 @@
     <Compile Include="Helpers\RowDataInfoValidationRule.cs" />
     <Compile Include="Helpers\SearchBookingsHelper.cs" />
     <Compile Include="Helpers\StaticResources.cs" />
+    <Page Include="Views\AddRooms_UserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Bansko\EditBooking_Window.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -289,11 +334,47 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\GroupExcursions_UserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Group\NewReservation_Group_UserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Views\Group\Search_Group_UserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Views\Login_UserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Main_UserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Management\CitiesManagement_Window.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Management\CountriesManagement_Window.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Management\ExcursionsManagement_Window.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Management\HotelsManagement_Window.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Management\UsersManagement_Window.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -303,7 +384,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Message\ChangeViewModelMessage.cs" />
     <Compile Include="Message\OpenChildWindowCommand.cs" />
     <Compile Include="Message\SelectedTabChangedMessage.cs" />
     <Compile Include="Message\SetNaviGationTabMessage.cs" />
@@ -333,16 +413,24 @@
     <None Include="Sources\protypo kratiseon.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Sources\protypo_leoforeia.xlsx" />
-    <None Include="Sources\Voucher_afirmo.docx" />
-    <None Include="Sources\Voucher_enfirmo_larissas.docx" />
-    <None Include="Sources\Voucher_enfirmo_thess.docx" />
+    <None Include="Sources\protypo_leoforeia.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\Voucher_afirmo.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\Voucher_enfirmo_larissas.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\Voucher_enfirmo_thess.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\01_latravel_logo1.jpg" />
+    <SplashScreen Include="Images\01_latravel_logo1.jpg" />
     <Resource Include="Images\gobansko.jpg" />
     <Resource Include="Images\gotoskiathos.jpg" />
     <Resource Include="Images\icon.png" />
@@ -362,4 +450,12 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\squirrel.windows.1.9.1\build\squirrel.windows.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\squirrel.windows.1.9.1\build\squirrel.windows.props'))" />
+    <Error Condition="!Exists('..\packages\squirrel.windows.1.9.1\build\squirrel.windows.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\squirrel.windows.1.9.1\build\squirrel.windows.targets'))" />
+  </Target>
+  <Import Project="..\packages\squirrel.windows.1.9.1\build\squirrel.windows.targets" Condition="Exists('..\packages\squirrel.windows.1.9.1\build\squirrel.windows.targets')" />
 </Project>

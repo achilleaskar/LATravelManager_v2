@@ -50,7 +50,10 @@ namespace LATravelManager.UI
                     Window window = msg.Window;
                     if (msg.ViewModel != null)
                         window.DataContext = msg.ViewModel;
-                   
+                    Application.Current.MainWindow.Visibility = Visibility.Hidden;
+                    window.ShowDialog();
+                    Application.Current.MainWindow.Visibility = Visibility.Visible;
+
                 });
         }
 

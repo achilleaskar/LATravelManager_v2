@@ -4,14 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:LATravelManager.UI.Views"
-             xmlns:ap="clr-namespace:LATravelManager.AttachedProperties"
+             xmlns:ap="clr-namespace:LATravelManager.UI.AttachedProperties"
+             xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.Window_ViewModels"
+             d:DataContext="{d:DesignInstance viewmodels:LoginViewModel}"
              mc:Ignorable="d"
+             Background="Wheat"
              d:DesignHeight="450"
              d:DesignWidth="800">
-    <UserControl.DataContext>
-        <Binding Path="Login"
-                 Source="{StaticResource Locator}" />
-    </UserControl.DataContext>
     <GroupBox HorizontalAlignment="Center"
               VerticalAlignment="Center"
               Header="Σύνδεση Χρήστη"
@@ -63,7 +62,6 @@
                         Margin="5"
                         Grid.ColumnSpan="2" />-->
                 <Border BorderThickness="1"
-                        BorderBrush="Red"
                         CornerRadius="2"
                         Grid.Row="3"
                         Grid.ColumnSpan="2"

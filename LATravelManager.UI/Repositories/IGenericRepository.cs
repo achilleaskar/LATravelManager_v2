@@ -18,7 +18,7 @@ namespace LATravelManager.UI.Repositories
 
         Task SaveAsync();
 
-        void UpdateValues<TEntity>(TEntity entity, TEntity newEntity) where TEntity : BaseModel;
+        void UpdateValues<TEntity>(TEntity entity, TEntity newEntity) where TEntity : EditTracker;
 
         bool HasChanges();
 

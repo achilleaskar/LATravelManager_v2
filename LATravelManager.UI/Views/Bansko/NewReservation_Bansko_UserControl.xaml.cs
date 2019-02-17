@@ -1,4 +1,5 @@
-﻿using LATravelManager.Models;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using LATravelManager.Models;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,7 +24,7 @@ namespace LATravelManager.UI.Views.Bansko
 
         private void IsPartnerCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            CustomersDataGrid.Columns[5].Visibility= Visibility.Visible;
+            CustomersDataGrid.Columns[5].Visibility = Visibility.Visible;
         }
         public static T GetVisualChild<T>(Visual parent) where T : Visual
         {
@@ -58,7 +59,7 @@ namespace LATravelManager.UI.Views.Bansko
             }
         }
 
-        private void DataGrid_KeyUp(object sender, KeyEventArgs e)
+        private void DataGrid_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
@@ -68,11 +69,16 @@ namespace LATravelManager.UI.Views.Bansko
                   CustomersDataGrid.Columns[1]);
                 }
             }
+            else if (e.Key == Key.Delete &&  e.OriginalSource.GetType()!= typeof(TextBox))
+            {
+                e.Handled = true;
+                (DataContext as NewReservation_Bansko_ViewModel).DeleteSelectedCustomers();
+            }
         }
 
         private void UserControl_KeyUp(object sender, KeyEventArgs e)
         {
-            if (Keyboard.IsKeyDown(Key.LeftCtrl)&& e.Key == Key.Z)
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.Z)
             {
                 ((NewReservation_Bansko_ViewModel)DataContext).ReadNextLineCommand.Execute(null);
             }
@@ -90,6 +96,11 @@ namespace LATravelManager.UI.Views.Bansko
                 if ((DataContext as NewReservation_Bansko_ViewModel).PutCustomersInRoomCommand.CanExecute(null))
                     (DataContext as NewReservation_Bansko_ViewModel).PutCustomersInRoomCommand.Execute(null);
             }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

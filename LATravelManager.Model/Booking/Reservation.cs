@@ -10,38 +10,8 @@ using System.Text;
 
 namespace LATravelManager.Models
 {
-    public class Reservation : BaseModel
+    public class Reservation : EditTracker
     {
-        //public event EventHandler CustomerValueChanged;
-        //public event EventHandler CustomerStartingPlaceChanged;
-        //public event EventHandler CustomersChanged;
-
-        #region Constructors
-
-        public Reservation()
-        {
-            //CustomersList.CollectionChanged += CustomersCollectionChanged;
-        }
-
-        //public Reservation(Reservation r, DataBaseManipulation.UnitOfWork uOW)
-        //{
-        //    Tittle = "Η κράτηση";
-        //    foreach (var c in r.CustomersList)
-        //    {
-        //        CustomersList.Add(new Customer(c, uOW));
-        //    }
-        //    NoNameRoomType = (r.NoNameRoomType == null) ? null : uOW.GenericRepository.GetById<RoomType>(r.NoNameRoomType.Id);
-        //    ReservationType = r.ReservationType;
-        //    OnlyStay = r.OnlyStay;
-        //    HB = r.HB;
-        //    Hotel = (r.Hotel == null) ? null : uOW.GenericRepository.GetById<Hotel>(r.Hotel.Id);
-        //    Transfer = r.Transfer;
-        //    OnlyStay = r.OnlyStay;
-        //    FirstHotel = r.FirstHotel;
-        //    Room = (r.Room != null) ? uOW.GenericRepository.GetById<Room>(r.Room.Id) : null;
-        //}
-
-        #endregion Constructors
 
         #region Fields
 
@@ -438,36 +408,28 @@ namespace LATravelManager.Models
         public bool Contains(string key)
         {
             key = key.ToUpper();
-            if (Booking == null)
-            {
-                return false;
-            }
             if (string.IsNullOrEmpty(key))
             {
                 return true;
             }
-            if (Booking.Comment.ToUpper().Contains(key) || (Booking.IsPartners && Booking.Partner.Name.ToUpper().Contains(key)))
+            if (Booking == null)
+            {
+                return false;
+            }
+            if ((!string.IsNullOrEmpty(Booking.Comment)&& Booking.Comment.ToUpper().Contains(key) )|| (Booking.IsPartners && Booking.Partner.Name.ToUpper().Contains(key)))
             {
                 return true;
             }
 
             foreach (var c in CustomersList)
             {
-                if (c.Name.ToUpper().Contains(key) || c.Surename.ToUpper().Contains(key) || (c.Tel != null && c.Tel.Contains(key)) || c.Comment.ToUpper().Contains(key) || (c.Email != null && c.Email.ToUpper().Contains(key))
-                    || c.PassportNum.ToUpper().Contains(key) || c.StartingPlace.ToUpper().Contains(key))
+                if (c.Name.ToUpper().StartsWith(key) || c.Surename.ToUpper().StartsWith(key) || (c.Tel != null && c.Tel.StartsWith(key)) ||(!string.IsNullOrEmpty(c.Comment)&& c.Comment.ToUpper().Contains(key)) || (c.Email != null && c.Email.ToUpper().StartsWith(key))
+                    || (!string.IsNullOrEmpty(c.PassportNum) && c.PassportNum.ToUpper().StartsWith(key)) || c.StartingPlace.ToUpper().Contains(key))
                 {
                     return true;
                 }
             }
             return false;
-        }
-
-        public void SelectAll()
-        {
-            foreach (Customer c in CustomersList)
-            {
-                c.IsSelected = true;
-            }
         }
 
         private void CustomersCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -505,17 +467,17 @@ namespace LATravelManager.Models
 
         private string GetHotelName()
         {
-           
+
             switch (ReservationType)
             {
                 case ReservationTypeEnum.Normal:
-                    return Room.Hotel.Name;
+                    return Room!=null?Room.Hotel.Name:"";
 
                 case ReservationTypeEnum.Noname:
                     return "NO NAME";
 
                 case ReservationTypeEnum.Overbooked:
-                    return Hotel.Name;
+                    return Hotel!=null ? Hotel.Name:"";
 
                 case ReservationTypeEnum.NoRoom:
                     return "NO ROOM";

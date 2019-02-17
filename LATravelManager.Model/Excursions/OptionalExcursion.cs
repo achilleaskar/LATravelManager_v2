@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LATravelManager.Models
 {
-    public class OptionalExcursion : BaseModel
+    public class OptionalExcursion : EditTracker
     {
         #region Fields + Constructors
 

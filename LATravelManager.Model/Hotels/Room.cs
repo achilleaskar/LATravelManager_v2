@@ -10,7 +10,7 @@ using static LATravelManager.Model.Enums;
 
 namespace LATravelManager.Models
 {
-    public class Room : BaseModel
+    public class Room : EditTracker
     {
         #region Constructors
 
@@ -342,6 +342,7 @@ namespace LATravelManager.Models
                 tmpBookedInfo = PlanDailyInfo.Find(x => x.Date == tmpDate);
                 tmpBookedInfo.Reservation = null;
                 tmpBookedInfo.RoomState = RoomStateEnum.Available;
+                tmpDate = tmpDate.AddDays(1);
             }
             reservation.Room = null;
         }
@@ -395,11 +396,11 @@ namespace LATravelManager.Models
                     {
                         tmpPlanInfo.RoomState = roomState;
                         tmpPlanInfo.Reservation = reservation;
-                        //if (tmpDate == reservation.CheckIn)
-                        //{
-                        //    tmpBookedInfo.DayState = BookedInfo.DayStateEnum.FirstDay;
-                        //    tmpBookedInfo.Text = dayNum.ToString();
-                        //}
+                        if (tmpDate == reservation.CheckIn)
+                        {
+                            tmpPlanInfo.DayState = DayStateEnum.FirstDay;
+                            //tmpPlanInfo.Text = dayNum.ToString();
+                        }
                     }
                     else
                     {
@@ -439,11 +440,11 @@ namespace LATravelManager.Models
                     {
                         tmpPlanInfo.Reservation = reservation;
                         tmpPlanInfo.RoomState = RoomStateEnum.Booked;
-                        //if (tmpDate == reservation.CheckIn)
-                        //{
-                        //    tmpBookedInfo.DayState = BookedInfo.DayStateEnum.FirstDay;
-                        //    tmpBookedInfo.Text = dayNum.ToString();
-                        //}
+                        if (tmpDate == reservation.CheckIn)
+                        {
+                            tmpPlanInfo.DayState = DayStateEnum.FirstDay;
+                            //tmpPlanInfo.Text = dayNum.ToString();
+                        }
                     }
                     else
                         tmpPlanInfo.RoomState = RoomStateEnum.OverBookedByMistake;

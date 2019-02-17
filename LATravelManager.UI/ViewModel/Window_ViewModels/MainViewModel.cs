@@ -1,16 +1,15 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
-using LATravelManager.DataAccess;
 using LATravelManager.Models;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
-using LATravelManager.UI.ViewModel.Window_ViewModels;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace LATravelManager.UI.ViewModel
+namespace LATravelManager.UI.ViewModel.Window_ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
@@ -25,12 +24,20 @@ namespace LATravelManager.UI.ViewModel
             //OpenUsersEditCommand = new RelayCommand(OpenUsersWindow, CanEditWindows);
             Messenger.Default.Register<ChangeVisibilityMessage>(this, msg => { Visibility = msg.Visible ? Visibility.Visible : Visibility.Collapsed; });
             Messenger.Default.Register<IsBusyChangedMessage>(this, msg => { ManageIsBusy(msg.IsBusy); });
+            Messenger.Default.Register<LoginLogOutMessage>(this, async msg => { await ChangeViewModel(msg.Login); });
         }
 
-        private void ManageIsBusy(bool add)
+        private async Task ChangeViewModel(bool login)
         {
-            _ = add ? IsBusyCounter++ : IsBusyCounter--;
-            IsBusy = IsBusyCounter > 0;
+            if (login)
+            {
+                SelectedViewmodel = new MainUserControl_ViewModel(StartingRepository);//TODO
+            }
+            else
+            {
+                SelectedViewmodel = new LoginViewModel(StartingRepository);
+            }
+            await SelectedViewmodel.LoadAsync(0);
         }
 
         #endregion Constructors
@@ -38,34 +45,12 @@ namespace LATravelManager.UI.ViewModel
         #region Fields
 
         private bool _IsBusy = false;
-        private Visibility _Visibility;
-
-
-
-
 
         private IViewModel _SelectedViewmodel;
 
-        public IViewModel SelectedViewmodel
-        {
-            get
-            {
-                return _SelectedViewmodel;
-            }
+        private Visibility _Visibility;
 
-            set
-            {
-                if (_SelectedViewmodel == value)
-                {
-                    return;
-                }
-
-                _SelectedViewmodel = value;
-                RaisePropertyChanged();
-            }
-        }
-
-
+        private GenericRepository StartingRepository;
 
         #endregion Fields
 
@@ -90,10 +75,8 @@ namespace LATravelManager.UI.ViewModel
             }
         }
 
-        /// <summary>
-        /// Sets and gets the MenuVisibility property.
-        /// Changes to that property's value raise the PropertyChanged event.
-        /// </summary>
+        public int IsBusyCounter { get; private set; }
+
         public Visibility MenuVisibility
         {
             get
@@ -115,6 +98,25 @@ namespace LATravelManager.UI.ViewModel
         public RelayCommand OpenHotelEditCommand { get; }
 
         public RelayCommand OpenUsersEditCommand { get; set; }
+
+        public IViewModel SelectedViewmodel
+        {
+            get
+            {
+                return _SelectedViewmodel;
+            }
+
+            set
+            {
+                if (_SelectedViewmodel == value)
+                {
+                    return;
+                }
+
+                _SelectedViewmodel = value;
+                RaisePropertyChanged();
+            }
+        }
 
         /// <summary>
         /// Sets and gets the Visibility property. Changes to that property's value raise the
@@ -139,19 +141,15 @@ namespace LATravelManager.UI.ViewModel
             }
         }
 
-        public int IsBusyCounter { get; private set; }
-
         #endregion Properties
-
-        GenericRepository StartingRepository;
 
         #region Methods
 
-        public async Task LoadAsync()
+        public async Task LoadAsync(GenericRepository startingRepository)
         {
-            StartingRepository = new GenericRepository();
+            StartingRepository = startingRepository;
 #if DEBUG
-            Helpers.StaticResources.User = new User { Name = "Admin", Id = -12, BaseLocation = User.GrafeiaXriston.Thessalonikis, Level = 0 };
+            Helpers.StaticResources.User = new User { BaseLocation = User.GrafeiaXriston.Thessalonikis, Id = 1, Level = 0, UserName = "admin" };
 #endif
             if (Helpers.StaticResources.User == null)
                 SelectedViewmodel = new LoginViewModel(StartingRepository);//TODO
@@ -159,6 +157,31 @@ namespace LATravelManager.UI.ViewModel
                 SelectedViewmodel = new MainUserControl_ViewModel(StartingRepository);//TODO
             await SelectedViewmodel.LoadAsync(0);
         }
+
+        private bool CanEditWindows()
+        {
+            if (IsInDesignMode)
+                return true;
+            return IsBusy;
+        }
+
+        //public void OpenHotelsWindow()
+        //{
+        //    //SimpleIoc.Default.Register<HotelsManagement_ViewModel>();
+        //    MessengerInstance.Send(new OpenChildWindowCommand(new HotelsManagement_Window()));
+        //}
+        private void ChangeVisibility(ChangeVisibilityMessage msg)
+        {
+            Visibility = msg.Visible ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void ManageIsBusy(bool add)
+        {
+            _ = add ? IsBusyCounter++ : IsBusyCounter--;
+            IsBusy = IsBusyCounter > 0;
+        }
+
+        #endregion Methods
 
         //public void OpenCitiesWindow()
         //{
@@ -171,25 +194,6 @@ namespace LATravelManager.UI.ViewModel
         //    //SimpleIoc.Default.Register<HotelsManagement_ViewModel>();
         //    MessengerInstance.Send(new OpenChildWindowCommand(new CountriesManagement_Window()));
         //}
-
-        //public void OpenHotelsWindow()
-        //{
-        //    //SimpleIoc.Default.Register<HotelsManagement_ViewModel>();
-        //    MessengerInstance.Send(new OpenChildWindowCommand(new HotelsManagement_Window()));
-        //}
-
-        private bool CanEditWindows()
-        {
-            if (IsInDesignMode)
-                return true;
-            return IsBusy;
-        }
-
-        private void ChangeVisibility(ChangeVisibilityMessage msg)
-        {
-            Visibility = msg.Visible ? Visibility.Visible : Visibility.Collapsed;
-        }
-
         //private void OpenExcursionsWindow()
         //{
         //    MessengerInstance.Send(new OpenChildWindowCommand(new ExcursionsManagement_Window()));
@@ -199,7 +203,5 @@ namespace LATravelManager.UI.ViewModel
         //{
         //    MessengerInstance.Send(new OpenChildWindowCommand(new UsersManagement_Window()));
         //}
-
-        #endregion Methods
     }
 }

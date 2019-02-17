@@ -1,41 +1,20 @@
 ﻿using GalaSoft.MvvmLight;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Windows;
 
 namespace LATravelManager.Model
 {
-    public abstract class BaseModel:ObservableObject
+    public abstract class BaseModel : ObservableObject
     {
-
-        #region Fields
-
-        //private static List<PropertyInfo> _propertyInfos;
-
-        private DateTime _CreatedDate = DateTime.Now;
-
-        ///// <summary>
-        ///// The opposite of <see cref="HasErrors"/>.
-        ///// </summary>
-        ///// <remarks>Exists for convenient binding only.</remarks>
-        //private bool _IsOk = false;
-        //private int _Number;
-
-        #endregion Fields
+        public BaseModel()
+        {
+        }
 
         #region Properties
 
-        /// <summary>
-        /// Sets and gets the CreatedDate property. Changes to that property's value raise the
-        /// PropertyChanged event.
-        /// </summary>
-        public DateTime CreatedDate { get; set; }
+       
 
         /// <summary>
         /// Gets an error message indicating what is wrong with this object.
@@ -74,43 +53,12 @@ namespace LATravelManager.Model
         ///// </summary>
         //public bool HasErrors => Errors.Any();
 
-        /// <summary>
-        /// Sets and gets the Id property. Changes to that property's value raise the PropertyChanged event.
-        /// </summary>
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        /// <summary>
-        /// Sets and gets the IsOk property. Changes to that property's value raise the
-        /// PropertyChanged event.
-        /// </summary>
-        [NotMapped]
-        //public bool IsOk
-        //{
-        //    get
-        //    {
-        //        return !Errors.Any();
-        //    }
+        
 
-        //    set
-        //    {
-        //        if (_IsOk == value)
-        //        {
-        //            return;
-        //        }
-
-        //        _IsOk = value;
-        //        RaisePropertyChanged();
-        //    }
-        //}
-
-        public DateTime? ModifiedDate { get; set; }
-
-        /// <summary>
-        /// Sets and gets the Number property.
-        /// Changes to that property's value raise the PropertyChanged event.
-        /// </summary>
         //[NotMapped]
         //public int Number
         //{
@@ -258,6 +206,5 @@ namespace LATravelManager.Model
         //}
 
         //#endregion Methods
-
     }
 }

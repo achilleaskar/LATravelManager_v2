@@ -1,11 +1,9 @@
-﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
+﻿using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
 using LATravelManager.Models;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
-using LATravelManager.UI.ViewModel.CategoriesViewModels.Group;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Personal;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Skiathos;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty;
@@ -14,11 +12,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
-namespace LATravelManager.UI.ViewModel
+namespace LATravelManager.UI.ViewModel.Window_ViewModels
 {
     public class MainUserControl_ViewModel : MyViewModelBase
     {
-
         #region Constructors
 
         public MainUserControl_ViewModel(GenericRepository startingRepository)
@@ -73,8 +70,6 @@ namespace LATravelManager.UI.ViewModel
 
         public int IsBusyCounter { get; set; }
 
-        public bool IsLoaded { get; set; }
-
         public RelayCommand LogOutCommand { get; set; }
 
         public NavigationViewModel NavigationViewModel
@@ -95,6 +90,7 @@ namespace LATravelManager.UI.ViewModel
                 RaisePropertyChanged();
             }
         }
+
         public ExcursionCategory_ViewModelBase SelectedExcursionType
         {
             get
@@ -167,24 +163,26 @@ namespace LATravelManager.UI.ViewModel
 
         #region Methods
 
-        public override async  Task LoadAsync(int id)
+        public override async Task LoadAsync(int id)
         {
             NavigationViewModel = new NavigationViewModel(this);
-            await NavigationViewModel.LoadAsync(0);
             Templates = new ObservableCollection<ExcursionCategory>(await StartingRepository.GetAllAsync<ExcursionCategory>());
             MessengerInstance.Send(new ExcursionCategoryChanged());
             MessengerInstance.Send(new ResetNavigationTabsMessage());
+            if (Helpers.StaticResources.StartingPlaces == null || Helpers.StaticResources.StartingPlaces.Count == 0)
+            {
+                Helpers.StaticResources.StartingPlaces = new ObservableCollection<StartingPlace>(StartingRepository.GetAllSortedByName<StartingPlace>());
+            }
         }
 
         public override async Task ReloadAsync()
         {
-            throw new System.NotImplementedException();
+            await Task.Delay(0);
         }
 
         public void TryLogOut()
         {
-            //TODO
-            //MessengerInstance.Send(new ChangeViewModelMessage(nameof(Login_ViewModel)));
+            MessengerInstance.Send(new LoginLogOutMessage(false));
         }
 
         private bool CanLogout()
@@ -198,10 +196,11 @@ namespace LATravelManager.UI.ViewModel
             _ = add ? IsBusyCounter++ : IsBusyCounter--;
             IsBusy = IsBusyCounter > 0;
         }
+
         private async Task SetProperViewModel()
         {
             var index = -1;
-            switch (SelectedTemplateIndex+1)
+            switch (SelectedTemplateIndex + 1)
             {
                 case 1:
                     index = TemplateViewmodels.FindIndex(x => x.GetType() == typeof(BanskoParent_ViewModel));
@@ -269,6 +268,5 @@ namespace LATravelManager.UI.ViewModel
         }
 
         #endregion Methods
-
     }
 }

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LATravelManager.Models
 {
-    public class Excursion : BaseModel
+    public class Excursion : EditTracker
     {
         #region Constructors
 

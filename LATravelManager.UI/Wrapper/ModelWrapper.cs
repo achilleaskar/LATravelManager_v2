@@ -1,4 +1,5 @@
 ﻿using LATravelManager.Model;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
@@ -12,10 +13,19 @@ namespace LATravelManager.UI.Wrapper
             Model = model;
         }
 
+        public DateTime? ModifiedDate
+        {
+            get { return GetValue<DateTime>(); }
+            set { SetValue(value); }
+        }
+
         public T Model { get; }
 
-        public int Id { get { return Model.Id; } }
-
+        public int Id
+        {
+            get { return Model.Id; }
+            set { SetValue(value); }
+        }
         protected virtual void SetValue<TValue>(TValue value,
           [CallerMemberName]string propertyName = null)
         {
@@ -27,6 +37,12 @@ namespace LATravelManager.UI.Wrapper
         protected virtual TValue GetValue<TValue>([CallerMemberName]string propertyName = null)
         {
             return (TValue)typeof(T).GetProperty(propertyName).GetValue(Model);
+        }
+
+        public DateTime CreatedDate
+        {
+            get { return GetValue<DateTime>(); }
+            set { SetValue(value); }
         }
 
         private void ValidatePropertyInternal(string propertyName, object currentValue)

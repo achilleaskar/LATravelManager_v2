@@ -5,6 +5,8 @@
              xmlns:views="clr-namespace:LATravelManager.UI.Views"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.Parents"
+             xmlns:windows="clr-namespace:LATravelManager.UI.ViewModel.Window_ViewModels"
+             d:DataContext="{d:DesignInstance windows:MainUserControl_ViewModel}"
              x:Class="LATravelManager.UI.Views.Main_UserControl"
              mc:Ignorable="d"
              d:DesignHeight="450"
@@ -13,14 +15,14 @@
         <DataTemplate DataType="{x:Type viewmodels:BanskoParent_ViewModel}">
             <views:Bansko_UserControl />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:GroupParent_ViewModel}">
+            <views:GroupExcursions_UserControl />
+        </DataTemplate>
         <!--<DataTemplate DataType="{x:Type viewmodels:Skiathos_ViewModel}">
             <views:Skiathos_UserControl />
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewmodels:PersonalExcursion_ViewModel}">
             <views:PersonalExcursions_UserControl />
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type viewmodels:GroupExcursion_ViewModel}">
-            <views:GroupExcursions_UserControl />
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewmodels:ThirdPartyExcursions_ViewModel}">
             <views:ThirdPartyExcursions_UserControl />
@@ -40,7 +42,8 @@
                     Orientation="Horizontal">
             <Border BorderBrush="DimGray"
                     BorderThickness="1"
-                    Visibility="{Binding IsBusy, Converter={StaticResource booleanToVisibilityConverter}}">
+                    Visibility="{Binding IsBusy, Converter={StaticResource booleanToVisibilityConverter}}"
+                   >
                 <iconPacks:PackIconFontAwesome Kind="SpinnerSolid"
                                                VerticalAlignment="Center"
                                                Spin="True"

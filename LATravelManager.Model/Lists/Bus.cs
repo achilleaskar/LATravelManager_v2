@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LATravelManager.Models
 {
-    public class Bus : BaseModel
+    public class Bus : EditTracker
     {
         #region Fields
 

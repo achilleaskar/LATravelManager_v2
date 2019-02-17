@@ -2,6 +2,9 @@
 using MySql.Data.Entity;
 using System;
 using System.Data.Entity;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace LATravelManager.DataAccess
 {
@@ -41,6 +44,15 @@ namespace LATravelManager.DataAccess
         #endregion Properties
 
         #region Methods
+
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
+        {
+            
+
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

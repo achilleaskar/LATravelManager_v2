@@ -29,6 +29,15 @@ namespace LATravelManager.UI.Helpers
             await Context.SaveAsync();
         }
 
+        internal async Task DeleteReservation(Reservation selectedReservation)
+        {
+            if (selectedReservation.Booking.ReservationsInBooking.Count == 1)
+                Context.Delete(selectedReservation.Booking);
+            else
+                Context.Delete(selectedReservation);
+            await Context.SaveAsync();
+        }
+
         internal DateTime GetDateLimit(string parameter)
         {
             int.TryParse(parameter, out int i);

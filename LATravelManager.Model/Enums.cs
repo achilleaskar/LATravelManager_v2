@@ -31,6 +31,13 @@
             house
         }
 
+        public enum DayStateEnum
+        {
+            Empty,
+            FirstDay,
+            LastDay
+        };
+
         public enum ContinentsEnum
         {
             NorthAmerica,

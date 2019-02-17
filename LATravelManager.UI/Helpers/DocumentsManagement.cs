@@ -20,12 +20,12 @@ namespace LATravelManager.UI.Helpers
     {
         private string folderNameVouchers;
 
-        public DocumentsManagement(BanskoRepository context)
+        public DocumentsManagement(GenericRepository context)
         {
             Context = context;
         }
 
-        public BanskoRepository Context { get; }
+        public GenericRepository Context { get; }
         private readonly CultureInfo culture = new CultureInfo("el-GR");
 
         public string CreateFolder(DateTime date, string folderName, string city)
@@ -41,7 +41,7 @@ namespace LATravelManager.UI.Helpers
         {
         }
 
-        public void PrintSingleBookingVoucher(BookingWrapper booking)
+        public async Task PrintSingleBookingVoucher(BookingWrapper booking)
         {
             foreach (var res in booking.ReservationsInBooking)
             {
@@ -61,11 +61,11 @@ namespace LATravelManager.UI.Helpers
                 {
                     MessageBox.Show("Η κράτηση είναι TRANSFER");
                 }
-                PrintVoucher(booking);
             }
+           await PrintVoucher(booking);
         }
 
-        public string PrintVoucher(BookingWrapper booking)
+        public async Task<string> PrintVoucher(BookingWrapper booking)
         {
             var VoucherFilename = string.Empty;
             var inputPath = AppDomain.CurrentDomain.BaseDirectory;
@@ -100,7 +100,7 @@ namespace LATravelManager.UI.Helpers
                     Directory.CreateDirectory(outputpath + @"\Vouchers");
                     folderNameVouchers = CreateFolder(res.CheckIn, @"\Vouchers\", booking.Excursion.Name);
 
-                    CreateWordVoucher(folderNameVouchers + VoucherFilename, res, booking);
+                    await CreateWordVoucher(folderNameVouchers + VoucherFilename, res, booking);
 
                     VoucherDir = folderNameVouchers + VoucherFilename;
                 }
@@ -235,13 +235,10 @@ namespace LATravelManager.UI.Helpers
             int lineNum = 0;
             Thread.CurrentThread.CurrentCulture = culture;
 
-           
             int counter;
             int customersCount;
             using (GenericRepository Context = new GenericRepository())
             {
-
-
                 List<Booking> AllBookings = (await Context.GetAllBookingInPeriod(new DateTime(2018, 09, 01), new DateTime(2019, 09, 01), 2)).ToList();
 
                 if (AllBookings.Count > 0)
@@ -260,8 +257,8 @@ namespace LATravelManager.UI.Helpers
                         else
                         {
                             date = b.CheckIn;
-                            CurrentDayBookings = new BookingsPerDay(date);
                             bookingsPerDays.Add(CurrentDayBookings);
+                            CurrentDayBookings = new BookingsPerDay(date);
                             CurrentDayBookings.Bookings.Add(b);
                         }
                     }
@@ -340,13 +337,12 @@ namespace LATravelManager.UI.Helpers
                                 myWorksheet.Cells["D" + (lineNum - 1)].Style.Border.Bottom.Style = ExcelBorderStyle.Medium;
                                 myWorksheet.Cells["F" + (lineNum - 1)].Style.Border.Bottom.Style = ExcelBorderStyle.Medium;
                                 myWorksheet.Cells["A" + (lineNum - 1)].Style.Border.Bottom.Style = ExcelBorderStyle.Medium;
-                            }                                                                                       
-                                myWorksheet.Cells["B" + (lineNum - 1)].Style.Border.Bottom.Style = ExcelBorderStyle.Medium;
-                            if (booking.IsPartners)                                                                 
-                            {                                                                                       
+                            }
+                            myWorksheet.Cells["B" + (lineNum - 1)].Style.Border.Bottom.Style = ExcelBorderStyle.Medium;
+                            if (booking.IsPartners)
+                            {
                                 myWorksheet.Cells["I" + (lineNum - 1)].Style.Border.Bottom.Style = ExcelBorderStyle.Medium;
                                 myWorksheet.Cells["H" + (lineNum - 1)].Style.Border.Bottom.Style = ExcelBorderStyle.Medium;
-
                             }
                         }
                         //if (reservation.Room.Id >= 0)
