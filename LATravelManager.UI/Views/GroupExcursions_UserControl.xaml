@@ -3,18 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:viewmodels="clr-namespace:LATravelManager.ViewModel.Group"
+             xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.CategoriesViewModels.Group"
              xmlns:views="clr-namespace:LATravelManager.UI.Views.Group"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d"
              d:DesignHeight="450"
              d:DesignWidth="800">
-    <UserControl.DataContext>
-        <Binding Path="Group"
-                 Source="{StaticResource Locator}" />
-    </UserControl.DataContext>
     <UserControl.Resources>
-        <DataTemplate DataType="{x:Type viewmodels:NewReservation_Group_Viewmodel}">
+        <DataTemplate DataType="{x:Type viewmodels:NewReservation_Group_ViewModel}">
             <views:NewReservation_Group_UserControl />
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewmodels:Search_Group_ViewModel}">
@@ -50,10 +46,11 @@
                     Command="{Binding UpdateExcursionsCommand}">
                 <iconPacks:PackIconFontAwesome Kind="SyncSolid"
                                                VerticalAlignment="Center"
-                                               Spin="{Binding UnitOfWork.IsBusy}" />
+                                               Spin="{Binding !StartingReposiroty.IsContextAvailable}" />
             </Button>
         </StackPanel>
         <ContentControl Grid.Row="1"
+                        IsEnabled="{Binding Enable}"
                         Grid.ColumnSpan="2"
                         Content="{Binding SelectedChildViewModel}" />
     </Grid>

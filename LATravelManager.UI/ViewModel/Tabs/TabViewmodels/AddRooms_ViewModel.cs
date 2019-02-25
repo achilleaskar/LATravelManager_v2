@@ -15,9 +15,9 @@ namespace LATravelManager.UI.ViewModel.Tabs
         {
         }
 
-        public override async Task LoadAsync(int id)
+        public override Task LoadAsync(int id = 0)
         {
-            await Task.Delay(0);
+            throw new NotImplementedException();
         }
 
         public override Task ReloadAsync()

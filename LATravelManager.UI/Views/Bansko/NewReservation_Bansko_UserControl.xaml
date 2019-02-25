@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
              xmlns:helpers="clr-namespace:LATravelManager.UI.Helpers"
              xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
@@ -31,47 +30,9 @@
         </Style>
         <Style x:Key="RowStyle"
                TargetType="{x:Type DataGridRow}">
-            <Style.Triggers>
-                <Trigger Property="Validation.HasError"
-                         Value="true">
-                    <Setter Property="BorderThickness"
-                            Value="1" />
-                    <Setter Property="BorderBrush"
-                            Value="Red" />
-                    <Setter Property="ToolTip"
-                            Value="{Binding (Validation.Errors)[0].ErrorContent, RelativeSource={RelativeSource Self}}" />
-                </Trigger>
-            </Style.Triggers>
             <Setter Property="IsSelected"
                     Value="{Binding IsSelected, Mode=TwoWay,
                              UpdateSourceTrigger=PropertyChanged}" />
-        </Style>
-        <Style x:Key="TextBlockDataError"
-               TargetType="{x:Type TextBox}">
-            <Style.Triggers>
-                <Trigger Property="Validation.HasError"
-                         Value="true">
-                    <Setter Property="BorderThickness"
-                            Value="1" />
-                    <Setter Property="BorderBrush"
-                            Value="Red" />
-                    <Setter Property="ToolTip"
-                            Value="{Binding (Validation.Errors)[0].ErrorContent, RelativeSource={RelativeSource Self}}" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-        <Style TargetType="{x:Type StackPanel}"
-               x:Key="TopStackPanelStyle">
-            <Style.Resources>
-                <Style TargetType="{x:Type TextBlock}">
-                    <Setter Property="HorizontalAlignment"
-                            Value="Center" />
-                </Style>
-                <Style TargetType="{x:Type Label}">
-                    <Setter Property="HorizontalAlignment"
-                            Value="Center" />
-                </Style>
-            </Style.Resources>
         </Style>
         <Style x:Key="DataGridCellStyle"
                TargetType="{x:Type DataGridCell}">
@@ -82,8 +43,8 @@
 
     <ScrollViewer HorizontalScrollBarVisibility="Auto"
                   VerticalScrollBarVisibility="Auto">
-        <Grid VerticalAlignment="Center"
-              HorizontalAlignment="Center">
+        <Grid VerticalAlignment="Top"
+              HorizontalAlignment="Left">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
@@ -91,328 +52,7 @@
             <FrameworkElement x:Name="dummyElement"
                               Visibility="Collapsed" />
             <StackPanel Orientation="Horizontal">
-                <StackPanel Margin="5">
-                    <DataGrid Margin="5"
-                              FontSize="12"
-                              Height="250"
-                              Width="603"
-                              LoadingRow="DataGrid_LoadingRow"
-                              PreparingCellForEdit="CustomersDataGrid_PreparingCellForEdit"
-                              x:Name="CustomersDataGrid"
-                              KeyUp="DataGrid_KeyDown"
-                              HorizontalAlignment="Left"
-                              ItemsSource="{Binding BookingWr.Customers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                              AutoGenerateColumns="False"
-                              SelectedItem="{Binding SelectedCustomer}"
-                              CanUserAddRows="True">
-                        <DataGrid.Resources>
-                            <Style TargetType="{x:Type ComboBox}">
-                                <Setter Property="Margin"
-                                        Value="0" />
-                            </Style>
-                        </DataGrid.Resources>
-                        <DataGrid.RowStyle>
-                            <StaticResource ResourceKey="RowStyle" />
-                        </DataGrid.RowStyle>
-                        <DataGrid.RowValidationRules>
-                            <helpers:RowDataInfoValidationRule ValidationStep="UpdatedValue" />
-                        </DataGrid.RowValidationRules>
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Δωμάτιο"
-                                                IsReadOnly="True"
-                                                Binding="{Binding RoomNumber, UpdateSourceTrigger=PropertyChanged}">
-                                <DataGridTextColumn.CellStyle>
-                                    <Style TargetType="{x:Type DataGridCell}">
-                                        <Setter Property="Background"
-                                                Value="{Binding RoomColor, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" />
-                                    </Style>
-                                </DataGridTextColumn.CellStyle>
-                            </DataGridTextColumn>
-                            <DataGridTextColumn Header="Όνομα"
-                                                MaxWidth="200"
-                                                MinWidth="90"
-                                                Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
-                            <DataGridTextColumn Header="Επίθετο"
-                                                MinWidth="90"
-                                                MaxWidth="200"
-                                                Binding="{Binding Surename, UpdateSourceTrigger=PropertyChanged}" />
-                            <DataGridTextColumn Header="Τηλέφωνο"
-                                                MinWidth="80"
-                                                MaxWidth="200"
-                                                Binding="{Binding Tel, UpdateSourceTrigger=PropertyChanged}" />
-                            <DataGridTemplateColumn Header="Αναχώρηση"
-                                                    Width="100"
-                                                    CellStyle="{StaticResource DataGridCellStyle}">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <ComboBox IsEditable="True"
-                                                  Width="Auto"
-                                                  VerticalAlignment="Top"
-                                                  MinWidth="60"
-                                                  Text="{Binding StartingPlace, UpdateSourceTrigger=PropertyChanged}"
-                                                  ItemsSource="{x:Static helpers:StaticResources.StartingPlaces}"
-                                                  DisplayMemberPath="Name" />
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTextColumn Header="Τιμή"
-                                                Width="55"
-                                                FontWeight="DemiBold"
-                                                FontSize="14"
-                                                Binding="{Binding PriceString, UpdateSourceTrigger=PropertyChanged}" />
-                            <DataGridComboBoxColumn Header="Ηλικία"
-                                                    ItemsSource="{x:Static helpers:StaticResources.AgesList}">
-                                <DataGridComboBoxColumn.ElementStyle>
-                                    <Style TargetType="{x:Type ComboBox}">
-                                        <Setter Property="SelectedIndex"
-                                                Value="{Binding Age, UpdateSourceTrigger=PropertyChanged}" />
-                                        <Setter Property="Foreground"
-                                                Value="{Binding SelectedIndex, ConverterParameter=12, Converter={StaticResource SelectedIndexToForegroundConverter}, RelativeSource={RelativeSource Self}, UpdateSourceTrigger=PropertyChanged}" />
-                                    </Style>
-                                </DataGridComboBoxColumn.ElementStyle>
-                                <DataGridComboBoxColumn.EditingElementStyle>
-                                    <Style TargetType="{x:Type ComboBox}">
-                                        <Setter Property="SelectedIndex"
-                                                Value="{Binding Age, UpdateSourceTrigger=PropertyChanged}" />
-                                        <Setter Property="Foreground"
-                                                Value="{Binding SelectedIndex, ConverterParameter=12, Converter={StaticResource SelectedIndexToForegroundConverter}, RelativeSource={RelativeSource Self}, UpdateSourceTrigger=PropertyChanged}" />
-                                    </Style>
-                                </DataGridComboBoxColumn.EditingElementStyle>
-                            </DataGridComboBoxColumn>
-                            <DataGridTemplateColumn Header="Λεωφορείο"
-                                                    Visibility="{Binding DataContext.SelectedExcursion.IncludesBus, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <ComboBox SelectedIndex="{Binding CustomerHasBusIndex, UpdateSourceTrigger=PropertyChanged}"
-                                                  Foreground="{Binding SelectedIndex, ConverterParameter=0, Converter={StaticResource SelectedIndexToForegroundConverter}, RelativeSource={RelativeSource Self}, UpdateSourceTrigger=PropertyChanged}">
-                                            <ComboBoxItem Content="ΝΑΙ" />
-                                            <ComboBoxItem Content="ΜΟΝΟ ΠΗΓΑΙΝΕ" />
-                                            <ComboBoxItem Content="ΜΟΝΟ ΕΠΙΣΤΡΟΦΗ" />
-                                            <ComboBoxItem Content="ΟΧΙ" />
-                                        </ComboBox>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Header="CheckIn"
-                                                    Visibility="{Binding DataContext.BookingWr.DifferentDates, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <DatePicker SelectedDate="{Binding CheckIn}" />
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Header="CheckOut"
-                                                    Visibility="{Binding DataContext.BookingWr.DifferentDates, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <DatePicker SelectedDate="{Binding CheckOut}" />
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                    <StackPanel Orientation="Horizontal"
-                                HorizontalAlignment="Center">
-
-                        <TextBlock Text="{Binding ErrorsInDatagrid}"
-                                   FontSize="14"
-                                   Foreground="Red"
-                                   MaxHeight="100"
-                                   MaxWidth="500" />
-                        <TextBlock x:Name="BookedMessage"
-                                   Grid.Row="2"
-                                   FontSize="14"
-                                   Foreground="Green"
-                                   MaxWidth="390"
-                                   MaxHeight="60"
-                                   HorizontalAlignment="Right"
-                                   Text="{Binding BookedMessage}" />
-                    </StackPanel>
-                </StackPanel>
-                <Border BorderThickness="1"
-                        Height="250"
-                        VerticalAlignment="Top"
-                        Margin="0,10">
-                    <Grid Margin="5">
-                        <Grid.Resources>
-                            <Style TargetType="Label">
-                                <Setter Property="HorizontalAlignment"
-                                        Value="Center" />
-                                <Setter Property="Padding"
-                                        Value="0,5,0,0" />
-                            </Style>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="HorizontalAlignment"
-                                        Value="Center" />
-                                <Setter Property="Background"
-                                        Value="LightGray" />
-                            </Style>
-                        </Grid.Resources>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <StackPanel Grid.Row="0"
-                                    VerticalAlignment="Top">
-                            <Label Content="Πωλητής:"
-                                   Padding="0"
-                                   HorizontalAlignment="Center" />
-                            <TextBlock Text="{Binding BookingWr.User.UserName }" />
-                            <Label Content="Προστέθηκε:"
-                                   Padding="0" />
-                            <TextBlock Text="{Binding BookingWr.CreatedDate, StringFormat='{}{0:dd/MM/yyyy}' }" />
-                        </StackPanel  >
-                        <StackPanel Grid.Row="1"
-                                    VerticalAlignment="Center">
-
-                            <Separator />
-                            <TextBlock Text="{Binding SelectedCustomer.Reservation.CheckIn, StringFormat='{}{0:dd/MM/yyyy}'}" />
-                            <Separator Width="10" />
-                            <TextBlock Text="{Binding SelectedCustomer.Reservation.CheckOut, StringFormat='{}{0:dd/MM/yyyy}'}" />
-                            <Separator />
-                        </StackPanel>
-                        <StackPanel Grid.Row="2"
-                                    VerticalAlignment="Bottom">
-                            <Label Content="Ξενοδόχείο:"
-                                   Padding="0" />
-                            <TextBlock Text="{Binding SelectedCustomer.HotelName }" />
-                            <Label Content="Τύπος Δωματίου:"
-                                   Padding="0" />
-                            <TextBlock Text="{Binding SelectedCustomer.RoomTypeName }" />
-                            <Separator />
-                            <CheckBox Content="Only Stay"
-                                      HorizontalAlignment="Left"
-                                      IsChecked="{Binding SelectedCustomer.Reservation.OnlyStay}" />
-                            <CheckBox Content="HB"
-                                      HorizontalAlignment="Left"
-                                      IsChecked="{Binding SelectedCustomer.Reservation.HB}" />
-                            <CheckBox Content="Διαφ. Ημερομηνίες"
-                                      HorizontalAlignment="Left"
-                                      IsChecked="{Binding BookingWr.DifferentDates}" />
-                        </StackPanel>
-                    </Grid>
-                </Border>
-                <GroupBox Grid.Column="1"
-                          Header="Πληρωμές"
-                          HorizontalAlignment="Left"
-                          VerticalAlignment="Top">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <GroupBox HorizontalAlignment="Center"
-                                  VerticalAlignment="Top"
-                                  Header="Νέα Πληρωμή">
-                            <StackPanel Orientation="Horizontal">
-                                <StackPanel Margin="5,5,5,0">
-                                    <TextBlock Text="Ποσό:"
-                                               HorizontalAlignment="Left"
-                                               VerticalAlignment="Center" />
-                                    <TextBox Grid.Row="0"
-                                             Margin="0,5"
-                                             HorizontalAlignment="Center"
-                                             Style="{StaticResource TextBlockDataError}"
-                                             Grid.Column="1"
-                                             Text="{Binding Payment.AmountString,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                             Width="50" />
-                                </StackPanel>
-                                <StackPanel Grid.Column="1"
-                                            Margin="5">
-                                    <TextBlock Text="Μέθοδος:"
-                                               HorizontalAlignment="Left"
-                                               VerticalAlignment="Center" />
-                                    <ComboBox Grid.Row="0"
-                                              Margin="0,5"
-                                              VerticalAlignment="Center"
-                                              HorizontalAlignment="Center"
-                                              SelectedIndex="{Binding Payment.PaymentMethod,NotifyOnValidationError=True}"
-                                              Grid.Column="1"
-                                              Width="80">
-                                        <ComboBoxItem>Μετρητά</ComboBoxItem>
-                                        <ComboBoxItem>Τράπεζα</ComboBoxItem>
-                                        <ComboBoxItem>VISA</ComboBoxItem>
-                                    </ComboBox>
-                                </StackPanel>
-                                <StackPanel Grid.Row="1"
-                                            Margin="5,5,0,0"
-                                            Grid.Column="0"
-                                            HorizontalAlignment="Stretch"
-                                            Grid.ColumnSpan="2">
-                                    <TextBlock Text="Σημείωση Πληρωμής:"
-                                               HorizontalAlignment="Left"
-                                               VerticalAlignment="Center" />
-                                    <TextBox Grid.Row="0"
-                                             Margin="0,0,5,-5"
-                                             HorizontalAlignment="Stretch"
-                                             Grid.Column="1"
-                                             Width="140"
-                                             TextWrapping="Wrap"
-                                             Height="40"
-                                             Text="{Binding Payment.Comment}" />
-                                </StackPanel>
-                            </StackPanel>
-                        </GroupBox>
-                        <StackPanel Grid.Row="1"
-                                    Orientation="Vertical">
-                            <TextBlock Text=" Ιστορικό Πληρωμών"
-                                       HorizontalAlignment="Left" />
-                            <ListView Name="payments"
-                                      Focusable="False"
-                                      Height="142"
-                                      SelectedItem="{Binding SelectedPayment}"
-                                      Width="425"
-                                      ItemsSource="{Binding BookingWr.Payments}">
-                                <ListView.Resources>
-                                    <ContextMenu x:Key="ItemContextMenu">
-                                        <MenuItem Header="Διαγραφη"
-                                                  Command="{Binding DataContext.DeletePaymentCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
-                                            <MenuItem.Icon>
-                                                <Image MaxHeight="20"
-                                                       Stretch="Fill" />
-                                            </MenuItem.Icon>
-                                        </MenuItem>
-                                    </ContextMenu>
-                                </ListView.Resources>
-                                <ListView.ItemContainerStyle>
-                                    <Style TargetType="{x:Type ListViewItem}">
-                                        <Setter Property="ContextMenu"
-                                                Value="{StaticResource ItemContextMenu}" />
-                                    </Style>
-                                </ListView.ItemContainerStyle>
-                                <ListView.View>
-                                    <GridView>
-                                        <GridViewColumn Header="Ημερομηνία"
-                                                        Width="115"
-                                                        DisplayMemberBinding="{Binding Date, StringFormat='{}{0:dd/MM/yyyy-HH:mm}'}" />
-                                        <GridViewColumn Header="Ποσό"
-                                                        Width="40"
-                                                        DisplayMemberBinding="{Binding Amount}" />
-                                        <GridViewColumn Header="Μέθοδος"
-                                                        Width="70" />
-                                        <GridViewColumn Header="Χρήστης"
-                                                        Width="80"
-                                                        DisplayMemberBinding="{Binding User.UserName}" />
-                                        <GridViewColumn Header="Σημείωση"
-                                                        DisplayMemberBinding="{Binding Comment}" />
-                                    </GridView>
-                                </ListView.View>
-                            </ListView>
-                        </StackPanel>
-                    </Grid>
-                </GroupBox>
-            </StackPanel>
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
                 <GroupBox Header="Διαθέσιμα Δωμάτια"
-                          Grid.Row="0"
-                          Grid.Column="0"
                           VerticalAlignment="Top">
                     <StackPanel>
                         <StackPanel.Resources>
@@ -425,107 +65,12 @@
                                         Value="Center" />
                             </Style>
                         </StackPanel.Resources>
-                        <StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <StackPanel>
-                                    <Label Content="Check In:"
-                                           Padding="0" />
-                                    <DatePicker SelectedDate="{Binding BookingWr.CheckIn}"
-                                                Margin="0,0,5,0" />
-                                </StackPanel>
-                                <StackPanel>
-                                    <Label Content="Check Out:"
-                                           Padding="0" />
-                                    <DatePicker SelectedDate="{Binding BookingWr.CheckOut}" />
-                                </StackPanel>
-                                <CheckBox IsChecked="{Binding BookingWr.DateChanged}"
-                                          VerticalAlignment="Center" />
-                                <StackPanel Margin="5,0,5,0">
-                                    <Label Content="Ξενοδοχείο:"
-                                           Padding="0"
-                                           VerticalAlignment="Center" />
-                                    <ComboBox MinWidth="45"
-                                              Width="90"
-                                              x:Name="FilterSelectedHotelComboBox"
-                                              SelectedIndex="{Binding SelectedHotelIndex}"
-                                              VerticalAlignment="Center">
-                                        <ComboBox.Resources>
-                                            <CollectionViewSource x:Key="HotelsList"
-                                                                  Source="{Binding Hotels}" />
-                                        </ComboBox.Resources>
-                                        <ComboBox.ItemsSource>
-                                            <CompositeCollection>
-                                                <ComboBoxItem Content="Όλα" />
-                                                <CollectionContainer Collection="{Binding Source={StaticResource HotelsList}}" />
-                                            </CompositeCollection>
-                                        </ComboBox.ItemsSource>
-                                    </ComboBox>
-                                </StackPanel>
-                                <StackPanel>
-                                    <Label VerticalAlignment="Center"
-                                           Padding="0"
-                                           Content="Τύπος Δωματίου:" />
-                                    <ComboBox VerticalAlignment="Center"
-                                              Width="90"
-                                              SelectedIndex="{Binding SelectedRoomTypeIndex}">
-                                        <ComboBox.Resources>
-                                            <CollectionViewSource x:Key="RoomTypesList"
-                                                                  Source="{Binding RoomTypes}" />
-                                        </ComboBox.Resources>
-                                        <ComboBox.ItemsSource>
-                                            <CompositeCollection>
-                                                <ComboBoxItem Content="Όλα" />
-                                                <CollectionContainer Collection="{Binding Source={StaticResource RoomTypesList}}" />
-                                            </CompositeCollection>
-                                        </ComboBox.ItemsSource>
-                                    </ComboBox>
-                                </StackPanel>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal"
-                                        Margin="0,5"
-                                        IsEnabled="{Binding BookingWr.DateChanged}"
-                                        HorizontalAlignment="Right">
-
-                                <CheckBox Content="Όλοι"
-                                          IsChecked="{Binding All}"
-                                          VerticalAlignment="Center"
-                                          Margin="5" />
-                                <Button Content="Προβολή"
-                                        IsDefault="True"
-                                        VerticalAlignment="Center"
-                                        Command="{Binding ShowFilteredRoomsCommand}"
-                                        Margin="5,0" />
-                                <Button Content="Τοποθέτηση"
-                                        VerticalAlignment="Center"
-                                        Command="{Binding PutCustomersInRoomCommand}"
-                                        Margin="0,0,5,0" />
-                                <Button Content="Noname"
-                                        VerticalAlignment="Center"
-                                        Command="{Binding BookRoomNoNameCommand}"
-                                        Margin="0,0,5,0" />
-                                <Button Content="OverBook"
-                                        VerticalAlignment="Center"
-                                        Command="{Binding OverBookHotelCommand}"
-                                        Margin="0,0,5,0" />
-                                <Button Content="Transfer"
-                                        VerticalAlignment="Center"
-                                        Command="{Binding AddTransferCommand}"
-                                        Margin="0,0,5,0" />
-                                <Button Cursor="Hand"
-                                        Command="{Binding UpdateAllCommand}"
-                                        HorizontalAlignment="Left">
-                                    <iconPacks:PackIconFontAwesome Kind="SyncSolid"
-                                                                   VerticalAlignment="Center"
-                                                                   Spin="{Binding UnitOfWork.IsBusy}"
-                                                                   Margin="2" />
-                                </Button>
-                            </StackPanel>
-                        </StackPanel>
+                       
                         <ListView ItemsSource="{Binding FilteredRoomList}"
                                   Grid.Row="1"
-                                  Width="400"
+                                  Width="460"
                                   HorizontalAlignment="Left"
-                                  Height="320"
+                                  Height="230"
                                   SelectedItem="{Binding SelectedRoom, UpdateSourceTrigger=PropertyChanged}"
                                   Grid.ColumnSpan="2">
                             <ListView.Resources>
@@ -615,6 +160,101 @@
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <StackPanel>
+                                    <Label Content="Check In:"
+                                           Padding="0" />
+                                    <DatePicker SelectedDate="{Binding BookingWr.CheckIn}"
+                                                Margin="0,0,5,0" />
+                                </StackPanel>
+                                <StackPanel>
+                                    <Label Content="Check Out:"
+                                           Padding="0" />
+                                    <DatePicker SelectedDate="{Binding BookingWr.CheckOut}" />
+                                </StackPanel>
+                                <!--<CheckBox IsChecked="{Binding BookingWr.DateChanged}"
+                                          VerticalAlignment="Center" />-->
+                                <StackPanel Margin="5,0,5,0">
+                                    <Label Content="Ξενοδοχείο:"
+                                           Padding="0"
+                                           VerticalAlignment="Center" />
+                                    <ComboBox MinWidth="45"
+                                              Width="90"
+                                              x:Name="FilterSelectedHotelComboBox"
+                                              SelectedIndex="{Binding SelectedHotelIndex}"
+                                              VerticalAlignment="Center">
+                                        <ComboBox.Resources>
+                                            <CollectionViewSource x:Key="HotelsList"
+                                                                  Source="{Binding Hotels}" />
+                                        </ComboBox.Resources>
+                                        <ComboBox.ItemsSource>
+                                            <CompositeCollection>
+                                                <ComboBoxItem Content="Όλα" />
+                                                <CollectionContainer Collection="{Binding Source={StaticResource HotelsList}}" />
+                                            </CompositeCollection>
+                                        </ComboBox.ItemsSource>
+                                    </ComboBox>
+                                </StackPanel>
+                                <StackPanel>
+                                    <Label VerticalAlignment="Center"
+                                           Padding="0"
+                                           Content="Τύπος Δωματίου:" />
+                                    <ComboBox VerticalAlignment="Center"
+                                              Width="90"
+                                              SelectedIndex="{Binding SelectedRoomTypeIndex}">
+                                        <ComboBox.Resources>
+                                            <CollectionViewSource x:Key="RoomTypesList"
+                                                                  Source="{Binding RoomTypes}" />
+                                        </ComboBox.Resources>
+                                        <ComboBox.ItemsSource>
+                                            <CompositeCollection>
+                                                <ComboBoxItem Content="Όλα" />
+                                                <CollectionContainer Collection="{Binding Source={StaticResource RoomTypesList}}" />
+                                            </CompositeCollection>
+                                        </ComboBox.ItemsSource>
+                                    </ComboBox>
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal"
+                                        Margin="0,5"
+                                        HorizontalAlignment="Right">
+
+                                <CheckBox Content="Όλοι"
+                                          IsChecked="{Binding All}"
+                                          VerticalAlignment="Center"
+                                          Margin="5" />
+                                <Button Content="Προβολή"
+                                        IsDefault="True"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding ShowFilteredRoomsCommand}"
+                                        Margin="5,0" />
+                                <Button Content="Τοποθέτηση"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding PutCustomersInRoomCommand}"
+                                        Margin="0,0,5,0" />
+                                <Button Content="Noname"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding BookRoomNoNameCommand}"
+                                        Margin="0,0,5,0" />
+                                <Button Content="OverBook"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding OverBookHotelCommand}"
+                                        Margin="0,0,5,0" />
+                                <Button Content="Transfer"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding AddTransferCommand}"
+                                        Margin="0,0,5,0" />
+                                <Button Cursor="Hand"
+                                        Command="{Binding UpdateAllCommand}"
+                                        HorizontalAlignment="Left">
+                                    <iconPacks:PackIconFontAwesome Kind="SyncSolid"
+                                                                   VerticalAlignment="Center"
+                                                                   Spin="{Binding UnitOfWork.IsBusy}"
+                                                                   Margin="2" />
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
                     </StackPanel>
                 </GroupBox>
                 <Grid HorizontalAlignment="Left"
@@ -784,27 +424,9 @@
                             <ComboBox ItemsSource="{Binding Users}"
                                       SelectedItem="{Binding SelectedUser}"
                                       DisplayMemberPath="UserName"
+                                      Visibility="{Binding Converter={StaticResource UserToVisibilityConverter},ConverterParameter=1,  Mode=OneWay}"
                                       VerticalAlignment="Center" />
-                            <Button Content="Αποθήκευση"
-                                    Margin="5,5,5,0"
-                                    Command="{Binding SaveCommand}" />
-                            <Button Content="Προσθήκη πελάτη"
-                                    Margin="5,5,5,0"
-                                    Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}"
-                                    Command="{Binding AddCustomerCommand}" />
-                            <Button Content="Προσθήκη απο αρχείο"
-                                    Margin="5,5,5,0"
-                                    Command="{Binding AddFromFileCommand}" />
-                            <Button Content="Read Next Line"
-                                    Margin="5,5,5,0"
-                                    Command="{Binding ReadNextLineCommand}" />
-                            <Button Content="CheckOut"
-                                    Margin="5,5,5,0"
-                                    Command="{Binding CheckOutCommand}" />
-                            <Button Content="Καθαρισμός"
-                                    Margin="5,5,5,0"
-                                    Command="{Binding ClearBookingCommand}"
-                                    Click="Button_Click" />
+
                             <TextBlock Text="{Binding ErrorsInCanAddReservationToRoom}"
                                        HorizontalAlignment="Center"
                                        FontSize="14"
@@ -815,6 +437,366 @@
                         </StackPanel>
                     </GroupBox>
                 </Grid>
+               
+                <Border BorderThickness="1"
+                        Height="250"
+                        Visibility="Collapsed"
+                        VerticalAlignment="Top"
+                        Margin="0,10">
+                    <Grid Margin="5">
+                        <Grid.Resources>
+                            <Style TargetType="Label">
+                                <Setter Property="HorizontalAlignment"
+                                        Value="Center" />
+                                <Setter Property="Padding"
+                                        Value="0,5,0,0" />
+                            </Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment"
+                                        Value="Center" />
+                                <Setter Property="Background"
+                                        Value="LightGray" />
+                            </Style>
+                        </Grid.Resources>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0"
+                                    VerticalAlignment="Top">
+                            <Label Content="Πωλητής:"
+                                   Padding="0"
+                                   HorizontalAlignment="Center" />
+                            <TextBlock Text="{Binding BookingWr.User.UserName }" />
+                            <Label Content="Προστέθηκε:"
+                                   Padding="0" />
+                            <TextBlock Text="{Binding BookingWr.CreatedDate, StringFormat='{}{0:dd/MM/yyyy}' }" />
+                        </StackPanel  >
+                        <StackPanel Grid.Row="1"
+                                    VerticalAlignment="Center">
+
+                            <Separator />
+                            <TextBlock Text="{Binding SelectedCustomer.Reservation.CheckIn, StringFormat='{}{0:dd/MM/yyyy}'}" />
+                            <Separator Width="10" />
+                            <TextBlock Text="{Binding SelectedCustomer.Reservation.CheckOut, StringFormat='{}{0:dd/MM/yyyy}'}" />
+                            <Separator />
+                        </StackPanel>
+                        <StackPanel Grid.Row="2"
+                                    VerticalAlignment="Bottom">
+                            <Label Content="Ξενοδόχείο:"
+                                   Padding="0" />
+                            <TextBlock Text="{Binding SelectedCustomer.HotelName }" />
+                            <Label Content="Τύπος Δωματίου:"
+                                   Padding="0" />
+                            <TextBlock Text="{Binding SelectedCustomer.RoomTypeName }" />
+                            <Separator />
+                            <CheckBox Content="Only Stay"
+                                      HorizontalAlignment="Left"
+                                      IsChecked="{Binding SelectedCustomer.Reservation.OnlyStay}" />
+                            <CheckBox Content="HB"
+                                      HorizontalAlignment="Left"
+                                      IsChecked="{Binding SelectedCustomer.Reservation.HB}" />
+                            <CheckBox Content="Διαφ. Ημερομηνίες"
+                                      HorizontalAlignment="Left"
+                                      IsChecked="{Binding BookingWr.DifferentDates}" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+                <GroupBox Grid.Column="1"
+                          Header="Πληρωμές"
+                          HorizontalAlignment="Left"
+                          VerticalAlignment="Top">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <GroupBox HorizontalAlignment="Center"
+                                  VerticalAlignment="Top"
+                                  Header="Νέα Πληρωμή">
+                            <StackPanel Orientation="Horizontal">
+                                <StackPanel Margin="5,5,5,0">
+                                    <TextBlock Text="Ποσό:"
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center" />
+                                    <TextBox Grid.Row="0"
+                                             Margin="0,5"
+                                             HorizontalAlignment="Center"
+                                             Grid.Column="1"
+                                             Text="{Binding Payment.AmountString,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                             Width="50" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1"
+                                            Margin="5">
+                                    <TextBlock Text="Μέθοδος:"
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center" />
+                                    <ComboBox Grid.Row="0"
+                                              Margin="0,5"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Center"
+                                              SelectedIndex="{Binding Payment.PaymentMethod,NotifyOnValidationError=True}"
+                                              Grid.Column="1"
+                                              Width="80">
+                                        <ComboBoxItem>Μετρητά</ComboBoxItem>
+                                        <ComboBoxItem>Τράπεζα</ComboBoxItem>
+                                        <ComboBoxItem>VISA</ComboBoxItem>
+                                    </ComboBox>
+                                </StackPanel>
+                                <StackPanel Grid.Row="1"
+                                            Margin="5,5,0,0"
+                                            Grid.Column="0"
+                                            HorizontalAlignment="Stretch"
+                                            Grid.ColumnSpan="2">
+                                    <TextBlock Text="Σημείωση Πληρωμής:"
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center" />
+                                    <TextBox Grid.Row="0"
+                                             Margin="0,0,5,-5"
+                                             HorizontalAlignment="Stretch"
+                                             Grid.Column="1"
+                                             Width="140"
+                                             TextWrapping="Wrap"
+                                             Height="40"
+                                             Text="{Binding Payment.Comment}" />
+                                </StackPanel>
+                            </StackPanel>
+                        </GroupBox>
+                        <StackPanel Grid.Row="1"
+                                    Orientation="Vertical">
+                            <TextBlock Text=" Ιστορικό Πληρωμών"
+                                       HorizontalAlignment="Left" />
+                            <ListView Name="payments"
+                                      Focusable="False"
+                                      Height="142"
+                                      SelectedItem="{Binding SelectedPayment}"
+                                      Width="425"
+                                      ItemsSource="{Binding BookingWr.Payments}">
+                                <ListView.Resources>
+                                    <ContextMenu x:Key="ItemContextMenu">
+                                        <MenuItem Header="Διαγραφη"
+                                                  Visibility="{Binding Converter={StaticResource UserToVisibilityConverter},ConverterParameter=1,  Mode=OneWay}"
+                                                  Command="{Binding DataContext.DeletePaymentCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
+                                            <MenuItem.Icon>
+                                                <Image MaxHeight="20"
+                                                       Stretch="Fill" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                </ListView.Resources>
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="{x:Type ListViewItem}">
+                                        <Setter Property="ContextMenu"
+                                                Value="{StaticResource ItemContextMenu}" />
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Header="Ημερομηνία"
+                                                        Width="115"
+                                                        DisplayMemberBinding="{Binding Date, StringFormat='{}{0:dd/MM/yyyy-HH:mm}'}" />
+                                        <GridViewColumn Header="Ποσό"
+                                                        Width="40"
+                                                        DisplayMemberBinding="{Binding Amount}" />
+                                        <GridViewColumn Header="Μέθοδος"
+                                                        Width="70" />
+                                        <GridViewColumn Header="Χρήστης"
+                                                        Width="80"
+                                                        DisplayMemberBinding="{Binding User.UserName}" />
+                                        <GridViewColumn Header="Σημείωση"
+                                                        DisplayMemberBinding="{Binding Comment}" />
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </StackPanel>
+                    </Grid>
+                </GroupBox>
+            </StackPanel>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Margin="5,0">
+                    <DataGrid Margin="5"
+                              FontSize="12"
+                              Height="250"
+                              Width="663"
+                              LoadingRow="DataGrid_LoadingRow"
+                              PreparingCellForEdit="CustomersDataGrid_PreparingCellForEdit"
+                              x:Name="CustomersDataGrid"
+                              KeyUp="DataGrid_KeyDown"
+                              HorizontalAlignment="Left"
+                              ItemsSource="{Binding BookingWr.Customers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              AutoGenerateColumns="False"
+                              SelectedItem="{Binding SelectedCustomer}"
+                              CanUserAddRows="True">
+                        <DataGrid.Resources>
+                            <Style TargetType="{x:Type ComboBox}">
+                                <Setter Property="Margin"
+                                        Value="0" />
+                                <Style.Triggers>
+                                    <Trigger Property="Validation.HasError"
+                                             Value="True">
+
+                                        <Setter Property="ToolTip"
+                                                Value="{Binding RelativeSource={RelativeSource Self},
+            Path=(Validation.Errors)[0].ErrorContent}" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.Resources>
+                        <DataGrid.RowStyle>
+                            <StaticResource ResourceKey="RowStyle" />
+                        </DataGrid.RowStyle>
+                        <DataGrid.RowValidationRules>
+                            <helpers:RowDataInfoValidationRule ValidationStep="UpdatedValue" />
+                        </DataGrid.RowValidationRules>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Δωμάτιο"
+                                                IsReadOnly="True"
+                                                Binding="{Binding RoomNumber, UpdateSourceTrigger=PropertyChanged}">
+                                <DataGridTextColumn.CellStyle>
+                                    <Style TargetType="{x:Type DataGridCell}">
+                                        <Setter Property="Background"
+                                                Value="{Binding RoomColor, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" />
+                                    </Style>
+                                </DataGridTextColumn.CellStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Όνομα"
+                                                MaxWidth="200"
+                                                MinWidth="90"
+                                                ElementStyle="{StaticResource DataGridColumnStyle}"
+                                                EditingElementStyle="{StaticResource DataGridEditingColumnStyle}"
+                                                Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                            <DataGridTextColumn Header="Επίθετο"
+                                                MinWidth="90"
+                                                MaxWidth="200"
+                                                ElementStyle="{StaticResource DataGridColumnStyle}"
+                                                EditingElementStyle="{StaticResource DataGridEditingColumnStyle}"
+                                                Binding="{Binding Surename, UpdateSourceTrigger=PropertyChanged}" />
+                            <DataGridTextColumn Header="Τηλέφωνο"
+                                                MinWidth="80"
+                                                MaxWidth="200"
+                                                ElementStyle="{StaticResource DataGridColumnStyle}"
+                                                EditingElementStyle="{StaticResource DataGridEditingColumnStyle}"
+                                                Binding="{Binding Tel, UpdateSourceTrigger=PropertyChanged}" />
+                            <DataGridTemplateColumn Header="Αναχώρηση"
+                                                    Width="100"
+                                                    CellStyle="{StaticResource DataGridCellStyle}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox IsEditable="True"
+                                                  Width="Auto"
+                                                  VerticalAlignment="Top"
+                                                  MinWidth="60"
+                                                  Text="{Binding StartingPlace, UpdateSourceTrigger=PropertyChanged}"
+                                                  ItemsSource="{x:Static helpers:StaticResources.StartingPlaces}"
+                                                  DisplayMemberPath="Name" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Τιμή"
+                                                Width="55"
+                                                ElementStyle="{StaticResource DataGridColumnStyle}"
+                                                EditingElementStyle="{StaticResource DataGridEditingColumnStyle}"
+                                                FontWeight="DemiBold"
+                                                FontSize="14"
+                                                Binding="{Binding PriceString, UpdateSourceTrigger=PropertyChanged}" />
+                            <DataGridComboBoxColumn Header="Ηλικία"
+                                                    ItemsSource="{x:Static helpers:StaticResources.AgesList}">
+                                <DataGridComboBoxColumn.ElementStyle>
+                                    <Style TargetType="{x:Type ComboBox}">
+                                        <Setter Property="SelectedIndex"
+                                                Value="{Binding Age, UpdateSourceTrigger=PropertyChanged}" />
+                                        <Setter Property="Foreground"
+                                                Value="{Binding SelectedIndex, ConverterParameter=12, Converter={StaticResource SelectedIndexToForegroundConverter}, RelativeSource={RelativeSource Self}, UpdateSourceTrigger=PropertyChanged}" />
+                                    </Style>
+                                </DataGridComboBoxColumn.ElementStyle>
+                                <DataGridComboBoxColumn.EditingElementStyle>
+                                    <Style TargetType="{x:Type ComboBox}">
+                                        <Setter Property="SelectedIndex"
+                                                Value="{Binding Age, UpdateSourceTrigger=PropertyChanged}" />
+                                        <Setter Property="Foreground"
+                                                Value="{Binding SelectedIndex, ConverterParameter=12, Converter={StaticResource SelectedIndexToForegroundConverter}, RelativeSource={RelativeSource Self}, UpdateSourceTrigger=PropertyChanged}" />
+                                    </Style>
+                                </DataGridComboBoxColumn.EditingElementStyle>
+                            </DataGridComboBoxColumn>
+                            <DataGridTemplateColumn Header="Λεωφορείο"
+                                                    Visibility="{Binding DataContext.SelectedExcursion.IncludesBus, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox SelectedIndex="{Binding CustomerHasBusIndex, UpdateSourceTrigger=PropertyChanged}"
+                                                  Foreground="{Binding SelectedIndex, ConverterParameter=0, Converter={StaticResource SelectedIndexToForegroundConverter}, RelativeSource={RelativeSource Self}, UpdateSourceTrigger=PropertyChanged}">
+                                            <ComboBoxItem Content="ΝΑΙ" />
+                                            <ComboBoxItem Content="ΜΟΝΟ ΠΗΓΑΙΝΕ" />
+                                            <ComboBoxItem Content="ΜΟΝΟ ΕΠΙΣΤΡΟΦΗ" />
+                                            <ComboBoxItem Content="ΟΧΙ" />
+                                        </ComboBox>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="CheckIn"
+                                                    Visibility="{Binding DataContext.BookingWr.DifferentDates, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <DatePicker SelectedDate="{Binding CheckIn}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="CheckOut"
+                                                    Visibility="{Binding DataContext.BookingWr.DifferentDates, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <DatePicker SelectedDate="{Binding CheckOut}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Center">
+
+                        <TextBlock Text="{Binding ErrorsInDatagrid}"
+                                   FontSize="14"
+                                   Foreground="Red"
+                                   MaxHeight="100"
+                                   MaxWidth="500" />
+                        <TextBlock x:Name="BookedMessage"
+                                   Grid.Row="2"
+                                   FontSize="14"
+                                   Foreground="Green"
+                                   MaxWidth="390"
+                                   MaxHeight="60"
+                                   HorizontalAlignment="Right"
+                                   Text="{Binding BookedMessage}" />
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Grid.Column="1" HorizontalAlignment="Left">
+                    <Button Content="Αποθήκευση"
+                            Margin="5,5,5,0"
+                            Command="{Binding SaveCommand}" />
+                    <Button Content="Προσθήκη πελάτη"
+                            Margin="5,5,5,0"
+                            Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}"
+                            Command="{Binding AddCustomerCommand}" />
+                    <Button Content="Προσθήκη απο αρχείο"
+                            Margin="5,5,5,0"
+                            Command="{Binding AddFromFileCommand}" />
+                    <Button Content="Read Next Line"
+                            Margin="5,5,5,0"
+                            Command="{Binding ReadNextLineCommand}" />
+                    <Button Content="CheckOut"
+                            Margin="5,5,5,0"
+                            Command="{Binding CheckOutCommand}" />
+                    <Button Content="Καθαρισμός"
+                            Margin="5,5,5,0"
+                            Command="{Binding ClearBookingCommand}"
+                            Click="Button_Click" />
+                </StackPanel>
             </Grid>
         </Grid>
     </ScrollViewer>

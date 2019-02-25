@@ -151,7 +151,7 @@ namespace LATravelManager.UI.Data.Workers
 
         public async Task<List<Hotel>> GetAllAvailableRooms(
             GenericRepository context, DateTime planStart, DateTime planEnd,
-            Excursion excursionfilter,
+            ExcursionWrapper excursionfilter,
              Booking unSavedBooking = null)
         {
             try

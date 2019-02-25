@@ -1,5 +1,7 @@
 ﻿using LATravelManager.Model;
+using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace LATravelManager.UI.Repositories
@@ -8,7 +10,7 @@ namespace LATravelManager.UI.Repositories
     {
         Task<T> GetByIdAsync<T>(int id) where T : BaseModel;
 
-        Task<IEnumerable<T>> GetAllAsync<T>() where T : BaseModel;
+        Task<IEnumerable<T>> GetAllAsync<T>(Expression<Func<T, bool>> filter = null) where T : BaseModel;
 
         Task<IEnumerable<TEntity>> GetAllAsyncSortedByName<TEntity>() where TEntity : BaseModel, INamed;
 

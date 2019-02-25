@@ -182,10 +182,18 @@ public class NewReservationHelper : ViewModelBase
                     customer.RoomColor = new SolidColorBrush(Colors.LightPink);
                 else
                     customer.RoomColor = new SolidColorBrush(Colors.LightBlue);
-                if (!booking.DifferentDates)
+                if (booking.DifferentDates)
                 {
-                    customer.CheckIn = booking.CheckIn;
-                    customer.CheckOut = booking.CheckOut;
+                    if (booking.ExcursionDate != null)
+                    {
+                        customer.CheckIn = booking.ExcursionDate.CheckIn;
+                        customer.CheckOut = booking.ExcursionDate.CheckOut;
+                    }
+                    else
+                    {
+                        customer.CheckIn = booking.CheckIn;
+                        customer.CheckOut = booking.CheckOut;
+                    }
                 }
 
                 newRes.CustomersList.Add(customer.Model);
@@ -211,7 +219,7 @@ public class NewReservationHelper : ViewModelBase
         }
     }
 
-    public async Task<BookingWrapper> SaveAsync(GenericRepository context,Payment Payment, BookingWrapper BookingWr)
+    public async Task<BookingWrapper> SaveAsync(GenericRepository context, Payment Payment, BookingWrapper BookingWr)
     {
         //TODO oti na nai exw kanei edw
         //UOW.Reload();
@@ -234,11 +242,11 @@ public class NewReservationHelper : ViewModelBase
         else
         {
             // CalculateDiferences(startingBooking, Booking);
-           // tmpBooking = new BookingWrapper(Booking.Model);
+            // tmpBooking = new BookingWrapper(Booking.Model);
 
-           // Context.Add(tmpBooking.Model);
-           // await Context.SaveAsync();
-           // Context.RemoveById<Booking>(Booking.Id);
+            // Context.Add(tmpBooking.Model);
+            // await Context.SaveAsync();
+            // Context.RemoveById<Booking>(Booking.Id);
             //Booking = tmpBooking;
         }
         await context.SaveAsync();
@@ -298,10 +306,10 @@ public class NewReservationHelper : ViewModelBase
 
     private async Task CalculateDiferencesAsync(Booking Dbbooking, Booking newBooking)
     {
-        var tmpBooking = await Context.GetByIdAsync<Booking>(newBooking.Id);
-        Context.UpdateValues(tmpBooking, newBooking);
-        tmpBooking.Payments.Clear();
-        tmpBooking.ReservationsInBooking.Clear();
+        //var tmpBooking = await Context.GetByIdAsync<Booking>(newBooking.Id);
+        //Context.UpdateValues(tmpBooking, newBooking);
+        //tmpBooking.Payments.Clear();
+        //tmpBooking.ReservationsInBooking.Clear();
 
         //UOW.ObjectContextAdapter.ObjectContext.ObjectStateManager.TryGetObjectStateEntry(tmpBooking, out ObjectStateEntry myObjectState);
         //IEnumerable<string> modifiedProperties = myObjectState.GetModifiedProperties();

@@ -1,11 +1,14 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
+using LaTravelManager.ViewModel;
+using LaTravelManager.ViewModel.Management;
 using LATravelManager.Models;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
-using System.Collections.ObjectModel;
+using LATravelManager.UI.Views;
+using LATravelManager.UI.Views.Management;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -17,11 +20,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
         public MainViewModel()
         {
-            //OpenHotelEditCommand = new RelayCommand(OpenHotelsWindow, CanEditWindows);
-            //OpenCitiesEditCommand = new RelayCommand(OpenCitiesWindow, CanEditWindows);
-            //OpenCountriesEditCommand = new RelayCommand(OpenCountriesWindow, CanEditWindows);
-            //OpenExcursionsEditCommand = new RelayCommand(OpenExcursionsWindow, CanEditWindows);
-            //OpenUsersEditCommand = new RelayCommand(OpenUsersWindow, CanEditWindows);
+           
             Messenger.Default.Register<ChangeVisibilityMessage>(this, msg => { Visibility = msg.Visible ? Visibility.Visible : Visibility.Collapsed; });
             Messenger.Default.Register<IsBusyChangedMessage>(this, msg => { ManageIsBusy(msg.IsBusy); });
             Messenger.Default.Register<LoginLogOutMessage>(this, async msg => { await ChangeViewModel(msg.Login); });
@@ -37,7 +36,8 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             {
                 SelectedViewmodel = new LoginViewModel(StartingRepository);
             }
-            await SelectedViewmodel.LoadAsync(0);
+            await SelectedViewmodel.LoadAsync();
+            RaisePropertyChanged(nameof(MenuVisibility));
         }
 
         #endregion Constructors
@@ -89,15 +89,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             }
         }
 
-        public RelayCommand OpenCitiesEditCommand { get; }
-
-        public RelayCommand OpenCountriesEditCommand { get; }
-
-        public RelayCommand OpenExcursionsEditCommand { get; }
-
-        public RelayCommand OpenHotelEditCommand { get; }
-
-        public RelayCommand OpenUsersEditCommand { get; set; }
+       
 
         public IViewModel SelectedViewmodel
         {
@@ -149,27 +141,18 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
         {
             StartingRepository = startingRepository;
 #if DEBUG
-            Helpers.StaticResources.User = new User { BaseLocation = User.GrafeiaXriston.Thessalonikis, Id = 1, Level = 0, UserName = "admin" };
+            Helpers.StaticResources.User = new User { BaseLocation = 1, Id = 1, Level = 0, UserName = "admin" };
+            RaisePropertyChanged(nameof(MenuVisibility));
 #endif
             if (Helpers.StaticResources.User == null)
                 SelectedViewmodel = new LoginViewModel(StartingRepository);//TODO
             else
                 SelectedViewmodel = new MainUserControl_ViewModel(StartingRepository);//TODO
-            await SelectedViewmodel.LoadAsync(0);
+            await SelectedViewmodel.LoadAsync();
         }
 
-        private bool CanEditWindows()
-        {
-            if (IsInDesignMode)
-                return true;
-            return IsBusy;
-        }
+      
 
-        //public void OpenHotelsWindow()
-        //{
-        //    //SimpleIoc.Default.Register<HotelsManagement_ViewModel>();
-        //    MessengerInstance.Send(new OpenChildWindowCommand(new HotelsManagement_Window()));
-        //}
         private void ChangeVisibility(ChangeVisibilityMessage msg)
         {
             Visibility = msg.Visible ? Visibility.Visible : Visibility.Collapsed;
@@ -183,25 +166,6 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
         #endregion Methods
 
-        //public void OpenCitiesWindow()
-        //{
-        //    //SimpleIoc.Default.Register<HotelsManagement_ViewModel>();
-        //    MessengerInstance.Send(new OpenChildWindowCommand(new CitiesManagement_Window()));
-        //}
-
-        //public void OpenCountriesWindow()
-        //{
-        //    //SimpleIoc.Default.Register<HotelsManagement_ViewModel>();
-        //    MessengerInstance.Send(new OpenChildWindowCommand(new CountriesManagement_Window()));
-        //}
-        //private void OpenExcursionsWindow()
-        //{
-        //    MessengerInstance.Send(new OpenChildWindowCommand(new ExcursionsManagement_Window()));
-        //}
-
-        //private void OpenUsersWindow()
-        //{
-        //    MessengerInstance.Send(new OpenChildWindowCommand(new UsersManagement_Window()));
-        //}
+       
     }
 }

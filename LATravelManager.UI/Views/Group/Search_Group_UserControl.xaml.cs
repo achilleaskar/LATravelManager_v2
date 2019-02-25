@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using LATravelManager.UI.ViewModel.CategoriesViewModels.Group;
+using System.Windows.Controls;
 
 namespace LATravelManager.UI.Views.Group
 {
@@ -14,6 +15,7 @@ namespace LATravelManager.UI.Views.Group
 
         private void ListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            ((Search_Group_ViewModel)DataContext).EditBookingCommand.Execute(null);
         }
 
         private void ListViewSub_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)

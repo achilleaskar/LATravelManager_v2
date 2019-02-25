@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace LATravelManager.UI.Views
+namespace LATravelManager.UI.Views.Management
 {
     /// <summary>
     /// Interaction logic for CitiesManagementWindow.xaml

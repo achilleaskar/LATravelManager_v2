@@ -1,5 +1,4 @@
 ﻿using GalaSoft.MvvmLight;
-using LATravelManager.UI.Repositories;
 using System.Threading.Tasks;
 
 namespace LATravelManager.UI.ViewModel.BaseViewModels
@@ -9,33 +8,11 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         private bool _hasChanges;
 
 
-
-
-        private bool _isContextInUse = false;
-
-        public bool isContextInUse
-        {
-            get
-            {
-                return _isContextInUse;
-            }
-
-            set
-            {
-                if (_isContextInUse == value)
-                {
-                    return;
-                }
-
-                _isContextInUse = value;
-                RaisePropertyChanged();
-            }
-        }
         public bool IsLoaded { get; set; }
 
-        public abstract Task LoadAsync(int id);
-        public abstract Task ReloadAsync();
+        public abstract Task LoadAsync(int id = 0);
 
+        public abstract Task ReloadAsync();
 
         public bool HasChanges
         {
@@ -49,6 +26,5 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 }
             }
         }
-
     }
 }

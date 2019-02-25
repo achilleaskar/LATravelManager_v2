@@ -11,7 +11,7 @@ namespace LATravelManager.Models
         public Customer()
         {
             Age = 18;
-            DOB = DateTime.Now.AddYears(-20);
+            //DOB = DateTime.Now.AddYears(-20);
         }
         #region Properties
 
@@ -34,7 +34,7 @@ namespace LATravelManager.Models
 
         public int DeserveDiscount { get; set; }
 
-        public DateTime DOB { get; set; }
+        public DateTime? DOB { get; set; }
 
         [StringLength(30, MinimumLength = 0)]
         [DataType(DataType.EmailAddress, ErrorMessage = "Το Email δεν έχει τη σωστή μορφή")]
@@ -66,8 +66,8 @@ namespace LATravelManager.Models
         [StringLength(20, MinimumLength = 3, ErrorMessage = "Το Επίθετο μπορεί να είναι απο 3 έως 20 χαρακτήρες")]
         public string Surename { get; set; }
 
-        [Phone(ErrorMessage = "Το τηλέφωνο δν έχει τη σωστή μορφή")]
         [StringLength(18, MinimumLength = 10, ErrorMessage = "Το τηλέφωνο πρέπει να είναι τουλάχιστον 10 χαρακτήρες")]
+        [Phone(ErrorMessage = "Το τηλέφωνο δν έχει τη σωστή μορφή")]
         public string Tel { get; set; }
 
         #endregion Properties

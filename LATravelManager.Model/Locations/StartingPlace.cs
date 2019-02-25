@@ -3,8 +3,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LATravelManager.Models
 {
-    public class StartingPlace : BaseModel,INamed
+    public class StartingPlace : BaseModel, INamed
     {
+        public StartingPlace()
+        {
+
+        }
         #region Fields + Constructors
 
         private string _Details = string.Empty;

@@ -11,10 +11,7 @@
              Height="700"
              d:DesignHeight="900"
              d:DesignWidth="800">
-    <UserControl.DataContext>
-        <Binding Path="AddRoomsGroup"
-                 Source="{StaticResource Locator}" />
-    </UserControl.DataContext>
+    
     <UserControl.Resources>
         <xcad:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <converters:TabSizeConverter x:Key="tabSizeConverter" />

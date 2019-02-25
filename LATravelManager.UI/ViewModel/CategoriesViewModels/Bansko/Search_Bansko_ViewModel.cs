@@ -271,7 +271,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
 
         #region Methods
 
-        public override async Task LoadAsync(int id)
+        public override async Task LoadAsync(int id = 0)
         {
             await ReloadAsync();
         }
@@ -331,7 +331,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
                 var viewModel = new NewReservation_Bansko_ViewModel();
                 await viewModel.LoadAsync(SelectedReservation.Booking.Id);
-                MessengerInstance.Send(new OpenChildWindowCommand(new EditBooking_Window(), viewModel));
+                MessengerInstance.Send(new OpenChildWindowCommand(new EditBooking_Bansko_Window(), viewModel));
             }
             catch (Exception ex)
             {

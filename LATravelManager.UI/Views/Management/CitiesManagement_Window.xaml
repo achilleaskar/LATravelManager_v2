@@ -1,4 +1,4 @@
-﻿<Window x:Class="LATravelManager.UI.Views.CitiesManagement_Window"
+﻿<Window x:Class="LATravelManager.UI.Views.Management.CitiesManagement_Window"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -26,7 +26,7 @@
             <Grid VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="100" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -91,7 +91,7 @@
                                                    Margin="5" />
                 </Button>
                 <DataGrid ItemsSource="{Binding MainCollection}"
-                          Width="200"
+                          Width="210"
                           Grid.Row="1"
                           VerticalAlignment="Stretch"
                           AutoGenerateColumns="False"
@@ -99,9 +99,10 @@
                           CanUserDeleteRows="False"
                           SelectedItem="{Binding SelectedEntity}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Όνομα"
+                        <DataGridTextColumn Header="Όνομα" Width="100"
                                             Binding="{Binding Name}" />
                         <DataGridTextColumn Header="Χώρα"
+                                            Width="100"
                                             Binding="{Binding Country.Name}" />
                     </DataGrid.Columns>
                 </DataGrid>

@@ -12,6 +12,13 @@ namespace LATravelManager.UI.Converters
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (parameter==null&&value is int)
+            {
+                if (Helpers.StaticResources.User.Level <= (int)value)
+                    return Visibility.Visible;
+                else
+                    return Visibility.Collapsed;
+            }
             if (Helpers.StaticResources.User != null && parameter != null)
             {
                 //if (value is Reservation r && StaticResources.User.Level == StaticResources.UserLevel.OfficeManager)
@@ -19,7 +26,7 @@ namespace LATravelManager.UI.Converters
                 //        return Visibility.Visible;
                 //    else
                 //        return Visibility.Collapsed;
-                if (Helpers.StaticResources.User.Level < int.Parse(parameter.ToString()))
+                if (Helpers.StaticResources.User.Level <= int.Parse(parameter.ToString()))
                     return Visibility.Visible;
             }
             return Visibility.Collapsed;

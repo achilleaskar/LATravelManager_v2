@@ -92,9 +92,9 @@ namespace LATravelManager.UI.Wrapper
             set { SetValue(value); }
         }
 
-        public DateTime DOB
+        public DateTime? DOB
         {
-            get { return GetValue<DateTime>(); }
+            get { return GetValue<DateTime?>(); }
             set { SetValue(value); }
         }
 

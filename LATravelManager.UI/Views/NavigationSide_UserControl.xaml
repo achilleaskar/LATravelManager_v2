@@ -12,7 +12,8 @@
     
     <UserControl.Resources>
         <DataTemplate x:Key="SidePaneListViewTemplate">
-            <Button Command="{Binding ChangeViewModelCommand}" Margin="5 5 5 0">
+            <Button Command="{Binding ChangeViewModelCommand}" Margin="5 5 5 0"
+                    Visibility="{Binding Level, Converter={StaticResource UserToVisibilityConverter},  Mode=OneWay}">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <ControlTemplate.Triggers>

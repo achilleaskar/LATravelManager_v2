@@ -70,6 +70,8 @@ namespace LATravelManager.Models
 
         public DateTime CheckOut { get; set; }
 
+        public ExcursionDate ExcursionDate { get; set; }
+
         public string Comment { get; set; }
 
         public float Commision { get; set; }

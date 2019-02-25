@@ -9,6 +9,7 @@
              d:DataContext="{d:DesignInstance windows:MainUserControl_ViewModel}"
              x:Class="LATravelManager.UI.Views.Main_UserControl"
              mc:Ignorable="d"
+             Background="White"
              d:DesignHeight="450"
              d:DesignWidth="800">
     <UserControl.Resources>
@@ -18,10 +19,10 @@
         <DataTemplate DataType="{x:Type viewmodels:GroupParent_ViewModel}">
             <views:GroupExcursions_UserControl />
         </DataTemplate>
-        <!--<DataTemplate DataType="{x:Type viewmodels:Skiathos_ViewModel}">
-            <views:Skiathos_UserControl />
+        <DataTemplate DataType="{x:Type viewmodels:PersonalParent_ViewModel}">
+            <views:Personal_UserControl />
         </DataTemplate>
-        <DataTemplate DataType="{x:Type viewmodels:PersonalExcursion_ViewModel}">
+        <!--  <DataTemplate DataType="{x:Type viewmodels:PersonalExcursion_ViewModel}">
             <views:PersonalExcursions_UserControl />
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewmodels:ThirdPartyExcursions_ViewModel}">
@@ -36,30 +37,53 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <StackPanel HorizontalAlignment="Right"
-                    VerticalAlignment="Top"
-                    Background="White"
-                    Orientation="Horizontal">
-            <Border BorderBrush="DimGray"
-                    BorderThickness="1"
-                    Visibility="{Binding IsBusy, Converter={StaticResource booleanToVisibilityConverter}}"
-                   >
-                <iconPacks:PackIconFontAwesome Kind="SpinnerSolid"
-                                               VerticalAlignment="Center"
-                                               Spin="True"
-                                               Margin="5" />
-            </Border>
-            <Label Content="{Binding UserName}" />
-            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
-            <Label Content="Προβολη" />
-            <ComboBox ItemsSource="{Binding Templates}"
-                      DisplayMemberPath="Name"
-                      VerticalAlignment="Center"
-                      SelectedIndex="{Binding SelectedTemplateIndex}" />
-            <Button Content="Αποσύνδεση"
-                    Margin="5"
-                    Command="{Binding LogOutCommand}" />
-        </StackPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+        <Menu DockPanel.Dock="Top" Height="30"
+              Visibility="{Binding MenuVisibility}">
+            <MenuItem Header="Tools">
+                <MenuItem Header="Open Child" />
+                <MenuItem Header="Add Person" />
+            </MenuItem>
+            <MenuItem Header="Διαχείριση">
+                <MenuItem Command="{Binding OpenHotelEditCommand}"
+                          Header="Ξενοδοχεία" />
+                <MenuItem Command="{Binding OpenCitiesEditCommand}"
+                          Header="Πόλεις" />
+                <MenuItem Command="{Binding OpenCountriesEditCommand}"
+                          Header="Χώρες" />
+                <MenuItem Command="{Binding OpenExcursionsEditCommand}"
+                          Header="Εκδρομές" />
+                <MenuItem Command="{Binding OpenUsersEditCommand}"
+                          Header="Χρήστες" />
+            </MenuItem>
+            </Menu>
+                <StackPanel HorizontalAlignment="Right"
+                            VerticalAlignment="Top"
+                            Background="White"
+                            Grid.Column="1"
+                        Height="30"
+                        Orientation="Horizontal">
+                    <Border BorderBrush="DimGray"
+                            BorderThickness="1"
+                            Visibility="{Binding IsBusy, Converter={StaticResource booleanToVisibilityConverter}}">
+                        <iconPacks:PackIconFontAwesome Kind="SpinnerSolid"
+                                                       VerticalAlignment="Center"
+                                                       Spin="True"
+                                                       Margin="5" />
+                    </Border>
+                    <Label Content="{Binding UserName}" />
+                    <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+                   
+                    <Button Content="Αποσύνδεση"
+                            Margin="5,0"
+                            VerticalAlignment="Center"
+                            Command="{Binding LogOutCommand}" />
+                </StackPanel>
+        </Grid>
         <Grid Grid.Row="1"
               VerticalAlignment="Stretch"
               HorizontalAlignment="Stretch">
@@ -69,10 +93,36 @@
             </Grid.ColumnDefinitions>
             <views:NavigationSide_UserControl VerticalAlignment="Stretch"
                                               DataContext="{Binding NavigationViewModel}" />
-            <ContentControl Content="{Binding SelectedExcursionType}"
-                            VerticalAlignment="Stretch"
-                            HorizontalAlignment="Stretch"
-                            Grid.Column="1" />
+            <TabControl Grid.Column="1"
+                        SelectedIndex="{Binding SelectedTemplateIndex}"
+                        ItemsSource="{Binding Templates}">
+                <TabControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"
+                                   FontSize="16" Margin="25,0">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsSelected,
+                        RelativeSource={RelativeSource AncestorType=TabItem}}"
+                                                     Value="True">
+                                            <Setter Property="FontWeight"
+                                                    Value="Bold" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style></TextBlock>
+                    </DataTemplate>
+                </TabControl.ItemTemplate>
+                <TabControl.ContentTemplate>
+                    <DataTemplate>
+                        <ContentControl Content="{Binding DataContext.SelectedExcursionType,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                        VerticalAlignment="Stretch"
+                                        Background="Aqua"
+                                        HorizontalAlignment="Stretch" />
+                    </DataTemplate>
+                </TabControl.ContentTemplate>
+            </TabControl>
         </Grid>
     </Grid>
 </UserControl>

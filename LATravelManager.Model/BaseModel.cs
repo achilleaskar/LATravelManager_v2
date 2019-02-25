@@ -1,6 +1,4 @@
 ﻿using GalaSoft.MvvmLight;
-using System;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -13,8 +11,6 @@ namespace LATravelManager.Model
         }
 
         #region Properties
-
-       
 
         /// <summary>
         /// Gets an error message indicating what is wrong with this object.
@@ -56,8 +52,6 @@ namespace LATravelManager.Model
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-
-        
 
         //[NotMapped]
         //public int Number

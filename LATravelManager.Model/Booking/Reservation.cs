@@ -97,6 +97,10 @@ namespace LATravelManager.Models
         {
             get
             {
+                if (!Booking.DifferentDates)
+                {
+                    return Booking.ExcursionDate == null ? Booking.CheckIn : Booking.ExcursionDate.CheckIn;
+                }
                 DateTime minValue = new DateTime();
                 foreach (Customer customer in CustomersList)
                 {
@@ -122,6 +126,11 @@ namespace LATravelManager.Models
         {
             get
             {
+                if (!Booking.DifferentDates)
+                {
+                    return Booking.ExcursionDate == null ? Booking.CheckOut: Booking.ExcursionDate.CheckOut;
+                }
+
                 DateTime maxValue = new DateTime();
                 foreach (Customer customer in CustomersList)
                 {

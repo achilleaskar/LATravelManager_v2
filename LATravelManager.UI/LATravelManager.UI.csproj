@@ -80,6 +80,9 @@
     <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
       <HintPath>..\packages\Google.Protobuf.3.5.1\lib\net45\Google.Protobuf.dll</HintPath>
     </Reference>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="MahApps.Metro, Version=1.6.5.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.6.5\lib\net47\MahApps.Metro.dll</HintPath>
     </Reference>
@@ -151,6 +154,9 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WPFTextBoxAutoComplete, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WPFTextBoxAutoComplete.1.0.5\lib\net40\WPFTextBoxAutoComplete.dll</HintPath>
+    </Reference>
     <Reference Include="Xceed.Wpf.AvalonDock, Version=3.5.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
       <HintPath>..\packages\Extended.Wpf.Toolkit.3.5.0\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
     </Reference>
@@ -172,19 +178,29 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ExcursionCategoryChangedMessage.cs" />
+    <Compile Include="Helpers\ExcursionComparer.cs" />
     <Compile Include="Message\ChangeChildViewModelMessage.cs" />
     <Compile Include="Helpers\DocumentsManagement.cs" />
     <Compile Include="Message\LoginLogOutMessage.cs" />
+    <Compile Include="Message\SelectedExcursionChangedMessage.cs" />
     <Compile Include="NotifyTaskCompletion.cs" />
+    <Compile Include="ViewModel\BaseViewModels\AddEditBase.cs" />
     <Compile Include="ViewModel\BaseViewModels\GroupChilds_BaseViewModel.cs" />
     <Compile Include="ViewModel\CategoriesViewModels\Bansko\Search_Bansko_ViewModel.cs" />
     <Compile Include="ViewModel\CategoriesViewModels\Group\NewReservation_Group_ViewModel.cs" />
     <Compile Include="ViewModel\CategoriesViewModels\Group\Search_Group_ViewModel.cs" />
+    <Compile Include="ViewModel\CategoriesViewModels\Personal\NewReservation_Personal_ViewModel.cs" />
+    <Compile Include="ViewModel\CategoriesViewModels\Personal\Search_Personal_ViewModel.cs" />
+    <Compile Include="ViewModel\Management\CitiesManagement_ViewModel.cs" />
+    <Compile Include="ViewModel\Management\CountriesManagement_ViewModel.cs" />
+    <Compile Include="ViewModel\Management\ExcursionsManagement_ViewModel.cs" />
+    <Compile Include="ViewModel\Management\HotelsManagement_ViewModel.cs" />
+    <Compile Include="ViewModel\Management\UsersManagement_viewModel.cs" />
     <Compile Include="ViewModel\Parents\GroupParent_ViewModel.cs" />
     <Compile Include="MessageListener.cs" />
     <Compile Include="Message\ChangeVisibilityMessage.cs" />
     <Compile Include="Message\DeselectAllTabsMessage.cs" />
-    <Compile Include="Message\ExcursionCategoryChanged.cs" />
     <Compile Include="Message\IsBusyChangedMessage.cs" />
     <Compile Include="Message\ResetNavigationTabsMessage.cs" />
     <Compile Include="Message\SetChildViewModelMessage.cs" />
@@ -204,7 +220,7 @@
     <Compile Include="ViewModel\CategoriesViewModels\Bansko\NewReservation_Bansko_ViewModel.cs" />
     <Compile Include="ViewModel\CategoriesViewModels\ChildViewModel.cs" />
     <Compile Include="ViewModel\CategoriesViewModels\IChildViewModel.cs" />
-    <Compile Include="ViewModel\CategoriesViewModels\Personal\PersonalParent_ViewModel.cs" />
+    <Compile Include="ViewModel\Parents\PersonalParent_ViewModel.cs" />
     <Compile Include="ViewModel\CategoriesViewModels\Skiathos\SkiathosParent_ViewModel.cs" />
     <Compile Include="ViewModel\CategoriesViewModels\ThirdParty\ThirdPartyParent_ViewModel.cs" />
     <Compile Include="ViewModel\Tabs\AddRoomsTab.cs" />
@@ -223,8 +239,8 @@
     <Compile Include="Views\AddRooms_UserControl.xaml.cs">
       <DependentUpon>AddRooms_UserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Bansko\EditBooking_Window.xaml.cs">
-      <DependentUpon>EditBooking_Window.xaml</DependentUpon>
+    <Compile Include="Views\Bansko\EditBooking_Bansko_Window.xaml.cs">
+      <DependentUpon>EditBooking_Bansko_Window.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Bansko\Lists_Bankso_UserControl.xaml.cs">
       <DependentUpon>Lists_Bankso_UserControl.xaml</DependentUpon>
@@ -280,8 +296,24 @@
     <Compile Include="Views\NavigationSide_UserControl.xaml.cs">
       <DependentUpon>NavigationSide_UserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Personal\NewReservation_Personal_UserControl.xaml.cs">
+      <DependentUpon>NewReservation_Personal_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Personal\Search_Personal_UserControl.xaml.cs">
+      <DependentUpon>Search_Personal_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Personal_UserControl.xaml.cs">
+      <DependentUpon>Personal_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Services\PlaneService_UserControl.xaml.cs">
+      <DependentUpon>PlaneService_UserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Wrapper\BookingWrapper.cs" />
+    <Compile Include="Wrapper\CityWrapper.cs" />
+    <Compile Include="Wrapper\CountryWrapper.cs" />
     <Compile Include="Wrapper\CustomerWrapper.cs" />
+    <Compile Include="Wrapper\ExcursionWrapper.cs" />
+    <Compile Include="Wrapper\HotelWrapper.cs" />
     <Compile Include="Wrapper\ModelWrapper.cs" />
     <Compile Include="Wrapper\NotifyDataErrorInfoBase.cs" />
     <Compile Include="App.xaml.cs">
@@ -302,11 +334,13 @@
     <Compile Include="Helpers\RowDataInfoValidationRule.cs" />
     <Compile Include="Helpers\SearchBookingsHelper.cs" />
     <Compile Include="Helpers\StaticResources.cs" />
+    <Compile Include="Wrapper\Personal_BookingWrapper.cs" />
+    <Compile Include="Wrapper\UserWrapper.cs" />
     <Page Include="Views\AddRooms_UserControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Bansko\EditBooking_Window.xaml">
+    <Page Include="Views\Bansko\EditBooking_Bansko_Window.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -340,7 +374,7 @@
     </Page>
     <Page Include="Views\Group\NewReservation_Group_UserControl.xaml">
       <SubType>Designer</SubType>
-      <Generator>XamlIntelliSenseFileGenerator</Generator>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Group\Search_Group_UserControl.xaml">
       <SubType>Designer</SubType>
@@ -382,6 +416,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Personal\NewReservation_Personal_UserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Personal\Search_Personal_UserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Personal_UserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Services\PlaneService_UserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Message\OpenChildWindowCommand.cs" />
@@ -405,6 +455,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="log4net.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -441,11 +494,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LATravelManager.DataAccess\LATravelManager.DataAccess.csproj">
-      <Project>{55666D1D-EEC1-481A-AB05-5EE49C7E29AB}</Project>
+      <Project>{55666d1d-eec1-481a-ab05-5ee49c7e29ab}</Project>
       <Name>LATravelManager.DataAccess</Name>
     </ProjectReference>
     <ProjectReference Include="..\LATravelManager.Model\LATravelManager.Model.csproj">
-      <Project>{C98AFCAD-18B7-4072-999F-E285382BAFC1}</Project>
+      <Project>{c98afcad-18b7-4072-999f-e285382bafc1}</Project>
       <Name>LATravelManager.Model</Name>
     </ProjectReference>
   </ItemGroup>

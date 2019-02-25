@@ -118,9 +118,9 @@ namespace LATravelManager.UI.Helpers
 
             if (booking.IsPartners)
                 fileName = @"Sources\Voucher_afirmo.docx";
-            else if (booking.User.BaseLocation == User.GrafeiaXriston.Larisas)
+            else if (booking.User.BaseLocation == 2)
                 fileName = @"Sources\Voucher_enfirmo_larissas.docx";
-            else if (booking.User.BaseLocation == User.GrafeiaXriston.Thessalonikis)
+            else if (booking.User.BaseLocation == 1)
                 fileName = @"Sources\Voucher_enfirmo_thess.docx";
             else
                 fileName = @"Sources\Voucher_enfirmo_thess.docx";

@@ -9,11 +9,7 @@
         mc:Ignorable="d"
         Title="{Binding ControlName}"
         Height="650"
-        Width="800">
-    <Window.DataContext>
-        <Binding Path="Excursions"
-                 Source="{StaticResource Locator}" />
-    </Window.DataContext>
+        Width="900">
     <Grid Margin="20">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -61,7 +57,7 @@
                 <TextBlock Text="Επιλεγμένες Πόλεις:"
                            Grid.Row="2" />
                 <ListView Grid.Row="3"
-                          ItemsSource="{Binding SelectedEntity.Destinations}"
+                          ItemsSource="{Binding SelectedEntity.Destinations,ValidatesOnDataErrors=True}"
                           SelectedItem="{Binding SelectedCity}"
                           DisplayMemberPath="Name"
                           Height="100" />
@@ -72,7 +68,7 @@
                                   SelectedItem="{Binding SelectedCityToAdd}"
                                   DisplayMemberPath="Name"
                                   VerticalAlignment="Center"
-                                  Margin="5"
+                                  Margin="5" Width="150"
                                   IsEditable="True" />
                         <Button HorizontalAlignment="Right"
                                 Padding="3,4,3,3"
@@ -94,7 +90,7 @@
                            Grid.Row="4" />
                 <ListView Grid.Row="5"
                           Width="180"
-                          ItemsSource="{Binding SelectedEntity.ExcursionDates}"
+                          ItemsSource="{Binding SelectedEntity.ExcursionDates,ValidatesOnDataErrors=True}"
                           SelectedItem="{Binding SelectedDate}"
                           DisplayMemberPath="Name"
                           Height="150" />
@@ -114,14 +110,14 @@
                     <Label Content="Check In:"
                            Grid.Row="0" />
                     <DatePicker Grid.Row="0"
-                                SelectedDate="{Binding SelectedDate.CheckIn}"
+                                SelectedDate="{Binding SelectedDate.CheckIn,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                 VerticalAlignment="Center"
                                 Grid.Column="1" />
                     <Label Content="Check Out:"
                            Grid.Row="1"
                            Grid.Column="0" />
                     <DatePicker Grid.Row="1"
-                                SelectedDate="{Binding SelectedDate.CheckOut}"
+                                SelectedDate="{Binding SelectedDate.CheckOut,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                 VerticalAlignment="Center"
                                 Grid.Column="1" />
                     <Label Content="Όνομα:"
@@ -129,7 +125,7 @@
                            Width="Auto"
                            Margin="0"
                            Grid.Column="0" />
-                    <TextBox Text="{Binding SelectedDate.Name}"
+                    <TextBox Text="{Binding SelectedDate.Name,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                              Grid.Row="2"
                              Grid.Column="1" />
                     <Button Content="Προσθήκη"
@@ -147,26 +143,26 @@
                             Grid.Row="6"
                             Grid.ColumnSpan="2">
                     <Label Content="Ταυτότ.:" />
-                    <CheckBox IsChecked="{Binding SelectedEntity.PassportNeeded}"
+                    <CheckBox IsChecked="{Binding SelectedEntity.PassportNeeded,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                               VerticalAlignment="Center" />
                     <Label Content="Ημερ. Γεν. :" />
-                    <CheckBox IsChecked="{Binding SelectedEntity.DOBNeeded}"
+                    <CheckBox IsChecked="{Binding SelectedEntity.DOBNeeded,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                               VerticalAlignment="Center" />
                     <Label Content="Πασο:" />
-                    <CheckBox IsChecked="{Binding SelectedEntity.DiscountsExist}"
+                    <CheckBox IsChecked="{Binding SelectedEntity.DiscountsExist,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                               VerticalAlignment="Center" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal"
                             Grid.Row="7"
                             Grid.ColumnSpan="2">
                     <Label Content="Λεοφορείο:" />
-                    <CheckBox IsChecked="{Binding SelectedEntity.IncludesBus}"
+                    <CheckBox IsChecked="{Binding SelectedEntity.IncludesBus,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                               VerticalAlignment="Center" />
                     <Label Content="Αεροπλάνο:" />
-                    <CheckBox IsChecked="{Binding SelectedEntity.IncludesPlane}"
+                    <CheckBox IsChecked="{Binding SelectedEntity.IncludesPlane,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                               VerticalAlignment="Center" />
                     <Label Content="Πλοίο:" />
-                    <CheckBox IsChecked="{Binding SelectedEntity.IncludesShip}"
+                    <CheckBox IsChecked="{Binding SelectedEntity.IncludesShip,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                               VerticalAlignment="Center" />
                 </StackPanel>
                 <StackPanel Orientation="Vertical"
@@ -207,7 +203,7 @@
                                                    Margin="5" />
                 </Button>
                 <DataGrid ItemsSource="{Binding MainCollection}"
-                          MaxWidth="300"
+                          MaxWidth="490"
                           Grid.Row="1"
                           VerticalAlignment="Stretch"
                           AutoGenerateColumns="False"
@@ -216,9 +212,15 @@
                           SelectedItem="{Binding SelectedEntity}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Όνομα"
+                                            MaxWidth="100"
                                             Binding="{Binding Name}" />
                         <DataGridTextColumn Header="Κατηγορία"
                                             Binding="{Binding ExcursionType.Name}" />
+                        <DataGridTextColumn Header="Έναρξη"
+                                            Width="85"
+                                            Binding="{Binding Start,StringFormat='{}{0:dd/MM/yyyy}'}" />
+                        <DataGridTextColumn Header="Λήξη" Width="85"
+                                            Binding="{Binding End,StringFormat='{}{0:dd/MM/yyyy}'}" />
                     </DataGrid.Columns>
                 </DataGrid>
                 <Button Content="Διαγραφη"

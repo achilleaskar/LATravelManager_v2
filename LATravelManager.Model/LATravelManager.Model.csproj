@@ -67,8 +67,18 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Airline.cs" />
     <Compile Include="BaseModel.cs" />
     <Compile Include="Booking\Booking.cs" />
+    <Compile Include="Booking\Personal_Booking.cs" />
+    <Compile Include="Services\BusService.cs" />
+    <Compile Include="Services\CruiseService.cs" />
+    <Compile Include="Services\FerryService.cs" />
+    <Compile Include="Services\GuideService.cs" />
+    <Compile Include="Services\HotelService.cs" />
+    <Compile Include="Services\OptionalService.cs" />
+    <Compile Include="Services\PlaneService.cs" />
+    <Compile Include="Services\Service.cs" />
     <Compile Include="ChangeLog.cs" />
     <Compile Include="Definitions.cs" />
     <Compile Include="EditTracker.cs" />
@@ -103,6 +113,7 @@
     <Compile Include="Hotels\RoomType.cs" />
     <Compile Include="Locations\StartingPlace.cs" />
     <Compile Include="People\User.cs" />
+    <Compile Include="Services\TransferService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

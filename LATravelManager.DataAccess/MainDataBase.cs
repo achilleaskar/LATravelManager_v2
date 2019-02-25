@@ -1,8 +1,9 @@
-﻿using LATravelManager.Models;
+﻿using LATravelManager.Model;
+using LATravelManager.Model.Booking;
+using LATravelManager.Models;
 using MySql.Data.Entity;
 using System;
 using System.Data.Entity;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,10 +20,12 @@ namespace LATravelManager.DataAccess
         {
             Configuration.ValidateOnSaveEnabled = false;
         }
+
         #endregion Constructors
 
         #region Properties
 
+        public DbSet<Airline> Airlines { get; set; }
         public DbSet<BookingInfoPerDay> BookingInfosPerDay { get; set; }
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<Bus> Bus { get; set; }
@@ -35,6 +38,7 @@ namespace LATravelManager.DataAccess
         public DbSet<Hotel> Hotels { get; set; }
         public DbSet<Leader> Leaders { get; set; }
         public DbSet<OptionalExcursion> OptionalExcursions { get; set; }
+        public DbSet<Personal_Booking> Personal_Bookings { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<Room> Rooms { get; set; }
         public DbSet<RoomType> RoomTypes { get; set; }
@@ -45,14 +49,15 @@ namespace LATravelManager.DataAccess
 
         #region Methods
 
+        public object GetStartingPlace<T>(Func<object, bool> filter)
+        {
+            throw new NotImplementedException();
+        }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            
-
             return base.SaveChangesAsync(cancellationToken);
         }
-
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -61,11 +66,6 @@ namespace LATravelManager.DataAccess
             //Database.Connection.Open();
             base.OnModelCreating(modelBuilder);
             // SetExecutionStrategy(MySqlProviderInvariantName.ProviderName, () => new MySqlExecutionStrategy());
-        }
-
-        public object GetStartingPlace<T>(Func<object, bool> filter)
-        {
-            throw new NotImplementedException();
         }
 
         #endregion Methods

@@ -9,6 +9,8 @@ namespace LATravelManager.UI.Helpers
         #region Properties
 
         public static string[] AgesList { get; set; } = { "<1", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18+" };
+
+        public static string[] Airports { get; set; } = { "Thessaloniki(SKG)", "Athens(ATH)" };
         public static ObservableCollection<StartingPlace> StartingPlaces { get; set; }
         public static Booking TmpBooking { get; set; }
         public static User User { get; set; }

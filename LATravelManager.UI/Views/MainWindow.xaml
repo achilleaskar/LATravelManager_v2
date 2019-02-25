@@ -4,13 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
         Loaded="MainWindow_OnLoaded"
         xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.Window_ViewModels"
         xmlns:views="clr-namespace:LATravelManager.UI.Views"
         d:DataContext="{d:DesignInstance viewmodels:MainViewModel}"
-        Height="780"
-        Width="1200"
+        Height="860"
+        Width="1335"
+        Closed="Window_Closed"
         WindowStartupLocation="CenterScreen">
     <Window.IsEnabled>
         <Binding Path="BindableProperty"
@@ -20,7 +20,6 @@
         <Binding Path="Visibility" />
     </Window.Visibility>
     <Window.Resources>
-        <converters:UserToVisibility x:Key="UserToVisibilityConverter" />
         <DataTemplate DataType="{x:Type viewmodels:LoginViewModel}">
             <views:Login_UserControl />
         </DataTemplate>
@@ -28,26 +27,8 @@
             <views:Main_UserControl />
         </DataTemplate>
     </Window.Resources>
-    <Grid>
-        <Menu DockPanel.Dock="Top">
-            <MenuItem Header="Tools">
-                <MenuItem Header="Open Child" />
-                <MenuItem Header="Add Person" />
-            </MenuItem>
-            <MenuItem Header="Διαχείριση"
-                      Visibility="{Binding MenuVisibility}">
-                <MenuItem Command="{Binding OpenHotelEditCommand}"
-                          Header="Ξενοδοχεία" />
-                <MenuItem Command="{Binding OpenCitiesEditCommand}"
-                          Header="Πόλεις" />
-                <MenuItem Command="{Binding OpenCountriesEditCommand}"
-                          Header="Χώρες" />
-                <MenuItem Command="{Binding OpenExcursionsEditCommand}"
-                          Header="Εκδρομές" />
-                <MenuItem Command="{Binding OpenUsersEditCommand}"
-                          Header="Χρήστες" />
-            </MenuItem>
-        </Menu>
-        <ContentControl Content="{Binding SelectedViewmodel}" />
-    </Grid>
+
+       
+        <ContentControl Content="{Binding SelectedViewmodel}" Grid.Row="1" />
+  
 </Window>

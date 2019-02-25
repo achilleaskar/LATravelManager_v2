@@ -3,17 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:LATravelManager.UI.Views.Group"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
+             xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko"
+             d:DataContext="{d:DesignInstance viewmodels:Search_Bansko_ViewModel}"
              mc:Ignorable="d"
              Background="White"
              d:DesignHeight="450"
              d:DesignWidth="1130">
-    <UserControl.DataContext>
-        <Binding Path="SearchGroup"
-                 Source="{StaticResource Locator}" />
-    </UserControl.DataContext>
-    <Grid IsEnabled="{Binding IsAnyExcursionSelected}">
+    <UserControl.Resources>
+        <converters:UserToVisibility x:Key="UserToVisibilityConverter" />
+    </UserControl.Resources>
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -29,21 +30,30 @@
                 <StackPanel VerticalAlignment="Stretch"
                             Orientation="Vertical">
                     <StackPanel Orientation="Horizontal"
+                                Margin="0 0 0 5"
                                 HorizontalAlignment="Center">
-                        <Label Content="Ημερομηνίες:" />
-                        <ComboBox Width="150"
-                                  SelectedIndex="{Binding SelectedDatesIndex}">
-                            <ComboBox.Resources>
-                                <CollectionViewSource x:Key="DatesList"
-                                                      Source="{Binding SelectedExcursion.ExcursionDates}" />
-                            </ComboBox.Resources>
-                            <ComboBox.ItemsSource>
-                                <CompositeCollection>
-                                    <ComboBoxItem Content="Όλες" />
-                                    <CollectionContainer Collection="{Binding Source={StaticResource DatesList}}" />
-                                </CompositeCollection>
-                            </ComboBox.ItemsSource>
-                        </ComboBox>
+                        <StackPanel Margin="0,0,5,0">
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="CheckIn"
+                                       Padding="0"
+                                       HorizontalAlignment="Center" />
+                                <CheckBox Margin="5,0"
+                                          IsChecked="{Binding EnableCheckInFilter}" />
+                            </StackPanel>
+                            <DatePicker SelectedDate="{Binding CheckIn}"
+                                        Width="118" />
+                        </StackPanel>
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="CheckOut"
+                                       Padding="0"
+                                       HorizontalAlignment="Center" />
+                                <CheckBox Margin="5,0"
+                                          IsChecked="{Binding EnableCheckOutFilter}" />
+                            </StackPanel>
+                            <DatePicker SelectedDate="{Binding CheckOut}"
+                                        Width="118" />
+                        </StackPanel>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Border BorderBrush="Gray"
@@ -83,7 +93,7 @@
                         Margin="5,0">
                 <Label Content="Λέξη Κλειδί:"
                        VerticalAlignment="Center" />
-                <TextBox Text="{Binding KeyWordBookingFilter, Delay=100,UpdateSourceTrigger=PropertyChanged}"
+                <TextBox Text="{Binding FilterString, Delay=100,UpdateSourceTrigger=PropertyChanged}"
                          Width="100"
                          VerticalAlignment="Center"
                          Margin="0,0,5,0" />
@@ -97,7 +107,7 @@
                        VerticalAlignment="Center" />
                 <ComboBox  Width="85"
                            VerticalAlignment="Center"
-                           SelectedItem="{Binding UserBookingFilter}">
+                           SelectedIndex="{Binding UserIndexBookingFilter}">
                     <ComboBox.Resources>
                         <CollectionViewSource x:Key="UsersList"
                                               Source="{Binding Users}" />
@@ -109,6 +119,7 @@
                         </CompositeCollection>
                     </ComboBox.ItemsSource>
                 </ComboBox>
+
             </StackPanel>
         </StackPanel>
         <DataGrid Grid.Row="1"
@@ -121,18 +132,18 @@
                   IsReadOnly="True"
                   CanUserReorderColumns="False"
                   AutoGenerateColumns="False"
-                  ItemsSource="{Binding FilteredBookings,UpdateSourceTrigger=PropertyChanged}"
-                  SelectedItem="{Binding SelectedBooking,UpdateSourceTrigger=PropertyChanged}">
+                  ItemsSource="{Binding FilteredReservations,UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding SelectedReservation,UpdateSourceTrigger=PropertyChanged}">
             <DataGrid.Resources>
-                <ContextMenu x:Key="reservationContextMenu">
+                <ContextMenu x:Key="reservationContextSubMenu">
                     <MenuItem Header="Επεξεργασία"
-                              Command="{Binding DataContext.EditReservationCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}">
+                              Command="{Binding DataContext.EditBookingCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}">
                         <MenuItem.Icon>
                             <iconPacks:PackIconFontAwesome Kind="EditRegular" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="Διαγραφή"
-                              Command="{Binding DataContext.DeleteBookingCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}">
+                    <MenuItem Header="Διαγραφή Κράτησης"
+                              Command="{Binding DataContext.DeleteReservationCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}">
                         <MenuItem.Icon>
                             <iconPacks:PackIconFontAwesome Kind="TrashAltRegular" />
                         </MenuItem.Icon>
@@ -143,115 +154,40 @@
                 <Style TargetType="{x:Type DataGridRow}"
                        BasedOn="{StaticResource {x:Type DataGridRow}}">
                     <Setter Property="ContextMenu"
-                            Value="{StaticResource reservationContextMenu}" />
+                            Value="{StaticResource reservationContextSubMenu}" />
                     <EventSetter Event="MouseDoubleClick"
                                  Handler="ListView_MouseDoubleClick" />
                 </Style>
             </DataGrid.RowStyle>
             <DataGrid.Columns>
+                <DataGridTextColumn Header="Ξενοδοχείο"
+                                    Width="95"
+                                    Binding="{Binding HotelName}" />
+                <DataGridTextColumn Header="Τύπος Δωμ."
+                                    Width="90"
+                                    Binding="{Binding RoomTypeName}" />
                 <DataGridTextColumn Header="Αναχ."
-                                    MaxWidth="70"
+                                    Width="45"
                                     Binding="{Binding CheckIn ,StringFormat='{}{0:dd/MM}'}" />
                 <DataGridTextColumn Header="Επιστ."
-                                    MaxWidth="80"
+                                    Width="45"
                                     Binding="{Binding CheckOut ,StringFormat='{}{0:dd/MM}'}" />
-                <DataGridTextColumn Header="Προκατ."
-                                    MaxWidth="70"
-                                    Binding="{Binding Recieved}" />
-                <DataGridTextColumn Header="Υπόλ."
-                                    MaxWidth="70"
-                                    Binding="{Binding Remaining}" />
                 <DataGridTextColumn Header="Ονόματα"
                                     Width="250"
                                     CanUserResize="True"
                                     Binding="{Binding Names}" />
-                <DataGridTextColumn Header="Σημείωση"
-                                    MaxWidth="190"
-                                    Binding="{Binding Comment}" />
-                <DataGridTextColumn Header="Πωλητής"
-                                    MaxWidth="70"
-                                    Binding="{Binding User.Name}" />
-                <DataGridTextColumn Header="Προστέθηκε"
-                                    MaxWidth="120"
-                                    Binding="{Binding CreatedDate,StringFormat='{}{0:dd/MM/yyyy-HH:mm}' }" />
+                <DataGridTextColumn Header="Τηλέφωνο"
+                                    Width="105"
+                                    MinWidth="85"
+                                    Binding="{Binding Tel}" />
                 <DataGridTextColumn Header="Γραφείο"
-                                    MaxWidth="100"
-                                    Binding="{Binding Partner.Name}" />
-                <DataGridTextColumn Header="Τοποθεσίες"
-                                    MaxWidth="150"
-                                    Binding="{Binding Locations}" />
-                <!--<DataGridTextColumn Header="Αριθμός Δωμ."
-                                    MaxWidth="150" />
-                --><!--Visibility="{Binding Converter={StaticResource UserToVisibilityValueConverter},ConverterParameter=3,  Mode=OneWay}"
-                                    Binding="{Binding Room.Id}" />--><!--
-                <DataGridTextColumn Header="Aρ.Κράτ."
-                                    MaxWidth="150" />-->
-                <!--Visibility="{Binding Converter={StaticResource UserToVisibilityValueConverter},ConverterParameter=3,  Mode=OneWay}"
-                                    Binding="{Binding Id}" />-->
+                                    Width="125"
+                                    MinWidth="85"
+                                    Binding="{Binding Booking.Partner.Name}" />
+                <DataGridTextColumn Header="Σημείωση"
+                                    Width="190"
+                                    Binding="{Binding Booking.Comment}" />
             </DataGrid.Columns>
-            <DataGrid.RowDetailsTemplate>
-                <DataTemplate>
-                    <DataGrid CanUserSortColumns="True"
-                              CanUserAddRows="False"
-                              CanUserDeleteRows="False"
-                              IsReadOnly="True"
-                              CanUserReorderColumns="False"
-                              AutoGenerateColumns="False"
-                              ItemsSource="{Binding ReservationsInBooking,UpdateSourceTrigger=PropertyChanged}"
-                              SelectedItem="{Binding SelectedReservation,UpdateSourceTrigger=PropertyChanged}">
-                        <DataGrid.Resources>
-                            <ContextMenu x:Key="reservationContextSubMenu">
-                                <MenuItem Header="Επεξεργασία2"
-                                          Command="{Binding DataContext.EditReservationCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}">
-                                    <MenuItem.Icon>
-                                        <iconPacks:PackIconFontAwesome Kind="EditRegular" />
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                                <MenuItem Header="Διαγραφή2"
-                                          Command="{Binding DataContext.EditReservationCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}">
-                                    <MenuItem.Icon>
-                                        <iconPacks:PackIconFontAwesome Kind="TrashAltRegular" />
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                            </ContextMenu>
-                        </DataGrid.Resources>
-                        <DataGrid.RowStyle>
-                            <Style TargetType="{x:Type DataGridRow}"
-                                   BasedOn="{StaticResource {x:Type DataGridRow}}">
-                                <Setter Property="ContextMenu"
-                                        Value="{StaticResource reservationContextSubMenu}" />
-                                <EventSetter Event="MouseDoubleClick"
-                                             Handler="ListViewSub_MouseDoubleClick" />
-                            </Style>
-                        </DataGrid.RowStyle>
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Ξενοδοχείο"
-                                                MaxWidth="95"
-                                                Binding="{Binding Room.Hotel.Name}" />
-                            <DataGridTextColumn Header="Τύπος Δωμ."
-                                                MaxWidth="90"
-                                                Binding="{Binding Room.RoomType}" />
-                            <DataGridTextColumn Header="Αναχ."
-                                                MaxWidth="70"
-                                                Binding="{Binding CheckIn ,StringFormat='{}{0:dd/MM}'}" />
-                            <DataGridTextColumn Header="Επιστ."
-                                                MaxWidth="80"
-                                                Binding="{Binding CheckOut ,StringFormat='{}{0:dd/MM}'}" />
-                            <DataGridTextColumn Header="Ονόματα"
-                                                Width="250"
-                                                CanUserResize="True"
-                                                Binding="{Binding Names}" />
-                            <DataGridTextColumn Header="Τηλέφωνο"
-                                                MaxWidth="105"
-                                                MinWidth="85"
-                                                Binding="{Binding Tel}" />
-                            <DataGridTextColumn Header="Σημείωση"
-                                                MaxWidth="190"
-                                                Binding="{Binding Comment}" />
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </DataTemplate>
-            </DataGrid.RowDetailsTemplate>
         </DataGrid>
     </Grid>
 </UserControl>

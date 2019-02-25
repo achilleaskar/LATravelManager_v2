@@ -1,17 +1,48 @@
-﻿using GalaSoft.MvvmLight;
-using System;
+﻿using LATravelManager.Models;
+using LATravelManager.UI.Message;
+using LATravelManager.UI.Repositories;
+using LATravelManager.UI.Wrapper;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace LATravelManager.UI.ViewModel.BaseViewModels
 {
-    public class ExcursionCategory_ViewModelBase : ViewModelBase
+    public abstract class ExcursionCategory_ViewModelBase : MyViewModelBase
     {
-        public ExcursionCategory_ViewModelBase()
+        public ExcursionCategory_ViewModelBase(GenericRepository startingReposiroty)
         {
             Childs = new List<MyViewModelBase>();
             Tabs = new List<TabsBaseViewModel>();
+            StartingReposiroty = startingReposiroty;
         }
+
+        private ExcursionWrapper _SelectedExcursion;
+
+        public ExcursionWrapper SelectedExcursion
+        {
+            get
+            {
+                return _SelectedExcursion;
+            }
+
+            set
+            {
+                if (_SelectedExcursion == value)
+                {
+                    return;
+                }
+
+                _SelectedExcursion = value;
+                MessengerInstance.Send(new SelectedExcursionChangedMessage(value));
+                RaisePropertyChanged();
+                RaisePropertyChanged("Enable");
+            }
+        }
+
+
+
+
+       
 
         public List<TabsBaseViewModel> Tabs { get; internal set; }
 
@@ -21,7 +52,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             {
                 SelectedChildViewModel = Childs[index];
                 if (!SelectedChildViewModel.IsLoaded)
-                    await SelectedChildViewModel.LoadAsync(0);
+                    await SelectedChildViewModel.LoadAsync();
             }
         }
 
@@ -68,9 +99,10 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
+        public GenericRepository StartingReposiroty { get; set; }
+
         private void ChildChanged()
         {
-
         }
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace LATravelManager.UI.Wrapper
@@ -11,8 +12,43 @@ namespace LATravelManager.UI.Wrapper
         public ModelWrapper(T model)
         {
             Model = model;
+            if (model.Id == 0)
+            {
+                ValidateAllProperties();
+            }
         }
 
+        public bool HasValues()
+        {
+            foreach (PropertyInfo pi in GetType().GetProperties())
+            {
+                if (pi.PropertyType == typeof(string))
+                {
+                    string value = (string)pi.GetValue(this);
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        return true;
+                    }
+                }
+                else if (pi.PropertyType == typeof(int))
+                {
+                    int value = (int)pi.GetValue(this);
+                    if (value != 0)
+                    {
+                        return true;
+                    }
+                }
+                else if (pi.PropertyType == typeof(double))
+                {
+                    int value = (int)pi.GetValue(this);
+                    if (value != 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
         public DateTime? ModifiedDate
         {
             get { return GetValue<DateTime>(); }
@@ -34,6 +70,16 @@ namespace LATravelManager.UI.Wrapper
             ValidatePropertyInternal(propertyName, value);
         }
 
+        public void ValidateAllProperties()
+        {
+            var type = GetType();
+            var props = GetType().GetProperties();
+            foreach (PropertyInfo pi in Model.GetType().GetProperties())
+            {
+                ValidatePropertyInternal(pi.Name, pi.GetValue(Model));
+            }
+        }
+
         protected virtual TValue GetValue<TValue>([CallerMemberName]string propertyName = null)
         {
             return (TValue)typeof(T).GetProperty(propertyName).GetValue(Model);
@@ -53,6 +99,9 @@ namespace LATravelManager.UI.Wrapper
 
             ValidateCustomErrors(propertyName);
         }
+        public string Title { get; set; }
+
+
 
         private void ValidateDataAnnotations(string propertyName, object currentValue)
         {

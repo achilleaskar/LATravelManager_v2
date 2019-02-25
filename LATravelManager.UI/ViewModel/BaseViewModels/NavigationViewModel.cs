@@ -22,8 +22,8 @@ namespace LATravelManager.UI.ViewModel
                 SecondaryViewModels = new List<MyViewModelBase>();
                 SecondaryTabs.Add(new AddRoomsTab());
                 SecondaryTabs.Add(new SettingsTab());
-                SetTabs(null);
-                MessengerInstance.Register<ResetNavigationTabsMessage>(this, msg => SetTabs(msg));
+                SetTabs();
+                MessengerInstance.Register<ResetNavigationTabsMessage>(this, msg => SetTabs());
                 MessengerInstance.Register<SelectedTabChangedMessage>(this, async tab => await SelectTab(tab));
             }
             catch (Exception ex)
@@ -49,7 +49,7 @@ namespace LATravelManager.UI.ViewModel
                             var addRoomsViewModel = new AddRooms_ViewModel();
                             SecondaryViewModels.Add(addRoomsViewModel);
                             MessengerInstance.Send(new SetSecondaryChildViewModelMessage(addRoomsViewModel));
-                            await addRoomsViewModel.LoadAsync(0);
+                            await addRoomsViewModel.LoadAsync();
                         }
                         break;
 
@@ -62,7 +62,7 @@ namespace LATravelManager.UI.ViewModel
                             var settingsViewModel = new Settings_Viewmodel();
                             SecondaryViewModels.Add(settingsViewModel);
                             MessengerInstance.Send(new SetSecondaryChildViewModelMessage(settingsViewModel));
-                            await settingsViewModel.LoadAsync(0);
+                            await settingsViewModel.LoadAsync();
                         }
                         break;
                 }
@@ -94,7 +94,7 @@ namespace LATravelManager.UI.ViewModel
             }
         }
 
-        private void SetTabs(ResetNavigationTabsMessage obj)
+        private void SetTabs()
         {
             parent = MainUserControl_ViewModel.SelectedExcursionType;
             List<TabsBaseViewModel> tabs;
@@ -110,7 +110,7 @@ namespace LATravelManager.UI.ViewModel
         }
 
 
-        public async Task LoadAsync(int id)
+        public async Task LoadAsync(int id = 0)
         {
             await Task.Delay(0);
         }

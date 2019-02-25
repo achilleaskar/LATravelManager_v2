@@ -5,7 +5,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
-using System.Linq;
 using System.Text;
 using System.Windows.Media;
 
@@ -15,6 +14,10 @@ namespace LATravelManager.UI.Wrapper
     {
         #region Constructors
 
+        public BookingWrapper() : base(new Booking())
+        {
+        }
+
         public BookingWrapper(Booking model) : base(model)
         {
             Customers = new ObservableCollection<CustomerWrapper>();
@@ -23,76 +26,31 @@ namespace LATravelManager.UI.Wrapper
             InitializeBookingWrapper();
         }
 
-        private void Payments_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            CalculateRemainingAmount();
-
-        }
-
-        private void InitializeBookingWrapper()
-        {
-            CustomerWrapper c;
-            int counter = 0;
-            foreach (var res in ReservationsInBooking)
-            {
-                counter++;
-                foreach (var customer in res.CustomersList)
-                {
-                    c = new CustomerWrapper(customer);
-                    if (res.ReservationType == Reservation.ReservationTypeEnum.Overbooked)
-                    {
-                        c.RoomNumber = counter + "-OB";
-                    }
-                    else if (res.ReservationType == Reservation.ReservationTypeEnum.Normal)
-                    {
-                        c.RoomNumber = counter.ToString();
-                    }
-                    else if (res.ReservationType == Reservation.ReservationTypeEnum.Noname)
-                    {
-                        c.RoomNumber = counter + "-NN";
-                    }
-                    else if (res.ReservationType == Reservation.ReservationTypeEnum.Transfer)
-                    {
-                        c.RoomNumber = "TRNS-" + counter;
-                    }
-                    if (counter % 2 == 0)
-                    {
-                        c.RoomColor = new SolidColorBrush(Colors.LightPink);
-                    }
-                    else
-                    {
-                        c.RoomColor = new SolidColorBrush(Colors.LightBlue);
-                    }
-                    c.Handled = true;
-                    Customers.Add(c);
-                }
-            }
-            if (IsPartners && string.IsNullOrEmpty(FullPriceString))
-            {
-                CommisionString = Commision.ToString();
-                FullPriceString = FullPrice.ToString();
-                FullPrice = (Commision == 100) ? 0 : (float)Math.Round(100 * NetPrice / (100 - Commision), 2);
-
-            }
-            if (Id == 0)
-            {
-                Commision = 10;
-            }
-            CalculateRemainingAmount();
-        }
-
         #endregion Constructors
 
         #region Fields
 
         private float _Commision;
+
         private string _CommisionString;
+
+        private ObservableCollection<CustomerWrapper> _Customers;
+
+        private bool _DateChanged = false;
+
         private float _FullPrice;
+
         private string _FullPriceString;
+
         private float _NetPrice;
+
         private string _NetPriceString;
+
         private float _Remaining;
+
         private bool Calculating;
+
+        private int IdCounter;
 
         #endregion Fields
 
@@ -129,12 +87,6 @@ namespace LATravelManager.UI.Wrapper
         public string Comment
         {
             get { return GetValue<string>(); }
-            set { SetValue(value); }
-        }
-
-        public Excursion Excursion
-        {
-            get { return GetValue<Excursion>(); }
             set { SetValue(value); }
         }
 
@@ -205,8 +157,6 @@ namespace LATravelManager.UI.Wrapper
             }
         }
 
-        private ObservableCollection<CustomerWrapper> _Customers;
-
         public ObservableCollection<CustomerWrapper> Customers
         {
             get
@@ -226,10 +176,46 @@ namespace LATravelManager.UI.Wrapper
             }
         }
 
+        public bool DateChanged
+        {
+            get
+            {
+                return _DateChanged;
+            }
+
+            set
+            {
+                if (_DateChanged == value)
+                {
+                    return;
+                }
+
+                _DateChanged = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public bool DifferentDates
         {
             get { return GetValue<bool>(); }
             set { SetValue(value); }
+        }
+
+        public Excursion Excursion
+        {
+            get { return GetValue<Excursion>(); }
+            set { SetValue(value); }
+        }
+
+        public ExcursionDate ExcursionDate
+        {
+            get { return GetValue<ExcursionDate>(); }
+            set
+            {
+                SetValue(value);
+                CheckIn = value.CheckIn;
+                CheckOut = value.CheckOut;
+            }
         }
 
         public float FullPrice
@@ -302,30 +288,6 @@ namespace LATravelManager.UI.Wrapper
             }
         }
 
-
-
-
-        private bool _DateChanged = false;
-
-        public bool DateChanged
-        {
-            get
-            {
-                return _DateChanged;
-            }
-
-            set
-            {
-                if (_DateChanged == value)
-                {
-                    return;
-                }
-
-                _DateChanged = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public bool HasManyReservations
         {
             get
@@ -357,6 +319,7 @@ namespace LATravelManager.UI.Wrapper
                     }
                     Calculating = false;
                 }
+                CommisionString = Commision.ToString();
 
                 CalculateRemainingAmount();
                 RaisePropertyChanged();
@@ -514,12 +477,17 @@ namespace LATravelManager.UI.Wrapper
             }
             else
             {
-                if (NetPrice != FullPrice - FullPrice * Commision / 100)
+                if (Commision <= 0)
                 {
-                    FullPrice = (Commision == 100) ? 0 : (float)Math.Round(100 * FullPrice / (100 - Commision), 2);
                 }
-                Remaining = NetPrice - Recieved;
-
+                else
+                {
+                    if (NetPrice != Math.Round(FullPrice - FullPrice * Commision / 100, 2))
+                    {
+                        FullPrice = (Commision == 100) ? 0 : (float)Math.Round(100 * FullPrice / (100 - Commision), 2);
+                    }
+                    Remaining = NetPrice - Recieved;
+                }
             }
         }
 
@@ -546,9 +514,7 @@ namespace LATravelManager.UI.Wrapper
             return false;
         }
 
-        int IdCounter;
-
-        //ΤΟΔΟ 
+        //ΤΟΔΟ
         public void EntityViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(CustomerWrapper.Price) && !Calculating)
@@ -571,27 +537,6 @@ namespace LATravelManager.UI.Wrapper
                 }
             RaisePropertyChanged(nameof(Customers));
         }
-
-        //public void PaymentCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        //{
-        //    if (e.Action == NotifyCollectionChangedAction.Remove)
-        //    {
-        //        foreach (Payment item in e.OldItems)
-        //        {
-        //            //Removed items
-        //            item.PropertyChanged -= EntityViewModelPropertyChanged;
-        //        }
-        //    }
-        //    else if (e.Action == NotifyCollectionChangedAction.Add)
-        //    {
-        //        foreach (Payment item in e.NewItems)
-        //        {
-        //            //Added items
-        //            item.PropertyChanged += EntityViewModelPropertyChanged;
-        //        }
-        //    }
-        //    CalculateRemainingAmount();
-        //}
 
         private void Customers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -639,6 +584,37 @@ namespace LATravelManager.UI.Wrapper
             //}
         }
 
+        private string GetLocations()
+        {
+            List<string> locations = new List<string>();
+            foreach (CustomerWrapper customer in Customers)
+            {
+                if (!locations.Contains(customer.StartingPlace))
+                    locations.Add(customer.StartingPlace);
+            }
+            return string.Join(", ", locations);
+        }
+
+        //public void PaymentCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        //{
+        //    if (e.Action == NotifyCollectionChangedAction.Remove)
+        //    {
+        //        foreach (Payment item in e.OldItems)
+        //        {
+        //            //Removed items
+        //            item.PropertyChanged -= EntityViewModelPropertyChanged;
+        //        }
+        //    }
+        //    else if (e.Action == NotifyCollectionChangedAction.Add)
+        //    {
+        //        foreach (Payment item in e.NewItems)
+        //        {
+        //            //Added items
+        //            item.PropertyChanged += EntityViewModelPropertyChanged;
+        //        }
+        //    }
+        //    CalculateRemainingAmount();
+        //}
         //private void CustomersChanged(object sender, NotifyCollectionChangedEventArgs e)
         //{
         //    if (e.Action == NotifyCollectionChangedAction.Remove)
@@ -662,18 +638,6 @@ namespace LATravelManager.UI.Wrapper
         //        }
         //    }
         //}
-
-        private string GetLocations()
-        {
-            List<string> locations = new List<string>();
-            foreach (CustomerWrapper customer in Customers)
-            {
-                if (!locations.Contains(customer.StartingPlace))
-                    locations.Add(customer.StartingPlace);
-            }
-            return string.Join(", ", locations);
-        }
-
         private string GetNames()
         {
             StringBuilder sb = new StringBuilder();
@@ -683,6 +647,64 @@ namespace LATravelManager.UI.Wrapper
             }
             return sb.ToString().TrimEnd(',', ' ');
         }
+
+        private void InitializeBookingWrapper()
+        {
+            CustomerWrapper c;
+            int counter = 0;
+            foreach (var res in ReservationsInBooking)
+            {
+                counter++;
+                foreach (var customer in res.CustomersList)
+                {
+                    c = new CustomerWrapper(customer);
+                    if (res.ReservationType == Reservation.ReservationTypeEnum.Overbooked)
+                    {
+                        c.RoomNumber = counter + "-OB";
+                    }
+                    else if (res.ReservationType == Reservation.ReservationTypeEnum.Normal)
+                    {
+                        c.RoomNumber = counter.ToString();
+                    }
+                    else if (res.ReservationType == Reservation.ReservationTypeEnum.Noname)
+                    {
+                        c.RoomNumber = counter + "-NN";
+                    }
+                    else if (res.ReservationType == Reservation.ReservationTypeEnum.Transfer)
+                    {
+                        c.RoomNumber = "TRNS-" + counter;
+                    }
+                    if (counter % 2 == 0)
+                    {
+                        c.RoomColor = new SolidColorBrush(Colors.LightPink);
+                    }
+                    else
+                    {
+                        c.RoomColor = new SolidColorBrush(Colors.LightBlue);
+                    }
+                    c.Handled = true;
+                    Customers.Add(c);
+                }
+            }
+            if (IsPartners && string.IsNullOrEmpty(FullPriceString))
+            {
+                CommisionString = Commision.ToString();
+                FullPriceString = FullPrice.ToString();
+                FullPrice = (Commision == 100) ? 0 : (float)Math.Round(100 * NetPrice / (100 - Commision), 2);
+            }
+            if (Id == 0)
+            {
+                Commision = 10;
+            }
+            CalculateRemainingAmount();
+        }
+
+        private void Payments_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            CalculateRemainingAmount();
+        }
+
+        #endregion Methods
 
         //private void ReservationsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         //{
@@ -707,7 +729,5 @@ namespace LATravelManager.UI.Wrapper
         //        }
         //    }
         //}
-
-        #endregion Methods
     }
 }

@@ -5,6 +5,7 @@ using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.Views.Bansko;
+using LATravelManager.UI.Wrapper;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,7 +16,7 @@ using System.Windows.Data;
 
 namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Group
 {
-    public class Search_Group_ViewModel : BanskoChilds_BaseViewModel
+    public class Search_Group_ViewModel : GroupChilds_BaseViewModel
     {
         #region Constructors
 
@@ -31,6 +32,9 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Group
 
             CheckIn = DateTime.Today;
             CheckOut = DateTime.Today.AddDays(3);
+
+            MessengerInstance.Register<SelectedExcursionChangedMessage>(this, async exc => { await SelectedExcursionChanged(exc.SelectedExcursion); });
+
         }
 
         #endregion Constructors
@@ -271,7 +275,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Group
 
         #region Methods
 
-        public override async Task LoadAsync(int id)
+        public override async Task LoadAsync(int id = 0)
         {
             await ReloadAsync();
         }
@@ -331,7 +335,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Group
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
                 var viewModel = new NewReservation_Group_ViewModel();
                 await viewModel.LoadAsync(SelectedReservation.Booking.Id);
-                MessengerInstance.Send(new OpenChildWindowCommand(new EditBooking_Window(), viewModel));
+                MessengerInstance.Send(new OpenChildWindowCommand(new EditBooking_Bansko_Window(), viewModel));
             }
             catch (Exception ex)
             {
@@ -350,7 +354,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Group
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
                 await ReloadAsync();
                 DateTime dateLimit = SearchBookingsHelper.GetDateLimit(parameter);
-                List<Reservation> list = (await Context.GetAllReservationsByCreationDate(dateLimit, 2)).ToList();
+                List<Reservation> list = (await Context.GetAllReservationsByCreationDate(dateLimit, SelectedExcursion.Id)).ToList();
                 foreach (var r in list)
                 {
                     FilteredReservations.Add(r);
@@ -366,6 +370,15 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Group
             finally
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(false));
+            }
+        }
+
+        public  async Task SelectedExcursionChanged(ExcursionWrapper selectedExcursion)
+        {
+            if (selectedExcursion!=null)
+            {
+                SelectedExcursion = selectedExcursion;
+                await LoadAsync();
             }
         }
 

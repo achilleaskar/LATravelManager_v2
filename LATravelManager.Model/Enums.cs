@@ -11,6 +11,12 @@
             ThirdParty
         }
 
+        public enum FlightMode
+        {
+            allerRetour,
+            onlyGo,
+            OnlyReturn
+        }
         public enum RoomStateEnum
         {
             NotAvailable,
@@ -20,6 +26,13 @@
             NotMovableNoName,
             Booked,
             OverBookedByMistake
+        }
+
+        public enum GrafeiaXriston
+        {
+            Allo = 0,
+            Thessalonikis = 1,
+            Larisas = 2
         }
 
         public enum HotelCategoryEnum

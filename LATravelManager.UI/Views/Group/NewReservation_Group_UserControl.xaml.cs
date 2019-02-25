@@ -1,26 +1,40 @@
-﻿using System.Windows;
+﻿using LATravelManager.Models;
+using LATravelManager.UI.ViewModel.CategoriesViewModels.Group;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 
 namespace LATravelManager.UI.Views.Group
 {
     /// <summary>
-    /// Interaction logic for NewReservation_Group_UserControl.xaml
+    /// Interaction logic for NewReservation_Bansko_UserControl.xaml
     /// </summary>
     public partial class NewReservation_Group_UserControl : UserControl
     {
-        #region Constructors
-
         public NewReservation_Group_UserControl()
         {
             InitializeComponent();
         }
+        private void IsPartnerCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            CustomersDataGrid.Columns[5].Visibility = Visibility.Collapsed;
+        }
 
-        #endregion Constructors
-
-        #region Methods
-
+        private void IsPartnerCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            CustomersDataGrid.Columns[5].Visibility = Visibility.Visible;
+        }
         public static T GetVisualChild<T>(Visual parent) where T : Visual
         {
             var child = default(T);
@@ -54,7 +68,7 @@ namespace LATravelManager.UI.Views.Group
             }
         }
 
-        private void DataGrid_KeyUp(object sender, KeyEventArgs e)
+        private void DataGrid_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
@@ -64,17 +78,38 @@ namespace LATravelManager.UI.Views.Group
                   CustomersDataGrid.Columns[1]);
                 }
             }
+            else if (e.Key == Key.Delete && e.OriginalSource.GetType() != typeof(TextBox))
+            {
+                e.Handled = true;
+                (DataContext as NewReservation_Group_ViewModel).DeleteSelectedCustomers();
+            }
         }
 
-        private void IsPartnerCheckBox_Checked(object sender, RoutedEventArgs e) => CustomersDataGrid.Columns[6].IsReadOnly = true;
-
-        private void IsPartnerCheckBox_Unchecked(object sender, RoutedEventArgs e) => CustomersDataGrid.Columns[6].IsReadOnly = false;
-
-        #endregion Methods
+        private void UserControl_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.Z)
+            {
+                ((NewReservation_Group_ViewModel)DataContext).ReadNextLineCommand.Execute(null);
+            }
+        }
 
         private void DataGrid_LoadingRow(object sender, DataGridRowEventArgs e)
         {
-            e.Row.Header = (e.Row.GetIndex()).ToString();
+            e.Row.Header = (e.Row.GetIndex() + 1).ToString();
+        }
+
+        private void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is ListViewItem lvi && lvi.DataContext is Room)
+            {
+                if ((DataContext as NewReservation_Group_ViewModel).PutCustomersInRoomCommand.CanExecute(null))
+                    (DataContext as NewReservation_Group_ViewModel).PutCustomersInRoomCommand.Execute(null);
+            }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

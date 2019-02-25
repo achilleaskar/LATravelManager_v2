@@ -38,11 +38,12 @@ namespace LATravelManager.UI.Views
 
         private async void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
+#if !DEBUG
             try
             {
-                using (var updateManager = await UpdateManager.GitHubUpdateManager("https://github.com/achilleaskar/LaTravelManager"))
+                using (var updateManager = await UpdateManager.GitHubUpdateManager("https://github.com/achilleaskar/LATravelManager_v2"))
                 {
-                    var releaseEntry = await updateManager.UpdateApp();
+                    ReleaseEntry releaseEntry = await updateManager.UpdateApp();
                     if (releaseEntry?.Version.ToString() != null)
                     {
                         MessageBoxResult dialogResult = MessageBox.Show("Εγκαταστάθηκε νέα ενημέρωση. Θέλετε να επανεκκινήσετε την εφαρμογή σας τώρα?", "", MessageBoxButton.YesNo, MessageBoxImage.Question);
@@ -53,9 +54,18 @@ namespace LATravelManager.UI.Views
             }
             catch (Exception ex)
             {
-                if (!ex.Message.Contains(".exe"))
-                    MessageBox.Show("Error updating:" + ex.Message);
+                
+                //if (!ex.Message.Contains(".exe"))
+                //    MessageBox.Show("Error updating:" + ex.Message);
             }
+#endif
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            Application.Current.Shutdown();
+
+            Environment.Exit(0);
         }
     }
 }

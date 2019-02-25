@@ -10,7 +10,7 @@
         FontSize="14"
         WindowStartupLocation="CenterOwner"
         Title="{Binding ControlName}"
-        Height="450"
+        Height="470"
         Width="800">
     <Window.DataContext>
         <Binding Path="Users"
@@ -27,10 +27,11 @@
                   VerticalAlignment="Center">
             <Grid VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="130" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -55,50 +56,57 @@
                          Margin="0,5,5,5"
                          Grid.Row="1"
                          Grid.Column="1" />
-                <Label Content="UserName:"
+                <Label Content="Τηλέφωνο:"
                        Grid.Row="2"
                        Grid.Column="0" />
-                <TextBox Text="{Binding SelectedEntity.UserName,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                <TextBox Text="{Binding SelectedEntity.Tel,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
                          Margin="0,5,5,5"
                          Grid.Row="2"
                          Grid.Column="1" />
-                <Label Content="Κωδικός:"
+                <Label Content="UserName:"
                        Grid.Row="3"
                        Grid.Column="0" />
-              <PasswordBox Name="PasswordBox"
-                             Width="110"
-                             ap:PasswordBoxMVVMAttachedProperties.EncryptedPassword="{Binding PassWord, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             VerticalAlignment="Center"
-                             Grid.Row="3"
-                             PasswordChanged="PasswordBox_PasswordChanged"
-                             Grid.Column="1"
-                             Margin="0,0,5,0" />
-                <Label Content="Επανάληψη:"
+                <TextBox Text="{Binding SelectedEntity.UserName,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0,5,5,5"
+                         Grid.Row="3"
+                         Grid.Column="1" />
+                <Label Content="Κωδικός:"
                        Grid.Row="4"
                        Grid.Column="0" />
-                <PasswordBox Name="PasswordBoxRepeat"
-                             Width="110"
-                             ap:PasswordBoxMVVMAttachedProperties.EncryptedPassword="{Binding PasswordRepeat, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                <PasswordBox Name="PasswordBox"
+                             ap:PasswordBoxMVVMAttachedProperties.EncryptedPassword="{Binding PassWord, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              VerticalAlignment="Center"
                              Grid.Row="4"
                              PasswordChanged="PasswordBox_PasswordChanged"
                              Grid.Column="1"
                              Margin="0,0,5,0" />
-                    <Label Content="Πόλη:"
+                <Label Content="Επανάληψη:"
                        Grid.Row="5"
                        Grid.Column="0" />
-                <ComboBox ItemsSource="{Binding BaseLocations}"
-                          DisplayMemberPath="Name"
-                          SelectedValue="{Binding SelectedEntity.BaseLocation, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
-                          Margin="0,5,5,5"
-                          Grid.Row="5"
-                          Grid.Column="1" />
-                <Label Content="Επίπεδο:"
+                <PasswordBox Name="PasswordBoxRepeat"
+                             ap:PasswordBoxMVVMAttachedProperties.EncryptedPassword="{Binding PasswordRepeat, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             VerticalAlignment="Center"
+                             Grid.Row="5"
+                             PasswordChanged="PasswordBox_PasswordChanged"
+                             Grid.Column="1"
+                             Margin="0,0,5,0" />
+                <Label Content="Πόλη:"
                        Grid.Row="6"
+                       Grid.Column="0" />
+                <ComboBox SelectedIndex="{Binding SelectedEntity.BaseLocation, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
+                          Margin="0,5,5,5"
+                          Grid.Row="6"
+                          Grid.Column="1">
+                    <ComboBoxItem>Άλλο</ComboBoxItem>
+                    <ComboBoxItem>Θεσσαλονίκης</ComboBoxItem>
+                    <ComboBoxItem>Λάρισας</ComboBoxItem>
+                </ComboBox>
+                <Label Content="Επίπεδο:"
+                       Grid.Row="7"
                        Grid.Column="0" />
                 <ComboBox SelectedIndex="{Binding SelectedEntity.Level, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
                           Margin="0,5,5,5"
-                          Grid.Row="6"
+                          Grid.Row="7"
                           Grid.Column="1">
                     <ComboBoxItem>Δημιουργός</ComboBoxItem>
                     <ComboBoxItem>Διαχειριστής</ComboBoxItem>
@@ -108,7 +116,7 @@
                     <ComboBoxItem>Only See</ComboBoxItem>
                 </ComboBox>
                 <StackPanel Orientation="Vertical"
-                            Grid.Row="7"
+                            Grid.Row="8"
                             Grid.ColumnSpan="2">
                     <Button Content="Προσθήκη"
                             Margin="5,5,5,0"
@@ -121,8 +129,9 @@
                             Command="{Binding ClearEntityCommand}" />
                 </StackPanel>
                 <TextBlock Text="{Binding ResultMessage}"
-                           Grid.Row="8"
+                           Grid.Row="9"
                            Grid.ColumnSpan="2"
+                           Width="230"
                            TextWrapping="Wrap"
                            HorizontalAlignment="Left" />
             </Grid>
@@ -155,9 +164,9 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Όνομα"
                                             Binding="{Binding Name}" />
-                        <DataGridTextColumn Header="Τηλέφωνο"
-                                            Binding="{Binding BaseLocation}" />
                         <DataGridTextColumn Header="Γραφείο"
+                                            Binding="{Binding BaseLocation}" />
+                        <DataGridTextColumn Header="Τηλέφωνο"
                                             Binding="{Binding Tel }" />
                     </DataGrid.Columns>
                 </DataGrid>

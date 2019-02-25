@@ -175,7 +175,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             }
         }
 
-        public async override Task LoadAsync(int id)
+        public async override Task LoadAsync(int id = 0)
         {
             Users = (await startingRepository.GetAllAsync<User>()).ToList();
         }
