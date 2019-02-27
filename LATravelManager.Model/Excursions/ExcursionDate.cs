@@ -116,7 +116,7 @@ namespace LATravelManager.Models
 
         public override string ToString()
         {
-            return Name;
+            return Name + CheckIn.ToString(" dd-")+CheckOut.ToString("dd/MM");
         }
 
         #endregion Methods

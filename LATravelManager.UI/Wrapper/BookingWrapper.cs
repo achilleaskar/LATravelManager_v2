@@ -65,7 +65,7 @@ namespace LATravelManager.UI.Wrapper
                 DateChanged = true;
                 if (CheckOut < CheckIn)
                 {
-                    CheckOut = CheckIn;
+                    CheckOut = CheckIn.AddDays(3);
                 }
             }
         }

@@ -42,7 +42,7 @@
                 <TextBox Text="{Binding SelectedEntity.Name,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
                          Margin="0,5,5,5"
                          Grid.Row="0"
-                         Width="Auto"
+                         Width="185"
                          Grid.Column="1" />
                 <Label Content="Τύπος:"
                        Grid.Row="1"
@@ -51,7 +51,8 @@
                           DisplayMemberPath="Name"
                           MinWidth="150"
                           SelectedValue="{Binding SelectedEntity.ExcursionType, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
-                          Margin="0,5,5,5" HorizontalAlignment="Right"
+                          Margin="0,5,5,5"
+                          HorizontalAlignment="Right"
                           Grid.Row="1"
                           Grid.Column="1" />
                 <TextBlock Text="Επιλεγμένες Πόλεις:"
@@ -68,7 +69,8 @@
                                   SelectedItem="{Binding SelectedCityToAdd}"
                                   DisplayMemberPath="Name"
                                   VerticalAlignment="Center"
-                                  Margin="5" Width="150"
+                                  Margin="5"
+                                  Width="150"
                                   IsEditable="True" />
                         <Button HorizontalAlignment="Right"
                                 Padding="3,4,3,3"
@@ -219,7 +221,8 @@
                         <DataGridTextColumn Header="Έναρξη"
                                             Width="85"
                                             Binding="{Binding Start,StringFormat='{}{0:dd/MM/yyyy}'}" />
-                        <DataGridTextColumn Header="Λήξη" Width="85"
+                        <DataGridTextColumn Header="Λήξη"
+                                            Width="85"
                                             Binding="{Binding End,StringFormat='{}{0:dd/MM/yyyy}'}" />
                     </DataGrid.Columns>
                 </DataGrid>

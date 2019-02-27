@@ -53,6 +53,7 @@
                               Visibility="Collapsed" />
             <StackPanel Orientation="Horizontal">
                 <GroupBox Header="Διαθέσιμα Δωμάτια"
+                          Margin="5"
                           VerticalAlignment="Top">
                     <StackPanel>
                         <StackPanel.Resources>

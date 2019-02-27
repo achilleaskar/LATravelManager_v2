@@ -16,12 +16,13 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Skiathos
 
         public override Task LoadAsync(int id = 0)
         {
-            throw new NotImplementedException();
+            return Task.Delay(0);
         }
 
         public override Task ReloadAsync()
         {
-            throw new NotImplementedException();
+            return Task.Delay(0);
+
         }
     }
 }

@@ -1514,6 +1514,11 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Group
                 return "Προσθέστε Πελάτες!";
             }
 
+            if (BookingWr.ExcursionDate==null)
+            {
+                return "Επιλέξτε Ημερομηνίες !";
+            }
+
             if (BookingWr.IsPartners)
             {
                 if (BookingWr.NetPrice <= 0)

@@ -11,10 +11,11 @@ namespace LATravelManager.Models
 
         public City()
         {
+            Excursions = new List<Excursion>();
         }
 
         #endregion Constructors
-
+        public List<Excursion> Excursions { get; set; }
 
 
         #region Properties

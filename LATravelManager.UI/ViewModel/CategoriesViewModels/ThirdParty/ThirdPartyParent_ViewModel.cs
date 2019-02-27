@@ -1,9 +1,5 @@
 ﻿using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
@@ -16,12 +12,12 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
 
         public override Task LoadAsync(int id = 0)
         {
-            throw new NotImplementedException();
+            return Task.Delay(0);
         }
 
         public override Task ReloadAsync()
         {
-            throw new NotImplementedException();
+            return Task.Delay(0);
         }
     }
 }

@@ -19,7 +19,11 @@ namespace LATravelManager.UI.Repositories
         public GenericRepository()
         {
             this.Context = new MainDatabase();
+            tasks = new List<Task>();
+            
         }
+
+        List<Task> tasks;
 
         public bool IsContextAvailable { get; set; }
 
@@ -27,8 +31,10 @@ namespace LATravelManager.UI.Repositories
         {
             IsContextAvailable = false;
             IsContextAvailable = true;
-            var result = await Task.Run(() => Context.Hotels.Where(x => x.City.Id == cityId).OrderBy(h => h.Name).AsNoTracking().ToListAsync());
-            return result;
+            Task<List<Hotel>> result =  Task.Run(() => Context.Hotels.Where(x => x.City.Id == cityId).OrderBy(h => h.Name).AsNoTracking().ToListAsync());
+            tasks.Add(result);
+            await Task.WhenAll(tasks);
+            return await result;
         }
 
         public async Task<List<Hotel>> GetAllHotelsWithRoomsInCityAsync(DateTime minDay, DateTime maxDay, int cityId)

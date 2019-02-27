@@ -1157,7 +1157,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
 
         private async Task<Booking> CreateNewBooking()
         {
-            return new Booking { Excursion = SelectedExcursion.Model, CheckIn = BookingWr != null ? BookingWr.CheckIn : new DateTime(2018, 12, 28), CheckOut = BookingWr != null ? BookingWr.CheckOut : new DateTime(2018, 12, 30), User = await GenericRepository.GetByIdAsync<User>(StaticResources.User.Id) };
+            return new Booking { Excursion = SelectedExcursion.Model, User = await GenericRepository.GetByIdAsync<User>(StaticResources.User.Id) };
         }
 
         private void DeletePayment()

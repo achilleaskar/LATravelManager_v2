@@ -190,7 +190,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             }
         }
 
-        public Repositories.GenericRepository StartingRepository { get; }
+        public GenericRepository StartingRepository { get; }
 
         public ObservableCollection<ExcursionCategory> Templates
         {

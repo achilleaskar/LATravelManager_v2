@@ -30,7 +30,7 @@ namespace LATravelManager.UI.Helpers
 
         public string CreateFolder(DateTime date, string folderName, string city)
         {
-            var folder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + folderName + city + @"\" + DateTime.Now.ToString("MMMM") + @"\" + date.ToString("dd-MM-yy");
+            var folder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + folderName + city + @"\" + date.ToString("MMMM") + @"\" + date.ToString("dd-MM-yy");
 
             Directory.CreateDirectory(folder);
 
@@ -67,10 +67,7 @@ namespace LATravelManager.UI.Helpers
 
         public async Task<string> PrintVoucher(BookingWrapper booking)
         {
-            var VoucherFilename = string.Empty;
-            var inputPath = AppDomain.CurrentDomain.BaseDirectory;
             var outputpath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-            string VoucherDir = string.Empty;
 
             foreach (var res in booking.ReservationsInBooking)
             {
@@ -89,6 +86,7 @@ namespace LATravelManager.UI.Helpers
 
                 try
                 {
+                    string VoucherFilename;
                     if (booking.IsPartners)
                     {
                         VoucherFilename = string.Format(@"\{0}_{1}_{2}_{3}_Voucher.docx", res.CustomersList[0].Surename, res.HotelName, res.RoomTypeName, booking.Partner.Name);
@@ -102,7 +100,7 @@ namespace LATravelManager.UI.Helpers
 
                     await CreateWordVoucher(folderNameVouchers + VoucherFilename, res, booking);
 
-                    VoucherDir = folderNameVouchers + VoucherFilename;
+                    string VoucherDir = folderNameVouchers + VoucherFilename;
                 }
                 catch (Exception ex)
                 {

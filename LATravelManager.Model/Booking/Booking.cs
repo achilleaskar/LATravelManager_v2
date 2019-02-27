@@ -12,6 +12,9 @@ namespace LATravelManager.Models
         {
             Payments = new ObservableCollection<Payment>();
             ReservationsInBooking = new List<Reservation>();
+            CheckIn = DateTime.Today;
+            CheckOut = DateTime.Today.AddDays(3);
+
         }
 
         //public Booking()

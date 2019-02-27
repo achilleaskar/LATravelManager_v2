@@ -41,16 +41,16 @@ namespace LATravelManager.UI.Views
 #if !DEBUG
             try
             {
-                using (var updateManager = await UpdateManager.GitHubUpdateManager("https://github.com/achilleaskar/LATravelManager_v2"))
-                {
-                    ReleaseEntry releaseEntry = await updateManager.UpdateApp();
-                    if (releaseEntry?.Version.ToString() != null)
-                    {
-                        MessageBoxResult dialogResult = MessageBox.Show("Εγκαταστάθηκε νέα ενημέρωση. Θέλετε να επανεκκινήσετε την εφαρμογή σας τώρα?", "", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                        if (dialogResult == MessageBoxResult.Yes)
-                            UpdateManager.RestartApp();
-                    }
-                }
+                //using (var updateManager = await UpdateManager.GitHubUpdateManager("https://github.com/achilleaskar/LATravelManager_v2"))
+                //{
+                //    ReleaseEntry releaseEntry = await updateManager.UpdateApp();
+                //    if (releaseEntry?.Version.ToString() != null)
+                //    {
+                //        MessageBoxResult dialogResult = MessageBox.Show("Εγκαταστάθηκε νέα ενημέρωση. Θέλετε να επανεκκινήσετε την εφαρμογή σας τώρα?", "", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                //        if (dialogResult == MessageBoxResult.Yes)
+                //            UpdateManager.RestartApp();
+                //    }
+                //}
             }
             catch (Exception ex)
             {

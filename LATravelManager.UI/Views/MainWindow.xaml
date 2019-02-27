@@ -8,9 +8,10 @@
         xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.Window_ViewModels"
         xmlns:views="clr-namespace:LATravelManager.UI.Views"
         d:DataContext="{d:DesignInstance viewmodels:MainViewModel}"
-        Height="860"
+        Height="840"
         Width="1335"
         Closed="Window_Closed"
+        WindowState="Maximized"
         WindowStartupLocation="CenterScreen">
     <Window.IsEnabled>
         <Binding Path="BindableProperty"
