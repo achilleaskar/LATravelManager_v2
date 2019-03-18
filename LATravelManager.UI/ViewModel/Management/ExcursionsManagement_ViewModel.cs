@@ -4,6 +4,7 @@ using LATravelManager.Models;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
+using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.Views.Management;
 using LATravelManager.UI.Wrapper;
 using System;
@@ -179,7 +180,7 @@ namespace LaTravelManager.ViewModel.Management
 
         #region Methods
 
-        public override async Task LoadAsync(int id = 0)
+        public override async Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
         {
             try
             {

@@ -5,6 +5,7 @@ using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.Views.Bansko;
+using LATravelManager.UI.Wrapper;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,8 +22,8 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
 
         public Search_Bansko_ViewModel()
         {
-            FilteredReservations = new ObservableCollection<Reservation>();
-            _customerView = CollectionViewSource.GetDefaultView(FilteredReservations);
+            FilteredReservations = new ObservableCollection<ReservationWrapper>();
+            CustomerView = CollectionViewSource.GetDefaultView(FilteredReservations);
 
             ShowReservationsCommand = new RelayCommand<string>(async (obj) => { await ShowReservations(obj); }, CanShowReservations);
             EditBookingCommand = new RelayCommand(async () => { await EditBooking(); }, CanEditBooking);
@@ -43,10 +44,10 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
         private bool _EnableCheckInFilter = false;
         private bool _EnableCheckOutFilter = false;
 
-        private ObservableCollection<Reservation> _FilteredReservations = new ObservableCollection<Reservation>();
+        private ObservableCollection<ReservationWrapper> _FilteredReservations = new ObservableCollection<ReservationWrapper>();
         private string _FilterString = string.Empty;
         private Booking _SelectedBooking;
-        private Reservation _SelectedReservation;
+        private ReservationWrapper _SelectedReservationWr;
         private int _UserBookingFilterIndex;
         private ObservableCollection<User> _Users;
         private SearchBookingsHelper SearchBookingsHelper;
@@ -55,7 +56,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
 
         #region Properties
 
-        public ICollectionView _customerView { get; set; }
+        public ICollectionView CustomerView { get; set; }
 
         public DateTime CheckIn
         {
@@ -72,8 +73,8 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
                 }
 
                 _CheckIn = value;
-                if (_customerView != null)
-                    _customerView.Refresh();
+                if (CustomerView != null)
+                    CustomerView.Refresh();
                 RaisePropertyChanged();
             }
         }
@@ -93,8 +94,8 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
                 }
 
                 _CheckOut = value;
-                if (_customerView != null)
-                    _customerView.Refresh();
+                if (CustomerView != null)
+                    CustomerView.Refresh();
                 RaisePropertyChanged();
             }
         }
@@ -122,8 +123,8 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
                 }
 
                 _EnableCheckInFilter = value;
-                if (_customerView != null)
-                    _customerView.Refresh();
+                if (CustomerView != null)
+                    CustomerView.Refresh();
                 RaisePropertyChanged();
             }
         }
@@ -143,13 +144,13 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
                 }
 
                 _EnableCheckOutFilter = value;
-                if (_customerView != null)
-                    _customerView.Refresh();
+                if (CustomerView != null)
+                    CustomerView.Refresh();
                 RaisePropertyChanged();
             }
         }
 
-        public ObservableCollection<Reservation> FilteredReservations
+        public ObservableCollection<ReservationWrapper> FilteredReservations
         {
             get
             {
@@ -183,8 +184,8 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
                 }
 
                 _FilterString = value;
-                if (_customerView != null)
-                    _customerView.Refresh();
+                if (CustomerView != null)
+                    CustomerView.Refresh();
                 RaisePropertyChanged();
             }
         }
@@ -208,21 +209,21 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
             }
         }
 
-        public Reservation SelectedReservation
+        public ReservationWrapper SelectedReservation
         {
             get
             {
-                return _SelectedReservation;
+                return _SelectedReservationWr;
             }
 
             set
             {
-                if (_SelectedReservation == value)
+                if (_SelectedReservationWr == value)
                 {
                     return;
                 }
 
-                _SelectedReservation = value;
+                _SelectedReservationWr = value;
                 RaisePropertyChanged();
             }
         }
@@ -271,17 +272,21 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
 
         #region Methods
 
-        public override async Task LoadAsync(int id = 0)
+        public override async Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
         {
             await ReloadAsync();
         }
 
         public override async Task ReloadAsync()
         {
+
+            if (Context!=null&&!Context.IsTaskOk)
+            {
+                await Context.LastTask;
+            }
             Context = new GenericRepository();
             Users = new ObservableCollection<User>(await Context.GetAllAsyncSortedByName<User>());
             SearchBookingsHelper = new SearchBookingsHelper(Context);
-            FilteredReservations.Clear();
         }
 
         private bool CanDeleteBooking()
@@ -306,7 +311,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
 
         private bool CustomerFilter(object item)
         {
-            Reservation reservation = item as Reservation;
+            ReservationWrapper reservation = item as ReservationWrapper;
             return reservation.Contains(FilterString) && (!EnableCheckInFilter || reservation.CheckIn == CheckIn) && (!EnableCheckOutFilter || reservation.CheckOut == CheckOut) && (UserBookingFilterIndex == 0 || reservation.Booking.User.Id == Users[UserBookingFilterIndex - 1].Id);
         }
 
@@ -328,7 +333,6 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
         {
             try
             {
-                MessengerInstance.Send(new IsBusyChangedMessage(true));
                 var viewModel = new NewReservation_Bansko_ViewModel();
                 await viewModel.LoadAsync(SelectedReservation.Booking.Id);
                 MessengerInstance.Send(new OpenChildWindowCommand(new EditBooking_Bansko_Window(), viewModel));
@@ -337,10 +341,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
             {
                 MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
             }
-            finally
-            {
-                MessengerInstance.Send(new IsBusyChangedMessage(false));
-            }
+           
         }
 
         private async Task ShowReservations(string parameter)
@@ -348,16 +349,17 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
             try
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
+                FilteredReservations.Clear();
                 await ReloadAsync();
                 DateTime dateLimit = SearchBookingsHelper.GetDateLimit(parameter);
-                List<Reservation> list = (await Context.GetAllReservationsByCreationDate(dateLimit, 2)).ToList();
+                List<ReservationWrapper> list = (await Context.GetAllReservationsByCreationDate(dateLimit, 2)).Select(r=>new ReservationWrapper(r)).ToList();
                 foreach (var r in list)
                 {
                     FilteredReservations.Add(r);
                 }
 
-                _customerView = CollectionViewSource.GetDefaultView(FilteredReservations);
-                _customerView.Filter = CustomerFilter;
+                CustomerView = CollectionViewSource.GetDefaultView(FilteredReservations);
+                CustomerView.Filter = CustomerFilter;
             }
             catch (Exception ex)
             {

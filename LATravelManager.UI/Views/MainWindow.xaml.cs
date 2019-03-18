@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows;
 using LATravelManager.Models;
 using LATravelManager.UI.Repositories;
@@ -14,7 +15,7 @@ namespace LATravelManager.UI.Views
     /// </summary>
     public partial class MainWindow : Window
     {
-        private MainViewModel _viewModel;
+        private readonly MainViewModel _viewModel;
 
         public GenericRepository StartingRepository;
 
@@ -38,27 +39,25 @@ namespace LATravelManager.UI.Views
 
         private async void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
-#if !DEBUG
             try
             {
-                //using (var updateManager = await UpdateManager.GitHubUpdateManager("https://github.com/achilleaskar/LATravelManager_v2"))
-                //{
-                //    ReleaseEntry releaseEntry = await updateManager.UpdateApp();
-                //    if (releaseEntry?.Version.ToString() != null)
-                //    {
-                //        MessageBoxResult dialogResult = MessageBox.Show("Εγκαταστάθηκε νέα ενημέρωση. Θέλετε να επανεκκινήσετε την εφαρμογή σας τώρα?", "", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                //        if (dialogResult == MessageBoxResult.Yes)
-                //            UpdateManager.RestartApp();
-                //    }
-                //}
+                using (var updateManager = await UpdateManager.GitHubUpdateManager("https://github.com/achilleaskar/LATravelManager_v2"))
+                {
+                    ReleaseEntry releaseEntry = await updateManager.UpdateApp();
+                    if (releaseEntry?.Version.ToString() != null)
+                    {
+                        MessageBoxResult dialogResult = MessageBox.Show("Εγκαταστάθηκε νέα ενημέρωση. Θέλετε να επανεκκινήσετε την εφαρμογή σας τώρα?", "", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                        if (dialogResult == MessageBoxResult.Yes)
+                            UpdateManager.RestartApp();
+                    }
+                }
             }
             catch (Exception ex)
             {
-                
-                //if (!ex.Message.Contains(".exe"))
-                //    MessageBox.Show("Error updating:" + ex.Message);
+
+                if (!ex.Message.Contains(".exe"))
+                    MessageBox.Show("Error updating:" + ex.Message);
             }
-#endif
         }
 
         private void Window_Closed(object sender, EventArgs e)

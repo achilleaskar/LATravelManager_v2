@@ -375,7 +375,7 @@
                     <ScrollViewer VerticalScrollBarVisibility="Auto"
                                   Grid.Row="1"
                                   HorizontalScrollBarVisibility="Auto">
-                        <ItemsControl ItemsSource="{Binding AllDaysDeparturesList}"
+                        <!--<ItemsControl ItemsSource="{Binding AllDaysDeparturesList}"
                                       Margin="5">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -453,10 +453,10 @@
                                                         Command="{Binding PrintListCommand}"
                                                         CommandParameter="1"
                                                         Margin="0,5,5,0" />
-                                                <!--<Button Content="Συνολική"
+                                                --><!--<Button Content="Συνολική"
                                                         Command="{Binding PrintListCommand}"
                                                         CommandParameter="2"
-                                                        Margin="0,5,5,5" />-->
+                                                        Margin="0,5,5,5" />--><!--
                                             </StackPanel>
                                             <StackPanel Orientation="Vertical">
                                                 <Button Content="Εισιτήρια"
@@ -468,10 +468,10 @@
                                                         Command="{Binding PrintListCommand}"
                                                         CommandParameter="4"
                                                         Margin="0,5,5,0" />
-                                                <!--<Button Content="Συνολική"
+                                                --><!--<Button Content="Συνολική"
                                                         Command="{Binding PrintListCommand}"
                                                         CommandParameter="5"
-                                                        Margin="0,5,5,5" />-->
+                                                        Margin="0,5,5,5" />--><!--
                                             </StackPanel>
                                         </StackPanel>
                                         <Button Content="Όλες"
@@ -501,7 +501,7 @@
                                     </StackPanel>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                        </ItemsControl>-->
                     </ScrollViewer>
                 </Grid>
             </TabItem>

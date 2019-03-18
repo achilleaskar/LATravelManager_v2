@@ -2,6 +2,7 @@
 using LATravelManager.Models;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.Security;
+using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.Wrapper;
 using System;
 using System.Collections.ObjectModel;
@@ -165,7 +166,7 @@ namespace LaTravelManager.ViewModel.Management
         }
 
 
-        public override async Task LoadAsync(int id = 0)
+        public override async Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
         {
             MainCollection = new ObservableCollection<UserWrapper>((await Context.GetAllUsersAsyncSortedByUserName()).Select(u => new UserWrapper(u)));
             BaseLocations = new ObservableCollection<StartingPlace>(await Context.GetAllAsyncSortedByName<StartingPlace>());

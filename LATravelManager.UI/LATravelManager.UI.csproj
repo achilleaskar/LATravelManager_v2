@@ -8,7 +8,7 @@
     <ProjectGuid>{2B60FAA5-C679-40BD-A8CB-8DF107A7760B}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>LATravelManager.UI</RootNamespace>
-    <AssemblyName>LATravelManager.UI</AssemblyName>
+    <AssemblyName>LATravelManager</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -181,7 +181,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\FloadToStringValueConverter.cs" />
+    <Compile Include="Converters\IsGroupConverter.cs" />
+    <Compile Include="Data\LocalModels\NoName.cs" />
+    <Compile Include="Data\LocalModels\PlanDailyInfo.cs" />
+    <Compile Include="Data\LocalModels\RoomingList.cs" />
+    <Compile Include="Data\Workers\Lists.cs" />
     <Compile Include="ExcursionCategoryChangedMessage.cs" />
+    <Compile Include="Helpers\Actor.cs" />
     <Compile Include="Helpers\ExcursionComparer.cs" />
     <Compile Include="Message\ChangeChildViewModelMessage.cs" />
     <Compile Include="Helpers\DocumentsManagement.cs" />
@@ -190,6 +197,7 @@
     <Compile Include="NotifyTaskCompletion.cs" />
     <Compile Include="ViewModel\BaseViewModels\AddEditBase.cs" />
     <Compile Include="ViewModel\BaseViewModels\GroupChilds_BaseViewModel.cs" />
+    <Compile Include="ViewModel\BaseViewModels\NewReservationGroup_Base.cs" />
     <Compile Include="ViewModel\CategoriesViewModels\Bansko\Search_Bansko_ViewModel.cs" />
     <Compile Include="ViewModel\CategoriesViewModels\Group\NewReservation_Group_ViewModel.cs" />
     <Compile Include="ViewModel\CategoriesViewModels\Group\Search_Group_ViewModel.cs" />
@@ -206,7 +214,6 @@
     <Compile Include="Message\DeselectAllTabsMessage.cs" />
     <Compile Include="Message\IsBusyChangedMessage.cs" />
     <Compile Include="Message\ResetNavigationTabsMessage.cs" />
-    <Compile Include="Message\SetChildViewModelMessage.cs" />
     <Compile Include="Repositories\GenericRepository.cs" />
     <Compile Include="Repositories\IGenericRepository.cs" />
     <Compile Include="Security\PasswordHashing.cs" />
@@ -216,6 +223,10 @@
     <Compile Include="ViewModel\BaseViewModels\ExcursionCategory_ViewModelBase.cs" />
     <Compile Include="ViewModel\BaseViewModels\INavigationViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModels\IViewModel.cs" />
+    <Compile Include="ViewModel\Tabs\GlobalSearchTab.cs" />
+    <Compile Include="ViewModel\Tabs\InfoTab.cs" />
+    <Compile Include="ViewModel\Tabs\TabViewmodels\GlobalSearch_ViewModel.cs" />
+    <Compile Include="ViewModel\Tabs\TabViewmodels\Info_ViewModel.cs" />
     <Compile Include="ViewModel\Window_ViewModels\MainUserControl_ViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModels\MyViewModelBase.cs" />
     <Compile Include="ViewModel\BaseViewModels\TabsBaseViewModel.cs" />
@@ -311,6 +322,9 @@
     <Compile Include="Views\Services\PlaneService_UserControl.xaml.cs">
       <DependentUpon>PlaneService_UserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Tabs\GlobalSearch_UserControl.xaml.cs">
+      <DependentUpon>GlobalSearch_UserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Wrapper\BookingWrapper.cs" />
     <Compile Include="Wrapper\CityWrapper.cs" />
     <Compile Include="Wrapper\CountryWrapper.cs" />
@@ -338,6 +352,8 @@
     <Compile Include="Helpers\SearchBookingsHelper.cs" />
     <Compile Include="Helpers\StaticResources.cs" />
     <Compile Include="Wrapper\Personal_BookingWrapper.cs" />
+    <Compile Include="Wrapper\ReservationWrapper.cs" />
+    <Compile Include="Wrapper\RoomWrapper.cs" />
     <Compile Include="Wrapper\UserWrapper.cs" />
     <Page Include="Views\AddRooms_UserControl.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -435,6 +451,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Tabs\GlobalSearch_UserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Message\OpenChildWindowCommand.cs" />
@@ -466,10 +486,25 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="Sources\group\Voucher_afirmo.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\group\Voucher_enfirmo_larissas.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\group\Voucher_enfirmo_thess.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\letter.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Sources\protypo kratiseon.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Sources\protypo_leoforeia.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\protypo_symvasis.docx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Sources\Voucher_afirmo.docx">

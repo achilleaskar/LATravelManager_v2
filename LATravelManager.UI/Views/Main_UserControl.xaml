@@ -5,6 +5,8 @@
              xmlns:views="clr-namespace:LATravelManager.UI.Views"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.Parents"
+             xmlns:tabs="clr-namespace:LATravelManager.UI.ViewModel.Tabs.TabViewmodels"
+             xmlns:tabViews="clr-namespace:LATravelManager.UI.Views.Tabs"
              xmlns:windows="clr-namespace:LATravelManager.UI.ViewModel.Window_ViewModels"
              d:DataContext="{d:DesignInstance windows:MainUserControl_ViewModel}"
              x:Class="LATravelManager.UI.Views.Main_UserControl"
@@ -21,6 +23,9 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewmodels:PersonalParent_ViewModel}">
             <views:Personal_UserControl />
+        </DataTemplate> 
+        <DataTemplate DataType="{x:Type tabs:GlobalSearch_ViewModel}">
+            <tabViews:GlobalSearch_UserControl />
         </DataTemplate>
         <!--  <DataTemplate DataType="{x:Type viewmodels:PersonalExcursion_ViewModel}">
             <views:PersonalExcursions_UserControl />
@@ -42,9 +47,10 @@
                 <ColumnDefinition />
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
-        <Menu DockPanel.Dock="Top" Height="30"
-              Visibility="{Binding MenuVisibility}">
-            <MenuItem Header="Tools">
+            <Menu DockPanel.Dock="Top"
+                  Height="30"
+                 >
+                <MenuItem Header="Tools">
                 <MenuItem Header="Open Child" />
                 <MenuItem Header="Add Person" />
             </MenuItem>
@@ -56,9 +62,11 @@
                 <MenuItem Command="{Binding OpenCountriesEditCommand}"
                           Header="Χώρες" />
                 <MenuItem Command="{Binding OpenExcursionsEditCommand}"
-                          Header="Εκδρομές" />
+                              Header="Εκδρομές"
+                              Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}" />
                 <MenuItem Command="{Binding OpenUsersEditCommand}"
-                          Header="Χρήστες" />
+                              Header="Χρήστες"
+                              Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}" />
             </MenuItem>
             </Menu>
                 <StackPanel HorizontalAlignment="Right"

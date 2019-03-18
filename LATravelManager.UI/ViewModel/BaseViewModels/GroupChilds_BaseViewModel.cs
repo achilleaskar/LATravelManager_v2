@@ -12,7 +12,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 {
     public abstract class GroupChilds_BaseViewModel : MyViewModelBase
     {
-        private ExcursionWrapper _SelectedExcursion;
 
         public GroupChilds_BaseViewModel()
         {
@@ -20,22 +19,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         }
 
 
-        public ExcursionWrapper SelectedExcursion
-        {
-            get
-            {
-                return _SelectedExcursion;
-            }
-
-            set
-            {
-                if (_SelectedExcursion == value)
-                {
-                    return;
-                }
-                _SelectedExcursion = value;
-                RaisePropertyChanged();
-            }
-        }
+      
     }
 }

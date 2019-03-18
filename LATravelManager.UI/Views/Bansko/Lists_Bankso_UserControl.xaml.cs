@@ -33,20 +33,20 @@ namespace LATravelManager.UI.Views.Bansko
 
         private void DataGrid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (e.OriginalSource is TextBlock tb )
-            {
-                if (tb.DataContext is Reservation r)
-                {
-                   // r.SelectAll();
-                }
-            }
-            else if (e.OriginalSource is Border b)
-            {
-                if (b.DataContext is Reservation r)
-                {
-                  //  r.SelectAll();
-                }
-            }
+        //    if (e.OriginalSource is TextBlock tb )
+        //    {
+        //        //if (tb.DataContext is Reservation r)
+        //        //{
+        //        //   // r.SelectAll();
+        //        //}
+        //    }
+        //    else if (e.OriginalSource is Border b)
+        //    {
+        //        //if (b.DataContext is Reservation r)
+        //        //{
+        //        //  //  r.SelectAll();
+        //        //}
+        //    }
             e.Handled = true;
         }
 

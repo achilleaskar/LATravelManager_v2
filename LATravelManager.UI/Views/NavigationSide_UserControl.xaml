@@ -9,33 +9,32 @@
              Background="White"
              d:DesignHeight="450"
              d:DesignWidth="250">
-    
+
     <UserControl.Resources>
+        <Style TargetType="ListViewItem">
+            <Setter Property="IsSelected"
+                    Value="{Binding IsSelected}" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver"
+                         Value="True">
+                    <Setter Property="Cursor"
+                            Value="Hand" />
+                </Trigger>
+                <DataTrigger Binding="{Binding IsSelected}">
+                    <Setter Property="Background"
+                            Value="LightBlue" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
         <DataTemplate x:Key="SidePaneListViewTemplate">
-            <Button Command="{Binding ChangeViewModelCommand}" Margin="5 5 5 0"
-                    Visibility="{Binding Level, Converter={StaticResource UserToVisibilityConverter},  Mode=OneWay}">
-                <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver"
-                                     Value="True">
-                                <Setter Property="Cursor"
-                                        Value="Hand" />
-                            </Trigger>
-                            <DataTrigger Binding="{Binding IsSelected}">
-                                <Setter Property="Background"
-                                        Value="LightBlue" />
-                            </DataTrigger>
-                        </ControlTemplate.Triggers>
-                        <StackPanel Orientation="Horizontal">
-                            <iconPacks:PackIconMaterial Kind="{Binding IconName}"
-                                                        Height="30"
-                                                        Width="30" />
-                            <Label Content="{Binding Content}" />
-                        </StackPanel>
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
+
+            <StackPanel Orientation="Horizontal"
+                        Visibility="{Binding Level, Converter={StaticResource UserToVisibilityConverter},  Mode=OneWay}">
+                <iconPacks:PackIconMaterial Kind="{Binding IconName}"
+                                            Height="30"
+                                            Width="30" />
+                <Label Content="{Binding Content}" />
+            </StackPanel>
         </DataTemplate>
         <Storyboard x:Key="OpenMenu">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)"
@@ -208,33 +207,32 @@
                 BorderThickness="0,1,0,0"
                 ScrollViewer.CanContentScroll="False"
                 VerticalAlignment="Stretch">
-            <Grid Margin="0,5">
-                <ItemsControl ItemsSource="{Binding Tabs}"
-                              Background="Transparent"
-                              ScrollViewer.CanContentScroll="False"
-                              ScrollViewer.HorizontalScrollBarVisibility="Hidden"
-                              ItemTemplate="{StaticResource SidePaneListViewTemplate}"
-                              BorderThickness="0">
-                </ItemsControl>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <ListView ItemsSource="{Binding Tabs}"
+                          ScrollViewer.CanContentScroll="False"
+                          ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                          SelectedIndex="{Binding SelectedPrimaryTabIndex}"
+                          BorderThickness="0"
+                          Background="Transparent"
+                          ItemTemplate="{StaticResource SidePaneListViewTemplate}" />
                 <StackPanel VerticalAlignment="Bottom"
+                            Grid.Row="1"
                             ScrollViewer.CanContentScroll="False"
                             CanHorizontallyScroll="False"
                             ScrollViewer.HorizontalScrollBarVisibility="Hidden">
-                    <Separator Background="Gray" />
+                    <Separator Background="Gray"
+                               Margin="0" />
                     <ListView ItemsSource="{Binding SecondaryTabs}"
                               BorderThickness="0"
+                              Background="Transparent"
                               ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                               ScrollViewer.CanContentScroll="False"
-                              Background="Transparent"
-                              ItemTemplate="{StaticResource SidePaneListViewTemplate}"
-                              SelectedIndex="{Binding SelectedSecondaryTabIndex}">
-                        <ListView.Resources>
-                            <Style TargetType="{x:Type ListViewItem}">
-                                <Setter Property="IsSelected"
-                                        Value="{Binding IsSelected, Mode=TwoWay}" />
-                            </Style>
-                        </ListView.Resources>
-                    </ListView>
+                              SelectedIndex="{Binding SelectedSecondaryTabIndex}"
+                              ItemTemplate="{StaticResource SidePaneListViewTemplate}" />
                 </StackPanel>
             </Grid>
         </Border>

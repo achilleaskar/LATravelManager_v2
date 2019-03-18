@@ -49,7 +49,7 @@ namespace LATravelManager.Models
 
         public override string ToString()
         {
-            return UserName;
+            return Name;
         }
 
         #endregion Methods

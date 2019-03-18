@@ -13,18 +13,17 @@ namespace LATravelManager.UI.ViewModel.Parents
 {
     public class GroupParent_ViewModel : ExcursionCategory_ViewModelBase
     {
-        public GroupParent_ViewModel(GenericRepository startingReposiroty) : base(startingReposiroty)
+        public GroupParent_ViewModel(GenericRepository startingReposiroty, NavigationViewModel navigationViewModel) : base(startingReposiroty, navigationViewModel)
         {
             GroupExcursions = new ObservableCollection<ExcursionWrapper>();
             UpdateExcursionsCommand = new RelayCommand(async () => { await ReloadAsync(); }, CanUpdate);
 
             Tabs.Add(new MakeReservationTab { Index = Tabs.Count });
-            Tabs.Add(new SearchTab { Index = Tabs.Count });
-           // Tabs.Add(new MoveTab { Index = Tabs.Count });
-           // Tabs.Add(new ListManagementTab { Index = Tabs.Count });
-           // Tabs.Add(new OptionalActivitiesTab { Index = Tabs.Count });
+            // Tabs.Add(new SearchTab { Index = Tabs.Count });
+            // Tabs.Add(new MoveTab { Index = Tabs.Count });
+            // Tabs.Add(new ListManagementTab { Index = Tabs.Count });
+            // Tabs.Add(new OptionalActivitiesTab { Index = Tabs.Count });
             LoadChildViewModels();
-            SelectedExcursionIndex = -1;
         }
 
         public bool Enable => SelectedExcursion != null;
@@ -34,34 +33,12 @@ namespace LATravelManager.UI.ViewModel.Parents
             return StartingReposiroty.IsContextAvailable;
         }
 
-        public override async Task LoadAsync(int id = 0)
+        public override async Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
         {
             GroupExcursions = new ObservableCollection<ExcursionWrapper>((await StartingReposiroty.GetAllUpcomingGroupExcursionsAsync()).OrderBy(ex => ex, new ExcursionComparer()).Select(c => new ExcursionWrapper(c)));
         }
 
         public RelayCommand UpdateExcursionsCommand { get; set; }
-
-        private int _SelectedExcursionIndex;
-
-        public int SelectedExcursionIndex
-        {
-            get
-            {
-                return _SelectedExcursionIndex;
-            }
-
-            set
-            {
-                if (_SelectedExcursionIndex == value)
-                {
-                    return;
-                }
-
-                _SelectedExcursionIndex = value;
-                SelectedExcursion = (value <= GroupExcursions.Count && value >= 0) ? GroupExcursions[SelectedExcursionIndex] : null;
-                RaisePropertyChanged();
-            }
-        }
 
         private ObservableCollection<ExcursionWrapper> _GroupExcursions;
 
@@ -87,7 +64,7 @@ namespace LATravelManager.UI.ViewModel.Parents
         public void LoadChildViewModels()
         {
             Childs.Add(new NewReservation_Group_ViewModel());
-            Childs.Add(new Search_Group_ViewModel());
+            //Childs.Add(new Search_Group_ViewModel());
             //Childs.Add(new MoveReservation_Bansko_ViewModel());
             //Childs.Add(new Lists_Bansko_ViewModel());
             //Childs.Add(new OptionalActivities_Bansko_ViewModel());
@@ -95,6 +72,10 @@ namespace LATravelManager.UI.ViewModel.Parents
 
         public override async Task ReloadAsync()
         {
+            if (StartingReposiroty != null && !StartingReposiroty.IsTaskOk)
+            {
+                await StartingReposiroty.LastTask;
+            }
             StartingReposiroty = new GenericRepository();
             GroupExcursions = new ObservableCollection<ExcursionWrapper>((await StartingReposiroty.GetAllUpcomingGroupExcursionsAsync()).OrderBy(ex => ex, new ExcursionComparer()).Select(c => new ExcursionWrapper(c)));
             UpdateExcursionsCommand.RaiseCanExecuteChanged();

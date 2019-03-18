@@ -6,9 +6,8 @@ namespace LATravelManager.UI.Wrapper
     {
         #region Constructors
 
-        public CountryWrapper() : base(new Country())
+        public CountryWrapper() : this(new Country())
         {
-            Title = "Η χώρα";
         }
 
         public CountryWrapper(Country model) : base(model)

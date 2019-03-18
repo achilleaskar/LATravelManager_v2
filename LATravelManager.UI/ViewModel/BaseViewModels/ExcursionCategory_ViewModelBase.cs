@@ -9,14 +9,68 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 {
     public abstract class ExcursionCategory_ViewModelBase : MyViewModelBase
     {
-        public ExcursionCategory_ViewModelBase(GenericRepository startingReposiroty)
+        #region Constructors
+
+        public ExcursionCategory_ViewModelBase(GenericRepository startingReposiroty, NavigationViewModel navigationViewModel)
         {
             Childs = new List<MyViewModelBase>();
             Tabs = new List<TabsBaseViewModel>();
             StartingReposiroty = startingReposiroty;
+            NavigationViewModel = navigationViewModel;
         }
 
+        #endregion Constructors
+
+        #region Fields
+
+        private List<MyViewModelBase> _Childs;
+        private MyViewModelBase _SelectedChildViewModel;
         private ExcursionWrapper _SelectedExcursion;
+
+        #endregion Fields
+
+        #region Properties
+
+        public List<MyViewModelBase> Childs
+        {
+            get
+            {
+                return _Childs;
+            }
+
+            set
+            {
+                if (_Childs == value)
+                {
+                    return;
+                }
+
+                _Childs = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public NavigationViewModel NavigationViewModel { get; }
+
+        public MyViewModelBase SelectedChildViewModel
+        {
+            get
+            {
+                return _SelectedChildViewModel;
+            }
+
+            set
+            {
+                if (_SelectedChildViewModel == value)
+                {
+                    return;
+                }
+
+                _SelectedChildViewModel = value;
+                RaisePropertyChanged();
+                ChildChanged();
+            }
+        }
 
         public ExcursionWrapper SelectedExcursion
         {
@@ -42,67 +96,29 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
 
 
-       
 
+
+        public GenericRepository StartingReposiroty { get; set; }
         public List<TabsBaseViewModel> Tabs { get; internal set; }
+
+        #endregion Properties
+
+        #region Methods
 
         internal async Task SetProperChildViewModel(int index)
         {
-            if (index <= Childs.Count)
-            {
-                SelectedChildViewModel = Childs[index];
-                if (!SelectedChildViewModel.IsLoaded)
-                    await SelectedChildViewModel.LoadAsync();
-            }
-        }
-
-        private MyViewModelBase _SelectedChildViewModel;
-
-        public MyViewModelBase SelectedChildViewModel
-        {
-            get
-            {
-                return _SelectedChildViewModel;
-            }
-
-            set
-            {
-                if (_SelectedChildViewModel == value)
+     
+                if (index < Childs.Count)
                 {
-                    return;
+                    SelectedChildViewModel = Childs[index];
+                    if (!SelectedChildViewModel.IsLoaded)
+                        await SelectedChildViewModel.LoadAsync();
                 }
-
-                _SelectedChildViewModel = value;
-                RaisePropertyChanged();
-                ChildChanged();
-            }
         }
-
-        private List<MyViewModelBase> _Childs;
-
-        public List<MyViewModelBase> Childs
-        {
-            get
-            {
-                return _Childs;
-            }
-
-            set
-            {
-                if (_Childs == value)
-                {
-                    return;
-                }
-
-                _Childs = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public GenericRepository StartingReposiroty { get; set; }
-
         private void ChildChanged()
         {
         }
+
+        #endregion Methods
     }
 }

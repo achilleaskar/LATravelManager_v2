@@ -153,10 +153,10 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
       
 
-        private void ChangeVisibility(ChangeVisibilityMessage msg)
-        {
-            Visibility = msg.Visible ? Visibility.Visible : Visibility.Collapsed;
-        }
+        //private void ChangeVisibility(ChangeVisibilityMessage msg)
+        //{
+        //    Visibility = msg.Visible ? Visibility.Visible : Visibility.Collapsed;
+        //}
 
         private void ManageIsBusy(bool add)
         {

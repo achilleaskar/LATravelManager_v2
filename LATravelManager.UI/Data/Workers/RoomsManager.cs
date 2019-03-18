@@ -1,10 +1,10 @@
 ﻿using LATravelManager.Models;
+using LATravelManager.UI.Data.LocalModels;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.Wrapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Windows;
 using static LATravelManager.Model.Enums;
@@ -32,7 +32,7 @@ namespace LATravelManager.UI.Data.Workers
 
         private List<NoName> NonamesList { get; set; } = new List<NoName>();
 
-        private List<Hotel> Plan { get; set; } = new List<Hotel>();
+        private List<HotelWrapper> Plan { get; set; } = new List<HotelWrapper>();
 
         #endregion Properties
 
@@ -45,10 +45,10 @@ namespace LATravelManager.UI.Data.Workers
         //    return Hotels;
         //}
 
-        public bool CheckIfRoomIsFree(DateTime checkIn, DateTime checkout)
-        {
-            return true;
-        }
+        //public bool CheckIfRoomIsFree(DateTime checkIn, DateTime checkout)
+        //{
+        //    return true;
+        //}
 
         //public async Task<List<Hotel>> GetFreeRooms(DateTime checkIn, DateTime checkout, Excursion excursion)
         //{
@@ -149,7 +149,7 @@ namespace LATravelManager.UI.Data.Workers
             //}
         }
 
-        public async Task<List<Hotel>> GetAllAvailableRooms(
+        public async Task<List<HotelWrapper>> GetAllAvailableRooms(
             GenericRepository context, DateTime planStart, DateTime planEnd,
             ExcursionWrapper excursionfilter,
              Booking unSavedBooking = null)
@@ -161,7 +161,7 @@ namespace LATravelManager.UI.Data.Workers
                 DateTime MinDay = planStart, MaxDay = planEnd, tmpDate;
                 MinDay = MinDay.AddDays(-10);
                 MaxDay = MaxDay.AddDays(10);
-                Hotels = (await context.GetAllHotelsWithRoomsInCityAsync(MinDay, MaxDay,excursionfilter.Destinations[0].Id));
+                Hotels = (await context.GetAllHotelsWithRoomsInCityAsync(MinDay, MaxDay, excursionfilter.Destinations[0].Id));
                 Bookings = (await context.GetAllBookingInPeriod(MinDay, MaxDay, excursionfilter.Id)).ToList();
 
                 if (unSavedBooking.Id > 0)
@@ -174,9 +174,9 @@ namespace LATravelManager.UI.Data.Workers
                 {
                     foreach (Reservation reservation in booking.ReservationsInBooking)
                     {
-                        if (reservation.ReservationType == Reservation.ReservationTypeEnum.Noname)
+                        if (reservation.ReservationType == ReservationTypeEnum.Noname)
                         {
-                            NonamesList.Add(new NoName { Reservation = reservation });
+                            NonamesList.Add(new NoName { Reservation = new ReservationWrapper(reservation) });
                         }
 
                         if (booking.CheckIn < MinDay)
@@ -190,14 +190,14 @@ namespace LATravelManager.UI.Data.Workers
                     }
                 }
 
-                Hotel tmpHotel;//-------------
-                Room tmpRoom;//-------------
+                HotelWrapper tmpHotelWr;//-------------
+                RoomWrapper tmpRoomWr;//-------------
                 int counter = 0;//-------------
                                 //maybe parallel here
 
                 foreach (Hotel hotel in Hotels)
                 {
-                    tmpHotel = new Hotel//-------------
+                    tmpHotelWr = new HotelWrapper//-------------
                     {
                         Name = hotel.Name,
                         Id = hotel.Id,
@@ -209,7 +209,7 @@ namespace LATravelManager.UI.Data.Workers
                     {
                         room.DailyBookingInfo.Sort((x, y) => DateTime.Compare(x.Date, y.Date));
                         tmpDate = MinDay;
-                        tmpRoom = room; //new Room { Id = room.Id, RoomType = room.RoomType, Hotel = room.Hotel, Note = room.Note, };
+                        tmpRoomWr = new RoomWrapper(room); //new Room { Id = room.Id, RoomType = room.RoomType, Hotel = room.Hotel, Note = room.Note, };
 
                         if (room.StartDate > MaxDay || room.EndDate < MinDay)
                         {
@@ -222,12 +222,12 @@ namespace LATravelManager.UI.Data.Workers
 
                         while (tmpDate < MaxDay)
                         {
-                            if (tmpRoom.Id == 1472)
+                            if (tmpRoomWr.Id == 1472)
                             {
                             }
                             if (counter < room.DailyBookingInfo.Count && room.DailyBookingInfo[counter].Date == tmpDate)
                             {
-                                tmpRoom.PlanDailyInfo.Add(new PlanDailyInfo
+                                tmpRoomWr.PlanDailyInfo.Add(new PlanDailyInfo
                                 {
                                     Date = room.DailyBookingInfo[counter].Date,
                                     IsAllotment = room.DailyBookingInfo[counter].IsAllotment,
@@ -238,17 +238,17 @@ namespace LATravelManager.UI.Data.Workers
                             }
                             else
                             {
-                                tmpRoom.PlanDailyInfo.Add(new PlanDailyInfo { Date = tmpDate, RoomState = RoomStateEnum.NotAvailable });
+                                tmpRoomWr.PlanDailyInfo.Add(new PlanDailyInfo { Date = tmpDate, RoomState = RoomStateEnum.NotAvailable });
                             }
                             tmpDate = tmpDate.AddDays(1);
                         }
                         counter = 0;
-                        if (tmpRoom.PlanDailyInfo.Count > 0)
-                            tmpHotel.Rooms.Add(tmpRoom);
+                        if (tmpRoomWr.PlanDailyInfo.Count > 0)
+                            tmpHotelWr.RoomWrappers.Add(tmpRoomWr);
                     }
-                    if (tmpHotel.Rooms.Count > 0)
+                    if (tmpHotelWr.Rooms.Count > 0)
                     {
-                        Plan.Add(tmpHotel);
+                        Plan.Add(tmpHotelWr);
                     }
                 }
 
@@ -260,9 +260,9 @@ namespace LATravelManager.UI.Data.Workers
                         {
                             foreach (Reservation reservation in booking.ReservationsInBooking)
                             {
-                                if (reservation.ReservationType == Reservation.ReservationTypeEnum.Normal)
+                                if (reservation.ReservationType == ReservationTypeEnum.Normal)
                                 {
-                                    (await context.GetByIdAsync<Room>(reservation.Room.Id)).MakeReservation(reservation);
+                                    (new RoomWrapper(await context.GetByIdAsync<Room>(reservation.Room.Id))).MakeReservation(new ReservationWrapper(reservation));
                                 }
                             }
                         }
@@ -270,9 +270,9 @@ namespace LATravelManager.UI.Data.Workers
                         {
                             foreach (Reservation reservation in booking.ReservationsInBooking)
                             {
-                                if (reservation.ReservationType == Reservation.ReservationTypeEnum.Normal)
+                                if (reservation.ReservationType == ReservationTypeEnum.Normal)
                                 {
-                                    reservation.Room.MakeReservation(reservation);
+                                    (new RoomWrapper(reservation.Room)).MakeReservation(new ReservationWrapper(reservation));
                                 }
                             }
                         }
@@ -328,7 +328,7 @@ namespace LATravelManager.UI.Data.Workers
                     {
                         if (!noName.Handled)
                         {
-                            foreach (Room availableroom in noName.AvailableRooms)
+                            foreach (RoomWrapper availableroom in noName.AvailableRooms)
                             {
                                 if (Fits(noName, availableroom))
                                 {
@@ -367,7 +367,7 @@ namespace LATravelManager.UI.Data.Workers
                     {
                         if (!noName.Handled)
                         {
-                            foreach (Room availableroom in noName.AvailableRooms)
+                            foreach (RoomWrapper availableroom in noName.AvailableRooms)
                             {
                                 if (Fits(noName, availableroom))
                                 {
@@ -384,7 +384,7 @@ namespace LATravelManager.UI.Data.Workers
                     {
                         if (!noName.Handled)
                         {
-                            foreach (Room availableroom in noName.AvailableRooms)
+                            foreach (RoomWrapper availableroom in noName.AvailableRooms)
                             {
                                 if (FitsBefore(noName, availableroom))
                                 {
@@ -401,7 +401,7 @@ namespace LATravelManager.UI.Data.Workers
                     {
                         if (!noName.Handled)
                         {
-                            foreach (Room availableroom in noName.AvailableRooms)
+                            foreach (RoomWrapper availableroom in noName.AvailableRooms)
                             {
                                 if (FitsAfter(noName, availableroom))
                                 {
@@ -440,7 +440,7 @@ namespace LATravelManager.UI.Data.Workers
                     {
                         if (!noName.Handled)
                         {
-                            foreach (Room availableroom in noName.AvailableRooms)
+                            foreach (RoomWrapper availableroom in noName.AvailableRooms)
                             {
                                 if (Fits(noName, availableroom))
                                 {
@@ -457,7 +457,7 @@ namespace LATravelManager.UI.Data.Workers
                     {
                         if (!noName.Handled)
                         {
-                            foreach (Room availableroom in noName.AvailableRooms)
+                            foreach (RoomWrapper availableroom in noName.AvailableRooms)
                             {
                                 if (FitsBefore(noName, availableroom))
                                 {
@@ -474,7 +474,7 @@ namespace LATravelManager.UI.Data.Workers
                     {
                         if (!noName.Handled)
                         {
-                            foreach (Room availableroom in noName.AvailableRooms)
+                            foreach (RoomWrapper availableroom in noName.AvailableRooms)
                             {
                                 if (FitsAfter(noName, availableroom))
                                 {
@@ -520,33 +520,33 @@ namespace LATravelManager.UI.Data.Workers
 
                 SetNoNameColors(Plan);
 
-                List<Hotel> PlanCroped = new List<Hotel>();
+                List<HotelWrapper> PlanCroped = new List<HotelWrapper>();
 
-                foreach (Hotel hotel in Plan)
+                foreach (HotelWrapper hotel in Plan)
                 {
                     bool addThis = false;
-                    tmpHotel = new Hotel { Name = hotel.Name, Id = hotel.Id };
-                    foreach (Room room in hotel.Rooms)
+                    tmpHotelWr = new HotelWrapper { Name = hotel.Name, Id = hotel.Id };
+                    foreach (RoomWrapper roomWr in hotel.RoomWrappers)
                     {
                         addThis = false;
                         tmpDate = planStart;
-                        tmpRoom = room;// new Room { Id = room.Id, RoomType = room.RoomType, Hotel = room.Hotel, Note = room.Note };
+                        tmpRoomWr = roomWr;// new Room { Id = room.Id, RoomType = room.RoomType, Hotel = room.Hotel, Note = room.Note };
                         List<PlanDailyInfo> newList = new List<PlanDailyInfo>();
-                        while (room.PlanDailyInfo[counter].Date < planStart)
+                        while (roomWr.PlanDailyInfo[counter].Date < planStart)
                         {
                             counter++;
                         }
                         while (tmpDate < planEnd)
                         {
-                            if (counter < room.PlanDailyInfo.Count)
+                            if (counter < roomWr.PlanDailyInfo.Count)
                             {
-                                if (!addThis && room.PlanDailyInfo[counter].RoomState != RoomStateEnum.NotAvailable)
+                                if (!addThis && roomWr.PlanDailyInfo[counter].RoomState != RoomStateEnum.NotAvailable)
                                 {
                                     addThis = true;
                                 }
-                                if (room.PlanDailyInfo[counter].Date == tmpDate)
+                                if (roomWr.PlanDailyInfo[counter].Date == tmpDate)
                                 {
-                                    newList.Add(room.PlanDailyInfo[counter]);
+                                    newList.Add(roomWr.PlanDailyInfo[counter]);
                                     counter++;
                                 }
                                 else
@@ -564,13 +564,13 @@ namespace LATravelManager.UI.Data.Workers
                         counter = 0;
                         if (addThis)
                         {
-                            tmpRoom.PlanDailyInfo = newList;
-                            tmpHotel.Rooms.Add(tmpRoom);
+                            tmpRoomWr.PlanDailyInfo = newList;
+                            tmpHotelWr.RoomWrappers.Add(tmpRoomWr);
                         }
                     }
-                    if (tmpHotel.Rooms.Count > 0)
+                    if (tmpHotelWr.Rooms.Count > 0)
                     {
-                        PlanCroped.Add(tmpHotel);
+                        PlanCroped.Add(tmpHotelWr);
                     }
                 }
                 Plan = PlanCroped;
@@ -582,23 +582,23 @@ namespace LATravelManager.UI.Data.Workers
             return Plan;
         }
 
-        private static bool IsOtherFree(Reservation reservation, List<Hotel> plan)
+        private static bool IsOtherFree(ReservationWrapper reservation, List<HotelWrapper> plan)
         {
-            foreach (Hotel hotel in plan)
+            foreach (HotelWrapper hotel in plan)
                 if (hotel.Id != 21 && hotel.Id != 22 && hotel.Id != 23 && hotel.Id != 42)
-                    foreach (Room room in hotel.Rooms)
-                        if (room.RoomType == reservation.NoNameRoom.RoomType)
-                            if (room.CanAddReservationToRoom(reservation, false, false))
+                    foreach (RoomWrapper roomWr in hotel.RoomWrappers)
+                        if (roomWr.RoomType == reservation.NoNameRoom.RoomType)
+                            if (roomWr.CanAddReservationToRoom(reservation, false, false))
                                 return true;
             return false;
         }
 
-        private static void SetNoNameColors(List<Hotel> plan)
+        private static void SetNoNameColors(List<HotelWrapper> plan)
         {
             DateTime tmpdate;
-            foreach (Hotel hotel in plan)
+            foreach (HotelWrapper hotel in plan)
             {
-                foreach (Room room in hotel.Rooms)
+                foreach (RoomWrapper room in hotel.RoomWrappers)
                 {
                     for (var i = 0; i < room.PlanDailyInfo.Count; i++)
                     {
@@ -621,38 +621,37 @@ namespace LATravelManager.UI.Data.Workers
             }
         }
 
-        private static bool Fits(NoName noName, Room availableroom)
+        private static bool Fits(NoName noName, RoomWrapper availableroomWr)
         {
-            DateTime tmpdate = noName.Reservation.CheckIn;
             int lastNight;
-            for (int i = 0; i < availableroom.PlanDailyInfo.Count; i++)
+            for (int i = 0; i < availableroomWr.PlanDailyInfo.Count; i++)
             {
-                if (availableroom.PlanDailyInfo[i].Date > noName.Reservation.CheckIn)
+                if (availableroomWr.PlanDailyInfo[i].Date > noName.Reservation.CheckIn)
                 {
                     return false;
                 }
-                if (availableroom.PlanDailyInfo[i].Date == noName.Reservation.CheckIn)
+                if (availableroomWr.PlanDailyInfo[i].Date == noName.Reservation.CheckIn)
                 {
                     if (i == 0)
                     {
                         lastNight = i + noName.Reservation.Nights - 1;
-                        if (lastNight == availableroom.PlanDailyInfo.Count)
+                        if (lastNight == availableroomWr.PlanDailyInfo.Count)
                         {
                             return true;
                         }
-                        if (availableroom.PlanDailyInfo[lastNight + 1].RoomState != RoomStateEnum.Available)
+                        if (availableroomWr.PlanDailyInfo[lastNight + 1].RoomState != RoomStateEnum.Available)
                         {
                             return true;
                         }
                     }
-                    else if (availableroom.PlanDailyInfo[i - 1].RoomState != RoomStateEnum.Available)
+                    else if (availableroomWr.PlanDailyInfo[i - 1].RoomState != RoomStateEnum.Available)
                     {
                         lastNight = i + noName.Reservation.Nights - 1;
-                        if (lastNight == availableroom.PlanDailyInfo.Count)
+                        if (lastNight == availableroomWr.PlanDailyInfo.Count)
                         {
                             return true;
                         }
-                        if (availableroom.PlanDailyInfo[lastNight + 1].RoomState != RoomStateEnum.Available)
+                        if (availableroomWr.PlanDailyInfo[lastNight + 1].RoomState != RoomStateEnum.Available)
                         {
                             return true;
                         }
@@ -662,9 +661,8 @@ namespace LATravelManager.UI.Data.Workers
             return false;
         }
 
-        private bool FitsAfter(NoName noName, Room availableroom)
+        private bool FitsAfter(NoName noName, RoomWrapper availableroom)
         {
-            DateTime tmpdate = noName.Reservation.CheckIn;
             int lastNightI;
             for (int i = 0; i < availableroom.PlanDailyInfo.Count; i++)
             {
@@ -695,9 +693,8 @@ namespace LATravelManager.UI.Data.Workers
             return false;
         }
 
-        private bool FitsBefore(NoName noName, Room availableroom)
+        private bool FitsBefore(NoName noName, RoomWrapper availableroom)
         {
-            DateTime tmpdate = noName.Reservation.CheckIn;
             for (int i = 0; i < availableroom.PlanDailyInfo.Count; i++)
             {
                 if (availableroom.PlanDailyInfo[i].Date > noName.Reservation.CheckIn)
@@ -718,13 +715,13 @@ namespace LATravelManager.UI.Data.Workers
 
         private void UpdateNoNames()
         {
-            Object lockMe = new Object();
+            object lockMe = new object();
             Parallel.ForEach(NonamesList, noName =>
             {
                 noName.AvailableRooms.Clear();
                 Parallel.ForEach(Plan, hotel =>
                   {
-                      Parallel.ForEach(hotel.Rooms, room =>
+                      Parallel.ForEach(hotel.RoomWrappers, room =>
                       {
                           if (room.CanFit(noName.Reservation) && noName.AvailableRooms.Count < NonamesList.Count + 10)
                               if (room.CanAddReservationToRoom(noName.Reservation))

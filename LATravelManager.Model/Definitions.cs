@@ -14,7 +14,6 @@ namespace LATravelManager.Models
         //    Continious
         //}
 
-        public static string UnitOfWorkKey { get; set; } = Guid.NewGuid().ToString();
 
         public static int SelectedTemplate { get; set; } = -1;
 

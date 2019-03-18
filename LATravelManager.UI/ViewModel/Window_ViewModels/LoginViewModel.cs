@@ -16,7 +16,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 {
     public class LoginViewModel : MyViewModelBase
     {
-        private GenericRepository startingRepository;
+        private readonly GenericRepository startingRepository;
 
         public LoginViewModel(GenericRepository startingRepository)
         {
@@ -129,10 +129,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                 User userFound = null;
                 ErrorMessage = "Παρακαλώ περιμένετε...";
 
-                await Task.Run( () =>
-                {
-                    userFound = Users.Where(u=>u.UserName==PossibleUser.UserName).FirstOrDefault();
-                });
+                userFound = await startingRepository.FindUserAsync(PossibleUser.UserName.ToLower());
                 if (userFound == null)
                 {
                     ErrorMessage = "Δεν βρέθηκε χρηστης.";
@@ -175,7 +172,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             }
         }
 
-        public async override Task LoadAsync(int id = 0)
+        public async override Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
         {
             Users = (await startingRepository.GetAllAsync<User>()).ToList();
         }

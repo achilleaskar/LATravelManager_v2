@@ -14,9 +14,8 @@ namespace LATravelManager.UI.Wrapper
             Title = "Η εκδρομή";
         }
 
-        public ExcursionWrapper() : base(new Excursion())
+        public ExcursionWrapper() : this(new Excursion())
         {
-            Title = "Η εκδρομή";
         }
 
         public DateTime Start
@@ -62,6 +61,12 @@ namespace LATravelManager.UI.Wrapper
         }
 
         public bool DiscountsExist
+        {
+            get { return GetValue<bool>(); }
+            set { SetValue(value); }
+        }
+
+        public bool NightStart
         {
             get { return GetValue<bool>(); }
             set { SetValue(value); }
@@ -133,13 +138,14 @@ namespace LATravelManager.UI.Wrapper
             switch (propertyName)
             {
                 case nameof(Destinations):
-                    if (Destinations.Count==0)
+                    if (Destinations.Count == 0)
                     {
                         yield return "Παρακαλώ επιλέξτε προορισμό";
                     }
                     break;
+
                 case nameof(ExcursionDates):
-                    if (ExcursionDates.Count==0)
+                    if (ExcursionDates.Count == 0)
                     {
                         yield return "Παρακαλώ επιλέξτε Ημερομηνίες";
                     }

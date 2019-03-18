@@ -9,14 +9,14 @@ namespace LATravelManager.UI.ViewModel.Parents
 {
     public class PersonalParent_ViewModel : ExcursionCategory_ViewModelBase
     {
-        public PersonalParent_ViewModel(GenericRepository startingReposiroty) : base(startingReposiroty)
+        public PersonalParent_ViewModel(GenericRepository startingReposiroty, NavigationViewModel navigationViewModel) : base(startingReposiroty, navigationViewModel)
         {
             Tabs.Add(new MakeReservationTab { Index = Tabs.Count });
             Tabs.Add(new SearchTab { Index = Tabs.Count });
             LoadChildViewModels();
         }
 
-        public override Task LoadAsync(int id = 0)
+        public override Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
         {
             return Task.Delay(0);
         }

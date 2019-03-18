@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using static LATravelManager.Model.Enums;
 
 public class NewReservationHelper : ViewModelBase
 {
@@ -52,7 +53,7 @@ public class NewReservationHelper : ViewModelBase
         bool hasCustomers = false;
         Reservation newRes = new Reservation
         {
-            ReservationType = Reservation.ReservationTypeEnum.Noname,
+            ReservationType = ReservationTypeEnum.Noname,
             FirstHotel = "ΝΟ ΝΑΜΕ",
             HB = hb,
             NoNameRoomType = roomType,
@@ -105,7 +106,7 @@ public class NewReservationHelper : ViewModelBase
         bool hasCustomers = false;
         Reservation newRes = new Reservation
         {
-            ReservationType = Reservation.ReservationTypeEnum.Overbooked,
+            ReservationType = ReservationTypeEnum.Overbooked,
             FirstHotel = hotel.Name,
             Hotel = hotel,
             NoNameRoomType = roomType,
@@ -153,14 +154,14 @@ public class NewReservationHelper : ViewModelBase
         }
     }
 
-    public void PutCustomersInRoomAsync(BookingWrapper booking, Room SelectedRoom, bool all, bool onlyStay, bool hb)
+    public void PutCustomersInRoomAsync(BookingWrapper booking, RoomWrapper SelectedRoom, bool all, bool onlyStay, bool hb)
     {
         bool hasCustomers = false;
-        Reservation newRes = new Reservation
+        ReservationWrapper newResWr = new ReservationWrapper
         {
-            ReservationType = Reservation.ReservationTypeEnum.Normal,
+            ReservationType = ReservationTypeEnum.Normal,
             OnlyStay = onlyStay,
-            Room = SelectedRoom,
+            Room = SelectedRoom.Model,
             FirstHotel = SelectedRoom.Hotel.Name,
             HB = hb
         };
@@ -176,8 +177,8 @@ public class NewReservationHelper : ViewModelBase
                 hasCustomers = true;
                 customer.Handled = true;
                 customer.RoomNumber = (booking.ReservationsInBooking.Count + 1).ToString();
-                customer.HotelName = newRes.Room.Hotel.Name;
-                customer.RoomTypeName = newRes.Room.RoomType.Name;
+                customer.HotelName = newResWr.Room.Hotel.Name;
+                customer.RoomTypeName = newResWr.Room.RoomType.Name;
                 if (booking.ReservationsInBooking.Count() % 2 == 0)
                     customer.RoomColor = new SolidColorBrush(Colors.LightPink);
                 else
@@ -196,16 +197,16 @@ public class NewReservationHelper : ViewModelBase
                     }
                 }
 
-                newRes.CustomersList.Add(customer.Model);
+                newResWr.CustomersList.Add(customer.Model);
             }
         }
         if (hasCustomers)
         {
-            if (SelectedRoom.CanAddReservationToRoom(newRes))
+            if (SelectedRoom.CanAddReservationToRoom(newResWr))
             {
-                SelectedRoom.MakeReservation(newRes);
+                SelectedRoom.MakeReservation(newResWr);
             }
-            booking.ReservationsInBooking.Add(newRes);
+            booking.ReservationsInBooking.Add(newResWr.Model);
 
             RoomsManager.SortCustomers(booking);
             foreach (CustomerWrapper customer in booking.Customers)
@@ -259,7 +260,7 @@ public class NewReservationHelper : ViewModelBase
         bool hasCustomers = false;
         Reservation newRes = new Reservation
         {
-            ReservationType = Reservation.ReservationTypeEnum.Transfer,
+            ReservationType = ReservationTypeEnum.Transfer,
             FirstHotel = "TRANSFER"
         };
         foreach (CustomerWrapper customer in booking.Customers)
@@ -304,9 +305,9 @@ public class NewReservationHelper : ViewModelBase
         }
     }
 
-    private async Task CalculateDiferencesAsync(Booking Dbbooking, Booking newBooking)
-    {
-        //var tmpBooking = await Context.GetByIdAsync<Booking>(newBooking.Id);
+    //private async Task CalculateDiferencesAsync(Booking Dbbooking, Booking newBooking)
+    //{
+    //    //var tmpBooking = await Context.GetByIdAsync<Booking>(newBooking.Id);
         //Context.UpdateValues(tmpBooking, newBooking);
         //tmpBooking.Payments.Clear();
         //tmpBooking.ReservationsInBooking.Clear();
@@ -330,7 +331,7 @@ public class NewReservationHelper : ViewModelBase
         //         myObjectState.OriginalValues[propName],
         //         myObjectState.CurrentValues[propName]);
         //}
-    }
+    //}
 
     #endregion Methods
 }

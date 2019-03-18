@@ -14,8 +14,7 @@ namespace LATravelManager.UI.ViewModel.Tabs
             IconName = "SettingsOutline";
             Level = 1;
             IsChild = true;
-            Name = nameof(Settings_Viewmodel);
-            Content = "΄Ρυθμίσεις";
+            Content = "Ρυθμίσεις";
         }
     }
 }

@@ -39,14 +39,16 @@
             <ComboBox VerticalAlignment="Center"
                       Width="200"
                       SelectedItem="{Binding SelectedExcursion,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                      ItemsSource="{Binding GroupExcursions}" DisplayMemberPath="Name" />
+                      ItemsSource="{Binding GroupExcursions}"
+                      DisplayMemberPath="Name" />
             <Button HorizontalAlignment="Right"
-                    Cursor="Hand" VerticalAlignment="Center"
-                    Padding="5" Margin="5,0"
+                    Cursor="Hand"
+                    VerticalAlignment="Center"
+                    Padding="5"
+                    Margin="5,0"
                     Command="{Binding UpdateExcursionsCommand}">
                 <iconPacks:PackIconFontAwesome Kind="SyncSolid"
-                                               VerticalAlignment="Center"
-                                               Spin="{Binding !StartingReposiroty.IsContextAvailable}" />
+                                               VerticalAlignment="Center" />
             </Button>
         </StackPanel>
         <ContentControl Grid.Row="1"

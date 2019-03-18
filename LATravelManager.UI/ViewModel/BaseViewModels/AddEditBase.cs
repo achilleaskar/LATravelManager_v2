@@ -260,6 +260,10 @@ namespace LaTravelManager.BaseTypes
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
                 ResultMessage = "";
+                if (Context != null && !Context.IsTaskOk)
+                {
+                    await Context.LastTask;
+                }
                 Context = new GenericRepository();
                 if (SelectedEntity.Id > 0)
                 {

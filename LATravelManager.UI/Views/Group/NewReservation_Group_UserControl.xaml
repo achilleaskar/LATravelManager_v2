@@ -17,6 +17,8 @@
     <UserControl.Resources>
         <converters:BrushColorConverter x:Key="BrushColorConverter" />
         <converters:UserToVisibility x:Key="UserToVisibilityConverter" />
+        <converters:FloadToStringValueConverter x:Key="FtoSConverter" />
+
         <converters:SelectedIndexToForegroundConverter x:Key="SelectedIndexToForegroundConverter" />
         <Style TargetType="{x:Type Border}">
             <Setter Property="BorderBrush"
@@ -27,7 +29,6 @@
         <Style TargetType="{x:Type TextBlock}">
             <Setter Property="HorizontalAlignment"
                     Value="Center" />
-
         </Style>
         <Style x:Key="RowStyle"
                TargetType="{x:Type DataGridRow}">
@@ -248,7 +249,6 @@
                                         HorizontalAlignment="Left">
                                     <iconPacks:PackIconFontAwesome Kind="SyncSolid"
                                                                    VerticalAlignment="Center"
-                                                                   Spin="{Binding UnitOfWork.IsBusy}"
                                                                    Margin="2" />
                                 </Button>
                             </StackPanel>
@@ -277,7 +277,7 @@
                                 <CheckBox Name="IsPartnerCheckBox"
                                           Checked="IsPartnerCheckBox_Checked"
                                           Unchecked="IsPartnerCheckBox_Unchecked"
-                                          IsChecked="{Binding BookingWr.IsPartners,UpdateSourceTrigger=PropertyChanged}"
+                                          IsChecked="{Binding IsPartners,UpdateSourceTrigger=PropertyChanged}"
                                           HorizontalAlignment="Left"
                                           VerticalAlignment="Center" />
                             </StackPanel>
@@ -313,7 +313,7 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Text="Σύνολο:"
                                            HorizontalAlignment="Left" />
-                                <TextBox Text="{Binding BookingWr.FullPriceString,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                <TextBox Text="{Binding BookingWr.FullPrice,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                          Margin="5,0,5,5"
                                          VerticalAlignment="Center"
                                          MinWidth="40"
@@ -322,7 +322,7 @@
                                 <TextBlock Text="Προμήθεια (%):"
                                            Grid.Row="1"
                                            HorizontalAlignment="Left" />
-                                <TextBox Text="{Binding BookingWr.CommisionString,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                <TextBox Text="{Binding BookingWr.Commision,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                          Margin="5,0,5,5"
                                          VerticalAlignment="Center"
                                          MinWidth="40"
@@ -332,7 +332,7 @@
                                 <TextBlock Text="Νet τιμή:"
                                            Grid.Row="2"
                                            HorizontalAlignment="Left" />
-                                <TextBlock Text="{Binding BookingWr.NetPriceString,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                <TextBlock Text="{Binding BookingWr.NetPrice,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                            Margin="5,0,5,5"
                                            VerticalAlignment="Center"
                                            MinWidth="40"
@@ -367,7 +367,7 @@
                                            Width="50"
                                            Visibility="{Binding BookingWr.IsNotPartners,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource booleanToVisibilityConverter}}"
                                            Grid.Column="1"
-                                           Text="{Binding BookingWr.FullPriceString,UpdateSourceTrigger=PropertyChanged}"
+                                           Text="{Binding BookingWr.FullPrice,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged}"
                                            Margin="0,0,5,0" />
                                 <Label Content="Προκαταβολή:"
                                        Grid.Row="3"
@@ -418,9 +418,11 @@
                                           IsChecked="{Binding OnlyStay}" />
                                 <CheckBox Content="HB"
                                           IsChecked="{Binding HB }" />
+                                <CheckBox Content="Διαφ. Ημ."
+                                          IsChecked="{Binding BookingWr.DifferentDates }" />
                             </StackPanel>
                             <ComboBox ItemsSource="{Binding Users}"
-                                      SelectedItem="{Binding SelectedUser}"
+                                      SelectedIndex="{Binding SelectedUserIndex}"
                                       DisplayMemberPath="UserName"
                                       Visibility="{Binding Converter={StaticResource UserToVisibilityConverter},ConverterParameter=1,  Mode=OneWay}"
                                       VerticalAlignment="Center" />
@@ -470,7 +472,7 @@
                             <Label Content="Προστέθηκε:"
                                    Padding="0" />
                             <TextBlock Text="{Binding BookingWr.CreatedDate, StringFormat='{}{0:dd/MM/yyyy}' }" />
-                        </StackPanel  >
+                        </StackPanel>
                         <StackPanel Grid.Row="1"
                                     VerticalAlignment="Center">
 
@@ -622,7 +624,8 @@
                     <DataGrid Margin="5"
                               FontSize="12"
                               Height="250"
-                              Width="663"
+                              Width="700"
+                              CanUserSortColumns="False"
                               LoadingRow="DataGrid_LoadingRow"
                               PreparingCellForEdit="CustomersDataGrid_PreparingCellForEdit"
                               x:Name="CustomersDataGrid"
@@ -644,6 +647,12 @@
                         <DataGrid.RowValidationRules>
                             <helpers:RowDataInfoValidationRule ValidationStep="UpdatedValue" />
                         </DataGrid.RowValidationRules>
+                        <DataGrid.RowHeaderStyle>
+                            <Style TargetType="{x:Type DataGridRowHeader}">
+                                <Setter Property="Width"
+                                        Value="20" />
+                            </Style>
+                        </DataGrid.RowHeaderStyle>
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Δωμάτιο"
                                                 IsReadOnly="True"
@@ -683,10 +692,10 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <DataGridTextColumn Header="Τιμή"
-                                                Width="55"
+                                                Width="35"
                                                 FontWeight="DemiBold"
                                                 FontSize="14"
-                                                Binding="{Binding PriceString, UpdateSourceTrigger=PropertyChanged}" />
+                                                Binding="{Binding Price, UpdateSourceTrigger=PropertyChanged}" />
                             <DataGridTemplateColumn Header="Γέννηση"
                                                     CellStyle="{StaticResource DataGridCellStyle}"
                                                     Visibility="{Binding DataContext.SelectedExcursion.DOBNeeded, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">

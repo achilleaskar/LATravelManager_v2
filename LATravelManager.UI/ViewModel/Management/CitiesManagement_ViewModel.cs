@@ -2,6 +2,7 @@
 using LATravelManager.Models;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
+using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.Wrapper;
 using System;
 using System.Collections.ObjectModel;
@@ -18,7 +19,7 @@ namespace LaTravelManager.ViewModel.Management
             Countries = new ObservableCollection<Country>();
         }
 
-        public override async Task LoadAsync(int id = 0)
+        public override async Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
         {
             try
             {

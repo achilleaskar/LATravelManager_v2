@@ -8,10 +8,11 @@ namespace LATravelManager.Models
 {
     public class Booking : EditTracker
     {
+
         public Booking()
         {
             Payments = new ObservableCollection<Payment>();
-            ReservationsInBooking = new List<Reservation>();
+            ReservationsInBooking = new ObservableCollection<Reservation>();
             CheckIn = DateTime.Today;
             CheckOut = DateTime.Today.AddDays(3);
 

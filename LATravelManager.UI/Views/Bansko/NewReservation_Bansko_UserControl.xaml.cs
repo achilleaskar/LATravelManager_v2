@@ -98,9 +98,6 @@ namespace LATravelManager.UI.Views.Bansko
             }
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
+      
     }
 }

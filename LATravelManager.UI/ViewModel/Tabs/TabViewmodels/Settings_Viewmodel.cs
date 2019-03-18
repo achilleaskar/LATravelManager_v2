@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LATravelManager.UI.ViewModel.Tabs
+namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {
     public class Settings_Viewmodel : MyViewModelBase
     {
@@ -15,7 +15,7 @@ namespace LATravelManager.UI.ViewModel.Tabs
         {
         }
 
-        public override Task LoadAsync(int id = 0)
+        public override Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
         {
             throw new NotImplementedException();
         }

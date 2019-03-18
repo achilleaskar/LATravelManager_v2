@@ -1,4 +1,5 @@
 ﻿using LATravelManager.Model;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace LATravelManager.Models
@@ -22,6 +23,11 @@ namespace LATravelManager.Models
         public const string StartTimePropertyName = nameof(StartTime);
 
         #endregion Fields + Constructors
+
+
+
+
+        
 
         #region Properties
 
@@ -98,6 +104,9 @@ namespace LATravelManager.Models
                 RaisePropertyChanged(StartTimePropertyName);
             }
         }
+
+
+
 
         #endregion Properties
 

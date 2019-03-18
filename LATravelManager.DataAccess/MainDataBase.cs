@@ -49,16 +49,6 @@ namespace LATravelManager.DataAccess
 
         #region Methods
 
-        public object GetStartingPlace<T>(Func<object, bool> filter)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
-        {
-            return base.SaveChangesAsync(cancellationToken);
-        }
-
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Properties<string>()

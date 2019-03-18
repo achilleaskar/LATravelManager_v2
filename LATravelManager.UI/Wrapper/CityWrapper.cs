@@ -4,21 +4,15 @@ namespace LATravelManager.UI.Wrapper
 {
     public class CityWrapper : ModelWrapper<City>
     {
-        #region Constructors
 
-        public CityWrapper() : base(new City())
+        public CityWrapper() : this(new City())
         {
-            Title = "Η πόλη";
         }
 
         public CityWrapper(City model) : base(model)
         {
             Title = "Η πόλη";
         }
-
-        #endregion Constructors
-
-        #region Properties
 
         public Country Country
         {
@@ -32,15 +26,10 @@ namespace LATravelManager.UI.Wrapper
             set { SetValue(value.ToUpper()); }
         }
 
-        #endregion Properties
-
-        #region Methods
-
         public override string ToString()
         {
             return Name;
         }
 
-        #endregion Methods
     }
 }

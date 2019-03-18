@@ -1,19 +1,21 @@
 ﻿using LATravelManager.Model;
+using LATravelManager.Models;
+using LATravelManager.UI.Wrapper;
 using System.Collections.Generic;
 
-namespace LATravelManager.Models
+namespace LATravelManager.UI.Data.LocalModels
 {
     public class RoomingList : BaseModel
     {
         public const string hotelPropertyName = nameof(Hotel);
 
-        private Hotel _hotel;
+        private HotelWrapper _hotel;
 
         /// <summary>
         /// Sets and gets the hotel property.
         /// Changes to that property's value raise the PropertyChanged event.
         /// </summary>
-        public Hotel Hotel
+        public HotelWrapper Hotel
         {
             get
             {
@@ -34,13 +36,13 @@ namespace LATravelManager.Models
 
         public const string ReservationsPropertyName = nameof(Reservations);
 
-        private List<Reservation> _Reservations = new List<Reservation>();
+        private List<ReservationWrapper> _Reservations = new List<ReservationWrapper>();
 
         /// <summary>
         /// Sets and gets the Reservations property.
         /// Changes to that property's value raise the PropertyChanged event.
         /// </summary>
-        public List<Reservation> Reservations
+        public List<ReservationWrapper> Reservations
         {
             get
             {

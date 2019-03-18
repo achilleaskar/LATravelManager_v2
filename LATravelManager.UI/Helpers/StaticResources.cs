@@ -1,4 +1,6 @@
 ﻿using LATravelManager.Models;
+using LATravelManager.UI.Repositories;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -16,6 +18,29 @@ namespace LATravelManager.UI.Helpers
         public static User User { get; set; }
 
         #endregion Properties
+
+        public static async void CalculateSum(GenericRepository genericRepository)
+        {
+            var bookings = await genericRepository.GetAllBookingInPeriod(new DateTime(2018, 10, 1), new DateTime(2019, 04, 1), 2);
+            float sum = 0;
+            foreach (var b in bookings)
+            {
+                if (b.IsPartners)
+                {
+                    sum += b.NetPrice;
+                }
+                else
+                {
+                    foreach (var r in b.ReservationsInBooking)
+                    {
+                        foreach (var c in r.CustomersList)
+                        {
+                            sum += c.Price;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public class RequiredIfAttribute : ValidationAttribute

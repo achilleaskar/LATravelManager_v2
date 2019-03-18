@@ -1,8 +1,9 @@
 ﻿using LATravelManager.Model;
+using LATravelManager.UI.Wrapper;
 using System;
 using static LATravelManager.Model.Enums;
 
-namespace LATravelManager.Models
+namespace LATravelManager.UI.Data.LocalModels
 {
     public class PlanDailyInfo : BaseModel
     {
@@ -16,7 +17,7 @@ namespace LATravelManager.Models
         private DateTime _Date;
 
         private bool _IsAllotment = false;
-        private Reservation _Reservation;
+        private ReservationWrapper _Reservation;
         public DayStateEnum DayState { get; set; }
         private RoomStateEnum _RoomState;
 
@@ -74,7 +75,7 @@ namespace LATravelManager.Models
         /// Sets and gets the Reservation property. Changes to that property's value raise the
         /// PropertyChanged event.
         /// </summary>
-        public Reservation Reservation
+        public ReservationWrapper Reservation
         {
             get
             {

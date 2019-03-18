@@ -72,8 +72,6 @@ namespace LATravelManager.UI.Wrapper
 
         public void ValidateAllProperties()
         {
-            var type = GetType();
-            var props = GetType().GetProperties();
             foreach (PropertyInfo pi in Model.GetType().GetProperties())
             {
                 ValidatePropertyInternal(pi.Name, pi.GetValue(Model));

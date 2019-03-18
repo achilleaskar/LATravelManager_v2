@@ -152,6 +152,9 @@
                               VerticalAlignment="Center" />
                     <Label Content="Πασο:" />
                     <CheckBox IsChecked="{Binding SelectedEntity.DiscountsExist,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                              VerticalAlignment="Center" /> 
+                    <Label Content="Νυχτερινή:" />
+                    <CheckBox IsChecked="{Binding SelectedEntity.NightStart,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                               VerticalAlignment="Center" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal"

@@ -1,8 +1,8 @@
-﻿using CommonServiceLocator;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.Tabs;
+using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 using System;
 using System.Collections.Generic;
@@ -13,6 +13,8 @@ namespace LATravelManager.UI.ViewModel
 {
     public class NavigationViewModel : ViewModelBase, IViewModel
     {
+        #region Constructors
+
         public NavigationViewModel(MainUserControl_ViewModel mainUserControl_ViewModel)
         {
             try
@@ -20,114 +22,40 @@ namespace LATravelManager.UI.ViewModel
                 MainUserControl_ViewModel = mainUserControl_ViewModel;
                 _SecondaryTabs = new List<TabsBaseViewModel>();
                 SecondaryViewModels = new List<MyViewModelBase>();
+                SecondaryTabs.Add(new GlobalSearchTab());
+                SecondaryTabs.Add(new InfoTab());
                 SecondaryTabs.Add(new AddRoomsTab());
                 SecondaryTabs.Add(new SettingsTab());
-                SetTabs();
-                MessengerInstance.Register<ResetNavigationTabsMessage>(this, msg => SetTabs());
-                MessengerInstance.Register<SelectedTabChangedMessage>(this, async tab => await SelectTab(tab));
+                // SetTabs();
+                SecondaryViewModels.Add(new GlobalSearch_ViewModel());
+                SecondaryViewModels.Add(new Info_ViewModel());
+                SecondaryViewModels.Add(new AddRooms_ViewModel());
+                SecondaryViewModels.Add(new Settings_Viewmodel());
+                MessengerInstance.Register<ResetNavigationTabsMessage>(this, async msg => { await SetTabs(); });
             }
             catch (Exception ex)
             {
                 MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
             }
-
         }
 
-        private async Task SelectTab(SelectedTabChangedMessage tab)
-        {
-            var viewmodelIndex = -1;
-            if (tab.IsChild)
-            {
-                switch (tab.TabName)
-                {
-                    case nameof(AddRooms_ViewModel):
-                        viewmodelIndex = SecondaryViewModels.FindIndex(x => x.GetType() == typeof(AddRooms_ViewModel));
-                        if (viewmodelIndex >= 0)
-                            MessengerInstance.Send(new SetSecondaryChildViewModelMessage(SecondaryViewModels[viewmodelIndex]));
-                        else
-                        {
-                            var addRoomsViewModel = new AddRooms_ViewModel();
-                            SecondaryViewModels.Add(addRoomsViewModel);
-                            MessengerInstance.Send(new SetSecondaryChildViewModelMessage(addRoomsViewModel));
-                            await addRoomsViewModel.LoadAsync();
-                        }
-                        break;
-
-                    case nameof(Settings_Viewmodel):
-                        viewmodelIndex = SecondaryViewModels.FindIndex(x => x.GetType() == typeof(Settings_Viewmodel));
-                        if (viewmodelIndex >= 0)
-                            MessengerInstance.Send(new SetSecondaryChildViewModelMessage(SecondaryViewModels[viewmodelIndex]));
-                        else
-                        {
-                            var settingsViewModel = new Settings_Viewmodel();
-                            SecondaryViewModels.Add(settingsViewModel);
-                            MessengerInstance.Send(new SetSecondaryChildViewModelMessage(settingsViewModel));
-                            await settingsViewModel.LoadAsync();
-                        }
-                        break;
-                }
-            }
-            else
-            {
-                MessengerInstance.Send(new ChangeChildViewModelMessage(tab.Index));
-            }
-        }
-
-        private TabsBaseViewModel _SelectedTab;
-
-        public TabsBaseViewModel SelectedTab
-        {
-            get
-            {
-                return _SelectedTab;
-            }
-
-            set
-            {
-                if (_SelectedTab == value)
-                {
-                    return;
-                }
-
-                _SelectedTab = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private void SetTabs()
-        {
-            parent = MainUserControl_ViewModel.SelectedExcursionType;
-            List<TabsBaseViewModel> tabs;
-            if (parent is ExcursionCategory_ViewModelBase)
-            {
-                Tabs.Clear();
-                tabs = (parent as ExcursionCategory_ViewModelBase).Tabs ?? new List<TabsBaseViewModel>();
-                foreach (TabsBaseViewModel tab in tabs)
-                {
-                    Tabs.Add(tab);
-                }
-            }
-        }
-
-
-        public async Task LoadAsync(int id = 0)
-        {
-            await Task.Delay(0);
-        }
-
-        public Task ReloadAsync()
-        {
-            throw new NotImplementedException();
-        }
+        #endregion Constructors
 
         #region Fields
 
-        private ExcursionCategory_ViewModelBase parent;
+        private readonly List<MyViewModelBase> SecondaryViewModels;
 
         private bool _Expanded = true;
 
-        private ObservableCollection<TabsBaseViewModel> _Tabs = new ObservableCollection<TabsBaseViewModel>();
         private List<TabsBaseViewModel> _SecondaryTabs;
+
+        private int _SelectedPrimaryTabIndex;
+
+        private int _SelectedSecondaryTabIndex;
+
+        private ObservableCollection<TabsBaseViewModel> _Tabs = new ObservableCollection<TabsBaseViewModel>();
+
+        private ExcursionCategory_ViewModelBase parent;
 
         #endregion Fields
 
@@ -156,6 +84,10 @@ namespace LATravelManager.UI.ViewModel
             }
         }
 
+        public bool IsLoaded { get; set; }
+
+        public MainUserControl_ViewModel MainUserControl_ViewModel { get; }
+
         /// <summary>
         /// Sets and gets the SecondaryTabs property. Changes to that property's value raise the
         /// PropertyChanged event.
@@ -175,6 +107,54 @@ namespace LATravelManager.UI.ViewModel
                 }
 
                 _SecondaryTabs = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public int SelectedPrimaryTabIndex
+        {
+            get
+            {
+                return _SelectedPrimaryTabIndex;
+            }
+
+            set
+            {
+                if (_SelectedPrimaryTabIndex == value)
+                {
+                    return;
+                }
+
+                _SelectedPrimaryTabIndex = value;
+                if (value >= 0 && value < Tabs.Count)
+                {
+                    Tabs[value].IsSelected = true;
+                    Task.Run(() => SelectTab(value));
+                }
+                RaisePropertyChanged();
+            }
+        }
+
+        public int SelectedSecondaryTabIndex
+        {
+            get
+            {
+                return _SelectedSecondaryTabIndex;
+            }
+
+            set
+            {
+                if (_SelectedSecondaryTabIndex == value)
+                {
+                    return;
+                }
+
+                _SelectedSecondaryTabIndex = value;
+                if (value >= 0 && value < Tabs.Count)
+                {
+                    SecondaryTabs[value].IsSelected = true;
+                    Task.Run(() => SelectTab(value, true));
+                }
                 RaisePropertyChanged();
             }
         }
@@ -202,14 +182,70 @@ namespace LATravelManager.UI.ViewModel
             }
         }
 
-        public bool IsLoaded { get; set; }
-        public MainUserControl_ViewModel MainUserControl_ViewModel { get; }
-
         #endregion Properties
 
         #region Methods
 
-        private List<MyViewModelBase> SecondaryViewModels;
+        public async Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
+        {
+            await Task.Delay(0);
+        }
+
+        public Task ReloadAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal async Task SelectTab(int index, bool secondary = false)
+        {
+            for (int i = 0; i < Tabs.Count; i++)
+            {
+                if (!secondary && i == index)
+                {
+                    await parent.SetProperChildViewModel(index);
+                }
+                else
+                {
+                    Tabs[i].IsSelected = false;
+                }
+            }
+            for (int i = 0; i < SecondaryTabs.Count; i++)
+            {
+                if (secondary && i == index)
+                {
+                    await SelectSecondaryTab(i);
+                }
+                else
+                {
+                    SecondaryTabs[i].IsSelected = false;
+                }
+            }
+
+        }
+
+        private async Task SelectSecondaryTab(int tabIndex)
+        {
+            parent.SelectedChildViewModel = SecondaryViewModels[tabIndex];
+            await parent.SelectedChildViewModel.LoadAsync();
+        }
+        private async Task SetTabs()
+        {
+            parent = MainUserControl_ViewModel.SelectedExcursionType;
+            List<TabsBaseViewModel> tabs;
+            if (parent is ExcursionCategory_ViewModelBase)
+            {
+                Tabs.Clear();
+                tabs = (parent as ExcursionCategory_ViewModelBase).Tabs ?? new List<TabsBaseViewModel>();
+                foreach (TabsBaseViewModel tab in tabs)
+                {
+                    Tabs.Add(tab);
+                }
+            }
+            _SelectedPrimaryTabIndex = 0;
+            await SelectTab(0);
+        }
+
+        #endregion Methods
 
         //private void SetProperViewModel()
         //{
@@ -223,6 +259,5 @@ namespace LATravelManager.UI.ViewModel
         //    }
         //}
 
-        #endregion Methods
     }
 }

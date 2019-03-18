@@ -99,16 +99,13 @@
     <Compile Include="Hotels\HotelCategory.cs" />
     <Compile Include="Hotels\HotelInfo.cs" />
     <Compile Include="Lists\Leader.cs" />
-    <Compile Include="Booking\NoName.cs" />
     <Compile Include="Hotels\Option.cs" />
     <Compile Include="Excursions\OptionalExcursion.cs" />
     <Compile Include="People\Partner.cs" />
     <Compile Include="Booking\Payment.cs" />
-    <Compile Include="Plan\PlanDailyInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Booking\Reservation.cs" />
     <Compile Include="Hotels\Room.cs" />
-    <Compile Include="Lists\RoomingList.cs" />
     <Compile Include="Hotels\RoomOption.cs" />
     <Compile Include="Hotels\RoomType.cs" />
     <Compile Include="Locations\StartingPlace.cs" />

@@ -1,6 +1,5 @@
 ﻿using LATravelManager.Models;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace LATravelManager.UI.Wrapper
 {
@@ -11,11 +10,11 @@ namespace LATravelManager.UI.Wrapper
         public HotelWrapper(Hotel model) : base(model)
         {
             Title = "Το ξενοδοχείο";
+            RoomWrappers = new List<RoomWrapper>();
         }
 
-        public HotelWrapper():base(new Hotel())
+        public HotelWrapper() : this(new Hotel())
         {
-            Title = "Το ξενοδοχείο";
         }
 
         #endregion Constructors
@@ -50,6 +49,30 @@ namespace LATravelManager.UI.Wrapper
         {
             get { return GetValue<List<Room>>(); }
             set { SetValue(value); }
+        }
+
+
+
+
+        private List<RoomWrapper> _RoomWrappers;
+
+        public List<RoomWrapper> RoomWrappers
+        {
+            get
+            {
+                return _RoomWrappers;
+            }
+
+            set
+            {
+                if (_RoomWrappers == value)
+                {
+                    return;
+                }
+
+                _RoomWrappers = value;
+                RaisePropertyChanged();
+            }
         }
 
         public string Tel

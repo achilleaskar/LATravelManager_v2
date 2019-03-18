@@ -4,11 +4,20 @@
     {
         public enum ExcursionTypeEnum
         {
-            Bansko,
-            Skiathos,
-            Personal,
-            Group,
-            ThirdParty
+            Bansko=0,
+            Skiathos=1,
+            Personal=2,
+            Group=3,
+            ThirdParty=4
+        }
+
+        public enum ReservationTypeEnum
+        {
+            Normal,
+            Noname,
+            Overbooked,
+            NoRoom,
+            Transfer
         }
 
         public enum FlightMode

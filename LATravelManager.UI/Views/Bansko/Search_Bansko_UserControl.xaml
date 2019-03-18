@@ -105,8 +105,9 @@
                          Margin="0,0,5,0" />
                 <Label Content="Πωλητής:"
                        VerticalAlignment="Center" />
-                <ComboBox  Width="85"
+                <ComboBox  Width="85" Name="a1"
                            VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
                            SelectedIndex="{Binding UserIndexBookingFilter}">
                     <ComboBox.Resources>
                         <CollectionViewSource x:Key="UsersList"
@@ -119,6 +120,7 @@
                         </CompositeCollection>
                     </ComboBox.ItemsSource>
                 </ComboBox>
+                
 
             </StackPanel>
         </StackPanel>
@@ -172,6 +174,9 @@
                 <DataGridTextColumn Header="Επιστ."
                                     Width="45"
                                     Binding="{Binding CheckOut ,StringFormat='{}{0:dd/MM}'}" />
+                <DataGridTextColumn Header="Έδωσε"
+                                    Width="45"
+                                    Binding="{Binding Booking.Recieved }" />
                 <DataGridTextColumn Header="Ονόματα"
                                     Width="250"
                                     CanUserResize="True"

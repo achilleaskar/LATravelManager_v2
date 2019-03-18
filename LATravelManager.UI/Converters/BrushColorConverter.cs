@@ -12,7 +12,7 @@ namespace LATravelManager.UI.Converters
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var room = value as Room;
+            //var room = value as Room;
             //if (room.IsAllotment)
             //{
             //    return new SolidColorBrush(Colors.Blue);

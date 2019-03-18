@@ -1,4 +1,5 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using LATravelManager.UI.Message;
 
@@ -10,7 +11,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         public TabsBaseViewModel()
         {
-            ChangeViewModelCommand = new RelayCommand(TabItemClicked);
+           
             MessengerInstance.Register<DeselectAllOtherTabsMessage>(this, (msg) =>
             {
                 if (IsSelected && GetType().Name != msg.NewTab)
@@ -35,7 +36,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         #region Properties
 
-        public RelayCommand ChangeViewModelCommand { get; set; }
 
         public string Content
         {
@@ -79,9 +79,12 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 }
 
                 _IsSelected = value;
+             //   TabItemClicked();
                 RaisePropertyChanged();
             }
         }
+
+       
 
         /// <summary>
         /// Sets and gets the Level property.
@@ -106,22 +109,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
-        public string Name { get; set; }
 
         #endregion Properties
-
-        #region Methods
-
-        private void TabItemClicked()
-        {
-            if (!IsSelected)
-            {
-                MessengerInstance.Send(new SelectedTabChangedMessage(Name, IsChild,Index));
-                MessengerInstance.Send(new DeselectAllOtherTabsMessage(Name));
-            }
-            IsSelected = true;
-        }
-
-        #endregion Methods
     }
 }

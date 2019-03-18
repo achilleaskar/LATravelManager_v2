@@ -5,8 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
-             xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko"
-             d:DataContext="{d:DesignInstance viewmodels:Search_Bansko_ViewModel}"
+             xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.CategoriesViewModels.Group"
+             d:DataContext="{d:DesignInstance viewmodels:Search_Group_ViewModel}"
              mc:Ignorable="d"
              Background="White"
              d:DesignHeight="450"
@@ -119,6 +119,21 @@
                         </CompositeCollection>
                     </ComboBox.ItemsSource>
                 </ComboBox>
+                <CheckBox Content="Όλες οι εκδρομές"
+                          VerticalAlignment="Center"
+                          IsChecked="{Binding AllExcursions}" />
+                <Button Content="PrintRoomingLists"
+                        Margin="5,0"
+                        Command="{Binding PrintRoomingListsCommand}" />
+                <Button Content="PrintAllVouchers"
+                        Margin="5,0"
+                        Command="{Binding PrintAllVouchersCommand}" />
+                <Button Content="PrintAllLetters"
+                        Margin="5,0"
+                        Command="{Binding PrintAllLettersCommand}" />
+                <Button Content="PrintList"
+                        Margin="5,0"
+                        Command="{Binding PrintListCommand}" />
 
             </StackPanel>
         </StackPanel>
@@ -172,6 +187,9 @@
                 <DataGridTextColumn Header="Επιστ."
                                     Width="45"
                                     Binding="{Binding CheckOut ,StringFormat='{}{0:dd/MM}'}" />
+                <DataGridTextColumn Header="Έδωσε"
+                                    Width="45"
+                                    Binding="{Binding Booking.Recieved }" />
                 <DataGridTextColumn Header="Ονόματα"
                                     Width="250"
                                     CanUserResize="True"

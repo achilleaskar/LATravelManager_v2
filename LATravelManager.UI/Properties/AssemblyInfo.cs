@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Resources;
 using System.Runtime.InteropServices;
 using System.Windows;
 
@@ -51,4 +52,12 @@ using System.Windows;
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
 [assembly: log4net.Config.XmlConfigurator(ConfigFile = "log4net.config")]
+[assembly: NeutralResourcesLanguage("el-GR")]
+/*
+    cd "LATravelManager.UI\bin\Release"
+    nuget pack .\LaTravelManager.nuspec
+    Squirrel --releasify .\LaTravelManager.1.0.1.nupkg --releaseDir "C:\SquirrelReleases"
+
+*/
+
 

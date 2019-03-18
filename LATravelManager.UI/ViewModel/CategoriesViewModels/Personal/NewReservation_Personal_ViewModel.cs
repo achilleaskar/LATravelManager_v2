@@ -333,7 +333,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 
         #region Methods
 
-        public override async Task LoadAsync(int id = 0)
+        public override async Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
         {
             try
             {
@@ -431,6 +431,10 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
                 }
                 else
                 {
+                    if (RefreshableContext != null && !RefreshableContext.IsTaskOk)
+                    {
+                        await RefreshableContext.LastTask;
+                    }
                     RefreshableContext = new GenericRepository();
                 }
                 var partnerId = SelectedPartnerIndex >= 0 && Partners != null && SelectedPartnerIndex < Partners.Count ? Partners[SelectedPartnerIndex].Id : -1;

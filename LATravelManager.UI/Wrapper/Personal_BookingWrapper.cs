@@ -13,7 +13,7 @@ namespace LATravelManager.UI.Wrapper
     {
         #region Constructors
 
-        public Personal_BookingWrapper() : base(new Personal_Booking())
+        public Personal_BookingWrapper() : this(new Personal_Booking())
         {
         }
 

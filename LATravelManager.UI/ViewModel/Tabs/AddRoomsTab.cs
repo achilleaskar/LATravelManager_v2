@@ -1,9 +1,5 @@
 ﻿using LATravelManager.UI.ViewModel.BaseViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
 
 namespace LATravelManager.UI.ViewModel.Tabs
 {
@@ -14,10 +10,7 @@ namespace LATravelManager.UI.ViewModel.Tabs
             IconName = "Home";
             IsChild = true;
             Level = 1;
-            Name = nameof(AddRooms_ViewModel);
             Content = "Πρ. Δωματίων";
-
         }
-
     }
 }
