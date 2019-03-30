@@ -1,5 +1,4 @@
 ﻿using LATravelManager.Model;
-using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace LATravelManager.Models

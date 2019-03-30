@@ -1,5 +1,4 @@
 ﻿using LATravelManager.Models;
-using static LATravelManager.Model.Enums;
 
 namespace LATravelManager.UI.Wrapper
 {

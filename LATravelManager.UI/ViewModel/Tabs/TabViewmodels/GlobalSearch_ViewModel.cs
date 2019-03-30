@@ -546,9 +546,9 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
                 foreach (object r in CollectionViewSource.GetDefaultView(FilteredReservations))
                 {
-                    if (!bookings.Contains((r as Reservation).Booking))
+                    if (!bookings.Contains((r as ReservationWrapper).Booking))
                     {
-                        bookings.Add((r as Reservation).Booking);
+                        bookings.Add((r as ReservationWrapper).Booking);
                     }
                 }
                 int coutner = 0;
@@ -586,9 +586,9 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
                 foreach (object r in CollectionViewSource.GetDefaultView(FilteredReservations))
                 {
-                    if (!bookings.Contains((r as Reservation).Booking))
+                    if (!bookings.Contains((r as ReservationWrapper).Booking))
                     {
-                        bookings.Add((r as Reservation).Booking);
+                        bookings.Add((r as ReservationWrapper).Booking);
                     }
                 }
                 int coutner = 0;
@@ -626,9 +626,9 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
                 foreach (object r in CollectionViewSource.GetDefaultView(FilteredReservations))
                 {
-                    if (!bookings.Contains((r as Reservation).Booking))
+                    if (!bookings.Contains((r as ReservationWrapper).Booking))
                     {
-                        bookings.Add((r as Reservation).Booking);
+                        bookings.Add((r as ReservationWrapper).Booking);
                     }
                 }
                 int coutner = 0;
@@ -672,13 +672,15 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
               
                 List<ReservationWrapper> list = (await Context.GetAllReservationsFiltered(ExcursionIndexBookingFilter > 0 ? Excursions[ExcursionIndexBookingFilter - 1].Id : 0, UserIndexBookingFilter > 0 ? Users[UserIndexBookingFilter - 1].Id : 0, Completed, ExcursionCategoryIndexBookingFilter > 0 ? ExcursionCategoryIndexBookingFilter : -1,dateLimit)).Select(r => new ReservationWrapper(r)).ToList();
 
-                foreach (var r in list)
-                {
-                    FilteredReservations.Add(r);
-                }
-
+                //foreach (var r in list)
+                //{
+                //    //  r.CalculateAmounts();
+                //    FilteredReservations.Add(r);
+                //}
+                FilteredReservations = new ObservableCollection<ReservationWrapper>(list);
+                Parallel.ForEach(FilteredReservations, wr => wr.CalculateAmounts());
                 ReservationsCollectionView = CollectionViewSource.GetDefaultView(FilteredReservations);
-                ReservationsCollectionView.Filter = CustomerFilter;
+               ReservationsCollectionView.Filter = CustomerFilter;
             }
             catch (Exception ex)
             {

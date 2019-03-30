@@ -253,7 +253,7 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <DataGridTemplateColumn Header="Αεροπλάνο"
-                                                    Visibility="{Binding DataContext.SelectedExcursion.IncludesShip, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">
+                                                    Visibility="{Binding DataContext.SelectedExcursion.IncludesPlane, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <ComboBox SelectedIndex="{Binding CustomerHasPlaneIndex,UpdateSourceTrigger=PropertyChanged}"
@@ -752,8 +752,8 @@
                                 <CheckBox Name="IsPartnerCheckBox"
                                           Checked="IsPartnerCheckBox_Checked"
                                           Unchecked="IsPartnerCheckBox_Unchecked"
-                                          IsChecked="{Binding IsPartners,UpdateSourceTrigger=PropertyChanged}"
                                           HorizontalAlignment="Left"
+                                          IsChecked="{Binding IsPartners,UpdateSourceTrigger=PropertyChanged}"
                                           VerticalAlignment="Center" />
                             </StackPanel>
                             <StackPanel Orientation="Horizontal"
@@ -775,6 +775,19 @@
                                     <iconPacks:PackIconFontAwesome Kind="PlusSolid"
                                                                    VerticalAlignment="Center" />
                                 </Button>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal"
+                                        Margin="0 0 0 5"
+                                        Visibility="{Binding IsPartners,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource booleanToVisibilityConverter}}">
+
+                                <TextBlock Text="Email:"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Left" />
+                                <ComboBox ItemsSource="{Binding Emails}"
+                                          DisplayMemberPath="EValue"
+                                          SelectedItem="{Binding SelectedEmail}"
+                                          VerticalAlignment="Center"
+                                          Width="131" />
                             </StackPanel>
                             <Grid Visibility="{Binding IsChecked, ElementName=IsPartnerCheckBox, Converter={StaticResource booleanToVisibilityConverter}}">
                                 <Grid.RowDefinitions>

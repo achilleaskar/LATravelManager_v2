@@ -7,13 +7,13 @@ namespace LATravelManager.DataAccess.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class _193 : IMigrationMetadata
+    public sealed partial class _1933 : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(_193));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(_1933));
         
         string IMigrationMetadata.Id
         {
-            get { return "201903181247328_193"; }
+            get { return "201903191838476_1933"; }
         }
         
         string IMigrationMetadata.Source

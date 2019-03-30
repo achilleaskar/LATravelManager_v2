@@ -8,6 +8,7 @@ using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Skiathos;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty;
+using LATravelManager.UI.ViewModel.Management;
 using LATravelManager.UI.ViewModel.Parents;
 using LATravelManager.UI.Views;
 using LATravelManager.UI.Views.Management;
@@ -33,6 +34,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             OpenCountriesEditCommand = new RelayCommand(async () => { await OpenCountriesWindow(); }, CanEditWindows);
             OpenExcursionsEditCommand = new RelayCommand(async () => { await OpenExcursionsWindow(); }, CanEditWindows);
             OpenUsersEditCommand = new RelayCommand(async () => { await OpenUsersWindow(); }, CanEditWindows);
+            OpenPartnersEditCommand=new RelayCommand(async () => { await OpenPartnersWindow(); }, CanEditWindows);
             Templates = new ObservableCollection<ExcursionCategory>();
             TemplateViewmodels = new List<ExcursionCategory_ViewModelBase>();
 
@@ -40,6 +42,13 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             MessengerInstance.Register<ChangeChildViewModelMessage>(this, async vm => { await SelectedExcursionType.SetProperChildViewModel(vm.ViewModelindex); });
             MessengerInstance.Register<ExcursionCategoryChangedMessage>(this, async index => { await SetProperViewModel(); });
             StartingRepository = startingRepository;
+        }
+
+        private async Task OpenPartnersWindow()
+        {
+            var vm = new PartnerManagement_ViewModel(StartingRepository);
+            await vm.LoadAsync();
+            MessengerInstance.Send(new OpenChildWindowCommand(new PartnersManagement_Window { DataContext = vm }));
         }
 
         #endregion Constructors
@@ -50,6 +59,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
         public RelayCommand OpenCountriesEditCommand { get; }
         public RelayCommand OpenExcursionsEditCommand { get; }
         public RelayCommand OpenHotelEditCommand { get; }
+        public RelayCommand OpenPartnersEditCommand { get; }
         public RelayCommand OpenUsersEditCommand { get; set; }
         public string UserName => StaticResources.User != null ? StaticResources.User.Name : "Error";
 

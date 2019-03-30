@@ -191,7 +191,7 @@ namespace LaTravelManager.BaseTypes
 
         public virtual bool CanSaveChanges()
         {
-            return Context.HasChanges() && SelectedEntity != null;
+            return Context.HasChanges() && SelectedEntity != null&& !SelectedEntity.HasErrors;
         }
 
         public void EntityViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)

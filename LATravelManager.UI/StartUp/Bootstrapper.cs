@@ -1,7 +1,6 @@
 ﻿using Autofac;
 using LATravelManager.DataAccess;
 using LATravelManager.UI.Data.Workers;
-using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel;
 using LATravelManager.UI.ViewModel.Window_ViewModels;

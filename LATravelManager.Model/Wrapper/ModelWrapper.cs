@@ -89,7 +89,7 @@ namespace LATravelManager.UI.Wrapper
             set { SetValue(value); }
         }
 
-        private void ValidatePropertyInternal(string propertyName, object currentValue)
+        protected void ValidatePropertyInternal(string propertyName, object currentValue)
         {
             ClearErrors(propertyName);
 

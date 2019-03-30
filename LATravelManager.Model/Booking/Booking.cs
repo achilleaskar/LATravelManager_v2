@@ -8,14 +8,12 @@ namespace LATravelManager.Models
 {
     public class Booking : EditTracker
     {
-
         public Booking()
         {
             Payments = new ObservableCollection<Payment>();
             ReservationsInBooking = new ObservableCollection<Reservation>();
             CheckIn = DateTime.Today;
             CheckOut = DateTime.Today.AddDays(3);
-
         }
 
         //public Booking()
@@ -32,6 +30,9 @@ namespace LATravelManager.Models
         //    //this.booking = booking;
         //    //this.uOW = uOW;
         //}
+
+
+
 
         //public Booking(Booking tmpBooking, UnitOfWork uOW)
         //{
@@ -85,6 +86,7 @@ namespace LATravelManager.Models
         [Required]
         public virtual Excursion Excursion { get; set; }
 
+        public string PartnerEmail { get; set; }
         public bool IsPartners { get; set; }
 
         public float NetPrice { get; set; }

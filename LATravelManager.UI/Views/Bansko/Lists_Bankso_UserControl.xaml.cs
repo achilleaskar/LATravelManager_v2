@@ -1,5 +1,4 @@
-﻿using LATravelManager.Models;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace LATravelManager.UI.Views.Bansko

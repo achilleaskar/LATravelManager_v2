@@ -1,5 +1,4 @@
-﻿using LATravelManager.Models;
-using LATravelManager.UI.Wrapper;
+﻿using LATravelManager.UI.Wrapper;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 

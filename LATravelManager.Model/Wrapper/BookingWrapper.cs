@@ -326,6 +326,11 @@ namespace LATravelManager.UI.Wrapper
             get { return GetValue<User>(); }
             set { SetValue(value); }
         }
+        public string PartnerEmail
+        {
+            get { return GetValue<string>(); }
+            set { SetValue(value); }
+        }
 
         #endregion Properties
 

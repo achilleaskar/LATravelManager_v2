@@ -1,6 +1,5 @@
 ﻿using LATravelManager.Models;
 using LATravelManager.UI.Data.LocalModels;
-using LATravelManager.UI.Message;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -293,7 +292,7 @@ namespace LATravelManager.UI.Wrapper
             }
             catch (Exception ex)
             {
-                MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
+                MessageBox.Show(ex.Message);
             }
         }
 

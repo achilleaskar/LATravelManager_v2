@@ -27,7 +27,6 @@
         <Style TargetType="{x:Type TextBlock}">
             <Setter Property="HorizontalAlignment"
                     Value="Center" />
-
         </Style>
         <Style x:Key="RowStyle"
                TargetType="{x:Type DataGridRow}">
@@ -310,6 +309,19 @@
                                                                    VerticalAlignment="Center" />
                                 </Button>
                             </StackPanel>
+                            <StackPanel Orientation="Horizontal"
+                                        Margin="0 0 0 5"
+                                        Visibility="{Binding IsPartners,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource booleanToVisibilityConverter}}">
+
+                                <TextBlock Text="Email:"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Left" />
+                                <ComboBox ItemsSource="{Binding Emails}"
+                                          DisplayMemberPath="EValue"
+                                          SelectedItem="{Binding SelectedEmail}"
+                                          VerticalAlignment="Center"
+                                          Width="131" />
+                            </StackPanel>
                             <Grid Visibility="{Binding IsChecked, ElementName=IsPartnerCheckBox, Converter={StaticResource booleanToVisibilityConverter}}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
@@ -479,7 +491,7 @@
                             <Label Content="Προστέθηκε:"
                                    Padding="0" />
                             <TextBlock Text="{Binding BookingWr.CreatedDate, StringFormat='{}{0:dd/MM/yyyy}' }" />
-                        </StackPanel  >
+                        </StackPanel>
                         <StackPanel Grid.Row="1"
                                     VerticalAlignment="Center">
 
@@ -811,7 +823,6 @@
                     <Button Content="Καθαρισμός"
                             Margin="5,5,5,0"
                             Command="{Binding ClearBookingCommand}" />
-
                 </StackPanel>
             </Grid>
         </Grid>

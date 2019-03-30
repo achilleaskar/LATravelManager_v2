@@ -2,6 +2,7 @@
 using DocumentFormat.OpenXml.Spreadsheet;
 using GalaSoft.MvvmLight.CommandWpf;
 using LATravelManager.Models;
+using LATravelManager.UI.Data.LocalModels;
 using LATravelManager.UI.Data.Workers;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
@@ -23,6 +24,27 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
     public abstract class NewReservationGroup_Base : MyViewModelBase
     {
         #region Constructors
+
+        private ObservableCollection<Email> _Emails;
+
+        public ObservableCollection<Email> Emails
+        {
+            get
+            {
+                return _Emails;
+            }
+
+            set
+            {
+                if (_Emails == value)
+                {
+                    return;
+                }
+
+                _Emails = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public NewReservationGroup_Base()
         {
@@ -54,6 +76,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             Payment = new Payment();
             FilteredRoomList = new ObservableCollection<RoomWrapper>();
             SelectedUserIndex = -1;
+            Emails = new ObservableCollection<Email>();
         }
 
         #endregion Constructors
@@ -540,6 +563,42 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 if (SelectedPartnerIndex >= 0 && (BookingWr.Partner == null || (BookingWr.Partner != null && BookingWr.Partner.Id != Partners[SelectedPartnerIndex].Id)))
                 {
                     BookingWr.Partner = GenericRepository.GetById<Partner>(Partners[SelectedPartnerIndex].Id);
+                    Emails = (BookingWr.Partner.Emails != null && BookingWr.Partner.Emails.Count() > 0) ? new ObservableCollection<Email>(BookingWr.Partner.Emails.Split(',').Select(e => new Email(e))) : new ObservableCollection<Email>();
+                    if (Emails.Count > 0)
+                    {
+                        SelectedEmail = Emails[0];
+                    }
+                }
+                RaisePropertyChanged();
+            }
+        }
+
+
+
+
+
+
+
+        private Email _SelectedEmail;
+
+        public Email SelectedEmail
+        {
+            get
+            {
+                return _SelectedEmail;
+            }
+
+            set
+            {
+                if (_SelectedEmail == value)
+                {
+                    return;
+                }
+
+                _SelectedEmail = value;
+                if (value != null && BookingWr.Partner != null)
+                {
+                    BookingWr.PartnerEmail = value.EValue;
                 }
                 RaisePropertyChanged();
             }
@@ -696,10 +755,18 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                                             if (tmpCustomerWr.Tel.Length != 10)
                                             {
                                                 int ssid = int.Parse(c.CellValue.Text);
-                                                tmpCustomerWr.Tel = sst.ChildElements[ssid].InnerText;
-                                                if (tmpCustomerWr.Tel.Length < 10)
+                                                if (ssid < sst.ChildElements.Count)
                                                 {
-                                                    tmpCustomerWr.Tel = string.Empty;
+
+                                                    tmpCustomerWr.Tel = sst.ChildElements[ssid].InnerText;
+                                                    if (tmpCustomerWr.Tel.Length < 10)
+                                                    {
+                                                        tmpCustomerWr.Tel = string.Empty;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    MessageBox.Show("Λάθος τηλέφωνο");
                                                 }
                                             }
                                         }
@@ -818,7 +885,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
                     if (SelectedUserIndex < 0)
                     {
-                        SelectedUserIndex = Users.IndexOf(Users.Where(x => x.Id == StaticResources.User.Id).FirstOrDefault());
+                        SelectedUserIndex = Users.IndexOf(Users.Where(x => x.Id == BookingWr.User.Id).FirstOrDefault());
                     }
                     else
                     {
@@ -833,6 +900,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                     if (BookingWr.Id > 0 && BookingWr.IsPartners)
                     {
                         SelectedPartnerIndex = Partners.IndexOf(Partners.Where(p => p.Id == BookingWr.Partner.Id).FirstOrDefault());
+                        SelectedEmail = Emails.Where(e => e.EValue == BookingWr.PartnerEmail).FirstOrDefault();
                     }
                     else
                     {
@@ -1045,7 +1113,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
 
-                NewReservationHelper.PutCustomersInRoomAsync(BookingWr, new RoomWrapper( await GenericRepository.GetByIdAsync<Room>(SelectedRoom.Id)), All, OnlyStay, HB);
+                NewReservationHelper.PutCustomersInRoomAsync(BookingWr, new RoomWrapper(await GenericRepository.GetByIdAsync<Room>(SelectedRoom.Id)), All, OnlyStay, HB);
                 if (All)
                 {
                     FilteredRoomList.Clear();
@@ -1354,7 +1422,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                     RefreshableContext = new GenericRepository();
                 }
                 AvailableHotels = new ObservableCollection<HotelWrapper>();
-               // AvailableHotels = new ObservableCollection<HotelWrapper>((await Task.Run(() => RoomsManager.GetAllAvailableRooms(RefreshableContext, BookingWr.CheckIn, BookingWr.CheckOut, SelectedExcursion, unSavedBooking: BookingWr.Model))));
+                // AvailableHotels = new ObservableCollection<HotelWrapper>((await Task.Run(() => RoomsManager.GetAllAvailableRooms(RefreshableContext, BookingWr.CheckIn, BookingWr.CheckOut, SelectedExcursion, unSavedBooking: BookingWr.Model))));
                 FilteredRoomList = new ObservableCollection<RoomWrapper>();
                 List<RoomWrapper> tmplist = new List<RoomWrapper>();
 

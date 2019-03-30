@@ -1,0 +1,134 @@
+﻿<Window x:Class="LATravelManager.UI.Views.Management.PartnersManagement_Window"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LATravelManager.UI.Views.Management"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:helpers="clr-namespace:LATravelManager.UI.Helpers"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterOwner"
+        Title="{Binding ControlName}"
+        Height="450"
+        Width="800">
+   
+    <Grid Margin="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <GroupBox Header="Επεξεργασία"
+                  Grid.Column="0"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center">
+            <Grid VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="100" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Label Content="Όνομα:"
+                       Grid.Row="0"
+                       Grid.Column="0" />
+                <TextBox Text="{Binding SelectedEntity.Name,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0,5,5,5"
+                         Grid.Row="0"
+                         Grid.Column="1" />
+                <Label Content="Τηλέφωνο:"
+                       Grid.Row="1"
+                       Grid.Column="0" />
+                <TextBox Text="{Binding SelectedEntity.Tel,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0,5,5,5"
+                         Grid.Row="1"
+                         Grid.Column="1" />
+                <Label Content="Emails:"
+                       Grid.Row="2"
+                       Padding="5 0"
+                       Grid.Column="0" />
+                <DataGrid ItemsSource="{Binding SelectedEntity.EmailsList}"
+                          Grid.Row="3"
+                          AutoGenerateColumns="False"
+                          Width="180"
+                          Margin="5 0"
+                          Grid.Column="0"
+                          Height="130"
+                          CanUserAddRows="True"
+                          Grid.ColumnSpan="2">
+                   
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Email"
+                                            ElementStyle="{StaticResource DataGridColumnStyle}"
+                                            EditingElementStyle="{StaticResource DataGridEditingColumnStyle}"
+                                            Binding="{Binding EValue,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+                <StackPanel Orientation="Vertical"
+                            Grid.Row="4"
+                            Grid.ColumnSpan="2">
+                    <Button Content="Προσθήκη"
+                            Margin="5,5,5,0"
+                            Command="{Binding AddEntityCommand}" />
+                    <Button Content="Αποθήκευση Αλλαγών"
+                            Margin="5,5,5,0"
+                            Command="{Binding SaveChangesCommand}" />
+                    <Button Content="Καθαρισμός"
+                            Margin="5,5,5,0"
+                            Command="{Binding ClearEntityCommand}" />
+                </StackPanel>
+                <TextBlock Text="{Binding ResultMessage}"
+                           Grid.Row="5"
+                           Grid.ColumnSpan="2"
+                           TextWrapping="Wrap"
+                           HorizontalAlignment="Left" />
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="Καταχωρημένοι Συνεργάτες"
+                  Grid.Column="1"
+                  HorizontalAlignment="Center">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Button HorizontalAlignment="Right"
+                        Cursor="Hand"
+                        Command="{Binding UpdateEntitiesCommand}">
+                    <iconPacks:PackIconFontAwesome Kind="SyncSolid"
+                                                   VerticalAlignment="Center"
+                                                   Margin="5" />
+                </Button>
+                <DataGrid ItemsSource="{Binding MainCollection}"
+                          Width="210"
+                          Grid.Row="1"
+                          VerticalAlignment="Stretch"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          SelectedItem="{Binding SelectedEntity}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Όνομα"
+                                            Width="100"
+                                            Binding="{Binding Name}" />
+                        <DataGridTextColumn Header="Τηλέφωνο"
+                                            Width="100"
+                                            Binding="{Binding Tel}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+                <Button Content="Διαγραφη"
+                        Grid.Row="2"
+                        HorizontalAlignment="Right"
+                        Margin="5"
+                        VerticalAlignment="Bottom"
+                        Command="{Binding RemoveEntityCommand}" />
+            </Grid>
+        </GroupBox>
+    </Grid>
+</Window>

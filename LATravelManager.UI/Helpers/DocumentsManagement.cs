@@ -474,7 +474,7 @@ namespace LATravelManager.UI.Helpers
             reservationsThisDay = reservationsThisDay.OrderBy(x => x.CustomersList[0].StartingPlace).ToList();
             reservationsThisDay = reservationsThisDay.OrderBy(x => x.HotelName).ToList();
 
-            wbPath = GetPath("\\Λίστα Λεωφορείου για Bansko " + checkIn.ToString("dd_MM_yy"));
+            wbPath = GetPath($"\\Λίστα Λεωφορείου για {reservationsThisDay[0].Booking.Excursion.Destinations[0].Name} " + checkIn.ToString("dd_MM_yy"));
 
             myWorksheet.Cells["A1"].Value = "ΑΝΑΧΩΡΗΣΗ - " + checkIn.ToString("dd/MM/yyyy");
             lineNum = 5;
@@ -502,7 +502,7 @@ namespace LATravelManager.UI.Helpers
                                 myWorksheet.Cells["B" + lineNum].Value = reservation.CheckIn.Day + "-" + reservation.CheckOut.ToString("dd/MM");
                                 myWorksheet.Cells["E" + lineNum].Value = reservation.HotelName;
                                 if (reservation.Booking.IsPartners)
-                                    myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Partner.ToString().Length > 11) ? reservation.Booking.Partner.ToString().Substring(0, 11) : reservation.Booking.Partner.ToString();
+                                    myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Partner.Name.Length > 11) ? reservation.Booking.Partner.Name.Substring(0, 11) : reservation.Booking.Partner.Name;
                                 else if (!string.IsNullOrEmpty(reservation.Booking.Comment))
                                     myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Comment.Length > 12) ? reservation.Booking.Comment.Substring(0, 11) : reservation.Booking.Comment;
                             }
@@ -740,7 +740,7 @@ namespace LATravelManager.UI.Helpers
                 var regexText = new Regex("fullname");
                 docText = regexText.Replace(docText, c.Surename + " " + c.Name);
                 regexText = new Regex("fulldate");
-                docText = regexText.Replace(docText, reservationWr.Dates + " " + reservationWr.DaysCount + "νυχτο");
+                docText = regexText.Replace(docText, reservationWr.Dates + " " + (reservationWr.Booking.Excursion.NightStart? reservationWr.DaysCount-2:reservationWr.DaysCount-1) + "νυχτο");
                 regexText = new Regex("destination");
                 docText = regexText.Replace(docText, booking.Excursion.Destinations[0].Name);
                 regexText = new Regex("hotelnroomtype");
@@ -846,7 +846,7 @@ namespace LATravelManager.UI.Helpers
                 regexText = new Regex("ztime");
                 docText = regexText.Replace(docText, (booking.Excursion.ExcursionType.Category == Model.Enums.ExcursionTypeEnum.Group) ? ((customerStartingPlace.Id < 0) ? "" : customerStartingPlace.ReturnTime) : ((customerStartingPlace.Id < 0) ? "" : customerStartingPlace.StartTime));
                 regexText = new Regex("zplace");
-                docText = regexText.Replace(docText, customerStartingPlace.Details);
+                docText = regexText.Replace(docText,  customerStartingPlace.Id==14&&booking.Excursion.Destinations[0].Id==5?"Εθνική Τράπεζα": customerStartingPlace.Details);
                 regexText = new Regex("zsynodos");
                 docText = regexText.Replace(docText, "");
                 regexText = new Regex("zcity");

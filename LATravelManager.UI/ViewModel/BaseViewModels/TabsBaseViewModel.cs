@@ -1,6 +1,4 @@
-﻿using System;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.CommandWpf;
+﻿using GalaSoft.MvvmLight;
 using LATravelManager.UI.Message;
 
 namespace LATravelManager.UI.ViewModel.BaseViewModels

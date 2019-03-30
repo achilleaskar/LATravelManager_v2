@@ -1,14 +1,9 @@
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
-using LaTravelManager.ViewModel;
-using LaTravelManager.ViewModel.Management;
 using LATravelManager.Models;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
-using LATravelManager.UI.Views;
-using LATravelManager.UI.Views.Management;
 using System.Threading.Tasks;
 using System.Windows;
 

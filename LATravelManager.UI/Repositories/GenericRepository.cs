@@ -19,6 +19,7 @@ namespace LATravelManager.UI.Repositories
         public GenericRepository()
         {
             this.Context = new MainDatabase();
+            Context.Database.Log = Console.Write;
             IsContextAvailable = true;
         }
 
@@ -409,20 +410,17 @@ namespace LATravelManager.UI.Repositories
                (category >= 0 ? (int)c.Booking.Excursion.ExcursionType.Category == category : true) &&
                (excursionId == 0 || c.Booking.Excursion.Id == excursionId) &&
                (userId == 0 || c.Booking.User.Id == userId) &&
-               (completed || c.Booking.CheckIn >= DateTime.Today)
-               )
-               .Include(f => f.Booking)
+               (completed || c.Booking.CheckIn >= DateTime.Today))
                .Include(f => f.Booking.User)
                .Include(f => f.Booking.ExcursionDate)
                .Include(f => f.Booking.Partner)
-               .Include(f => f.Booking.Payments)
-               .Include(f => f.Room)
+              .Include(f => f.Booking.Payments)
+               .Include(f => f.Booking.ReservationsInBooking.Select(i => i.CustomersList))
                .Include(f => f.Room.Hotel)
                .Include(f => f.Room.RoomType)
                .Include(f => f.CustomersList)
                .Include(f => f.Hotel)
                .Include(f => f.NoNameRoomType)
-               //.Select(r => new ReservationWrapper(r))
                .ToListAsync);
         }
     }

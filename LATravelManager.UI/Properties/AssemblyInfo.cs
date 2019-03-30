@@ -26,6 +26,8 @@ using System.Windows;
 //the NeutralResourceLanguage attribute below.  Update the "en-US" in
 //the line below to match the UICulture setting in the project file.
 
+
+
 //[assembly: NeutralResourcesLanguage("en-US", UltimateResourceFallbackLocation.Satellite)]
 
 
@@ -49,10 +51,10 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+
 [assembly: log4net.Config.XmlConfigurator(ConfigFile = "log4net.config")]
 [assembly: NeutralResourcesLanguage("el-GR")]
+[assembly: AssemblyVersion("0.0.5")]
 /*
     cd "LATravelManager.UI\bin\Release"
     nuget pack .\LaTravelManager.nuspec

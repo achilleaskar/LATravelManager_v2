@@ -1,5 +1,4 @@
-﻿using LATravelManager.Models;
-using LATravelManager.UI.Message;
+﻿using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.Wrapper;
 using System.Collections.Generic;

@@ -1,9 +1,4 @@
 ﻿using LATravelManager.UI.ViewModel.BaseViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LATravelManager.UI.ViewModel.Tabs
 {
@@ -11,7 +6,7 @@ namespace LATravelManager.UI.ViewModel.Tabs
     {
         public InfoTab()
         {
-            Level = 5;
+            Level = 1;
             IconName = "InformationVariant";
             Content = "Πληροφορίες";
 

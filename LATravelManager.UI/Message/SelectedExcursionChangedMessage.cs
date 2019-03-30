@@ -1,14 +1,8 @@
-﻿using LATravelManager.Models;
-using LATravelManager.UI.Wrapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using LATravelManager.UI.Wrapper;
 
 namespace LATravelManager.UI.Message
 {
-   public class SelectedExcursionChangedMessage
+    public class SelectedExcursionChangedMessage
     {
         public SelectedExcursionChangedMessage(ExcursionWrapper selectedExcursion)
         {

@@ -1,5 +1,4 @@
-﻿using GalaSoft.MvvmLight;
-using LATravelManager.Model;
+﻿using LATravelManager.Model;
 using System.ComponentModel.DataAnnotations;
 using static LATravelManager.Model.Enums;
 

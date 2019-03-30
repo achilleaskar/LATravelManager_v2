@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
+using System.Net;
 using System.Windows;
 using LATravelManager.Models;
 using LATravelManager.UI.Repositories;
-using LATravelManager.UI.ViewModel;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 using Squirrel;
 
@@ -21,6 +20,7 @@ namespace LATravelManager.UI.Views
 
         public MainWindow(MainViewModel viewModel)
         {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             InitializeComponent();
             _viewModel = viewModel;
             DataContext = _viewModel;
@@ -56,7 +56,8 @@ namespace LATravelManager.UI.Views
             {
 
                 if (!ex.Message.Contains(".exe"))
-                    MessageBox.Show("Error updating:" + ex.Message);
+                    MessageBox.Show("Error updating:" + ex.Message + "   " + ex.InnerException != null ? ex.InnerException.Message : "");
+                throw ex;
             }
         }
 

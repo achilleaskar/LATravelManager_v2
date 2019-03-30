@@ -1,6 +1,5 @@
 ﻿using LATravelManager.Model;
 using System.ComponentModel.DataAnnotations;
-using static LATravelManager.Model.Enums;
 
 namespace LATravelManager.Models
 {

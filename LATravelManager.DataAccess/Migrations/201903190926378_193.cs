@@ -1,18 +1,17 @@
 namespace LATravelManager.DataAccess.Migrations
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class _193 : DbMigration
     {
         public override void Up()
         {
-            AddColumn("dbo.Excursions", "NightStart", c => c.Boolean(nullable: false));
+            DropColumn("dbo.Partners", "Email");
         }
         
         public override void Down()
         {
-            DropColumn("dbo.Excursions", "NightStart");
+            AddColumn("dbo.Partners", "Email", c => c.String(maxLength: 30, unicode: false));
         }
     }
 }

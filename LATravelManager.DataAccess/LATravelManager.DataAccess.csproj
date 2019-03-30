@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LATravelManager.DataAccess</RootNamespace>
     <AssemblyName>LATravelManager.DataAccess</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -127,9 +128,17 @@
     <Compile Include="Migrations\201902261028287_262.Designer.cs">
       <DependentUpon>201902261028287_262.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201903181247328_193.cs" />
-    <Compile Include="Migrations\201903181247328_193.Designer.cs">
-      <DependentUpon>201903181247328_193.cs</DependentUpon>
+    <Compile Include="Migrations\201903190926378_193.cs" />
+    <Compile Include="Migrations\201903190926378_193.Designer.cs">
+      <DependentUpon>201903190926378_193.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903190933506_1932.cs" />
+    <Compile Include="Migrations\201903190933506_1932.Designer.cs">
+      <DependentUpon>201903190933506_1932.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903191838476_1933.cs" />
+    <Compile Include="Migrations\201903191838476_1933.Designer.cs">
+      <DependentUpon>201903191838476_1933.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -193,8 +202,14 @@
     <EmbeddedResource Include="Migrations\201902261028287_262.resx">
       <DependentUpon>201902261028287_262.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903181247328_193.resx">
-      <DependentUpon>201903181247328_193.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201903190926378_193.resx">
+      <DependentUpon>201903190926378_193.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903190933506_1932.resx">
+      <DependentUpon>201903190933506_1932.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903191838476_1933.resx">
+      <DependentUpon>201903191838476_1933.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

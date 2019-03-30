@@ -1,5 +1,4 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
-using LATravelManager.Models;
+﻿using LATravelManager.Models;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko;
 using System.Windows;
 using System.Windows.Controls;

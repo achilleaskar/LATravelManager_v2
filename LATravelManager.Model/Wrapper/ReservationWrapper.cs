@@ -22,15 +22,52 @@ namespace LATravelManager.UI.Wrapper
 
         #region Fields
 
-     
+
 
         private Room _NoNameRoom;
 
-       
+
 
         #endregion Fields
 
         #region Properties
+
+
+
+
+
+        public float Recieved { get; set; }
+        public float Remaining { get; set; }
+        public float FullPrice { get; set; }
+
+        public void CalculateAmounts()
+        {
+            float total = 0;
+
+            Recieved = 0;
+            foreach (Payment payment in Booking.Payments)
+                Recieved += payment.Amount;
+
+            if (!Booking.IsPartners)
+            {
+                foreach (var r in Booking.ReservationsInBooking)
+                {
+                    foreach (var c in r.CustomersList)
+                    {
+
+                        total += c.Price;
+                    }
+                }
+                FullPrice = total;
+                Remaining = total - Recieved;
+            }
+            else
+            {
+                Remaining = Booking.NetPrice - Recieved;
+            }
+        }
+
+
 
         public Booking Booking
         {
@@ -96,7 +133,7 @@ namespace LATravelManager.UI.Wrapper
         }
 
         public string Dates => CheckIn.ToString("dd/MM") + "-" + CheckOut.ToString("dd/MM");
-        public string HotelDates => (Booking.Excursion.NightStart? CheckIn.AddDays(1).ToString("dd.MM"): CheckIn.ToString("dd.MM")) + "-" + CheckOut.ToString("dd.MM");
+        public string HotelDates => (Booking.Excursion.NightStart ? CheckIn.AddDays(1).ToString("dd.MM") : CheckIn.ToString("dd.MM")) + "-" + CheckOut.ToString("dd.MM");
 
         public int DaysCount
         {
