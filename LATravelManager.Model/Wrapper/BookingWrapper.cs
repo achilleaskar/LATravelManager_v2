@@ -345,6 +345,11 @@ namespace LATravelManager.Model.Wrapper
             get { return GetValue<User>(); }
             set { SetValue(value); }
         }
+        public string PartnerEmail
+        {
+            get { return GetValue<string>(); }
+            set { SetValue(value); }
+        }
 
         public string PartnerEmail
         {
