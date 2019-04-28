@@ -4,6 +4,7 @@ using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Group;
 using LATravelManager.UI.ViewModel.Tabs;
+using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
 using LATravelManager.UI.Wrapper;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -26,7 +27,13 @@ namespace LATravelManager.UI.ViewModel.Parents
             LoadChildViewModels();
         }
 
-        public bool Enable => SelectedExcursion != null;
+        public bool Enable => SelectedExcursion != null || SelectedChildViewModel is GlobalSearch_ViewModel|| SelectedChildViewModel is Info_ViewModel; 
+
+        public override void ChildChanged()
+        {
+            base.ChildChanged();
+            RaisePropertyChanged(nameof(Enable));
+        }
 
         private bool CanUpdate()
         {
@@ -35,7 +42,7 @@ namespace LATravelManager.UI.ViewModel.Parents
 
         public override async Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
         {
-            GroupExcursions = new ObservableCollection<ExcursionWrapper>((await StartingReposiroty.GetAllUpcomingGroupExcursionsAsync()).OrderBy(ex => ex, new ExcursionComparer()).Select(c => new ExcursionWrapper(c)));
+            GroupExcursions = new ObservableCollection<ExcursionWrapper>((await StartingReposiroty.GetAllGroupExcursionsAsync()).OrderBy(ex => ex, new ExcursionComparer()).Select(c => new ExcursionWrapper(c)));
         }
 
         public RelayCommand UpdateExcursionsCommand { get; set; }
@@ -77,7 +84,7 @@ namespace LATravelManager.UI.ViewModel.Parents
                 await StartingReposiroty.LastTask;
             }
             StartingReposiroty = new GenericRepository();
-            GroupExcursions = new ObservableCollection<ExcursionWrapper>((await StartingReposiroty.GetAllUpcomingGroupExcursionsAsync()).OrderBy(ex => ex, new ExcursionComparer()).Select(c => new ExcursionWrapper(c)));
+            GroupExcursions = new ObservableCollection<ExcursionWrapper>((await StartingReposiroty.GetAllGroupExcursionsAsync()).OrderBy(ex => ex, new ExcursionComparer()).Select(c => new ExcursionWrapper(c)));
             UpdateExcursionsCommand.RaiseCanExecuteChanged();
         }
     }

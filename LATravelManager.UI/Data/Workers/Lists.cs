@@ -1,6 +1,10 @@
 ﻿using GalaSoft.MvvmLight.Command;
-using LATravelManager.Models;
-using LATravelManager.UI.Data.LocalModels;
+using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Excursions;
+using LATravelManager.Model.Hotels;
+using LATravelManager.Model.Lists;
+using LATravelManager.Model.LocalModels;
+using LATravelManager.Model.People;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.Wrapper;
@@ -323,13 +327,13 @@ namespace LATravelManager.UI.Data.Workers
 
         public static string GetPath(string fileName)
         {
-            var i = 1;
+            int i = 1;
             string resultPath;
-            var folder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Λίστες";
+            string folder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Λίστες";
             Directory.CreateDirectory(folder);
 
             resultPath = folder + fileName + ".xlsx";
-            var fileExtension = ".xlsx";
+            string fileExtension = ".xlsx";
             while (File.Exists(resultPath))
             {
                 i++;
@@ -344,10 +348,10 @@ namespace LATravelManager.UI.Data.Workers
             Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\RoomingLists");
             string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\RoomingLists\" + $"Rooming List {From.ToString("dd.MM")}-{To.ToString("dd.MM")}" + ".xlsx";
 
-            var fileInfo = new FileInfo(path);
+            FileInfo fileInfo = new FileInfo(path);
             ExcelPackage p = new ExcelPackage();
             int pageCounter = 0;
-            foreach (var roomingList in roomingLists)
+            foreach (RoomingList roomingList in roomingLists)
             {
                 pageCounter++;
                 p.Workbook.Worksheets.Add($"{roomingList.Hotel.Name} {roomingList.Reservations[0].HotelDates}");
@@ -671,21 +675,22 @@ namespace LATravelManager.UI.Data.Workers
             List<RoomingList> rl = new List<RoomingList>();
             IEnumerable<Booking> tmplist = null;
             List<Reservation> tmpress = new List<Reservation>();
-            tmplist = await GenericRepository.GetAllBookingInPeriod(From, To, Excursion.Id);
-            foreach (var b in tmplist)
+            tmplist = (await GenericRepository.GetAllBookingInPeriod(From, To, Excursion.Id));
+            
+            foreach (Booking b in tmplist)
             {
                 tmpress.AddRange(b.ReservationsInBooking);
             }
             List<IGrouping<(Hotel Hotel, DateTime CheckIn, DateTime CheckOut), ReservationWrapper>> wrers =
-                tmpress.Select(x => new ReservationWrapper(x)).GroupBy(r => (r.Hotel, r.CheckIn, r.CheckOut)).ToList()
+                tmpress.Where(r=>r.ReservationType==ReservationTypeEnum.Normal || r.ReservationType == ReservationTypeEnum.Overbooked).Select(x => new ReservationWrapper(x)).GroupBy(r => (r.Hotel, r.CheckIn, r.CheckOut)).ToList()
              .OrderBy(t => t.Key.Hotel.Name).ThenBy(ti => ti.Key.CheckIn).ThenBy(to => to.Key.CheckOut).ToList();
             RoomingList rmList;
             RoomingList nonameroominglist = new RoomingList { Hotel = new HotelWrapper { Name = "NO NAME" } };
 
-            foreach (var group in wrers)
+            foreach (IGrouping<(Hotel Hotel, DateTime CheckIn, DateTime CheckOut), ReservationWrapper> group in wrers)
             {
                 rmList = new RoomingList { Hotel = new HotelWrapper(group.Key.Hotel) };
-                foreach (var res in group.OrderBy(r=>r.Booking.Id))
+                foreach (ReservationWrapper res in group.OrderBy(r => r.Booking.Id))
                 {
                     if (res.ReservationType == ReservationTypeEnum.Noname)
                         nonameroominglist.Reservations.Add(res);
@@ -693,9 +698,8 @@ namespace LATravelManager.UI.Data.Workers
                         rmList.Reservations.Add(res);
                 }
                 rl.Add(rmList);
-
             }
-            if (nonameroominglist.Reservations.Count>0)
+            if (nonameroominglist.Reservations.Count > 0)
             {
                 rl.Add(nonameroominglist);
             }
@@ -718,13 +722,12 @@ namespace LATravelManager.UI.Data.Workers
             //                    count++;
             //                }
 
-
             //            }
             //        }
             //        rl.Add(nonameroominglist);
             //    }
             //}
-        //    rl = rl.OrderBy(r => r.Hotel).ThenBy(r=>r.Reservations[0].CheckIn).ToList();
+            //    rl = rl.OrderBy(r => r.Hotel).ThenBy(r=>r.Reservations[0].CheckIn).ToList();
             CreateRoomingList(rl);
         }
 
@@ -748,11 +751,11 @@ namespace LATravelManager.UI.Data.Workers
 
         private void SelectCustomers()
         {
-            foreach (var b in FilteredBookings)
+            foreach (Booking b in FilteredBookings)
             {
-                foreach (var r in b.ReservationsInBooking)
+                foreach (Reservation r in b.ReservationsInBooking)
                 {
-                    foreach (var c in r.CustomersList)
+                    foreach (Customer c in r.CustomersList)
                     {
                         if (Departments.Any(x => x.StartingPlace.Equals(c.StartingPlace) && x.IsChecked))
                         {

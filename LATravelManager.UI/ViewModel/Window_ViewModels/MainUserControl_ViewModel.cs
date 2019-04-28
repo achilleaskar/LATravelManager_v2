@@ -1,13 +1,15 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
 using LaTravelManager.ViewModel.Management;
-using LATravelManager.Models;
+using LATravelManager.Model.Excursions;
+using LATravelManager.Model.Locations;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Skiathos;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty;
+using LATravelManager.UI.ViewModel.Management;
 using LATravelManager.UI.ViewModel.Parents;
 using LATravelManager.UI.Views;
 using LATravelManager.UI.Views.Management;
@@ -33,6 +35,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             OpenCountriesEditCommand = new RelayCommand(async () => { await OpenCountriesWindow(); }, CanEditWindows);
             OpenExcursionsEditCommand = new RelayCommand(async () => { await OpenExcursionsWindow(); }, CanEditWindows);
             OpenUsersEditCommand = new RelayCommand(async () => { await OpenUsersWindow(); }, CanEditWindows);
+            OpenPartnersEditCommand = new RelayCommand(async () => { await OpenPartnersWindow(); }, CanEditWindows);
             Templates = new ObservableCollection<ExcursionCategory>();
             TemplateViewmodels = new List<ExcursionCategory_ViewModelBase>();
 
@@ -40,6 +43,13 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             MessengerInstance.Register<ChangeChildViewModelMessage>(this, async vm => { await SelectedExcursionType.SetProperChildViewModel(vm.ViewModelindex); });
             MessengerInstance.Register<ExcursionCategoryChangedMessage>(this, async index => { await SetProperViewModel(); });
             StartingRepository = startingRepository;
+        }
+
+        private async Task OpenPartnersWindow()
+        {
+            PartnerManagement_ViewModel vm = new PartnerManagement_ViewModel(StartingRepository);
+            await vm.LoadAsync();
+            MessengerInstance.Send(new OpenChildWindowCommand(new PartnersManagement_Window { DataContext = vm }));
         }
 
         #endregion Constructors
@@ -50,6 +60,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
         public RelayCommand OpenCountriesEditCommand { get; }
         public RelayCommand OpenExcursionsEditCommand { get; }
         public RelayCommand OpenHotelEditCommand { get; }
+        public RelayCommand OpenPartnersEditCommand { get; }
         public RelayCommand OpenUsersEditCommand { get; set; }
         public string UserName => StaticResources.User != null ? StaticResources.User.Name : "Error";
 
@@ -59,21 +70,21 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
         public async Task OpenCitiesWindow()
         {
-            var vm = new CitiesManagement_ViewModel(StartingRepository);
+            CitiesManagement_ViewModel vm = new CitiesManagement_ViewModel(StartingRepository);
             await vm.LoadAsync();
             MessengerInstance.Send(new OpenChildWindowCommand(new CitiesManagement_Window { DataContext = vm }));
         }
 
         public async Task OpenCountriesWindow()
         {
-            var vm = new CountriesManagement_ViewModel(StartingRepository);
+            CountriesManagement_ViewModel vm = new CountriesManagement_ViewModel(StartingRepository);
             await vm.LoadAsync();
             MessengerInstance.Send(new OpenChildWindowCommand(new CountriesManagement_Window { DataContext = vm }));
         }
 
         public async Task OpenHotelsWindow()
         {
-            var vm = new HotelsManagement_ViewModel(StartingRepository);
+            HotelsManagement_ViewModel vm = new HotelsManagement_ViewModel(StartingRepository);
             await vm.LoadAsync();
             MessengerInstance.Send(new OpenChildWindowCommand(new HotelsManagement_Window { DataContext = vm }));
         }
@@ -85,14 +96,14 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
         private async Task OpenExcursionsWindow()
         {
-            var vm = new ExcursionsManagement_ViewModel(StartingRepository);
+            ExcursionsManagement_ViewModel vm = new ExcursionsManagement_ViewModel(StartingRepository);
             await vm.LoadAsync();
             MessengerInstance.Send(new OpenChildWindowCommand(new ExcursionsManagement_Window { DataContext = vm }));
         }
 
         private async Task OpenUsersWindow()
         {
-            var vm = new UsersManagement_viewModel(StartingRepository);
+            UsersManagement_viewModel vm = new UsersManagement_viewModel(StartingRepository);
             await vm.LoadAsync();
             MessengerInstance.Send(new OpenChildWindowCommand(new UsersManagement_Window { DataContext = vm }));
         }
@@ -228,7 +239,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
         public List<ExcursionCategory_ViewModelBase> TemplateViewmodels { get; set; }
 
-        public string Username => Helpers.StaticResources.User.Name;
+        public string Username => StaticResources.User.Name;
 
         #endregion Properties
 
@@ -238,7 +249,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
         {
             NavigationViewModel = new NavigationViewModel(this);
             Templates = new ObservableCollection<ExcursionCategory>((await StartingRepository.GetAllAsync<ExcursionCategory>()).OrderBy(e => e.IndexNum));
-            if (StaticResources.StartingPlaces == null || Helpers.StaticResources.StartingPlaces.Count == 0)
+            if (StaticResources.StartingPlaces == null || StaticResources.StartingPlaces.Count == 0)
             {
                 StaticResources.StartingPlaces = new ObservableCollection<StartingPlace>(StartingRepository.GetAllSortedByName<StartingPlace>());
             }
@@ -271,7 +282,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
         {
             if (SelectedTemplateIndex < Templates.Count)
             {
-                var index = -1;
+                int index = -1;
                 switch (Templates[SelectedTemplateIndex].Category)
                 {
                     case Model.Enums.ExcursionTypeEnum.Bansko:

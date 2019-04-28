@@ -1,12 +1,12 @@
-﻿using LATravelManager.Model;
+﻿using LATravelManager.Model.Excursions;
+using LATravelManager.Model.Hotels;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace LATravelManager.Models
+namespace LATravelManager.Model.Locations
 {
     public class City : BaseModel, INamed
     {
-
         #region Constructors
 
         public City()
@@ -15,8 +15,8 @@ namespace LATravelManager.Models
         }
 
         #endregion Constructors
-        public List<Excursion> Excursions { get; set; }
 
+        public List<Excursion> Excursions { get; set; }
 
         #region Properties
 
@@ -29,7 +29,6 @@ namespace LATravelManager.Models
         [StringLength(20, MinimumLength = 3, ErrorMessage = "Το Όνομα Πόλης μπορεί να είναι απο 3 έως 20 χαρακτήρες.")]
         public string Name { get; set; }
 
-
         #endregion Properties
 
         #region Methods
@@ -40,6 +39,5 @@ namespace LATravelManager.Models
         }
 
         #endregion Methods
-
     }
 }

@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
-using LATravelManager.Models;
+using LATravelManager.Model.BookingData;
+using LATravelManager.Model.People;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
@@ -279,8 +280,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
 
         public override async Task ReloadAsync()
         {
-
-            if (Context!=null&&!Context.IsTaskOk)
+            if (Context != null && !Context.IsTaskOk)
             {
                 await Context.LastTask;
             }
@@ -333,7 +333,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
         {
             try
             {
-                var viewModel = new NewReservation_Bansko_ViewModel();
+                NewReservation_Bansko_ViewModel viewModel = new NewReservation_Bansko_ViewModel();
                 await viewModel.LoadAsync(SelectedReservation.Booking.Id);
                 MessengerInstance.Send(new OpenChildWindowCommand(new EditBooking_Bansko_Window(), viewModel));
             }
@@ -341,7 +341,6 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
             {
                 MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
             }
-           
         }
 
         private async Task ShowReservations(string parameter)
@@ -352,8 +351,8 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
                 FilteredReservations.Clear();
                 await ReloadAsync();
                 DateTime dateLimit = SearchBookingsHelper.GetDateLimit(parameter);
-                List<ReservationWrapper> list = (await Context.GetAllReservationsByCreationDate(dateLimit, 2)).Select(r=>new ReservationWrapper(r)).ToList();
-                foreach (var r in list)
+                List<ReservationWrapper> list = (await Context.GetAllReservationsByCreationDate(dateLimit, 2)).Select(r => new ReservationWrapper(r)).ToList();
+                foreach (ReservationWrapper r in list)
                 {
                     FilteredReservations.Add(r);
                 }

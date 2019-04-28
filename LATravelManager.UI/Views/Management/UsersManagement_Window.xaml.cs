@@ -22,6 +22,5 @@ namespace LATravelManager.UI.Views.Management
             //of the PasswordBox.
             AttachedProperties.PasswordBoxMVVMAttachedProperties.SetEncryptedPassword(pBox, pBox.SecurePassword);
         }
-
     }
 }

@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
-using System.Windows;
-using LATravelManager.Models;
+﻿using LATravelManager.Model.Locations;
 using LATravelManager.UI.Repositories;
-using LATravelManager.UI.ViewModel;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 using Squirrel;
+using System;
+using System.Collections.ObjectModel;
+using System.Net;
+using System.Windows;
 
 namespace LATravelManager.UI.Views
 {
@@ -21,6 +20,7 @@ namespace LATravelManager.UI.Views
 
         public MainWindow(MainViewModel viewModel)
         {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             InitializeComponent();
             _viewModel = viewModel;
             DataContext = _viewModel;
@@ -36,12 +36,11 @@ namespace LATravelManager.UI.Views
             await _viewModel.LoadAsync(StartingRepository);
         }
 
-
         private async void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
             try
             {
-                using (var updateManager = await UpdateManager.GitHubUpdateManager("https://github.com/achilleaskar/LATravelManager_v2"))
+                using (UpdateManager updateManager = await UpdateManager.GitHubUpdateManager("https://github.com/achilleaskar/LATravelManager_v2"))
                 {
                     ReleaseEntry releaseEntry = await updateManager.UpdateApp();
                     if (releaseEntry?.Version.ToString() != null)
@@ -54,9 +53,9 @@ namespace LATravelManager.UI.Views
             }
             catch (Exception ex)
             {
-
                 if (!ex.Message.Contains(".exe"))
-                    MessageBox.Show("Error updating:" + ex.Message);
+                    MessageBox.Show("Error updating:" + ex.Message + "   " + ex.InnerException != null ? ex.InnerException.Message : "");
+                throw ex;
             }
         }
 

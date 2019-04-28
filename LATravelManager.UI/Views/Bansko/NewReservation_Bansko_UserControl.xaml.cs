@@ -1,5 +1,4 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
-using LATravelManager.Models;
+﻿using LATravelManager.Model.Hotels;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,6 +16,7 @@ namespace LATravelManager.UI.Views.Bansko
         {
             InitializeComponent();
         }
+
         private void IsPartnerCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             CustomersDataGrid.Columns[5].Visibility = Visibility.Collapsed;
@@ -26,13 +26,14 @@ namespace LATravelManager.UI.Views.Bansko
         {
             CustomersDataGrid.Columns[5].Visibility = Visibility.Visible;
         }
+
         public static T GetVisualChild<T>(Visual parent) where T : Visual
         {
-            var child = default(T);
-            var numVisuals = VisualTreeHelper.GetChildrenCount(parent);
-            for (var i = 0; i < numVisuals; i++)
+            T child = default(T);
+            int numVisuals = VisualTreeHelper.GetChildrenCount(parent);
+            for (int i = 0; i < numVisuals; i++)
             {
-                var v = (Visual)VisualTreeHelper.GetChild(parent, i);
+                Visual v = (Visual)VisualTreeHelper.GetChild(parent, i);
                 child = v as T;
                 if (child == null)
                 {
@@ -69,7 +70,7 @@ namespace LATravelManager.UI.Views.Bansko
                   CustomersDataGrid.Columns[1]);
                 }
             }
-            else if (e.Key == Key.Delete &&  e.OriginalSource.GetType()!= typeof(TextBox))
+            else if (e.Key == Key.Delete && e.OriginalSource.GetType() != typeof(TextBox))
             {
                 e.Handled = true;
                 (DataContext as NewReservation_Bansko_ViewModel).DeleteSelectedCustomers();
@@ -97,7 +98,5 @@ namespace LATravelManager.UI.Views.Bansko
                     (DataContext as NewReservation_Bansko_ViewModel).PutCustomersInRoomCommand.Execute(null);
             }
         }
-
-      
     }
 }

@@ -1,19 +1,9 @@
-﻿using LATravelManager.Models;
+﻿using LATravelManager.Model.Hotels;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Group;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace LATravelManager.UI.Views.Group
 {
@@ -26,6 +16,7 @@ namespace LATravelManager.UI.Views.Group
         {
             InitializeComponent();
         }
+
         private void IsPartnerCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             CustomersDataGrid.Columns[5].Visibility = Visibility.Collapsed;
@@ -35,13 +26,14 @@ namespace LATravelManager.UI.Views.Group
         {
             CustomersDataGrid.Columns[5].Visibility = Visibility.Visible;
         }
+
         public static T GetVisualChild<T>(Visual parent) where T : Visual
         {
-            var child = default(T);
-            var numVisuals = VisualTreeHelper.GetChildrenCount(parent);
-            for (var i = 0; i < numVisuals; i++)
+            T child = default(T);
+            int numVisuals = VisualTreeHelper.GetChildrenCount(parent);
+            for (int i = 0; i < numVisuals; i++)
             {
-                var v = (Visual)VisualTreeHelper.GetChild(parent, i);
+                Visual v = (Visual)VisualTreeHelper.GetChild(parent, i);
                 child = v as T;
                 if (child == null)
                 {
@@ -109,7 +101,6 @@ namespace LATravelManager.UI.Views.Group
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-
         }
     }
 }

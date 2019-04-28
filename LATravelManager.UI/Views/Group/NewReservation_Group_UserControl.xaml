@@ -301,6 +301,19 @@
                                                                    VerticalAlignment="Center" />
                                 </Button>
                             </StackPanel>
+                            <StackPanel Orientation="Horizontal"
+                                        Margin="0 0 0 5"
+                                        Visibility="{Binding IsPartners,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource booleanToVisibilityConverter}}">
+
+                                <TextBlock Text="Email:"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Left" />
+                                <ComboBox ItemsSource="{Binding Emails}"
+                                          DisplayMemberPath="EValue"
+                                          SelectedItem="{Binding SelectedEmail}"
+                                          VerticalAlignment="Center"
+                                          Width="131" />
+                            </StackPanel>
                             <Grid Visibility="{Binding IsChecked, ElementName=IsPartnerCheckBox, Converter={StaticResource booleanToVisibilityConverter}}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
@@ -416,7 +429,7 @@
                                         HorizontalAlignment="Center">
                                 <CheckBox Content="Onlystay"
                                           IsChecked="{Binding OnlyStay}" />
-                                <CheckBox Content="HB"
+                                <CheckBox Content="HB" 
                                           IsChecked="{Binding HB }" />
                                 <CheckBox Content="Διαφ. Ημ."
                                           IsChecked="{Binding BookingWr.DifferentDates }" />
@@ -541,7 +554,10 @@
                                               Grid.Column="1"
                                               Width="80">
                                         <ComboBoxItem>Μετρητά</ComboBoxItem>
-                                        <ComboBoxItem>Τράπεζα</ComboBoxItem>
+                                        <ComboBoxItem>Πειραιώς</ComboBoxItem>
+                                        <ComboBoxItem>Εθνική</ComboBoxItem>
+                                        <ComboBoxItem>Eurobank</ComboBoxItem>
+                                        <ComboBoxItem>Alpha Bank</ComboBoxItem>
                                         <ComboBoxItem>VISA</ComboBoxItem>
                                     </ComboBox>
                                 </StackPanel>
@@ -778,7 +794,7 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <DataGridTemplateColumn Header="Αεροπλάνο"
-                                                    Visibility="{Binding DataContext.SelectedExcursion.IncludesShip, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">
+                                                    Visibility="{Binding DataContext.SelectedExcursion.IncludesPlane, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <ComboBox SelectedIndex="{Binding CustomerHasPlaneIndex,UpdateSourceTrigger=PropertyChanged}"

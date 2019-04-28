@@ -1,4 +1,6 @@
-﻿using LATravelManager.Models;
+﻿using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Locations;
+using LATravelManager.Model.People;
 using LATravelManager.UI.Repositories;
 using System;
 using System.Collections.ObjectModel;
@@ -21,9 +23,9 @@ namespace LATravelManager.UI.Helpers
 
         public static async void CalculateSum(GenericRepository genericRepository)
         {
-            var bookings = await genericRepository.GetAllBookingInPeriod(new DateTime(2018, 10, 1), new DateTime(2019, 04, 1), 2);
+            System.Collections.Generic.IEnumerable<Booking> bookings = await genericRepository.GetAllBookingInPeriod(new DateTime(2018, 10, 1), new DateTime(2019, 04, 1), 2);
             float sum = 0;
-            foreach (var b in bookings)
+            foreach (Booking b in bookings)
             {
                 if (b.IsPartners)
                 {
@@ -31,9 +33,9 @@ namespace LATravelManager.UI.Helpers
                 }
                 else
                 {
-                    foreach (var r in b.ReservationsInBooking)
+                    foreach (Reservation r in b.ReservationsInBooking)
                     {
-                        foreach (var c in r.CustomersList)
+                        foreach (Customer c in r.CustomersList)
                         {
                             sum += c.Price;
                         }
@@ -72,10 +74,10 @@ namespace LATravelManager.UI.Helpers
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            var field = validationContext.ObjectType.GetProperty(_dependentProperty);
+            System.Reflection.PropertyInfo field = validationContext.ObjectType.GetProperty(_dependentProperty);
             if (field != null)
             {
-                var dependentValue = field.GetValue(validationContext.ObjectInstance, null);
+                object dependentValue = field.GetValue(validationContext.ObjectInstance, null);
                 if ((dependentValue == null && _targetValue == null) || (dependentValue.Equals(_targetValue)))
                 {
                     if (!_innerAttribute.IsValid(value))

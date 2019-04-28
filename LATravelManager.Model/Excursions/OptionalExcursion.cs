@@ -1,9 +1,9 @@
-﻿using LATravelManager.Model;
+﻿using LATravelManager.Model.People;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace LATravelManager.Models
+namespace LATravelManager.Model.Excursions
 {
     public class OptionalExcursion : EditTracker
     {

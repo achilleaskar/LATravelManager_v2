@@ -1,5 +1,4 @@
-﻿using LATravelManager.Models;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Globalization;
 using System.Text;
 using System.Windows.Controls;
@@ -14,10 +13,10 @@ namespace LATravelManager.UI.Helpers
         public override ValidationResult Validate(object value,
                         CultureInfo cultureInfo)
         {
-            var group = (BindingGroup)value;
+            BindingGroup group = (BindingGroup)value;
 
             StringBuilder error = new StringBuilder();
-            foreach (var item in group.Items)
+            foreach (object item in group.Items)
             {
                 //if (item is Customer cust)
                 //{
@@ -39,7 +38,7 @@ namespace LATravelManager.UI.Helpers
                 //}
             }
 
-            foreach (var item in group.Items)
+            foreach (object item in group.Items)
             {
                 // aggregate errors
                 if (item is IDataErrorInfo info)

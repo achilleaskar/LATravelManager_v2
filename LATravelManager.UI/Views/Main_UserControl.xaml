@@ -14,29 +14,34 @@
              Background="White"
              d:DesignHeight="450"
              d:DesignWidth="800">
-    <UserControl.Resources>
-        <DataTemplate DataType="{x:Type viewmodels:BanskoParent_ViewModel}">
-            <views:Bansko_UserControl />
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type viewmodels:GroupParent_ViewModel}">
-            <views:GroupExcursions_UserControl />
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type viewmodels:PersonalParent_ViewModel}">
-            <views:Personal_UserControl />
-        </DataTemplate> 
-        <DataTemplate DataType="{x:Type tabs:GlobalSearch_ViewModel}">
-            <tabViews:GlobalSearch_UserControl />
-        </DataTemplate>
-        <!--  <DataTemplate DataType="{x:Type viewmodels:PersonalExcursion_ViewModel}">
-            <views:PersonalExcursions_UserControl />
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type viewmodels:ThirdPartyExcursions_ViewModel}">
-            <views:ThirdPartyExcursions_UserControl />
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type viewmodels:AddRooms_ViewModel}">
-            <views:AddRooms_UserControl />
-        </DataTemplate>-->
-    </UserControl.Resources>
+        <UserControl.Resources>
+            <DataTemplate DataType="{x:Type viewmodels:BanskoParent_ViewModel}">
+                <views:Bansko_UserControl />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type viewmodels:GroupParent_ViewModel}">
+                <views:GroupExcursions_UserControl />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type viewmodels:PersonalParent_ViewModel}">
+                <views:Personal_UserControl />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type tabs:GlobalSearch_ViewModel}">
+                <tabViews:GlobalSearch_UserControl />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type tabs:Info_ViewModel}">
+                <tabViews:InfoTab_UserControl />
+            </DataTemplate>  <DataTemplate DataType="{x:Type tabs:EconomicData_ViewModel}">
+                <tabViews:EconomicData_UserControl />
+            </DataTemplate>
+            <!--  <DataTemplate DataType="{x:Type viewmodels:PersonalExcursion_ViewModel}">
+                <views:PersonalExcursions_UserControl />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type viewmodels:ThirdPartyExcursions_ViewModel}">
+                <views:ThirdPartyExcursions_UserControl />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type viewmodels:AddRooms_ViewModel}">
+                <views:AddRooms_UserControl />
+            </DataTemplate>-->
+        </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -48,49 +53,51 @@
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
             <Menu DockPanel.Dock="Top"
-                  Height="30"
-                 >
+                  Height="30">
                 <MenuItem Header="Tools">
-                <MenuItem Header="Open Child" />
-                <MenuItem Header="Add Person" />
-            </MenuItem>
-            <MenuItem Header="Διαχείριση">
-                <MenuItem Command="{Binding OpenHotelEditCommand}"
-                          Header="Ξενοδοχεία" />
-                <MenuItem Command="{Binding OpenCitiesEditCommand}"
-                          Header="Πόλεις" />
-                <MenuItem Command="{Binding OpenCountriesEditCommand}"
-                          Header="Χώρες" />
-                <MenuItem Command="{Binding OpenExcursionsEditCommand}"
+                    <MenuItem Header="Open Child" />
+                    <MenuItem Header="Add Person" />
+                </MenuItem>
+                <MenuItem Header="Διαχείριση">
+                    <MenuItem Command="{Binding OpenHotelEditCommand}"
+                              Header="Ξενοδοχεία" />
+                    <MenuItem Command="{Binding OpenCitiesEditCommand}"
+                              Header="Πόλεις" />
+                    <MenuItem Command="{Binding OpenCountriesEditCommand}"
+                              Header="Χώρες" />
+                    <MenuItem Command="{Binding OpenExcursionsEditCommand}"
                               Header="Εκδρομές"
                               Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}" />
-                <MenuItem Command="{Binding OpenUsersEditCommand}"
+                    <MenuItem Command="{Binding OpenUsersEditCommand}"
                               Header="Χρήστες"
                               Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}" />
-            </MenuItem>
+                    <MenuItem Command="{Binding OpenPartnersEditCommand}"
+                              Header="Συνεργάτες"
+                              Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}" />
+                </MenuItem>
             </Menu>
-                <StackPanel HorizontalAlignment="Right"
-                            VerticalAlignment="Top"
-                            Background="White"
-                            Grid.Column="1"
+            <StackPanel HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Background="White"
+                        Grid.Column="1"
                         Height="30"
                         Orientation="Horizontal">
-                    <Border BorderBrush="DimGray"
-                            BorderThickness="1"
-                            Visibility="{Binding IsBusy, Converter={StaticResource booleanToVisibilityConverter}}">
-                        <iconPacks:PackIconFontAwesome Kind="SpinnerSolid"
-                                                       VerticalAlignment="Center"
-                                                       Spin="True"
-                                                       Margin="5" />
-                    </Border>
-                    <Label Content="{Binding UserName}" />
-                    <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
-                   
-                    <Button Content="Αποσύνδεση"
-                            Margin="5,0"
-                            VerticalAlignment="Center"
-                            Command="{Binding LogOutCommand}" />
-                </StackPanel>
+                <Border BorderBrush="DimGray"
+                        BorderThickness="1"
+                        Visibility="{Binding IsBusy, Converter={StaticResource booleanToVisibilityConverter}}">
+                    <iconPacks:PackIconFontAwesome Kind="SpinnerSolid"
+                                                   VerticalAlignment="Center"
+                                                   Spin="True"
+                                                   Margin="5" />
+                </Border>
+                <Label Content="{Binding UserName}" />
+                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+
+                <Button Content="Αποσύνδεση"
+                        Margin="5,0"
+                        VerticalAlignment="Center"
+                        Command="{Binding LogOutCommand}" />
+            </StackPanel>
         </Grid>
         <Grid Grid.Row="1"
               VerticalAlignment="Stretch"
@@ -107,7 +114,8 @@
                 <TabControl.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Name}"
-                                   FontSize="16" Margin="25,0">
+                                   FontSize="16"
+                                   Margin="25,0">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
                                     <Style.Triggers>

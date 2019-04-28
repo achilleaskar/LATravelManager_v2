@@ -1,9 +1,8 @@
-﻿using LATravelManager.Model;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace LATravelManager.Models
+namespace LATravelManager.Model.Lists
 {
-    public class Leader : BaseModel,INamed
+    public class Leader : BaseModel, INamed
     {
         #region Fields + Constructors
 

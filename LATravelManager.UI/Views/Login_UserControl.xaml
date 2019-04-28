@@ -8,6 +8,7 @@
              xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.Window_ViewModels"
              d:DataContext="{d:DesignInstance viewmodels:LoginViewModel}"
              mc:Ignorable="d"
+             Loaded="UserControl_Loaded"
              Background="Wheat"
              d:DesignHeight="450"
              d:DesignWidth="800">
@@ -33,7 +34,8 @@
                 <Label Content="Password:"
                        HorizontalAlignment="Left"
                        Grid.Row="1" />
-                <TextBox Text="{Binding PossibleUser.UserName, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                <TextBox Name="username"
+                    Text="{Binding PossibleUser.UserName, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
                          Width="110"
                          MaxLength="20"
                          VerticalAlignment="Center"
@@ -44,6 +46,8 @@
                              ap:PasswordBoxMVVMAttachedProperties.EncryptedPassword="{Binding PasswordSecureString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              VerticalAlignment="Center"
                              Grid.Row="1"
+                             PreviewMouseLeftButtonDown="PasswordOnPreviewMouseDown"
+                             GotKeyboardFocus="SelectAllPassword"
                              PasswordChanged="PasswordBox_PasswordChanged"
                              Grid.Column="1"
                              Margin="0,0,5,0" />

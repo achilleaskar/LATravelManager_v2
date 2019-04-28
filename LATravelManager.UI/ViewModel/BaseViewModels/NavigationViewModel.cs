@@ -24,11 +24,13 @@ namespace LATravelManager.UI.ViewModel
                 SecondaryViewModels = new List<MyViewModelBase>();
                 SecondaryTabs.Add(new GlobalSearchTab());
                 SecondaryTabs.Add(new InfoTab());
+                SecondaryTabs.Add(new EconomicData_Tab());
                 SecondaryTabs.Add(new AddRoomsTab());
                 SecondaryTabs.Add(new SettingsTab());
                 // SetTabs();
                 SecondaryViewModels.Add(new GlobalSearch_ViewModel());
                 SecondaryViewModels.Add(new Info_ViewModel());
+                SecondaryViewModels.Add(new EconomicData_ViewModel());
                 SecondaryViewModels.Add(new AddRooms_ViewModel());
                 SecondaryViewModels.Add(new Settings_Viewmodel());
                 MessengerInstance.Register<ResetNavigationTabsMessage>(this, async msg => { await SetTabs(); });
@@ -150,7 +152,7 @@ namespace LATravelManager.UI.ViewModel
                 }
 
                 _SelectedSecondaryTabIndex = value;
-                if (value >= 0 && value < Tabs.Count)
+                if (value >= 0 && value < SecondaryTabs.Count)
                 {
                     SecondaryTabs[value].IsSelected = true;
                     Task.Run(() => SelectTab(value, true));
@@ -220,7 +222,6 @@ namespace LATravelManager.UI.ViewModel
                     SecondaryTabs[i].IsSelected = false;
                 }
             }
-
         }
 
         private async Task SelectSecondaryTab(int tabIndex)
@@ -228,6 +229,7 @@ namespace LATravelManager.UI.ViewModel
             parent.SelectedChildViewModel = SecondaryViewModels[tabIndex];
             await parent.SelectedChildViewModel.LoadAsync();
         }
+
         private async Task SetTabs()
         {
             parent = MainUserControl_ViewModel.SelectedExcursionType;
@@ -258,6 +260,5 @@ namespace LATravelManager.UI.ViewModel
         //            SecondaryTabs[SelectedSecondaryTabIndex].IsSelected = false;
         //    }
         //}
-
     }
 }

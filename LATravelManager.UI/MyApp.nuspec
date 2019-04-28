@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>LaTravelManager</id>
+    <version>0.0.0.0</version>
+    <authors>Karagiannis Achilleas</authors>
+    <owners>LAtravel</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>LA travel manager</description>
+    <copyright>Copyright 2019</copyright>
+  </metadata>
+  <files>
+      <file src="*.*" target="lib\net45\" exclude="*.pdb;*.nupkg;*.vshost.*"/>
+      <file src="**\*.*" target="lib\net45\" exclude="*.pdb;*.nupkg;*.vshost.*"/>
+  </files>
+</package>

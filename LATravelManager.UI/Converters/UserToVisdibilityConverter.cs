@@ -5,14 +5,13 @@ using System.Windows.Data;
 
 namespace LATravelManager.UI.Converters
 {
-
     public class UserToVisibility : IValueConverter
     {
         #region Methods
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (parameter==null&&value is int)
+            if (parameter == null && value is int)
             {
                 if (Helpers.StaticResources.User.Level <= (int)value)
                     return Visibility.Visible;

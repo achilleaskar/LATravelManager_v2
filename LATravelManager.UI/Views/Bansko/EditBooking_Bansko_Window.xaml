@@ -21,7 +21,6 @@
         <converters:BrushColorConverter x:Key="BrushColorConverter" />
         <converters:FloadToStringValueConverter x:Key="FtoSConverter" />
         <converters:IsGroupConverter x:Key="isGroupConverter" />
-
         <converters:SelectedIndexToForegroundConverter x:Key="SelectedIndexToForegroundConverter" />
         <Style TargetType="{x:Type Border}">
             <Setter Property="BorderBrush"
@@ -208,7 +207,6 @@
                                                 MaxWidth="200"
                                                 Binding="{Binding PassportNum,UpdateSourceTrigger=PropertyChanged}"
                                                 Visibility="{Binding DataContext.SelectedExcursion.PassportNeeded, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}" />
-
                             <DataGridTemplateColumn Header="Πάσο"
                                                     Width="70"
                                                     Visibility="{Binding DataContext.SelectedExcursion.DiscountsExist, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">
@@ -253,7 +251,7 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <DataGridTemplateColumn Header="Αεροπλάνο"
-                                                    Visibility="{Binding DataContext.SelectedExcursion.IncludesShip, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">
+                                                    Visibility="{Binding DataContext.SelectedExcursion.IncludesPlane, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <ComboBox SelectedIndex="{Binding CustomerHasPlaneIndex,UpdateSourceTrigger=PropertyChanged}"
@@ -286,7 +284,6 @@
                     </DataGrid>
                     <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Center">
-
                         <TextBlock Text="{Binding ErrorsInDatagrid}"
                                    FontSize="14"
                                    Foreground="Red"
@@ -353,8 +350,12 @@
                             <Separator />
                             <CheckBox Content="Only Stay"
                                       HorizontalAlignment="Left"
+                                      Checked="CheckBox_Checked"
+                                      Unchecked="CheckBox_Checked"
                                       IsChecked="{Binding SelectedCustomer.Reservation.OnlyStay}" />
                             <CheckBox Content="HB"
+                                      Checked="CheckBox_Checked"
+                                      Unchecked="CheckBox_Checked"
                                       HorizontalAlignment="Left"
                                       IsChecked="{Binding SelectedCustomer.Reservation.HB}" />
                             <CheckBox Content="Διαφ. Ημερομηνίες"
@@ -447,7 +448,10 @@
                                               Grid.Column="1"
                                               Width="80">
                                         <ComboBoxItem>Μετρητά</ComboBoxItem>
-                                        <ComboBoxItem>Τράπεζα</ComboBoxItem>
+                                        <ComboBoxItem>Πειραιώς</ComboBoxItem>
+                                        <ComboBoxItem>Εθνική</ComboBoxItem>
+                                        <ComboBoxItem>Eurobank</ComboBoxItem>
+                                        <ComboBoxItem>Alpha Bank</ComboBoxItem>
                                         <ComboBoxItem>VISA</ComboBoxItem>
                                     </ComboBox>
                                 </StackPanel>
@@ -752,8 +756,8 @@
                                 <CheckBox Name="IsPartnerCheckBox"
                                           Checked="IsPartnerCheckBox_Checked"
                                           Unchecked="IsPartnerCheckBox_Unchecked"
-                                          IsChecked="{Binding IsPartners,UpdateSourceTrigger=PropertyChanged}"
                                           HorizontalAlignment="Left"
+                                          IsChecked="{Binding IsPartners,UpdateSourceTrigger=PropertyChanged}"
                                           VerticalAlignment="Center" />
                             </StackPanel>
                             <StackPanel Orientation="Horizontal"
@@ -775,6 +779,18 @@
                                     <iconPacks:PackIconFontAwesome Kind="PlusSolid"
                                                                    VerticalAlignment="Center" />
                                 </Button>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal"
+                                        Margin="0 0 0 5"
+                                        Visibility="{Binding IsPartners,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource booleanToVisibilityConverter}}">
+                                <TextBlock Text="Email:"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Left" />
+                                <ComboBox ItemsSource="{Binding Emails}"
+                                          DisplayMemberPath="EValue"
+                                          SelectedItem="{Binding SelectedEmail}"
+                                          VerticalAlignment="Center"
+                                          Width="131" />
                             </StackPanel>
                             <Grid Visibility="{Binding IsChecked, ElementName=IsPartnerCheckBox, Converter={StaticResource booleanToVisibilityConverter}}">
                                 <Grid.RowDefinitions>
@@ -884,7 +900,6 @@
                                 <TextBox Text="{Binding Line,UpdateSourceTrigger=PropertyChanged}"
                                          Margin="0,0,5,0" />
                             </StackPanel>
-
                             <ComboBox ItemsSource="{Binding Users}"
                                       SelectedItem="{Binding SelectedUser}"
                                       DisplayMemberPath="UserName"
@@ -897,7 +912,6 @@
                             <Button Content="Voucher"
                                     Margin="5,5,5,0"
                                     Command="{Binding PrintVoucherCommand}" />
-
                             <Button Content="Σύμβαση"
                                     Margin="5,5,5,0"
                                     Command="{Binding PrintContractCommand}" />

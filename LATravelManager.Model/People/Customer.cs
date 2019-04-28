@@ -1,22 +1,21 @@
-﻿using LATravelManager.Model;
+﻿using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Excursions;
 using System;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace LATravelManager.Models
+namespace LATravelManager.Model.People
 {
-    public class Customer : EditTracker,INamed
+    public class Customer : EditTracker, INamed
     {
-
         public Customer()
         {
             Age = 18;
             //DOB = DateTime.Now.AddYears(-20);
         }
+
         #region Properties
 
         [Range(0, 18)]
-        [DisplayName("1234")]
         public int Age { get; set; }
 
         public DateTime CheckIn { get; set; }

@@ -2,7 +2,6 @@
 {
     public class ChangeChildViewModelMessage
     {
-
         public ChangeChildViewModelMessage(int ViewModelindex)
         {
             this.ViewModelindex = ViewModelindex;

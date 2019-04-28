@@ -52,7 +52,7 @@
                                     Margin="5" />
                         <Button Content="Προβολή"
                                 VerticalAlignment="Center"
-                                Command="{Binding ShowCustomersCommand}" /> 
+                                Command="{Binding ShowCustomersCommand}" />
                         <Button Content="phgaine"
                                 Margin="5,0"
                                 VerticalAlignment="Center"
@@ -203,7 +203,7 @@
                                                               BorderBrush="Black"
                                                               HorizontalScrollBarVisibility="Disabled"
                                                               HeadersVisibility="None">
-                                                        
+
                                                         <DataGrid.Columns>
                                                             <DataGridTextColumn Header="A/A"
                                                                                 IsReadOnly="True"
@@ -573,7 +573,6 @@
                                 <TextBlock Text="Age"
                                            HorizontalAlignment="Center" />
                             </Border>
-                           
                         </StackPanel>
                         <Border BorderBrush="Black"
                                 Grid.Row="1"
@@ -674,7 +673,6 @@
                                                             <DataGridTextColumn Header="Age"
                                                                                 Width="25"
                                                                                 Binding="{Binding AgeText}" />
-
                                                         </DataGrid.Columns>
                                                     </DataGrid>
                                                 </DataTemplate>

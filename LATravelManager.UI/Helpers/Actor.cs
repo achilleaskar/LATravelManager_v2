@@ -5,7 +5,7 @@ namespace LATravelManager.UI.Helpers
 {
     public class Actor<T, V>
     {
-        // Optional delegate to use to pass back the 
+        // Optional delegate to use to pass back the
         public delegate void After(object sender, V e);
 
         // use this delegate to represent a method that can be passed
@@ -17,7 +17,7 @@ namespace LATravelManager.UI.Helpers
             job = f;
         }
 
-        // This method passes T as the parameter to Func<T, V> job and 
+        // This method passes T as the parameter to Func<T, V> job and
         // returns V.  The callback delegate is invoked once the Task has
         // ran to completion.
         public virtual async Task Act(T t, After a)

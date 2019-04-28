@@ -1,6 +1,10 @@
 ﻿using GalaSoft.MvvmLight;
-using LATravelManager.Models;
+using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Hotels;
+using LATravelManager.Model.People;
+using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Data.Workers;
+using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.Wrapper;
@@ -232,7 +236,7 @@ public class NewReservationHelper : ViewModelBase
 
         if (Payment.Amount > 0)
         {
-            BookingWr.Payments.Add(new Payment { Amount = Payment.Amount, Comment = Payment.Comment, Date = DateTime.Now, PaymentMethod = Payment.PaymentMethod, User = await context.GetByIdAsync<User>(BookingWr.User.Id) });
+            BookingWr.Payments.Add(new Payment { Amount = Payment.Amount, Comment = Payment.Comment, Date = DateTime.Now, PaymentMethod = Payment.PaymentMethod, User = await context.GetByIdAsync<User>(StaticResources.User.Id) });
         }
 
         if (BookingWr.Id == 0)
@@ -308,29 +312,29 @@ public class NewReservationHelper : ViewModelBase
     //private async Task CalculateDiferencesAsync(Booking Dbbooking, Booking newBooking)
     //{
     //    //var tmpBooking = await Context.GetByIdAsync<Booking>(newBooking.Id);
-        //Context.UpdateValues(tmpBooking, newBooking);
-        //tmpBooking.Payments.Clear();
-        //tmpBooking.ReservationsInBooking.Clear();
+    //Context.UpdateValues(tmpBooking, newBooking);
+    //tmpBooking.Payments.Clear();
+    //tmpBooking.ReservationsInBooking.Clear();
 
-        //UOW.ObjectContextAdapter.ObjectContext.ObjectStateManager.TryGetObjectStateEntry(tmpBooking, out ObjectStateEntry myObjectState);
-        //IEnumerable<string> modifiedProperties = myObjectState.GetModifiedProperties();
-        //foreach (var propName in modifiedProperties)
-        //{
-        //    Console.WriteLine("Property {0} changed from {1} to {2}",
-        //         propName,
-        //         myObjectState.OriginalValues[propName],
-        //         myObjectState.CurrentValues[propName]);
-        //}
+    //UOW.ObjectContextAdapter.ObjectContext.ObjectStateManager.TryGetObjectStateEntry(tmpBooking, out ObjectStateEntry myObjectState);
+    //IEnumerable<string> modifiedProperties = myObjectState.GetModifiedProperties();
+    //foreach (var propName in modifiedProperties)
+    //{
+    //    Console.WriteLine("Property {0} changed from {1} to {2}",
+    //         propName,
+    //         myObjectState.OriginalValues[propName],
+    //         myObjectState.CurrentValues[propName]);
+    //}
 
-        //var myObjectState = UOW myContext.ObjectStateManager.GetObjectStateEntry(myObject);
-        //var modifiedProperties = myObjectState.GetModifiedProperties();
-        //foreach (var propName in modifiedProperties)
-        //{
-        //    Console.WriteLine("Property {0} changed from {1} to {2}",
-        //         propName,
-        //         myObjectState.OriginalValues[propName],
-        //         myObjectState.CurrentValues[propName]);
-        //}
+    //var myObjectState = UOW myContext.ObjectStateManager.GetObjectStateEntry(myObject);
+    //var modifiedProperties = myObjectState.GetModifiedProperties();
+    //foreach (var propName in modifiedProperties)
+    //{
+    //    Console.WriteLine("Property {0} changed from {1} to {2}",
+    //         propName,
+    //         myObjectState.OriginalValues[propName],
+    //         myObjectState.CurrentValues[propName]);
+    //}
     //}
 
     #endregion Methods

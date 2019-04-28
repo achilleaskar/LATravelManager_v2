@@ -1,5 +1,4 @@
-﻿using LATravelManager.Models;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace LATravelManager.UI.Views.Bansko
@@ -21,9 +20,9 @@ namespace LATravelManager.UI.Views.Bansko
 
         private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
-                ScrollViewer scv = (ScrollViewer)sender;
-                scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
-                e.Handled = true;
+            ScrollViewer scv = (ScrollViewer)sender;
+            scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
+            e.Handled = true;
         }
 
         private void CustomersDataGrid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -33,20 +32,20 @@ namespace LATravelManager.UI.Views.Bansko
 
         private void DataGrid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-        //    if (e.OriginalSource is TextBlock tb )
-        //    {
-        //        //if (tb.DataContext is Reservation r)
-        //        //{
-        //        //   // r.SelectAll();
-        //        //}
-        //    }
-        //    else if (e.OriginalSource is Border b)
-        //    {
-        //        //if (b.DataContext is Reservation r)
-        //        //{
-        //        //  //  r.SelectAll();
-        //        //}
-        //    }
+            //    if (e.OriginalSource is TextBlock tb )
+            //    {
+            //        //if (tb.DataContext is Reservation r)
+            //        //{
+            //        //   // r.SelectAll();
+            //        //}
+            //    }
+            //    else if (e.OriginalSource is Border b)
+            //    {
+            //        //if (b.DataContext is Reservation r)
+            //        //{
+            //        //  //  r.SelectAll();
+            //        //}
+            //    }
             e.Handled = true;
         }
 

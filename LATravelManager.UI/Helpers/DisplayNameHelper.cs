@@ -11,12 +11,11 @@ namespace LATravelManager.UI.Helpers
         {
             if (obj == null) return null;
             return GetDisplayName(obj.GetType(), propertyName);
-
         }
 
         public string GetDisplayName(Type type, string propertyName)
         {
-            var property = type.GetProperty(propertyName);
+            PropertyInfo property = type.GetProperty(propertyName);
             if (property == null) return null;
 
             return GetDisplayName(property);
@@ -24,11 +23,11 @@ namespace LATravelManager.UI.Helpers
 
         public string GetDisplayName(PropertyInfo property)
         {
-            var attrName = GetAttributeDisplayName(property);
+            string attrName = GetAttributeDisplayName(property);
             if (!string.IsNullOrEmpty(attrName))
                 return attrName;
 
-            var metaName = GetMetaDisplayName(property);
+            string metaName = GetMetaDisplayName(property);
             if (!string.IsNullOrEmpty(metaName))
                 return metaName;
 
@@ -37,7 +36,7 @@ namespace LATravelManager.UI.Helpers
 
         private string GetAttributeDisplayName(PropertyInfo property)
         {
-            var atts = property.GetCustomAttributes(
+            object[] atts = property.GetCustomAttributes(
                 typeof(DisplayNameAttribute), true);
             if (atts.Length == 0)
                 return null;
@@ -46,13 +45,13 @@ namespace LATravelManager.UI.Helpers
 
         private string GetMetaDisplayName(PropertyInfo property)
         {
-            var atts = property.DeclaringType.GetCustomAttributes(
+            object[] atts = property.DeclaringType.GetCustomAttributes(
                 typeof(MetadataTypeAttribute), true);
             if (atts.Length == 0)
                 return null;
 
-            var metaAttr = atts[0] as MetadataTypeAttribute;
-            var metaProperty =
+            MetadataTypeAttribute metaAttr = atts[0] as MetadataTypeAttribute;
+            PropertyInfo metaProperty =
                 metaAttr.MetadataClassType.GetProperty(property.Name);
             if (metaProperty == null)
                 return null;

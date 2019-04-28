@@ -1,5 +1,4 @@
-﻿using LATravelManager.Models;
-using LATravelManager.UI.Message;
+﻿using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.Wrapper;
 using System.Collections.Generic;
@@ -69,6 +68,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 _SelectedChildViewModel = value;
                 RaisePropertyChanged();
                 ChildChanged();
+
             }
         }
 
@@ -93,11 +93,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
-
-
-
-
-
         public GenericRepository StartingReposiroty { get; set; }
         public List<TabsBaseViewModel> Tabs { get; internal set; }
 
@@ -107,15 +102,15 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         internal async Task SetProperChildViewModel(int index)
         {
-     
-                if (index < Childs.Count)
-                {
-                    SelectedChildViewModel = Childs[index];
-                    if (!SelectedChildViewModel.IsLoaded)
-                        await SelectedChildViewModel.LoadAsync();
-                }
+            if (index < Childs.Count)
+            {
+                SelectedChildViewModel = Childs[index];
+                if (!SelectedChildViewModel.IsLoaded)
+                    await SelectedChildViewModel.LoadAsync();
+            }
         }
-        private void ChildChanged()
+
+        public virtual void ChildChanged()
         {
         }
 

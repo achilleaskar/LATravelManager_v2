@@ -1,5 +1,7 @@
-﻿using LATravelManager.Models;
-using LATravelManager.UI.Data.LocalModels;
+﻿using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Hotels;
+using LATravelManager.Model.LocalModels;
+using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.Wrapper;
 using System;
@@ -600,7 +602,7 @@ namespace LATravelManager.UI.Data.Workers
             {
                 foreach (RoomWrapper room in hotel.RoomWrappers)
                 {
-                    for (var i = 0; i < room.PlanDailyInfo.Count; i++)
+                    for (int i = 0; i < room.PlanDailyInfo.Count; i++)
                     {
                         PlanDailyInfo day = room.PlanDailyInfo[i];
                         if (day.DayState == DayStateEnum.FirstDay && day.RoomState == RoomStateEnum.MovaBleNoName)

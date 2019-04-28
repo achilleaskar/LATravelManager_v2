@@ -120,8 +120,6 @@
                         </CompositeCollection>
                     </ComboBox.ItemsSource>
                 </ComboBox>
-                
-
             </StackPanel>
         </StackPanel>
         <DataGrid Grid.Row="1"

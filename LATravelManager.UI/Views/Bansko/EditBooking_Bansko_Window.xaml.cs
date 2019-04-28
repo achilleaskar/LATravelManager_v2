@@ -1,10 +1,11 @@
-﻿using System.Windows;
+﻿using LATravelManager.Model.Hotels;
+using LATravelManager.UI.ViewModel.BaseViewModels;
+using LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko;
+using LATravelManager.UI.ViewModel.CategoriesViewModels.Group;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using LATravelManager.Models;
-using LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko;
-using LATravelManager.UI.ViewModel.CategoriesViewModels.Group;
 
 namespace LATravelManager.UI.Views.Bansko
 {
@@ -20,11 +21,11 @@ namespace LATravelManager.UI.Views.Bansko
 
         public static T GetVisualChild<T>(Visual parent) where T : Visual
         {
-            var child = default(T);
-            var numVisuals = VisualTreeHelper.GetChildrenCount(parent);
-            for (var i = 0; i < numVisuals; i++)
+            T child = default(T);
+            int numVisuals = VisualTreeHelper.GetChildrenCount(parent);
+            for (int i = 0; i < numVisuals; i++)
             {
-                var v = (Visual)VisualTreeHelper.GetChild(parent, i);
+                Visual v = (Visual)VisualTreeHelper.GetChild(parent, i);
                 child = v as T;
                 if (child == null)
                 {
@@ -102,10 +103,7 @@ namespace LATravelManager.UI.Views.Bansko
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-
         }
-
-       
 
         private void DataGrid_KeyUp(object sender, KeyEventArgs e)
         {
@@ -128,7 +126,6 @@ namespace LATravelManager.UI.Views.Bansko
                 {
                     e.Cancel = true;
                 }
-
             }
             else if (DataContext is NewReservation_Group_ViewModel b && b.HasChanges)
             {
@@ -137,8 +134,12 @@ namespace LATravelManager.UI.Views.Bansko
                 {
                     e.Cancel = true;
                 }
-
             }
+        }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            ((NewReservationGroup_Base)DataContext).BookingWr.RaisePropertyChanged();
         }
     }
 }

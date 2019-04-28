@@ -1,8 +1,9 @@
-﻿using LATravelManager.Model;
+﻿using LATravelManager.Model.Excursions;
+using LATravelManager.Model.People;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace LATravelManager.Models
+namespace LATravelManager.Model.Lists
 {
     public class Bus : EditTracker
     {

@@ -7,7 +7,6 @@ namespace LATravelManager.DataAccess.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
-            
         }
 
         protected override void Seed(MainDatabase context)

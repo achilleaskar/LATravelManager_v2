@@ -86,7 +86,6 @@
                                                                                 FontWeight="DemiBold"
                                                                                 FontSize="14"
                                                                                 Binding="{Binding PriceString,UpdateSourceTrigger=PropertyChanged}" />
-
                                                         </DataGrid.Columns>
                                                     </DataGrid>
                                                 </DataTemplate>

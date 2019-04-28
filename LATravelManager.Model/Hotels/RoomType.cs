@@ -1,7 +1,6 @@
-﻿using LATravelManager.Model;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace LATravelManager.Models
+namespace LATravelManager.Model.Hotels
 {
     public class RoomType : BaseModel
     {

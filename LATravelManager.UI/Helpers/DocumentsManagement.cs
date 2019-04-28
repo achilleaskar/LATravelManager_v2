@@ -1,5 +1,8 @@
 ﻿using DocumentFormat.OpenXml.Packaging;
-using LATravelManager.Models;
+using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Locations;
+using LATravelManager.Model.People;
+using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.Wrapper;
 using OfficeOpenXml;
@@ -47,13 +50,13 @@ namespace LATravelManager.UI.Helpers
 
         public static string GetPath(string fileName, string folderpath)
         {
-            var i = 1;
+            int i = 1;
             string resultPath;
-            var folder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + folderpath;
+            string folder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + folderpath;
             Directory.CreateDirectory(folder);
 
             resultPath = folder + fileName + ".xlsx";
-            var fileExtension = ".xlsx";
+            string fileExtension = ".xlsx";
             while (File.Exists(resultPath))
             {
                 i++;
@@ -64,7 +67,7 @@ namespace LATravelManager.UI.Helpers
 
         public string CreateFolder(DateTime date, string folderName, string city)
         {
-            var folder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + folderName + city + @"\" + date.ToString("MMMM") + @"\" + date.ToString("dd-MM-yy");
+            string folder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + folderName + city + @"\" + date.ToString("MMMM") + @"\" + date.ToString("dd-MM-yy");
 
             Directory.CreateDirectory(folder);
 
@@ -78,7 +81,7 @@ namespace LATravelManager.UI.Helpers
         public async void PrintAllBookings()
         {
             string wbPath = null;
-            var sampleFile = AppDomain.CurrentDomain.BaseDirectory + @"Sources\protypo kratiseon.xlsx";
+            string sampleFile = AppDomain.CurrentDomain.BaseDirectory + @"Sources\protypo kratiseon.xlsx";
             //List<string> selectedCities = new List<string>();
             ExcelRange modelTable;
             int lineNum = 0;
@@ -97,7 +100,7 @@ namespace LATravelManager.UI.Helpers
                     DateTime date = AllBookings[0].CheckIn;
                     List<BookingsPerDay> bookingsPerDays = new List<BookingsPerDay>();
                     BookingsPerDay CurrentDayBookings = new BookingsPerDay(date);
-                    foreach (var b in AllBookings)
+                    foreach (Booking b in AllBookings)
                     {
                         if (b.CheckIn == date)
                         {
@@ -112,10 +115,10 @@ namespace LATravelManager.UI.Helpers
                         }
                     }
                     bool first = true;
-                    foreach (var day in bookingsPerDays)
+                    foreach (BookingsPerDay day in bookingsPerDays)
                     {
-                        var fileInfo = new FileInfo(sampleFile);
-                        var p = new ExcelPackage(fileInfo);
+                        FileInfo fileInfo = new FileInfo(sampleFile);
+                        ExcelPackage p = new ExcelPackage(fileInfo);
                         ExcelWorksheet myWorksheet = p.Workbook.Worksheets[1];
 
                         counter = 0;
@@ -228,9 +231,9 @@ namespace LATravelManager.UI.Helpers
 
         public void PrintContract(BookingWrapper booking)
         {
-            var outputpath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            string outputpath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
             ReservationWrapper resWrapper;
-            foreach (var res in booking.ReservationsInBooking)
+            foreach (Reservation res in booking.ReservationsInBooking)
             {
                 resWrapper = new ReservationWrapper(res);
                 if (resWrapper.ReservationType == ReservationTypeEnum.Noname)
@@ -271,10 +274,10 @@ namespace LATravelManager.UI.Helpers
 
         public void PrintLetter(BookingWrapper booking)
         {
-            var outputpath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            string outputpath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
 
             ReservationWrapper resWrapper;
-            foreach (var res in booking.ReservationsInBooking)
+            foreach (Reservation res in booking.ReservationsInBooking)
             {
                 resWrapper = new ReservationWrapper(res);
                 if (resWrapper.ReservationType == ReservationTypeEnum.Noname)
@@ -307,7 +310,7 @@ namespace LATravelManager.UI.Helpers
 
         public void PrintSingleBookingContract(BookingWrapper booking)
         {
-            foreach (var res in booking.ReservationsInBooking)
+            foreach (Reservation res in booking.ReservationsInBooking)
             {
                 if (res.ReservationType == ReservationTypeEnum.Noname)
                 {
@@ -331,7 +334,7 @@ namespace LATravelManager.UI.Helpers
 
         public async Task PrintSingleBookingVoucher(BookingWrapper booking)
         {
-            foreach (var res in booking.ReservationsInBooking)
+            foreach (Reservation res in booking.ReservationsInBooking)
             {
                 if (res.ReservationType == ReservationTypeEnum.Noname)
                 {
@@ -355,10 +358,10 @@ namespace LATravelManager.UI.Helpers
 
         public async Task PrintVoucher(BookingWrapper booking)
         {
-            var outputpath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            string outputpath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
 
             ReservationWrapper resWrapper;
-            foreach (var res in booking.ReservationsInBooking)
+            foreach (Reservation res in booking.ReservationsInBooking)
             {
                 resWrapper = new ReservationWrapper(res);
                 if (resWrapper.ReservationType == ReservationTypeEnum.Noname)
@@ -388,6 +391,8 @@ namespace LATravelManager.UI.Helpers
                     Directory.CreateDirectory(outputpath + @"\Vouchers");
                     folderNameVouchers = CreateFolder(resWrapper.CheckIn, @"\Vouchers\", booking.Excursion.Name);
 
+                    Regex rgx = new Regex("[^a-zA-Z0-9\\ ._-]");
+                    VoucherFilename = rgx.Replace(VoucherFilename, "");
                     await CreateWordVoucher(folderNameVouchers + VoucherFilename, resWrapper, booking);
                 }
                 catch (Exception ex)
@@ -399,13 +404,13 @@ namespace LATravelManager.UI.Helpers
 
         public static string GetPath(string fileName)
         {
-            var i = 1;
+            int i = 1;
             string resultPath;
-            var folder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Λίστες";
+            string folder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Λίστες";
             Directory.CreateDirectory(folder);
 
             resultPath = folder + fileName + ".xlsx";
-            var fileExtension = ".xlsx";
+            string fileExtension = ".xlsx";
             while (File.Exists(resultPath))
             {
                 i++;
@@ -416,9 +421,9 @@ namespace LATravelManager.UI.Helpers
 
         internal async Task PrintList(List<Booking> bookings, DateTime checkIn)
         {
-            var more = await Context.GetAllBookinsFromCustomers(checkIn);
+            IEnumerable<Booking> more = await Context.GetAllBookinsFromCustomers(checkIn);
 
-            foreach (var b in more)
+            foreach (Booking b in more)
             {
                 if (!bookings.Any(h => h.Id == b.Id))
                 {
@@ -427,19 +432,19 @@ namespace LATravelManager.UI.Helpers
             }
             string PhoneNumbers = "";
             string wbPath = null;
-            var sampleFile = AppDomain.CurrentDomain.BaseDirectory + @"Sources\protypo_leoforeia.xlsx";
+            string sampleFile = AppDomain.CurrentDomain.BaseDirectory + @"Sources\protypo_leoforeia.xlsx";
             //List<string> selectedCities = new List<string>();
             ExcelRange modelTable;
             int lineNum;
             Thread.CurrentThread.CurrentCulture = culture;
 
-            var fileInfo = new FileInfo(sampleFile);
-            var p = new ExcelPackage(fileInfo);
+            FileInfo fileInfo = new FileInfo(sampleFile);
+            ExcelPackage p = new ExcelPackage(fileInfo);
             ExcelWorksheet myWorksheet = p.Workbook.Worksheets[1];
             int counter = 0;
             int customersCount, secondline;
-            var reservationsThisDay = new List<ReservationWrapper>();
-            var RestReservations = new List<ReservationWrapper>();
+            List<ReservationWrapper> reservationsThisDay = new List<ReservationWrapper>();
+            List<ReservationWrapper> RestReservations = new List<ReservationWrapper>();
 
             //foreach (CityDeptartureInfo city in PerCityDepartureList)
             //    if (city.IsChecked)
@@ -458,11 +463,11 @@ namespace LATravelManager.UI.Helpers
 
             foreach (Booking booking in bookings)
             {
-                foreach (var r in booking.ReservationsInBooking)
+                foreach (Reservation r in booking.ReservationsInBooking)
                 {
                     if (r.OnlyStay || r.Booking.SecondDepart)
                     {
-                        RestReservations.Add(new ReservationWrapper( r));
+                        RestReservations.Add(new ReservationWrapper(r));
                     }
                     else //if ((!booking.DifferentDates || r.CustomersList.Any(c => c.CheckIn == checkIn) && r.CustomersList.Any(b => b.CustomerHasBusIndex < 2 && b.CheckIn == checkIn)))
                     {
@@ -474,7 +479,7 @@ namespace LATravelManager.UI.Helpers
             reservationsThisDay = reservationsThisDay.OrderBy(x => x.CustomersList[0].StartingPlace).ToList();
             reservationsThisDay = reservationsThisDay.OrderBy(x => x.HotelName).ToList();
 
-            wbPath = GetPath("\\Λίστα Λεωφορείου για Bansko " + checkIn.ToString("dd_MM_yy"));
+            wbPath = GetPath($"\\Λίστα Λεωφορείου για {reservationsThisDay[0].Booking.Excursion.Destinations[0].Name} " + checkIn.ToString("dd_MM_yy"));
 
             myWorksheet.Cells["A1"].Value = "ΑΝΑΧΩΡΗΣΗ - " + checkIn.ToString("dd/MM/yyyy");
             lineNum = 5;
@@ -502,7 +507,7 @@ namespace LATravelManager.UI.Helpers
                                 myWorksheet.Cells["B" + lineNum].Value = reservation.CheckIn.Day + "-" + reservation.CheckOut.ToString("dd/MM");
                                 myWorksheet.Cells["E" + lineNum].Value = reservation.HotelName;
                                 if (reservation.Booking.IsPartners)
-                                    myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Partner.ToString().Length > 11) ? reservation.Booking.Partner.ToString().Substring(0, 11) : reservation.Booking.Partner.ToString();
+                                    myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Partner.Name.Length > 11) ? reservation.Booking.Partner.Name.Substring(0, 11) : reservation.Booking.Partner.Name;
                                 else if (!string.IsNullOrEmpty(reservation.Booking.Comment))
                                     myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Comment.Length > 12) ? reservation.Booking.Comment.Substring(0, 11) : reservation.Booking.Comment;
                             }
@@ -535,7 +540,7 @@ namespace LATravelManager.UI.Helpers
                                 myWorksheet.Cells["E" + lineNum].Value = reservation.HotelName;
                                 if (reservation.Booking.IsPartners)
                                     myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Partner.ToString().Length > 11) ? reservation.Booking.Partner.ToString().Substring(0, 11) : reservation.Booking.Partner.ToString();
-                                else if (reservation.Booking.Comment.Length > 0)
+                                else if (!string.IsNullOrEmpty( reservation.Booking.Comment))
                                     myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Comment.Length > 12) ? reservation.Booking.Comment.Substring(0, 11) : reservation.Booking.Comment;
                             }
                             //else if (customersCount == 1)
@@ -643,12 +648,12 @@ namespace LATravelManager.UI.Helpers
                 Process.Start(wbPath);
             }
             else
-                System.Windows.MessageBox.Show("Δέν υπάρχουν άτομα που να πηγαίνουν τις συγκεκριμένες ημέρες απο τις επιλεγμένες πόλεις", "Σφάλμα");
+                MessageBox.Show("Δέν υπάρχουν άτομα που να πηγαίνουν τις συγκεκριμένες ημέρες απο τις επιλεγμένες πόλεις", "Σφάλμα");
         }
 
         internal void PrintSingleBookingLetter(BookingWrapper booking)
         {
-            foreach (var res in booking.ReservationsInBooking)
+            foreach (Reservation res in booking.ReservationsInBooking)
             {
                 if (res.ReservationType == ReservationTypeEnum.Noname)
                 {
@@ -683,17 +688,17 @@ namespace LATravelManager.UI.Helpers
             //else
             fileName = @"Sources\protypo_symvasis.docx";
             File.Copy(fileName, saveAs, true);
-            var c = reservationWr.CustomersList[0];
+            Customer c = reservationWr.CustomersList[0];
 
-            using (var wordDoc = WordprocessingDocument.Open(saveAs, true))
+            using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(saveAs, true))
             {
                 string docText = null;
-                using (var sr = new StreamReader(wordDoc.MainDocumentPart.GetStream()))
+                using (StreamReader sr = new StreamReader(wordDoc.MainDocumentPart.GetStream()))
                 {
                     docText = sr.ReadToEnd();
                 }
                 // var imagePath = AppDomain.CurrentDomain.BaseDirectory + @"VoucherImages\";
-                var regexText = new Regex("todaydate");
+                Regex regexText = new Regex("todaydate");
                 docText = regexText.Replace(docText, DateTime.Today.ToString("dd/MM/yyyy"));
                 regexText = new Regex("customername");
                 docText = regexText.Replace(docText, c.Surename + " " + c.Name);
@@ -712,7 +717,7 @@ namespace LATravelManager.UI.Helpers
                 regexText = new Regex("location");
                 docText = regexText.Replace(docText, "Θεσσαλονίκη");
 
-                using (var sw = new StreamWriter(wordDoc.MainDocumentPart.GetStream(FileMode.Create)))
+                using (StreamWriter sw = new StreamWriter(wordDoc.MainDocumentPart.GetStream(FileMode.Create)))
                 {
                     sw.Write(docText);
                 }
@@ -727,26 +732,26 @@ namespace LATravelManager.UI.Helpers
             string fileName = @"Sources\letter.docx";
 
             File.Copy(fileName, saveAs, true);
-            var c = reservationWr.CustomersList[0];
+            Customer c = reservationWr.CustomersList[0];
 
-            using (var wordDoc = WordprocessingDocument.Open(saveAs, true))
+            using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(saveAs, true))
             {
                 string docText = null;
-                using (var sr = new StreamReader(wordDoc.MainDocumentPart.GetStream()))
+                using (StreamReader sr = new StreamReader(wordDoc.MainDocumentPart.GetStream()))
                 {
                     docText = sr.ReadToEnd();
                 }
                 // var imagePath = AppDomain.CurrentDomain.BaseDirectory + @"VoucherImages\";
-                var regexText = new Regex("fullname");
+                Regex regexText = new Regex("fullname");
                 docText = regexText.Replace(docText, c.Surename + " " + c.Name);
                 regexText = new Regex("fulldate");
-                docText = regexText.Replace(docText, reservationWr.Dates + " " + reservationWr.DaysCount + "νυχτο");
+                docText = regexText.Replace(docText, reservationWr.Dates + " " + (reservationWr.Booking.Excursion.NightStart ? reservationWr.DaysCount - 2 : reservationWr.DaysCount - 1) + "νυχτο");
                 regexText = new Regex("destination");
                 docText = regexText.Replace(docText, booking.Excursion.Destinations[0].Name);
                 regexText = new Regex("hotelnroomtype");
                 docText = regexText.Replace(docText, reservationWr.HotelName + "-" + reservationWr.RoomTypeName);
 
-                using (var sw = new StreamWriter(wordDoc.MainDocumentPart.GetStream(FileMode.Create)))
+                using (StreamWriter sw = new StreamWriter(wordDoc.MainDocumentPart.GetStream(FileMode.Create)))
                 {
                     sw.Write(docText);
                 }
@@ -760,7 +765,7 @@ namespace LATravelManager.UI.Helpers
         {
             string fileName;
 
-            if (booking.Excursion.ExcursionType.Category == Model.Enums.ExcursionTypeEnum.Group)
+            if (booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Group)
             {
                 if (booking.IsPartners)
                     fileName = @"Sources\group\Voucher_afirmo.docx";
@@ -783,7 +788,7 @@ namespace LATravelManager.UI.Helpers
                     fileName = @"Sources\Voucher_enfirmo_thess.docx";
             }
             File.Copy(fileName, saveAs, true);
-            var c = reservationWr.CustomersList[0];
+            Customer c = reservationWr.CustomersList[0];
             StartingPlace customerStartingPlace = await Context.GetByNameAsync<StartingPlace>(c.StartingPlace);
 
             if (customerStartingPlace == null || customerStartingPlace.Id == 19)
@@ -796,16 +801,16 @@ namespace LATravelManager.UI.Helpers
                 };
             }
 
-            using (var wordDoc = WordprocessingDocument.Open(saveAs, true))
+            using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(saveAs, true))
             {
                 string docText = null;
-                using (var sr = new StreamReader(wordDoc.MainDocumentPart.GetStream()))
+                using (StreamReader sr = new StreamReader(wordDoc.MainDocumentPart.GetStream()))
                 {
                     docText = sr.ReadToEnd();
                 }
-                bool after12 = (!string.IsNullOrEmpty(customerStartingPlace.ReturnTime) ? int.Parse(customerStartingPlace.ReturnTime.Substring(0, 2)) < 16 : false) && booking.Excursion.ExcursionType.Category == Model.Enums.ExcursionTypeEnum.Group;
+                bool after12 = (!string.IsNullOrEmpty(customerStartingPlace.ReturnTime) ? int.Parse(customerStartingPlace.ReturnTime.Substring(0, 2)) < 16 : false) && booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Group;
                 // var imagePath = AppDomain.CurrentDomain.BaseDirectory + @"VoucherImages\";
-                var regexText = new Regex("regexorderno");
+                Regex regexText = new Regex("regexorderno");
                 docText = regexText.Replace(docText, reservationWr.Booking.Id.ToString());
                 regexText = new Regex("regexresno");
                 docText = regexText.Replace(docText, reservationWr.Id.ToString());
@@ -824,7 +829,7 @@ namespace LATravelManager.UI.Helpers
                 regexText = new Regex("regexnames");
                 docText = regexText.Replace(docText, reservationWr.Names);
                 regexText = new Regex("regexcheckin");
-                docText = regexText.Replace(docText, booking.Excursion.ExcursionType.Category == Model.Enums.ExcursionTypeEnum.Group ? reservationWr.CheckIn.AddDays(1).ToString("dd/MM/yyyy") : reservationWr.CheckIn.ToString("dd/MM/yyyy"));
+                docText = regexText.Replace(docText, booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Group ? reservationWr.CheckIn.AddDays(1).ToString("dd/MM/yyyy") : reservationWr.CheckIn.ToString("dd/MM/yyyy"));
                 regexText = new Regex("regexcheckout");
                 docText = regexText.Replace(docText, reservationWr.CheckOut.ToString("dd/MM/yyyy"));
                 regexText = new Regex("regexroomtype");
@@ -844,17 +849,17 @@ namespace LATravelManager.UI.Helpers
                 regexText = new Regex("zlocation");
                 docText = regexText.Replace(docText, reservationWr.CustomersList[0].StartingPlace);
                 regexText = new Regex("ztime");
-                docText = regexText.Replace(docText, (booking.Excursion.ExcursionType.Category == Model.Enums.ExcursionTypeEnum.Group) ? ((customerStartingPlace.Id < 0) ? "" : customerStartingPlace.ReturnTime) : ((customerStartingPlace.Id < 0) ? "" : customerStartingPlace.StartTime));
+                docText = regexText.Replace(docText, (booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Group) ? ((customerStartingPlace.Id < 0) ? "" : customerStartingPlace.ReturnTime) : ((customerStartingPlace.Id < 0) ? "" : customerStartingPlace.StartTime));
                 regexText = new Regex("zplace");
-                docText = regexText.Replace(docText, customerStartingPlace.Details);
+                docText = regexText.Replace(docText, customerStartingPlace.Id == 14 && booking.Excursion.Destinations[0].Id == 5 ? "Εθνική Τράπεζα" : customerStartingPlace.Details);
                 regexText = new Regex("zsynodos");
                 docText = regexText.Replace(docText, "");
                 regexText = new Regex("zcity");
                 docText = regexText.Replace(docText, booking.Excursion.Destinations[0].Name);
                 regexText = new Regex("zgostart");
-                docText = regexText.Replace(docText, (booking.Excursion.ExcursionType.Category == Model.Enums.ExcursionTypeEnum.Group) ? ((customerStartingPlace.Id < 0) ? "" : customerStartingPlace.ReturnTime) : ((customerStartingPlace.Id < 0) ? "" : customerStartingPlace.StartTime));
+                docText = regexText.Replace(docText, (booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Group) ? ((customerStartingPlace.Id < 0) ? "" : customerStartingPlace.ReturnTime) : ((customerStartingPlace.Id < 0) ? "" : customerStartingPlace.StartTime));
                 regexText = new Regex("zreturnstart");
-                docText = regexText.Replace(docText, customerStartingPlace.Id == 19 ? "" : (booking.Excursion.ExcursionType.Category == Model.Enums.ExcursionTypeEnum.Group) ? "10:00" : "13:00");
+                docText = regexText.Replace(docText, customerStartingPlace.Id == 19 ? "" : (booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Group) ? "10:00" : "13:00");
                 regexText = new Regex("regexhotel");
                 docText = regexText.Replace(docText, reservationWr.HotelName);
                 regexText = new Regex("regexroomtype");
@@ -878,7 +883,7 @@ namespace LATravelManager.UI.Helpers
                 regexText = new Regex("location");
                 docText = regexText.Replace(docText, "Θεσσαλονίκη");
 
-                using (var sw = new StreamWriter(wordDoc.MainDocumentPart.GetStream(FileMode.Create)))
+                using (StreamWriter sw = new StreamWriter(wordDoc.MainDocumentPart.GetStream(FileMode.Create)))
                 {
                     sw.Write(docText);
                 }

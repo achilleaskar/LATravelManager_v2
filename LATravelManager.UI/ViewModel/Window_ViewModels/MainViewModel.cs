@@ -1,14 +1,13 @@
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
-using LaTravelManager.ViewModel;
-using LaTravelManager.ViewModel.Management;
-using LATravelManager.Models;
+using LATravelManager.Model.Hotels;
+using LATravelManager.Model.Locations;
+using LATravelManager.Model.People;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
-using LATravelManager.UI.Views;
-using LATravelManager.UI.Views.Management;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -20,7 +19,6 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
         public MainViewModel()
         {
-           
             Messenger.Default.Register<ChangeVisibilityMessage>(this, msg => { Visibility = msg.Visible ? Visibility.Visible : Visibility.Collapsed; });
             Messenger.Default.Register<IsBusyChangedMessage>(this, msg => { ManageIsBusy(msg.IsBusy); });
             Messenger.Default.Register<LoginLogOutMessage>(this, async msg => { await ChangeViewModel(msg.Login); });
@@ -89,8 +87,6 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             }
         }
 
-       
-
         public IViewModel SelectedViewmodel
         {
             get
@@ -132,7 +128,9 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                 RaisePropertyChanged();
             }
         }
-
+        public List<RoomType> RoomTypes { get; set; }
+        public List<Hotel> Hotels { get; set; }
+        public List<Country> Countries { get; set; }
         #endregion Properties
 
         #region Methods
@@ -140,6 +138,16 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
         public async Task LoadAsync(GenericRepository startingRepository)
         {
             StartingRepository = startingRepository;
+
+            await StartingRepository.LoadBasic();
+
+            RoomTypes = await StartingRepository.GetAllAsync<RoomType>();
+            Hotels = await StartingRepository.GetAllAsync<Hotel>();
+            Countries = await StartingRepository.GetAllAsync<Country>();
+
+            RoomTypes =  StartingRepository.GetAllAsyncLocal<RoomType>();
+            Hotels =  StartingRepository.GetAllAsyncLocal<Hotel>();
+            Countries =  StartingRepository.GetAllAsyncLocal<Country>();
 #if DEBUG
             Helpers.StaticResources.User = new User { BaseLocation = 1, Id = 1, Level = 0, UserName = "admin" };
             RaisePropertyChanged(nameof(MenuVisibility));
@@ -150,8 +158,6 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                 SelectedViewmodel = new MainUserControl_ViewModel(StartingRepository);//TODO
             await SelectedViewmodel.LoadAsync();
         }
-
-      
 
         //private void ChangeVisibility(ChangeVisibilityMessage msg)
         //{
@@ -165,7 +171,5 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
         }
 
         #endregion Methods
-
-       
     }
 }

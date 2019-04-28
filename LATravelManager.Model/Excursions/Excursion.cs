@@ -1,8 +1,10 @@
-﻿using LATravelManager.Model;
+﻿using LATravelManager.Model.Locations;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
-namespace LATravelManager.Models
+namespace LATravelManager.Model.Excursions
 {
     public class Excursion : EditTracker
     {
@@ -13,6 +15,8 @@ namespace LATravelManager.Models
             ExcursionDates = new ObservableCollection<ExcursionDate>();
             Destinations = new ObservableCollection<City>();
         }
+
+        public DateTime FirstDate => ExcursionDates.OrderBy(e => e.CheckIn).FirstOrDefault().CheckIn;
 
         #endregion Constructors
 
@@ -36,7 +40,7 @@ namespace LATravelManager.Models
         public bool IncludesShip { get; set; }
 
         [Required]
-        [StringLength(30,MinimumLength =4)]
+        [StringLength(30, MinimumLength = 4)]
         public string Name { get; set; }
 
         public bool PassportNeeded { get; set; }

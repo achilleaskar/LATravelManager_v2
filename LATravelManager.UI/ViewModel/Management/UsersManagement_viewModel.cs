@@ -1,9 +1,10 @@
 ﻿using LaTravelManager.BaseTypes;
-using LATravelManager.Models;
+using LATravelManager.Model.Locations;
+using LATravelManager.Model.People;
+using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.Security;
 using LATravelManager.UI.ViewModel.BaseViewModels;
-using LATravelManager.UI.Wrapper;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -164,7 +165,6 @@ namespace LaTravelManager.ViewModel.Management
 
             return Context.HasChanges() && Context.IsContextAvailable;
         }
-
 
         public override async Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
         {

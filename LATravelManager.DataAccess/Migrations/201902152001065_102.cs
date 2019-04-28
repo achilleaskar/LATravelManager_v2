@@ -1,8 +1,7 @@
 namespace LATravelManager.DataAccess.Migrations
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class _102 : DbMigration
     {
         public override void Up()
@@ -18,7 +17,7 @@ namespace LATravelManager.DataAccess.Migrations
             DropColumn("dbo.Leaders", "ModifiedDate");
             DropColumn("dbo.StartingPlaces", "ModifiedDate");
         }
-        
+
         public override void Down()
         {
             AddColumn("dbo.StartingPlaces", "ModifiedDate", c => c.DateTime(precision: 0));

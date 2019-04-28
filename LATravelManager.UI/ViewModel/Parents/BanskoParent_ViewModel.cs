@@ -1,4 +1,4 @@
-﻿using LATravelManager.Models;
+﻿using LATravelManager.Model.Excursions;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko;
@@ -13,7 +13,7 @@ namespace LATravelManager.UI.ViewModel.Parents
         public BanskoParent_ViewModel(GenericRepository startingReposiroty, NavigationViewModel navigationViewModel) : base(startingReposiroty, navigationViewModel)
         {
             Tabs.Add(new MakeReservationTab { Index = Tabs.Count });
-           // Tabs.Add(new SearchTab { Index = Tabs.Count });
+            // Tabs.Add(new SearchTab { Index = Tabs.Count });
             Tabs.Add(new MoveTab { Index = Tabs.Count });
             Tabs.Add(new ListManagementTab { Index = Tabs.Count });
             Tabs.Add(new OptionalActivitiesTab { Index = Tabs.Count });
@@ -22,10 +22,8 @@ namespace LATravelManager.UI.ViewModel.Parents
 
         public override async Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
         {
-            SelectedExcursion = new ExcursionWrapper( await StartingReposiroty.GetByIdAsync<Excursion>(2));
+            SelectedExcursion = new ExcursionWrapper(await StartingReposiroty.GetByIdAsync<Excursion>(2));
         }
-
-      
 
         public void LoadChildViewModels()
         {

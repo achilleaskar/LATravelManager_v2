@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
 using LaTravelManager.BaseTypes;
-using LATravelManager.Models;
+using LATravelManager.Model.Excursions;
+using LATravelManager.Model.Locations;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
@@ -180,13 +181,15 @@ namespace LaTravelManager.ViewModel.Management
 
         #region Methods
 
+        public bool ShowFinished { get; set; }
+
         public override async Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
         {
             try
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
 
-                MainCollection = new ObservableCollection<ExcursionWrapper>((await Context.GetAllUpcomingGroupExcursionsAsync()).OrderBy(ex => ex, new ExcursionComparer()).Select(c => new ExcursionWrapper(c)));
+                MainCollection = new ObservableCollection<ExcursionWrapper>((await Context.GetAllGroupExcursionsAsync(showFinished: ShowFinished)).OrderBy(ex => ex, new ExcursionComparer()).Select(c => new ExcursionWrapper(c)));
                 Cities = new ObservableCollection<City>(await Context.GetAllCitiesAsyncSortedByName());
                 ExcursionCategories = new ObservableCollection<ExcursionCategory>(await Context.GetAllAsync<ExcursionCategory>());
             }
@@ -206,7 +209,7 @@ namespace LaTravelManager.ViewModel.Management
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
 
-                var vm = new CitiesManagement_ViewModel(Context);
+                CitiesManagement_ViewModel vm = new CitiesManagement_ViewModel(Context);
                 await vm.LoadAsync();
                 MessengerInstance.Send(new OpenChildWindowCommand(new CitiesManagement_Window { DataContext = vm }));
             }

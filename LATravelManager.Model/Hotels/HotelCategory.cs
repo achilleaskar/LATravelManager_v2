@@ -1,8 +1,7 @@
-﻿using LATravelManager.Model;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace LATravelManager.Models
+namespace LATravelManager.Model.Hotels
 {
     public class HotelCategory : BaseModel
     {
@@ -11,6 +10,7 @@ namespace LATravelManager.Models
         public HotelCategory()
         {
         }
+
         public List<Hotel> Hotels { get; set; }
 
         #endregion Constructors

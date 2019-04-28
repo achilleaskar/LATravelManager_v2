@@ -7,7 +7,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
     {
         private bool _hasChanges;
 
-
         public bool IsLoaded { get; set; }
 
         public abstract Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null);

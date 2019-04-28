@@ -98,7 +98,7 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <GroupBox Header="Κρατήσεις" 
+            <GroupBox Header="Κρατήσεις"
                       HorizontalAlignment="Center"
                       VerticalAlignment="Stretch"  Margin="10">
                 <ListView ItemsSource="{Binding Result}"

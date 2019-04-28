@@ -1,9 +1,4 @@
 ﻿using LATravelManager.UI.ViewModel.BaseViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LATravelManager.UI.ViewModel.Tabs
 {
@@ -14,7 +9,6 @@ namespace LATravelManager.UI.ViewModel.Tabs
             Level = 1;
             IconName = "Walk";
             Content = "Προαιρετικές";
-
         }
     }
 }

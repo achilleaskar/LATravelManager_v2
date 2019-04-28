@@ -1,5 +1,7 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
-using LATravelManager.Models;
+using LATravelManager.Model.BookingData;
+using LATravelManager.Model.People;
+using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Data.Workers;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
@@ -68,8 +70,6 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Group
             MessengerInstance.Register<SelectedExcursionChangedMessage>(this, async exc => { await SelectedExcursionChanged(exc.SelectedExcursion); });
         }
 
-       
-
         private void PrintAllLetters()
         {
             try
@@ -87,14 +87,14 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Group
                 }
                 int coutner = 0;
 
-                foreach (var b in bookings)
+                foreach (Booking b in bookings)
                 {
                     coutner += b.ReservationsInBooking.Count;
                 }
 
                 using (DocumentsManagement vm = new DocumentsManagement(new GenericRepository()))
                 {
-                    foreach (var b in bookings)
+                    foreach (Booking b in bookings)
                     {
                         vm.PrintSingleBookingLetter(new BookingWrapper(b));
                     }
@@ -127,14 +127,14 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Group
                 }
                 int coutner = 0;
 
-                foreach (var b in bookings)
+                foreach (Booking b in bookings)
                 {
                     coutner += b.ReservationsInBooking.Count;
                 }
 
                 using (DocumentsManagement vm = new DocumentsManagement(new GenericRepository()))
                 {
-                    foreach (var b in bookings)
+                    foreach (Booking b in bookings)
                     {
                         await vm.PrintSingleBookingVoucher(new BookingWrapper(b));
                     }
@@ -174,7 +174,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Group
                 }
                 int coutner = 0;
 
-                foreach (var b in bookings)
+                foreach (Booking b in bookings)
                 {
                     coutner += b.ReservationsInBooking.Count;
                 }
@@ -519,7 +519,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Group
         {
             try
             {
-                var viewModel = new NewReservation_Group_ViewModel();
+                NewReservation_Group_ViewModel viewModel = new NewReservation_Group_ViewModel();
                 await viewModel.LoadAsync(SelectedReservation.Booking.Id);
                 MessengerInstance.Send(new OpenChildWindowCommand(new EditBooking_Bansko_Window(), viewModel));
             }
@@ -540,7 +540,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Group
                 List<ReservationWrapper> list = AllExcursions ?
                     (await Context.GetAllGroupReservationsByCreationDate(dateLimit)).Select(r => new ReservationWrapper(r)).ToList() :
                     (await Context.GetAllReservationsByCreationDate(dateLimit, SelectedExcursion.Id)).Select(r => new ReservationWrapper(r)).ToList();
-                foreach (var r in list)
+                foreach (ReservationWrapper r in list)
                 {
                     FilteredReservations.Add(r);
                 }

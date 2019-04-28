@@ -4,7 +4,7 @@
     {
         public IsBusyChangedMessage(bool isBusy)
         {
-            IsBusy= isBusy;
+            IsBusy = isBusy;
         }
 
         public bool IsBusy { get; }

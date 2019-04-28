@@ -1,0 +1,252 @@
+﻿<UserControl x:Class="LATravelManager.UI.Views.Tabs.EconomicData_UserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
+             xmlns:viewmodel="clr-namespace:LATravelManager.UI.Helpers"
+             xmlns:views="clr-namespace:LATravelManager.UI.Views.Tabs"
+             xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.Tabs.TabViewmodels"
+             d:DataContext="{d:DesignInstance viewmodels:EconomicData_ViewModel}"
+             mc:Ignorable="d"
+             Background="LemonChiffon"
+             d:DesignHeight="450"
+             d:DesignWidth="1130">
+    <UserControl.Resources>
+        <converters:UserToVisibility x:Key="UserToVisibilityConverter" />
+        <DataTemplate DataType="{x:Type viewmodel:PaymentInfo}">
+            <views:UserPaymentsInfo_UserControl />
+        </DataTemplate>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0"
+                    Orientation="Horizontal">
+            <Border BorderBrush="Gray"
+                    Padding="0,3"
+                    Background="LightYellow"
+                    CornerRadius="3"
+                    BorderThickness="1"
+                    Margin="0,2,0,2">
+                <StackPanel VerticalAlignment="Stretch"
+                            Orientation="Vertical">
+                    <StackPanel Orientation="Vertical"
+                                Margin="0 0 0 5"
+                                HorizontalAlignment="Center">
+                        <StackPanel Margin="0,0,0,2"
+                                    Orientation="Horizontal">
+                            <Label Content="Επιλεγμένες Ημερομηνίες:"
+                                   Padding="0"
+                                   HorizontalAlignment="Center" />
+                            <CheckBox Margin="5,0"
+                                      IsChecked="{Binding EnableDatesFilter}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <DatePicker SelectedDate="{Binding From}"
+                                        Width="118" />
+                            <DatePicker SelectedDate="{Binding To}"
+                                        Margin="5 0 0 0"
+                                        Width="118" />
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Border BorderBrush="Gray"
+                                CornerRadius="0,0,3,3"
+                                Background="LightGreen"
+                                Margin="0,0,0,-4"
+                                BorderThickness="0,1,0,1">
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="Ημέρας"
+                                        Margin="5"
+                                        Command="{Binding ShowEconomicDataCommand}"
+                                        CommandParameter="1"
+                                        Padding="5,2" />
+                                <Button Content="Εβδομάδας"
+                                        Margin="5"
+                                        CommandParameter="7"
+                                        Command="{Binding ShowEconomicDataCommand}"
+                                        Padding="5,2" />
+                                <Button Content="Μήνα"
+                                        Margin="5"
+                                        CommandParameter="30"
+                                        Command="{Binding ShowEconomicDataCommand}"
+                                        Padding="5,2" />
+                                <Border BorderBrush="Gray"
+                                        BorderThickness="1,0,0,0" />
+                                <Button Content="Σύνολο"
+                                        Margin="5"
+                                        Command="{Binding ShowEconomicDataCommand}"
+                                        Padding="5,2" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            <StackPanel Orientation="Horizontal"
+                        VerticalAlignment="Bottom"
+                        Margin="5">
+                <StackPanel.Resources>
+                    <Style TargetType="Label">
+                        <Setter Property="Padding"
+                                Value="0" />
+                    </Style>
+                    <Style TargetType="Button">
+                        <Setter Property="VerticalAlignment"
+                                Value="Bottom" />
+                    </Style>
+                </StackPanel.Resources>
+                <StackPanel>
+                    <Label Content="Πωλητής:"
+                           VerticalAlignment="Center" />
+                    <ComboBox  Width="85"
+                               Margin="0 0 5 0"
+                               VerticalAlignment="Center"
+                               SelectedIndex="{Binding UserIndexBookingFilter}">
+                        <ComboBox.Resources>
+                            <CollectionViewSource x:Key="UsersList"
+                                                  Source="{Binding Users}" />
+                        </ComboBox.Resources>
+                        <ComboBox.ItemsSource>
+                            <CompositeCollection>
+                                <ComboBoxItem Content="Όλοι" />
+                                <CollectionContainer Collection="{Binding Source={StaticResource UsersList}}" />
+                            </CompositeCollection>
+                        </ComboBox.ItemsSource>
+                    </ComboBox>
+                </StackPanel>
+                <StackPanel>
+                    <Label Content="Εκδρομή:"
+                           VerticalAlignment="Center" />
+                    <ComboBox  Width="105"
+                               Margin="0 0 5 0"
+                               IsSynchronizedWithCurrentItem="True"
+                               VerticalAlignment="Center"
+                               SelectedIndex="{Binding ExcursionIndexBookingFilter}">
+                        <ComboBox.Resources>
+                            <CollectionViewSource x:Key="ExcursionsList"
+                                                  Source="{Binding Excursions}" />
+                        </ComboBox.Resources>
+                        <ComboBox.ItemsSource>
+                            <CompositeCollection>
+                                <ComboBoxItem Content="Όλες" />
+                                <CollectionContainer Collection="{Binding Source={StaticResource ExcursionsList}}" />
+                            </CompositeCollection>
+                        </ComboBox.ItemsSource>
+                    </ComboBox>
+                </StackPanel>
+                <Button Content="PrintEconomicData"
+                        Margin="5,0"
+                        Height="22"
+                        Command="{Binding PrintEconomicDataCommand}" />
+            </StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Label Content="Μετρητά:"
+                       Padding="5 0"
+                       Grid.Row="0"
+                       Grid.Column="0" />
+                <TextBlock Text="{Binding Cash,StringFormat=c2}"
+                           Grid.Row="0"
+                           VerticalAlignment="Center"
+                           Grid.Column="1" />
+                <Border BorderBrush="Silver" BorderThickness="1"
+                           Grid.Column="2" Margin="1 0 0 0 "
+                           HorizontalAlignment="Left"
+                           Grid.RowSpan="4" />
+                <Label Content="Πειραιώς:"
+                       Grid.Row="1"
+                       Grid.Column="0" />
+                <TextBlock Text="{Binding Peiraios,StringFormat=c2}"
+                           Grid.Row="1"
+                           VerticalAlignment="Center"
+                           Grid.Column="1" />
+                <Label Content="Εθνική:"
+                       Padding="5 0"
+                       Grid.Row="2"
+                       Grid.Column="0" />
+                <TextBlock Text="{Binding Ethniki,StringFormat=c2}"
+                           VerticalAlignment="Center"
+                           Grid.Row="2"
+                           Grid.Column="1" />
+                <Label Content="Eurobank:"
+                       Padding="5 0"
+                       Grid.Row="0"
+                       Grid.Column="2" />
+                <TextBlock Text="{Binding Eurobank,StringFormat=c2}"
+                           VerticalAlignment="Center"
+                           Grid.Row="0"
+                           Grid.Column="3" />
+                <Label Content="Alpha Bank:"
+                       Grid.Row="1"
+                       Grid.Column="2" />
+                <TextBlock Text="{Binding AlphaBank,StringFormat=c2}"
+                           VerticalAlignment="Center"
+                           Grid.Row="1"
+                           Grid.Column="3" />
+                <Label Content="Visa:"
+                       Padding="5 0"
+                       Grid.Row="2"
+                       Grid.Column="2" />
+                <TextBlock Text="{Binding VISA,StringFormat=c2}"
+                           VerticalAlignment="Center"
+                           Grid.Row="2"
+                           Grid.Column="3" />
+                <Label Content="Σύνολο:"
+                       Grid.Row="3"
+                       Grid.Column="2" />
+                <TextBlock Text="{Binding Total,StringFormat=c2}"
+                           Grid.Row="3"
+                           VerticalAlignment="Center"
+                           Grid.Column="3" />
+            </Grid>
+        </StackPanel>
+        <TabControl Grid.Row="1"
+                    SelectedIndex="{Binding SelectedUserList}"
+                    ItemsSource="{Binding UsersList}">
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding User.UserName}"
+                               FontSize="14"
+                               Margin="15,0">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsSelected,
+                        RelativeSource={RelativeSource AncestorType=TabItem}}"
+                                                 Value="True">
+                                        <Setter Property="FontWeight"
+                                                Value="Bold" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style></TextBlock>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <ContentControl Content="{Binding }"
+                                    VerticalAlignment="Stretch"
+                                    Background="Aqua"
+                                    HorizontalAlignment="Stretch" />
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </TabControl>
+    </Grid>
+</UserControl>

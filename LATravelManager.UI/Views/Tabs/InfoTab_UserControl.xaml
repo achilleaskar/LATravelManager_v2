@@ -1,0 +1,362 @@
+﻿<UserControl x:Class="LATravelManager.UI.Views.Tabs.InfoTab_UserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:LATravelManager.UI.Views.Tabs"
+             xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
+             mc:Ignorable="d"
+             d:DesignHeight="450"
+             d:DesignWidth="800">
+    <UserControl.Resources>
+        <converters:UserToVisibility x:Key="UserToVisibilityConverter" />
+        <Style x:Key="DataGridCellStyle"
+               TargetType="{x:Type DataGridCell}">
+            <Setter Property="IsTabStop"
+                    Value="False" />
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <TabControl>
+            <TabItem Header="Πληροφορίες Αναχωρήσεων">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0"
+                                Orientation="Horizontal"
+                                Grid.ColumnSpan="2">
+                        <Label Content="Απο:" />
+                        <DatePicker Name="FromDepartureInfo_DatePicker"
+                                    Width="115"
+                                    CalendarStyle="{StaticResource styleCalendar}"
+                                    VerticalAlignment="Center"
+                                    SelectedDate="{Binding FromDepartureInfo, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" />
+                        <Label Content="Εώς:" />
+                        <DatePicker Name="ToDepartureInfo_DatePicker"
+                                    Width="115"
+                                    CalendarStyle="{StaticResource styleCalendar}"
+                                    VerticalAlignment="Center"
+                                    SelectedDate="{Binding ToDepartureInfo, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" />
+                        <Label Content="Εκδρομή:" />
+                        <ComboBox  Width="105"
+                                   Margin="0 0 5 0"
+                                   IsSynchronizedWithCurrentItem="True"
+                                   VerticalAlignment="Center"
+                                   ItemsSource="{Binding Excursions}"
+                                   SelectedItem="{Binding SelectedFilterExcursion}" />
+                        <Button Content="Προβολή"
+                                Command="{Binding ShowDepartureInfoCommand}"
+                                Margin="5,0" />
+                        <Label Foreground="red"
+                               Content="{Binding ShowDepartureInfoError}" />
+                    </StackPanel>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  Grid.Row="1"
+                                  HorizontalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding AllDaysDeparturesCollectionView}"
+                                      Margin="5">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Margin="5">
+                                        <TextBlock Text="{Binding Dates}" />
+                                        <ListView Name="PerDayInfo"
+                                                  Focusable="False"
+                                                  VerticalAlignment="Stretch"
+                                                  HorizontalAlignment="Left"
+                                                  ItemsSource="{Binding PerCityDepartureList}">
+                                            <ListView.ItemContainerStyle>
+                                                <Style TargetType="{x:Type ListViewItem}">
+                                                    <Setter Property="BorderBrush"
+                                                            Value="Gray" />
+                                                    <Setter Property="BorderThickness"
+                                                            Value="0,0,0,1" />
+                                                </Style>
+                                            </ListView.ItemContainerStyle>
+                                            <ListView.View>
+                                                <GridView>
+                                                    <GridViewColumn>
+                                                        <GridViewColumn.CellTemplate>
+                                                            <DataTemplate>
+                                                                <CheckBox IsChecked="{Binding IsChecked,UpdateSourceTrigger=PropertyChanged}"
+                                                                          HorizontalAlignment="Left" />
+                                                            </DataTemplate>
+                                                        </GridViewColumn.CellTemplate>
+                                                    </GridViewColumn>
+                                                    <GridViewColumn Header="Πόλη">
+                                                        <GridViewColumn.CellTemplate>
+                                                            <DataTemplate>
+                                                                <TextBlock Text="{Binding City}"
+                                                                           TextWrapping="Wrap"
+                                                                           Width="115" />
+                                                            </DataTemplate>
+                                                        </GridViewColumn.CellTemplate>
+                                                    </GridViewColumn>
+                                                    <GridViewColumn Header="Πηγαίνουν"
+                                                                    Width="80">
+                                                        <GridViewColumn.CellTemplate>
+                                                            <DataTemplate>
+                                                                <TextBlock Text="{Binding Going}"
+                                                                           HorizontalAlignment="Center" />
+                                                            </DataTemplate>
+                                                        </GridViewColumn.CellTemplate>
+                                                    </GridViewColumn>
+                                                    <GridViewColumn Header="Επιστρέφουν"
+                                                                    Width="80">
+                                                        <GridViewColumn.CellTemplate>
+                                                            <DataTemplate>
+                                                                <TextBlock Text="{Binding Returning}"
+                                                                           HorizontalAlignment="Center" />
+                                                            </DataTemplate>
+                                                        </GridViewColumn.CellTemplate>
+                                                    </GridViewColumn>
+                                                </GridView>
+                                            </ListView.View>
+                                        </ListView>
+                                        <StackPanel Orientation="Horizontal"
+                                                    HorizontalAlignment="Right">
+                                            <StackPanel Orientation="Vertical"
+                                                        Margin="0,0,10,0">
+                                                <Button Content="Εισιτήρια"
+                                                        Margin="0,5,5,0"
+                                                        Command="{Binding PrintListCommand}"
+                                                        CommandParameter="0"
+                                                        Width="70" />
+                                                <Button Content="Λέωφορ."
+                                                        Command="{Binding PrintListCommand}"
+                                                        CommandParameter="1"
+                                                        Margin="0,5,5,0" />
+                                                <!--<Button Content="Συνολική"
+                                                        Command="{Binding PrintListCommand}"
+                                                        CommandParameter="2"
+                                                        Margin="0,5,5,5" />-->
+                                            </StackPanel>
+                                            <StackPanel Orientation="Vertical">
+                                                <Button Content="Εισιτήρια"
+                                                        Command="{Binding PrintListCommand}"
+                                                        CommandParameter="3"
+                                                        Margin="0,5,5,0"
+                                                        Width="70" />
+                                                <Button Content="Λέωφορ."
+                                                        Command="{Binding PrintListCommand}"
+                                                        CommandParameter="4"
+                                                        Margin="0,5,5,0" />
+                                                <!--<Button Content="Συνολική"
+                                                        Command="{Binding PrintListCommand}"
+                                                        CommandParameter="5"
+                                                        Margin="0,5,5,5" />-->
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <Button Content="Όλες"
+                                                Command="{Binding PrintListCommand}"
+                                                CommandParameter="6"
+                                                HorizontalAlignment="Right"
+                                                Width="155"
+                                                Margin="5,5,5,0" />
+                                        <Button HorizontalAlignment="Right"
+                                                Padding="5,0"
+                                                Visibility="Visible"
+                                                Width="155"
+                                                Margin="5,5,5,0"
+                                                Command="{Binding SendEmailsCommand}">
+                                            <StackPanel>
+                                                <TextBlock Text="Αποστολή email" />
+                                                <TextBlock Text="σε γραφεία"
+                                                           HorizontalAlignment="Center" />
+                                            </StackPanel>
+                                        </Button>
+                                        <TextBox Text="{Binding PhoneNumbers}"
+                                                 HorizontalAlignment="Stretch"
+                                                 Height="130"
+                                                 Margin="5"
+                                                 Width="320"
+                                                 TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
+            <!--<TabItem Header="Ιστορικό Ενεργειών">
+                --><!--Visibility="{Binding Converter={StaticResource UserToVisibilityValueConverter},ConverterParameter=3,  Mode=OneWay}">--><!--
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0"
+                                Orientation="Horizontal" />
+                    <ListView Name="Gee"
+                              Focusable="False"
+                              Grid.Row="1"
+                              HorizontalAlignment="Stretch"
+                              VerticalAlignment="Stretch">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="{x:Type ListViewItem}">
+                                <Setter Property="BorderBrush"
+                                        Value="Gray" />
+                                <Setter Property="BorderThickness"
+                                        Value="0,0,0,1" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Ημερομηνία">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy-HH:mm}'}"
+                                                       TextWrapping="Wrap"
+                                                       Width="115" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Χρήστης">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding User.UserName}"
+                                                       Width="80" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Σημείωση">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Message}"
+                                                       TextWrapping="Wrap"
+                                                       Background="LightGoldenrodYellow"
+                                                       Margin="0,0,0,3"
+                                                       VerticalAlignment="Top"
+                                                       Width="390" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Κρατήσεις ανα Ξενοδοχείο">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0"
+                                Margin="5,5,0,0"
+                                Orientation="Horizontal"
+                                Grid.ColumnSpan="2">
+                        <Label Content="Απο:" />
+                        <DatePicker Name="FromReservationsInfo_DatePicker"
+                                    Width="115"
+                                    CalendarStyle="{StaticResource styleCalendar}"
+                                    VerticalAlignment="Center"
+                                    SelectedDate="{Binding FromReservationsInfo, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, Mode=TwoWay}" />
+                        <Label Content="Εώς:" />
+                        <DatePicker Name="ToReservationsInfo_DatePicker"
+                                    Width="115"
+                                    CalendarStyle="{StaticResource styleCalendar}"
+                                    VerticalAlignment="Center"
+                                    SelectedDate="{Binding ToReservationsInfo, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, Mode=TwoWay}" />
+                        <Button Content="Προβολή"
+                                Command="{Binding CalculateRoomsCommand}"
+                                Margin="5,0" />
+                        <Button Content="Προβολή Κενών"
+                                Command="{Binding CalculateFreeRoomsCommand}"
+                                Margin="5,0" />
+                        <CheckBox Content="Μονόνυχτα"
+                                  VerticalAlignment="Center"
+                                  Margin="5"
+                                  IsChecked="{Binding ShowSingleNights}" />
+                    </StackPanel>
+                    --><!--<ListView ItemsSource="{Binding ReservationsInfoList}"
+                              Grid.Row="1">
+
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Ημερομηνίες"
+                                                Width="120"
+                                                DisplayMemberBinding="{Binding Dates}" />
+                                <GridViewColumn Header="Ονόματα"
+                                                Width="120"
+                                                DisplayMemberBinding="{Binding Dates}" />
+                                <GridViewColumn Header="Τύπος Δωματίου"
+                                                Width="120"
+                                                DisplayMemberBinding="{Binding Room.RoomType}" />
+                            </GridView>
+                        </ListView.View>
+                        <ListView.GroupStyle>
+                            <GroupStyle>
+                                <GroupStyle.ContainerStyle>
+                                    <Style TargetType="{x:Type GroupItem}">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate>
+                                                    <Expander IsExpanded="True">
+                                                        <Expander.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <TextBlock Text="{Binding Name}"
+                                                                           FontSize="16"
+                                                                           Foreground="Green"
+                                                                           FontWeight="Bold"
+                                                                           FontStyle="Italic"
+                                                                           Margin="0,0,10,0"
+                                                                           VerticalAlignment="Center" />
+                                                            </StackPanel>
+                                                        </Expander.Header>
+                                                        <ItemsPresenter />
+                                                    </Expander>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </GroupStyle.ContainerStyle>
+                            </GroupStyle>
+                        </ListView.GroupStyle>
+                    </ListView>--><!--
+                    <TreeView x:Name="MainTreeView"
+                              Grid.Row="1"
+                              Margin="10"
+                              ItemsSource="{Binding ReservationsInfoList}">
+                        <TreeView.ItemTemplate>
+                            <HierarchicalDataTemplate ItemsSource="{Binding Rooms}">
+                                <TextBlock Text="{Binding }" />
+                                <HierarchicalDataTemplate.ItemTemplate>
+                                    <HierarchicalDataTemplate ItemsSource="{Binding Rooms}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding BookedInfoList[0].Reservation.Dates}"
+                                                       Margin="0,0,5,5" />
+                                            <TextBlock Margin="0,0,5,5"
+                                                       Text="," />
+                                            <TextBlock Margin="0,0,5,5"
+                                                       Text="{Binding BookedInfoList[0].Reservation.Nights}" />
+                                            <TextBlock  Margin="0,0,5,5"
+                                                        Text="Νύχτες," />
+                                            <TextBlock Margin="0,0,5,5"
+                                                       Text="{Binding RoomType}" />
+                                            <TextBlock Margin="0,0,5,5"
+                                                       Text="," />
+                                            <TextBlock Margin="0,0,5,5"
+                                                       Text="{Binding BookedInfoList[0].Reservation.CustomersCount}" />
+                                            <TextBlock Margin="0,0,5,5"
+                                                       Text="Άτομα," />
+                                            <TextBlock Margin="0,0,5,5"
+                                                       Text="{Binding BookedInfoList[0].Reservation.Names}" />
+                                        </StackPanel>
+                                    </HierarchicalDataTemplate>
+                                </HierarchicalDataTemplate.ItemTemplate>
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
+                    </TreeView>
+                </Grid>
+            </TabItem>-->
+        </TabControl>
+    </Grid>
+</UserControl>

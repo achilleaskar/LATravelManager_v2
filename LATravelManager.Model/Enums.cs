@@ -4,11 +4,11 @@
     {
         public enum ExcursionTypeEnum
         {
-            Bansko=0,
-            Skiathos=1,
-            Personal=2,
-            Group=3,
-            ThirdParty=4
+            Bansko = 0,
+            Skiathos = 1,
+            Personal = 2,
+            Group = 3,
+            ThirdParty = 4
         }
 
         public enum ReservationTypeEnum
@@ -26,6 +26,7 @@
             onlyGo,
             OnlyReturn
         }
+
         public enum RoomStateEnum
         {
             NotAvailable,

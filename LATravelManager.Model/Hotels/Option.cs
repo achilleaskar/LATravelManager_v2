@@ -1,12 +1,10 @@
-﻿using LATravelManager.Model;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace LATravelManager.Models
+namespace LATravelManager.Model.Hotels
 {
     public class Option : EditTracker
     {
-
         #region Fields
 
         public const string DatePropertyName = nameof(Date);
@@ -68,6 +66,5 @@ namespace LATravelManager.Models
         }
 
         #endregion Properties
-
     }
 }

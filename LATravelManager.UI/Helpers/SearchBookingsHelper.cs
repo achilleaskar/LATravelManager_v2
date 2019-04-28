@@ -1,4 +1,4 @@
-﻿using LATravelManager.Models;
+﻿using LATravelManager.Model.BookingData;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.Wrapper;
 using System;
@@ -8,7 +8,6 @@ namespace LATravelManager.UI.Helpers
 {
     public class SearchBookingsHelper
     {
-
         public SearchBookingsHelper(GenericRepository context)
         {
             Context = context;
@@ -33,7 +32,10 @@ namespace LATravelManager.UI.Helpers
         internal async Task DeleteReservation(ReservationWrapper selectedReservation)
         {
             if (selectedReservation.Booking.ReservationsInBooking.Count == 1)
+            {
+                Context.DeletePayments(selectedReservation.Booking);
                 Context.Delete(selectedReservation.Booking);
+            }
             else
                 Context.Delete(selectedReservation.Model);
             await Context.SaveAsync();

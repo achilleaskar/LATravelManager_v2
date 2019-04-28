@@ -1,5 +1,6 @@
 ﻿using LaTravelManager.BaseTypes;
-using LATravelManager.Models;
+using LATravelManager.Model.Hotels;
+using LATravelManager.Model.Locations;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
@@ -78,7 +79,7 @@ namespace LaTravelManager.ViewModel.Management
                 }
 
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
-                
+
                 Cities = new ObservableCollection<City>(await Context.GetAllCitiesAsyncSortedByName());
                 HotelCategories = new ObservableCollection<HotelCategory>(await Context.GetAllAsync<HotelCategory>());
                 if (Context.HasChanges())
@@ -98,7 +99,6 @@ namespace LaTravelManager.ViewModel.Management
             finally
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(false));
-                
             }
         }
 

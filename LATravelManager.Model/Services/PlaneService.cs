@@ -1,4 +1,4 @@
-﻿using LATravelManager.Models;
+﻿using LATravelManager.Model.People;
 using System;
 using System.Collections.ObjectModel;
 
@@ -12,7 +12,6 @@ namespace LATravelManager.Model.Services
             Tittle = "Αεροπορικό";
             Allerretour = true;
         }
-
 
         private string _FlyFrom;
 
@@ -78,9 +77,6 @@ namespace LATravelManager.Model.Services
         }
 
         private string _FlyTo;
-
-
-
 
         private Airline _Airline;
 

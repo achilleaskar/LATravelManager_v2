@@ -1,8 +1,9 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
 using LATravelManager.Model;
-using LATravelManager.Model.Booking;
+using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Hotels;
+using LATravelManager.Model.People;
 using LATravelManager.Model.Services;
-using LATravelManager.Models;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
@@ -18,6 +19,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 {
     public class NewReservation_Personal_ViewModel : MyViewModelBase
     {
+
         #region Constructors
 
         public NewReservation_Personal_ViewModel()
@@ -36,30 +38,39 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             LoadTemplates();
         }
 
-        private void AddService()
-        {
-            PersonalWr.Services.Add(SelectedService);
-        }
+        #endregion Constructors
 
-        private bool CanAddService()
-        {
-            return true;
-        }
-
-        private void ClearService()
-        {
-            Type t = SelectedService.GetType();
-            var index = Templates.IndexOf(SelectedService);
-            SelectedService = (Service)Activator.CreateInstance(t);
-            Templates[index] = SelectedService;
-        }
-
-        private bool CanClearService()
-        {
-            return SelectedService != null;
-        }
+        #region Fields
 
         private ObservableCollection<Airline> _AirLines;
+
+        private string _ErrorsInDatagrid;
+
+        private ObservableCollection<Partner> _Partners;
+
+        private Personal_BookingWrapper _PersonalWr;
+
+        private ObservableCollection<RoomType> _RoomTypes;
+
+        private Airline _SelectedAirline;
+
+        private Customer _SelectedCustomer;
+
+        private int _SelectedPartnerIndex;
+
+        private Payment _SelectedPayment;
+
+        private Service _SelectedService;
+
+        private List<Service> _Templates;
+
+        #endregion Fields
+
+        #region Properties
+
+        public RelayCommand AddCustomerCommand { get; }
+
+        public RelayCommand AddServiceCommand { get; set; }
 
         public ObservableCollection<Airline> AirLines
         {
@@ -80,115 +91,9 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             }
         }
 
-        #endregion Constructors
-
-        #region Fields
-
-        private string _ErrorsInDatagrid;
-        private ObservableCollection<Partner> _Partners;
-
-        private Personal_BookingWrapper _PersonalWr;
-
-        private ObservableCollection<RoomType> _RoomTypes;
-
-        private Customer _SelectedCustomer;
-        private int _SelectedPartnerIndex;
-
-        private Payment _SelectedPayment;
-
-        #endregion Fields
-
-        private Service _SelectedService;
-
-        public Service SelectedService
-        {
-            get
-            {
-                return _SelectedService;
-            }
-
-            set
-            {
-                if (_SelectedService == value)
-                {
-                    return;
-                }
-
-                _SelectedService = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private List<Service> _Templates;
-
-        public List<Service> Templates
-        {
-            get
-            {
-                return _Templates;
-            }
-
-            set
-            {
-                if (_Templates == value)
-                {
-                    return;
-                }
-
-                _Templates = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private void LoadTemplates()
-        {
-            Templates = new List<Service>
-            {
-                new PlaneService(),
-                new FerryService(),
-                new HotelService(),
-                new CruiseService(),
-                new BusService(),
-                new GuideService(),
-                new OptionalService(),
-                new TransferService()
-            };
-        }
-
-        private Airline _SelectedAirline;
-
-        public Airline SelectedAirline
-        {
-            get
-            {
-                return _SelectedAirline;
-            }
-
-            set
-            {
-                if (_SelectedAirline == value)
-                {
-                    return;
-                }
-
-                _SelectedAirline = value;
-                if (value != null && SelectedService is PlaneService p)
-                {
-                    p.Airline = GenericRepository.GetById<Airline>(value.Id);
-                }
-                else
-                {
-                    throw new Exception("Μπήκε ενώ δεν έπρεπε :/");
-                }
-                RaisePropertyChanged();
-            }
-        }
-
-        #region Properties
-
-        public RelayCommand AddCustomerCommand { get; }
-
         public RelayCommand ClearBookingCommand { get; }
+
+        public RelayCommand ClearServiceCommand { get; set; }
 
         public RelayCommand DeletePaymentCommand { get; }
 
@@ -273,6 +178,33 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 
         public RelayCommand SaveCommand { get; }
 
+        public Airline SelectedAirline
+        {
+            get
+            {
+                return _SelectedAirline;
+            }
+
+            set
+            {
+                if (_SelectedAirline == value)
+                {
+                    return;
+                }
+
+                _SelectedAirline = value;
+                if (value != null && SelectedService is PlaneService p)
+                {
+                    p.Airline = GenericRepository.GetById<Airline>(value.Id);
+                }
+                else
+                {
+                    throw new Exception("Μπήκε ενώ δεν έπρεπε :/");
+                }
+                RaisePropertyChanged();
+            }
+        }
+
         public Customer SelectedCustomer
         {
             get
@@ -327,6 +259,44 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             }
         }
 
+        public Service SelectedService
+        {
+            get
+            {
+                return _SelectedService;
+            }
+
+            set
+            {
+                if (_SelectedService == value)
+                {
+                    return;
+                }
+
+                _SelectedService = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public List<Service> Templates
+        {
+            get
+            {
+                return _Templates;
+            }
+
+            set
+            {
+                if (_Templates == value)
+                {
+                    return;
+                }
+
+                _Templates = value;
+                RaisePropertyChanged();
+            }
+        }
+
         private bool AreContexesFree => (RefreshableContext != null && RefreshableContext.IsContextAvailable) && (GenericRepository != null && GenericRepository.IsContextAvailable);
 
         #endregion Properties
@@ -337,7 +307,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
         {
             try
             {
-                var booking = id > 0
+                Personal_Booking booking = id > 0
                     ? await GenericRepository.GetFullPersonalBookingByIdAsync(id)
                     : await CreateNewBooking();
 
@@ -353,29 +323,6 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             {
                 IsLoaded = true;
             }
-        }
-
-        private async Task<Personal_Booking> CreateNewBooking()
-        {
-            return new Personal_Booking { User = await GenericRepository.GetByIdAsync<User>(StaticResources.User.Id) };
-        }
-
-        private void InitializeBooking(Personal_Booking booking)
-        {
-            PersonalWr = new Personal_BookingWrapper(booking);
-
-            PersonalWr.PropertyChanged += (s, e) =>
-            {
-                var x = e.PropertyName;
-                if (!HasChanges)
-                {
-                    HasChanges = GenericRepository.HasChanges();
-                    if (PersonalWr.Id == 0)
-                    {
-                        HasChanges = true;
-                    }
-                }
-            };
         }
 
         public override Task ReloadAsync()
@@ -396,6 +343,21 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             PersonalWr.Customers.Add(new Customer() { Age = 18, Name = name, Surename = surename, Price = 35, Tel = "6981001676", StartingPlace = "Αθήνα", PassportNum = passport, DOB = new DateTime(1991, 10, 4) });
         }
 
+        private void AddService()
+        {
+            PersonalWr.Services.Add(SelectedService);
+        }
+
+        private bool CanAddService()
+        {
+            return true;
+        }
+
+        private bool CanClearService()
+        {
+            return SelectedService != null;
+        }
+
         private bool CanDeletePayment()
         {
             return SelectedPayment != null && AreContexesFree;
@@ -411,14 +373,55 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             throw new NotImplementedException();
         }
 
+        private void ClearService()
+        {
+            Type t = SelectedService.GetType();
+            int index = Templates.IndexOf(SelectedService);
+            SelectedService = (Service)Activator.CreateInstance(t);
+            Templates[index] = SelectedService;
+        }
+        private async Task<Personal_Booking> CreateNewBooking()
+        {
+            return new Personal_Booking { User = await GenericRepository.GetByIdAsync<User>(StaticResources.User.Id) };
+        }
+
         private void DeletePayment()
         {
             GenericRepository.Delete(SelectedPayment);
         }
 
-        public RelayCommand ClearServiceCommand { get; set; }
-        public RelayCommand AddServiceCommand { get; set; }
+        private void InitializeBooking(Personal_Booking booking)
+        {
+            PersonalWr = new Personal_BookingWrapper(booking);
 
+            PersonalWr.PropertyChanged += (s, e) =>
+            {
+                string x = e.PropertyName;
+                if (!HasChanges)
+                {
+                    HasChanges = GenericRepository.HasChanges();
+                    if (PersonalWr.Id == 0)
+                    {
+                        HasChanges = true;
+                    }
+                }
+            };
+        }
+
+        private void LoadTemplates()
+        {
+            Templates = new List<Service>
+            {
+                new PlaneService(),
+                new FerryService(),
+                new HotelService(),
+                new CruiseService(),
+                new BusService(),
+                new GuideService(),
+                new OptionalService(),
+                new TransferService()
+            };
+        }
         private async Task ResetAllRefreshableDataASync()
         {
             try
@@ -437,7 +440,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
                     }
                     RefreshableContext = new GenericRepository();
                 }
-                var partnerId = SelectedPartnerIndex >= 0 && Partners != null && SelectedPartnerIndex < Partners.Count ? Partners[SelectedPartnerIndex].Id : -1;
+                int partnerId = SelectedPartnerIndex >= 0 && Partners != null && SelectedPartnerIndex < Partners.Count ? Partners[SelectedPartnerIndex].Id : -1;
                 // Hotels = new ObservableCollection<Hotel>(await RefreshableContext.GetAllHotelsInCityAsync(SelectedExcursion.Destinations[0].Id));
                 RoomTypes = new ObservableCollection<RoomType>(await RefreshableContext.GetAllAsync<RoomType>());
                 Partners = new ObservableCollection<Partner>(await RefreshableContext.GetAllAsyncSortedByName<Partner>());
@@ -467,5 +470,6 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
         }
 
         #endregion Methods
+
     }
 }

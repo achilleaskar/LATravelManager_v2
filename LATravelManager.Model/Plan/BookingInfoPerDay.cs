@@ -1,9 +1,9 @@
-﻿using LATravelManager.Model;
+﻿using LATravelManager.Model.BookingData;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using static LATravelManager.Model.Enums;
 
-namespace LATravelManager.Models
+namespace LATravelManager.Model.Plan
 {
     public class BookingInfoPerDay : BaseModel
     {

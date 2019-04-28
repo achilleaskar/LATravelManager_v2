@@ -1,7 +1,10 @@
 ﻿using LATravelManager.DataAccess;
 using LATravelManager.Model;
-using LATravelManager.Model.Booking;
-using LATravelManager.Models;
+using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Excursions;
+using LATravelManager.Model.Hotels;
+using LATravelManager.Model.Locations;
+using LATravelManager.Model.People;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -19,6 +22,7 @@ namespace LATravelManager.UI.Repositories
         public GenericRepository()
         {
             this.Context = new MainDatabase();
+            Context.Database.Log = Console.Write;
             IsContextAvailable = true;
         }
 
@@ -40,7 +44,7 @@ namespace LATravelManager.UI.Repositories
                 {
                     await lastTask;
                 }
-                var t = Task.Run(task);
+                Task<T> t = Task.Run(task);
                 lastTask = t;
                 return await t;
             }
@@ -52,6 +56,12 @@ namespace LATravelManager.UI.Repositories
             {
                 IsContextAvailable = true;
             }
+        }
+
+        internal void DeletePayments(Booking booking)
+        {
+            List<Payment> toDelete = Context.Payments.Where(p => p.Booking.Id == booking.Id).ToList();
+            Context.Payments.RemoveRange(toDelete);
         }
 
         public bool IsContextAvailable { get; set; }
@@ -74,7 +84,7 @@ namespace LATravelManager.UI.Repositories
 
         public async Task<User> FindUserAsync(string userName)
         {
-            return await RunTask(Context.Users.Where(u => u.UserName == userName).FirstOrDefaultAsync);
+            return await RunTask(Context.Users.Where(u => u.UserName.Equals(userName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefaultAsync);
         }
 
         public async Task<IEnumerable<Booking>> GetAllBookingInPeriod(DateTime minDay, DateTime maxDay, int excursionId)
@@ -101,6 +111,13 @@ namespace LATravelManager.UI.Repositories
                 .Include(f => f.ReservationsInBooking.Select(i => i.NoNameRoomType))
                 .Include(f => f.ReservationsInBooking.Select(i => i.Hotel))
                 .ToListAsync);
+        }
+
+        internal async Task LoadBasic()
+        {
+           await Context.RoomTypes.LoadAsync();
+           await Context.Countries.LoadAsync();
+           await Context.Hotels.LoadAsync();
         }
 
         public async Task<IEnumerable<Reservation>> GetAllReservationsByCreationDate(DateTime afterThisDay, int excursionId)
@@ -158,9 +175,28 @@ namespace LATravelManager.UI.Repositories
             return await RunTask(Context.Set<User>().OrderBy(x => x.UserName).ToListAsync);
         }
 
-        public async Task<IEnumerable<Excursion>> GetAllUpcomingGroupExcursionsAsync()
+        public async Task<IEnumerable<Excursion>> GetAllGroupExcursionsAsync(bool showFinished = false)
         {
-            return await RunTask(Context.Set<Excursion>().Where(c => c.ExcursionType.Category == Enums.ExcursionTypeEnum.Group && c.ExcursionDates.Any(d => d.CheckIn >= DateTime.Today))
+            try
+            {
+
+                return await RunTask(Context.Set<Excursion>()
+                .Where(c => c.ExcursionType.Category == Enums.ExcursionTypeEnum.Group && (showFinished || c.ExcursionDates.Any(d => d.CheckIn >= DateTime.Today)))
+                .Include(c => c.Destinations.Select(d => d.Country))
+                .Include(c => c.ExcursionType)
+                .Include(c => c.ExcursionDates)
+                .ToListAsync);
+            }
+            catch (Exception )
+            {
+
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<Excursion>> GetAllExcursionsAsync()
+        {
+            return await RunTask(Context.Set<Excursion>()
             .Include(c => c.Destinations.Select(d => d.Country))
             .Include(c => c.ExcursionType)
             .Include(c => c.ExcursionDates)
@@ -182,7 +218,7 @@ namespace LATravelManager.UI.Repositories
             {
                 return Context.Set<TEntity>().OrderBy(x => x.Name).ToList();
             }
-            catch (Exception ex)
+            catch (Exception )
             {
                 return null;
             }
@@ -229,10 +265,19 @@ namespace LATravelManager.UI.Repositories
                 .FirstOrDefaultAsync);
         }
 
-        public async Task<IEnumerable<TEntity>> GetAllAsync<TEntity>(Expression<Func<TEntity, bool>> filter = null) where TEntity : BaseModel
+        public List<TEntity> GetAllAsyncLocal<TEntity>(Expression<Func<TEntity, bool>> filter = null) where TEntity : BaseModel
         {
+
+            return  Context.Set<TEntity>().Local.ToList();
+        }
+
+            public async Task<List<TEntity>> GetAllAsync<TEntity>(Expression<Func<TEntity, bool>> filter = null) where TEntity : BaseModel
+        {
+
+            return await Context.Set<TEntity>().ToListAsync();
             if (filter == null)
             {
+                
                 return await RunTask(Context.Set<TEntity>().ToListAsync);
             }
             else
@@ -241,9 +286,26 @@ namespace LATravelManager.UI.Repositories
             }
         }
 
+        internal async Task<IEnumerable<Payment>> GetAllPaymentsFiltered(int excursionId, int userId, DateTime dateLimit, bool enableDatesFilter, DateTime from, DateTime to)
+        {
+            return await RunTask(Context.Payments
+               .Where(c =>
+             (!enableDatesFilter && c.Date >= dateLimit) ||
+               (enableDatesFilter && (c.Date >= from && c.Date <= to)) &&
+               (excursionId == 0 || c.Booking.Excursion.Id == excursionId) &&
+               (userId == 0 || c.User.Id == userId))
+               .Include(f => f.User)
+               .Include(f => f.Booking)
+               .Include(f => f.Booking.ExcursionDate)
+               .Include(f => f.Booking.Partner)
+               .Include(f => f.Booking.Payments)
+               .Include(f => f.Booking.ReservationsInBooking.Select(i => i.CustomersList))
+               .ToListAsync);
+        }
+
         public void RejectChanges()
         {
-            foreach (var entry in Context.ChangeTracker.Entries())
+            foreach (DbEntityEntry entry in Context.ChangeTracker.Entries())
             {
                 switch (entry.State)
                 {
@@ -264,19 +326,19 @@ namespace LATravelManager.UI.Repositories
 
         private object GetPrimaryKeyValue(DbEntityEntry entry)
         {
-            var modifiedEntities = Context.ChangeTracker.Entries()
+            List<DbEntityEntry> modifiedEntities = Context.ChangeTracker.Entries()
             .Where(p => p.State == EntityState.Modified).ToList();
-            var now = DateTime.UtcNow;
+            DateTime now = DateTime.UtcNow;
 
-            foreach (var change in modifiedEntities)
+            foreach (DbEntityEntry change in modifiedEntities)
             {
-                var entityName = change.Entity.GetType().Name;
-                var primaryKey = GetPrimaryKeyValue(change);
+                string entityName = change.Entity.GetType().Name;
+                object primaryKey = GetPrimaryKeyValue(change);
 
-                foreach (var prop in change.OriginalValues.PropertyNames)
+                foreach (string prop in change.OriginalValues.PropertyNames)
                 {
-                    var originalValue = change.OriginalValues[prop].ToString();
-                    var currentValue = change.CurrentValues[prop].ToString();
+                    string originalValue = change.OriginalValues[prop].ToString();
+                    string currentValue = change.CurrentValues[prop].ToString();
                     if (originalValue != currentValue)
                     {
                         ChangeLog log = new ChangeLog()
@@ -292,7 +354,7 @@ namespace LATravelManager.UI.Repositories
                     }
                 }
             }
-            var objectStateEntry = ((IObjectContextAdapter)Context).ObjectContext.ObjectStateManager.GetObjectStateEntry(entry.Entity);
+            System.Data.Entity.Core.Objects.ObjectStateEntry objectStateEntry = ((IObjectContextAdapter)Context).ObjectContext.ObjectStateManager.GetObjectStateEntry(entry.Entity);
             return objectStateEntry.EntityKey.EntityKeyValues[0].Value;
         }
 
@@ -304,7 +366,7 @@ namespace LATravelManager.UI.Repositories
         public virtual void Delete<TEntity>(TEntity entity)
            where TEntity : BaseModel
         {
-            var dbSet = Context.Set<TEntity>();
+            DbSet<TEntity> dbSet = Context.Set<TEntity>();
             if (Context.Entry(entity).State == EntityState.Detached)
             {
                 dbSet.Attach(entity);
@@ -320,7 +382,7 @@ namespace LATravelManager.UI.Repositories
 
         public async Task SaveAsync()
         {
-            var AddedEntities = Context.ChangeTracker.Entries().Where(E => E.State == EntityState.Added).ToList();
+            List<DbEntityEntry> AddedEntities = Context.ChangeTracker.Entries().Where(E => E.State == EntityState.Added).ToList();
 
             AddedEntities.ForEach(E =>
             {
@@ -330,7 +392,7 @@ namespace LATravelManager.UI.Repositories
                 }
             });
 
-            var EditedEntities = Context.ChangeTracker.Entries().Where(E => E.State == EntityState.Modified).ToList();
+            List<DbEntityEntry> EditedEntities = Context.ChangeTracker.Entries().Where(E => E.State == EntityState.Modified).ToList();
 
             EditedEntities.ForEach(E =>
             {
@@ -340,11 +402,11 @@ namespace LATravelManager.UI.Repositories
                 }
             });
 
-            var changes = from e in Context.ChangeTracker.Entries()
+            IEnumerable<DbEntityEntry> changes = from e in Context.ChangeTracker.Entries()
                           where e.State != EntityState.Unchanged
                           select e;
 
-            foreach (var change in changes)
+            foreach (DbEntityEntry change in changes)
             {
                 if (change.State == EntityState.Added)
                 {
@@ -353,14 +415,14 @@ namespace LATravelManager.UI.Repositories
                 else if (change.State == EntityState.Modified)
                 {
                     // Log Modified
-                    var item = change.Entity;
-                    var originalValues = Context.Entry(item).OriginalValues;
-                    var currentValues = Context.Entry(item).CurrentValues;
+                    object item = change.Entity;
+                    DbPropertyValues originalValues = Context.Entry(item).OriginalValues;
+                    DbPropertyValues currentValues = Context.Entry(item).CurrentValues;
 
                     foreach (string propertyName in originalValues.PropertyNames)
                     {
-                        var original = originalValues[propertyName];
-                        var current = currentValues[propertyName];
+                        object original = originalValues[propertyName];
+                        object current = currentValues[propertyName];
 
                         Console.WriteLine("Property {0} changed from {1} to {2}",
                      propertyName,
@@ -409,20 +471,17 @@ namespace LATravelManager.UI.Repositories
                (category >= 0 ? (int)c.Booking.Excursion.ExcursionType.Category == category : true) &&
                (excursionId == 0 || c.Booking.Excursion.Id == excursionId) &&
                (userId == 0 || c.Booking.User.Id == userId) &&
-               (completed || c.Booking.CheckIn >= DateTime.Today)
-               )
-               .Include(f => f.Booking)
+               (completed || c.Booking.CheckIn >= DateTime.Today))
                .Include(f => f.Booking.User)
                .Include(f => f.Booking.ExcursionDate)
                .Include(f => f.Booking.Partner)
-               .Include(f => f.Booking.Payments)
-               .Include(f => f.Room)
+              .Include(f => f.Booking.Payments)
+               .Include(f => f.Booking.ReservationsInBooking.Select(i => i.CustomersList))
                .Include(f => f.Room.Hotel)
                .Include(f => f.Room.RoomType)
                .Include(f => f.CustomersList)
                .Include(f => f.Hotel)
                .Include(f => f.NoNameRoomType)
-               //.Select(r => new ReservationWrapper(r))
                .ToListAsync);
         }
     }

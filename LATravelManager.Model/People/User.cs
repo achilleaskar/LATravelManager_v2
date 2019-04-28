@@ -1,8 +1,6 @@
-﻿using LATravelManager.Model;
-using System.ComponentModel.DataAnnotations;
-using static LATravelManager.Model.Enums;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace LATravelManager.Models
+namespace LATravelManager.Model.People
 {
     public class User : EditTracker, INamed
     {
@@ -18,12 +16,11 @@ namespace LATravelManager.Models
 
         #region Properties
 
-        
         [Required]
         public int BaseLocation { get; set; }
-        
+
         public byte[] HashedPassword { get; set; }
-       
+
         public int Level { get; set; }
 
         [Required(ErrorMessage = "Το όνομα απαιτείται!")]
@@ -42,7 +39,7 @@ namespace LATravelManager.Models
         [Required(ErrorMessage = "Το username απαιτείται!")]
         [StringLength(12, MinimumLength = 3, ErrorMessage = "Το username μπορεί να είναι απο 3 έως 12 χαρακτήρες.")]
         public string UserName { get; set; }
-      
+
         #endregion Properties
 
         #region Methods

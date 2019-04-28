@@ -29,7 +29,5 @@
         </DataTemplate>
     </Window.Resources>
 
-       
         <ContentControl Content="{Binding SelectedViewmodel}" Grid.Row="1" />
-  
 </Window>

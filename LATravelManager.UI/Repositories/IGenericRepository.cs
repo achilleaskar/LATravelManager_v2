@@ -10,7 +10,7 @@ namespace LATravelManager.UI.Repositories
     {
         Task<T> GetByIdAsync<T>(int id) where T : BaseModel;
 
-        Task<IEnumerable<T>> GetAllAsync<T>(Expression<Func<T, bool>> filter = null) where T : BaseModel;
+        Task<List<T>> GetAllAsync<T>(Expression<Func<T, bool>> filter = null) where T : BaseModel;
 
         Task<IEnumerable<TEntity>> GetAllAsyncSortedByName<TEntity>() where TEntity : BaseModel, INamed;
 

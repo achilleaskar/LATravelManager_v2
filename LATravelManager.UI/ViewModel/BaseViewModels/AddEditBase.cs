@@ -1,9 +1,9 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
 using LATravelManager.Model;
+using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
-using LATravelManager.UI.Wrapper;
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -170,7 +170,7 @@ namespace LaTravelManager.BaseTypes
                 {
                     return;
                 }
-                if (value==null)
+                if (value == null)
                 {
                     _SelectedEntity = new TWrapper();
                 }
@@ -191,7 +191,7 @@ namespace LaTravelManager.BaseTypes
 
         public virtual bool CanSaveChanges()
         {
-            return Context.HasChanges() && SelectedEntity != null;
+            return Context.HasChanges() && SelectedEntity != null && !SelectedEntity.HasErrors;
         }
 
         public void EntityViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)

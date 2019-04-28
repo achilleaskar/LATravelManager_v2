@@ -1,8 +1,7 @@
-﻿using LATravelManager.Model;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace LATravelManager.Models
+namespace LATravelManager.Model.Excursions
 {
     public class ExcursionDate : BaseModel
     {
@@ -116,7 +115,7 @@ namespace LATravelManager.Models
 
         public override string ToString()
         {
-            return Name + CheckIn.ToString(" dd-")+CheckOut.ToString("dd/MM");
+            return Name + CheckIn.ToString(" dd-") + CheckOut.ToString("dd/MM");
         }
 
         #endregion Methods

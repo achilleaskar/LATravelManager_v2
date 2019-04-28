@@ -1,6 +1,4 @@
-﻿using System;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.CommandWpf;
+﻿using GalaSoft.MvvmLight;
 using LATravelManager.UI.Message;
 
 namespace LATravelManager.UI.ViewModel.BaseViewModels
@@ -11,7 +9,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         public TabsBaseViewModel()
         {
-           
             MessengerInstance.Register<DeselectAllOtherTabsMessage>(this, (msg) =>
             {
                 if (IsSelected && GetType().Name != msg.NewTab)
@@ -35,7 +32,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         #endregion Fields
 
         #region Properties
-
 
         public string Content
         {
@@ -79,12 +75,10 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 }
 
                 _IsSelected = value;
-             //   TabItemClicked();
+                //   TabItemClicked();
                 RaisePropertyChanged();
             }
         }
-
-       
 
         /// <summary>
         /// Sets and gets the Level property.
@@ -108,7 +102,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 RaisePropertyChanged();
             }
         }
-
 
         #endregion Properties
     }

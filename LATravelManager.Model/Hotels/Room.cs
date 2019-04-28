@@ -1,10 +1,10 @@
-﻿using LATravelManager.Model;
+﻿using LATravelManager.Model.Plan;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace LATravelManager.Models
+namespace LATravelManager.Model.Hotels
 {
     public class Room : EditTracker
     {
@@ -17,7 +17,6 @@ namespace LATravelManager.Models
         }
 
         #endregion Constructors
-
 
         #region Properties
 

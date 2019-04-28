@@ -1,5 +1,6 @@
 ﻿using LaTravelManager.BaseTypes;
-using LATravelManager.Models;
+using LATravelManager.Model;
+using LATravelManager.Model.Locations;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
@@ -25,7 +26,7 @@ namespace LaTravelManager.ViewModel.Management
             try
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
-                
+
                 MainCollection = new ObservableCollection<CountryWrapper>((await Context.GetAllAsyncSortedByName<Country>()).Select(c => new CountryWrapper(c)));
             }
             catch (Exception ex)
@@ -35,7 +36,6 @@ namespace LaTravelManager.ViewModel.Management
             finally
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(false));
-                
             }
         }
 

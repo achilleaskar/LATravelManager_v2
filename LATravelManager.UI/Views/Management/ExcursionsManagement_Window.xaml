@@ -152,7 +152,7 @@
                               VerticalAlignment="Center" />
                     <Label Content="Πασο:" />
                     <CheckBox IsChecked="{Binding SelectedEntity.DiscountsExist,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                              VerticalAlignment="Center" /> 
+                              VerticalAlignment="Center" />
                     <Label Content="Νυχτερινή:" />
                     <CheckBox IsChecked="{Binding SelectedEntity.NightStart,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                               VerticalAlignment="Center" />
@@ -199,12 +199,15 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
+                <CheckBox Content="Ολοκληρωμένες"
+                          VerticalAlignment="Center"
+                          Margin="5 0"
+                          IsChecked="{Binding ShowFinished}" />
                 <Button HorizontalAlignment="Right"
                         Cursor="Hand"
                         Command="{Binding UpdateEntitiesCommand}">
                     <iconPacks:PackIconFontAwesome Kind="SyncSolid"
                                                    VerticalAlignment="Center"
-                                                   Spin="{Binding UnitOfWork.IsBusy}"
                                                    Margin="5" />
                 </Button>
                 <DataGrid ItemsSource="{Binding MainCollection}"

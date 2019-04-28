@@ -1,5 +1,4 @@
 ﻿using LATravelManager.UI.ViewModel.BaseViewModels;
-using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
 
 namespace LATravelManager.UI.ViewModel.Tabs
 {

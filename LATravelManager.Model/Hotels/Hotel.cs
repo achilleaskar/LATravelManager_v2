@@ -1,8 +1,8 @@
-﻿using LATravelManager.Model;
+﻿using LATravelManager.Model.Locations;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace LATravelManager.Models
+namespace LATravelManager.Model.Hotels
 {
     public class Hotel : EditTracker, INamed
     {

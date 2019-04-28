@@ -1,11 +1,13 @@
 ﻿using LATravelManager.Model;
-using LATravelManager.Model.Booking;
-using LATravelManager.Models;
+using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Excursions;
+using LATravelManager.Model.Hotels;
+using LATravelManager.Model.Lists;
+using LATravelManager.Model.Locations;
+using LATravelManager.Model.People;
+using LATravelManager.Model.Plan;
 using MySql.Data.Entity;
-using System;
 using System.Data.Entity;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace LATravelManager.DataAccess
 {
@@ -38,6 +40,8 @@ namespace LATravelManager.DataAccess
         public DbSet<Hotel> Hotels { get; set; }
         public DbSet<Leader> Leaders { get; set; }
         public DbSet<OptionalExcursion> OptionalExcursions { get; set; }
+        public DbSet<Partner> Partners { get; set; }
+        public DbSet<Payment> Payments { get; set; }
         public DbSet<Personal_Booking> Personal_Bookings { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<Room> Rooms { get; set; }

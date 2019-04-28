@@ -1,8 +1,7 @@
 namespace LATravelManager.DataAccess.Migrations
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class epitelousgamw : DbMigration
     {
         public override void Up()
@@ -29,7 +28,7 @@ namespace LATravelManager.DataAccess.Migrations
             DropColumn("dbo.Leaders", "CreatedDate");
             DropColumn("dbo.StartingPlaces", "CreatedDate");
         }
-        
+
         public override void Down()
         {
             AddColumn("dbo.StartingPlaces", "CreatedDate", c => c.DateTime(nullable: false, precision: 0));

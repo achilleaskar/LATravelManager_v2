@@ -1,8 +1,7 @@
 namespace LATravelManager.DataAccess.Migrations
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class _103 : DbMigration
     {
         public override void Up()
@@ -19,7 +18,7 @@ namespace LATravelManager.DataAccess.Migrations
             AlterColumn("dbo.Options", "ModifiedDate", c => c.DateTime(nullable: false, precision: 0));
             AlterColumn("dbo.Buses", "ModifiedDate", c => c.DateTime(nullable: false, precision: 0));
         }
-        
+
         public override void Down()
         {
             AlterColumn("dbo.Buses", "ModifiedDate", c => c.DateTime(precision: 0));

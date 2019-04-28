@@ -1,8 +1,7 @@
-﻿using LATravelManager.Model;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace LATravelManager.Models
+namespace LATravelManager.Model.Hotels
 {
     public class RoomOption : EditTracker
     {

@@ -1,7 +1,6 @@
-﻿using LATravelManager.Model;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace LATravelManager.Models
+namespace LATravelManager.Model.Locations
 {
     public class Country : BaseModel, INamed
     {
@@ -10,11 +9,9 @@ namespace LATravelManager.Models
         public Country()
         {
             Continentindex = -1;
-            
         }
 
         #endregion Constructors
-
 
         #region Properties
 
@@ -24,7 +21,6 @@ namespace LATravelManager.Models
 
         [Required(ErrorMessage = "Το Όνομα Χώρας απαιτείται!")]
         [StringLength(20, MinimumLength = 3, ErrorMessage = "Το Όνομα Χώρας μπορεί να είναι απο 3 έως 20 χαρακτήρες.")]
-
         public string Name { get; set; }
 
         #endregion Properties

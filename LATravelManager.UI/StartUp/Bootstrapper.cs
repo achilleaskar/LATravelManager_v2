@@ -1,7 +1,6 @@
 ﻿using Autofac;
 using LATravelManager.DataAccess;
 using LATravelManager.UI.Data.Workers;
-using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
@@ -13,14 +12,13 @@ namespace LATravelManager.UI.StartUp
     {
         public IContainer Bootstrap()
         {
-            var builder = new ContainerBuilder();
-
+            ContainerBuilder builder = new ContainerBuilder();
 
             builder.RegisterType<MainDatabase>().AsSelf();
 
             builder.RegisterType<MainWindow>().AsSelf();
 
-            builder.RegisterType<NavigationViewModel>().AsSelf() ;
+            builder.RegisterType<NavigationViewModel>().AsSelf();
             builder.RegisterType<MainViewModel>().AsSelf();
             builder.RegisterType<LoginViewModel>().AsSelf();
             builder.RegisterType<RoomsManager>().AsSelf().SingleInstance();

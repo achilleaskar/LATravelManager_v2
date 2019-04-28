@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LATravelManager.Model</RootNamespace>
     <AssemblyName>LATravelManager.Model</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,9 +31,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="CommonServiceLocator, Version=2.0.2.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\packages\CommonServiceLocator.2.0.2\lib\net47\CommonServiceLocator.dll</HintPath>
+      <HintPath>..\packages\CommonServiceLocator.2.0.2\lib\net45\CommonServiceLocator.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
@@ -69,8 +73,14 @@
   <ItemGroup>
     <Compile Include="Airline.cs" />
     <Compile Include="BaseModel.cs" />
-    <Compile Include="Booking\Booking.cs" />
-    <Compile Include="Booking\Personal_Booking.cs" />
+    <Compile Include="BookingData\Booking.cs" />
+    <Compile Include="BookingData\Personal_Booking.cs" />
+    <Compile Include="LocalModels\CityDepartureInfo.cs" />
+    <Compile Include="LocalModels\DailyDepartureInfo.cs" />
+    <Compile Include="LocalModels\Email.cs" />
+    <Compile Include="LocalModels\NoName.cs" />
+    <Compile Include="LocalModels\PlanDailyInfo.cs" />
+    <Compile Include="LocalModels\RoomingList.cs" />
     <Compile Include="Services\BusService.cs" />
     <Compile Include="Services\CruiseService.cs" />
     <Compile Include="Services\FerryService.cs" />
@@ -87,7 +97,7 @@
     <Compile Include="LookUpItem.cs" />
     <Compile Include="Plan\BookingInfoPerDay.cs" />
     <Compile Include="Lists\Bus.cs" />
-    <Compile Include="Booking\ChangeInBooking.cs" />
+    <Compile Include="BookingData\ChangeInBooking.cs" />
     <Compile Include="Locations\City.cs" />
     <Compile Include="Locations\Country.cs" />
     <Compile Include="People\Customer.cs" />
@@ -102,15 +112,28 @@
     <Compile Include="Hotels\Option.cs" />
     <Compile Include="Excursions\OptionalExcursion.cs" />
     <Compile Include="People\Partner.cs" />
-    <Compile Include="Booking\Payment.cs" />
+    <Compile Include="BookingData\Payment.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Booking\Reservation.cs" />
+    <Compile Include="BookingData\Reservation.cs" />
     <Compile Include="Hotels\Room.cs" />
     <Compile Include="Hotels\RoomOption.cs" />
     <Compile Include="Hotels\RoomType.cs" />
     <Compile Include="Locations\StartingPlace.cs" />
     <Compile Include="People\User.cs" />
     <Compile Include="Services\TransferService.cs" />
+    <Compile Include="Wrapper\BookingWrapper.cs" />
+    <Compile Include="Wrapper\CityWrapper.cs" />
+    <Compile Include="Wrapper\CountryWrapper.cs" />
+    <Compile Include="Wrapper\CustomerWrapper.cs" />
+    <Compile Include="Wrapper\ExcursionWrapper.cs" />
+    <Compile Include="Wrapper\HotelWrapper.cs" />
+    <Compile Include="Wrapper\ModelWrapper.cs" />
+    <Compile Include="Wrapper\NotifyDataErrorInfoBase.cs" />
+    <Compile Include="Wrapper\PartnerWrapper.cs" />
+    <Compile Include="Wrapper\Personal_BookingWrapper.cs" />
+    <Compile Include="Wrapper\ReservationWrapper.cs" />
+    <Compile Include="Wrapper\RoomWrapper.cs" />
+    <Compile Include="Wrapper\UserWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -11,7 +11,7 @@
              Height="700"
              d:DesignHeight="900"
              d:DesignWidth="800">
-    
+
     <UserControl.Resources>
         <xcad:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <converters:TabSizeConverter x:Key="tabSizeConverter" />
@@ -326,7 +326,7 @@
                                 <EventSetter Event="MouseDoubleClick"
                                              Handler="DataGridRow_MouseDoubleClick" />
                                 <Setter Property="IsSelected"
-                                        Value="{Binding IsSelected, Mode=TwoWay, 
+                                        Value="{Binding IsSelected, Mode=TwoWay,
                              UpdateSourceTrigger=PropertyChanged}" />
                             </Style>
                         </DataGrid.RowStyle>

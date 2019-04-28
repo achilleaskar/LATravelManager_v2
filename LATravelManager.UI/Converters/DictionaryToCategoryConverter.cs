@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Data;
-using LATravelManager.UI.Helpers;
 using static LATravelManager.Model.Enums;
 using static LATravelManager.UI.Helpers.Definitions;
 
