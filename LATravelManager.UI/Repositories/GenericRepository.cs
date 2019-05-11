@@ -82,10 +82,10 @@ namespace LATravelManager.UI.Repositories
                 .ToListAsync);
         }
 
-        public async Task<User> FindUserAsync(string userName)
-        {
-            return await RunTask(Context.Users.Where(u => u.UserName.Equals(userName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefaultAsync);
-        }
+        //public async Task<User> FindUserAsync(string userName)
+        //{
+        //    return await RunTask(Context.Users.Where(u => u.UserName.Equals(userName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefaultAsync);
+        //}
 
         public async Task<IEnumerable<Booking>> GetAllBookingInPeriod(DateTime minDay, DateTime maxDay, int excursionId)
         {

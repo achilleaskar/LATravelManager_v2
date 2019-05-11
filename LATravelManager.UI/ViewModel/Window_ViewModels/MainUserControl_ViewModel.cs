@@ -2,10 +2,8 @@
 using GalaSoft.MvvmLight.Messaging;
 using LaTravelManager.ViewModel.Management;
 using LATravelManager.Model.Excursions;
-using LATravelManager.Model.Locations;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
-using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Skiathos;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty;
@@ -16,7 +14,6 @@ using LATravelManager.UI.Views.Management;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -27,92 +24,33 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
     {
         #region Constructors
 
-        public MainUserControl_ViewModel(GenericRepository startingRepository)
+        public MainUserControl_ViewModel(MainViewModel mainViewModel)
         {
             LogOutCommand = new RelayCommand(TryLogOut, CanLogout);
+
             OpenHotelEditCommand = new RelayCommand(async () => { await OpenHotelsWindow(); }, CanEditWindows);
             OpenCitiesEditCommand = new RelayCommand(async () => { await OpenCitiesWindow(); }, CanEditWindows);
             OpenCountriesEditCommand = new RelayCommand(async () => { await OpenCountriesWindow(); }, CanEditWindows);
             OpenExcursionsEditCommand = new RelayCommand(async () => { await OpenExcursionsWindow(); }, CanEditWindows);
             OpenUsersEditCommand = new RelayCommand(async () => { await OpenUsersWindow(); }, CanEditWindows);
             OpenPartnersEditCommand = new RelayCommand(async () => { await OpenPartnersWindow(); }, CanEditWindows);
-            Templates = new ObservableCollection<ExcursionCategory>();
+
             TemplateViewmodels = new List<ExcursionCategory_ViewModelBase>();
 
+
             MessengerInstance.Register<IsBusyChangedMessage>(this, msg => { ManageIsBusy(msg.IsBusy); });
+
             MessengerInstance.Register<ChangeChildViewModelMessage>(this, async vm => { await SelectedExcursionType.SetProperChildViewModel(vm.ViewModelindex); });
             MessengerInstance.Register<ExcursionCategoryChangedMessage>(this, async index => { await SetProperViewModel(); });
-            StartingRepository = startingRepository;
-        }
-
-        private async Task OpenPartnersWindow()
-        {
-            PartnerManagement_ViewModel vm = new PartnerManagement_ViewModel(StartingRepository);
-            await vm.LoadAsync();
-            MessengerInstance.Send(new OpenChildWindowCommand(new PartnersManagement_Window { DataContext = vm }));
+            MainViewModel = mainViewModel;
         }
 
         #endregion Constructors
 
-        #region Properties
-
-        public RelayCommand OpenCitiesEditCommand { get; }
-        public RelayCommand OpenCountriesEditCommand { get; }
-        public RelayCommand OpenExcursionsEditCommand { get; }
-        public RelayCommand OpenHotelEditCommand { get; }
-        public RelayCommand OpenPartnersEditCommand { get; }
-        public RelayCommand OpenUsersEditCommand { get; set; }
-        public string UserName => StaticResources.User != null ? StaticResources.User.Name : "Error";
-
-        #endregion Properties
-
-        #region Methods
-
-        public async Task OpenCitiesWindow()
-        {
-            CitiesManagement_ViewModel vm = new CitiesManagement_ViewModel(StartingRepository);
-            await vm.LoadAsync();
-            MessengerInstance.Send(new OpenChildWindowCommand(new CitiesManagement_Window { DataContext = vm }));
-        }
-
-        public async Task OpenCountriesWindow()
-        {
-            CountriesManagement_ViewModel vm = new CountriesManagement_ViewModel(StartingRepository);
-            await vm.LoadAsync();
-            MessengerInstance.Send(new OpenChildWindowCommand(new CountriesManagement_Window { DataContext = vm }));
-        }
-
-        public async Task OpenHotelsWindow()
-        {
-            HotelsManagement_ViewModel vm = new HotelsManagement_ViewModel(StartingRepository);
-            await vm.LoadAsync();
-            MessengerInstance.Send(new OpenChildWindowCommand(new HotelsManagement_Window { DataContext = vm }));
-        }
-
-        private bool CanEditWindows()
-        {
-            return StartingRepository.IsContextAvailable;
-        }
-
-        private async Task OpenExcursionsWindow()
-        {
-            ExcursionsManagement_ViewModel vm = new ExcursionsManagement_ViewModel(StartingRepository);
-            await vm.LoadAsync();
-            MessengerInstance.Send(new OpenChildWindowCommand(new ExcursionsManagement_Window { DataContext = vm }));
-        }
-
-        private async Task OpenUsersWindow()
-        {
-            UsersManagement_viewModel vm = new UsersManagement_viewModel(StartingRepository);
-            await vm.LoadAsync();
-            MessengerInstance.Send(new OpenChildWindowCommand(new UsersManagement_Window { DataContext = vm }));
-        }
-
-        #endregion Methods
-
         #region Fields
 
         private bool _IsBusy = false;
+
         private NavigationViewModel _NavigationViewModel;
 
         private ExcursionCategory_ViewModelBase _SelectedExcursionType;
@@ -155,6 +93,8 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
         public RelayCommand LogOutCommand { get; set; }
 
+        public MainViewModel MainViewModel { get; }
+
         public NavigationViewModel NavigationViewModel
         {
             get
@@ -173,6 +113,18 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                 RaisePropertyChanged();
             }
         }
+
+        public RelayCommand OpenCitiesEditCommand { get; }
+
+        public RelayCommand OpenCountriesEditCommand { get; }
+
+        public RelayCommand OpenExcursionsEditCommand { get; }
+
+        public RelayCommand OpenHotelEditCommand { get; }
+
+        public RelayCommand OpenPartnersEditCommand { get; }
+
+        public RelayCommand OpenUsersEditCommand { get; set; }
 
         public ExcursionCategory_ViewModelBase SelectedExcursionType
         {
@@ -216,30 +168,13 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             }
         }
 
-        public GenericRepository StartingRepository { get; }
-
-        public ObservableCollection<ExcursionCategory> Templates
-        {
-            get
-            {
-                return _Templates;
-            }
-
-            set
-            {
-                if (_Templates == value)
-                {
-                    return;
-                }
-
-                _Templates = value;
-                RaisePropertyChanged();
-            }
-        }
+        public ObservableCollection<ExcursionCategory> Templates => MainViewModel.BasicDataManager.ExcursionCategories;
 
         public List<ExcursionCategory_ViewModelBase> TemplateViewmodels { get; set; }
 
         public string Username => StaticResources.User.Name;
+
+        public string UserName => StaticResources.User != null ? StaticResources.User.Name : "Error";
 
         #endregion Properties
 
@@ -248,12 +183,28 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
         public override async Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
         {
             NavigationViewModel = new NavigationViewModel(this);
-            Templates = new ObservableCollection<ExcursionCategory>((await StartingRepository.GetAllAsync<ExcursionCategory>()).OrderBy(e => e.IndexNum));
-            if (StaticResources.StartingPlaces == null || StaticResources.StartingPlaces.Count == 0)
-            {
-                StaticResources.StartingPlaces = new ObservableCollection<StartingPlace>(StartingRepository.GetAllSortedByName<StartingPlace>());
-            }
             await SetProperViewModel();
+        }
+
+        public async Task OpenCitiesWindow()
+        {
+            CitiesManagement_ViewModel vm = new CitiesManagement_ViewModel(StartingRepository);
+            await vm.LoadAsync();
+            MessengerInstance.Send(new OpenChildWindowCommand(new CitiesManagement_Window { DataContext = vm }));
+        }
+
+        public async Task OpenCountriesWindow()
+        {
+            CountriesManagement_ViewModel vm = new CountriesManagement_ViewModel(StartingRepository);
+            await vm.LoadAsync();
+            MessengerInstance.Send(new OpenChildWindowCommand(new CountriesManagement_Window { DataContext = vm }));
+        }
+
+        public async Task OpenHotelsWindow()
+        {
+            HotelsManagement_ViewModel vm = new HotelsManagement_ViewModel(StartingRepository);
+            await vm.LoadAsync();
+            MessengerInstance.Send(new OpenChildWindowCommand(new HotelsManagement_Window { DataContext = vm }));
         }
 
         public override async Task ReloadAsync()
@@ -266,6 +217,11 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             MessengerInstance.Send(new LoginLogOutMessage(false));
         }
 
+        private bool CanEditWindows()
+        {
+            return StartingRepository.IsContextAvailable;
+        }
+
         private bool CanLogout()
         {
             //ToDO
@@ -276,6 +232,27 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
         {
             _ = add ? IsBusyCounter++ : IsBusyCounter--;
             IsBusy = IsBusyCounter > 0;
+        }
+
+        private async Task OpenExcursionsWindow()
+        {
+            ExcursionsManagement_ViewModel vm = new ExcursionsManagement_ViewModel(StartingRepository);
+            await vm.LoadAsync();
+            MessengerInstance.Send(new OpenChildWindowCommand(new ExcursionsManagement_Window { DataContext = vm }));
+        }
+
+        private async Task OpenPartnersWindow()
+        {
+            PartnerManagement_ViewModel vm = new PartnerManagement_ViewModel(MainViewModel);
+            await vm.LoadAsync();
+            MessengerInstance.Send(new OpenChildWindowCommand(new PartnersManagement_Window { DataContext = vm }));
+        }
+
+        private async Task OpenUsersWindow()
+        {
+            UsersManagement_viewModel vm = new UsersManagement_viewModel(StartingRepository);
+            await vm.LoadAsync();
+            MessengerInstance.Send(new OpenChildWindowCommand(new UsersManagement_Window { DataContext = vm }));
         }
 
         private async Task SetProperViewModel()
@@ -291,7 +268,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                             SelectedExcursionType = TemplateViewmodels[index];
                         else
                         {
-                            SelectedExcursionType = new BanskoParent_ViewModel(StartingRepository, NavigationViewModel);
+                            SelectedExcursionType = new BanskoParent_ViewModel(NavigationViewModel);
                         }
                         break;
 
@@ -302,7 +279,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                             SelectedExcursionType = TemplateViewmodels[index];
                         else
                         {
-                            SelectedExcursionType = new GroupParent_ViewModel(StartingRepository, NavigationViewModel);
+                            SelectedExcursionType = new GroupParent_ViewModel(NavigationViewModel);
                         }
                         break;
 
@@ -312,7 +289,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                             SelectedExcursionType = TemplateViewmodels[index];
                         else
                         {
-                            SelectedExcursionType = new PersonalParent_ViewModel(StartingRepository, NavigationViewModel);
+                            SelectedExcursionType = new PersonalParent_ViewModel(NavigationViewModel);
                         }
                         break;
 
@@ -322,7 +299,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                             SelectedExcursionType = TemplateViewmodels[index];
                         else
                         {
-                            SelectedExcursionType = new ThirdPartyParent_ViewModel(StartingRepository, NavigationViewModel);
+                            SelectedExcursionType = new ThirdPartyParent_ViewModel(NavigationViewModel);
                         }
 
                         break;
@@ -333,7 +310,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                             SelectedExcursionType = TemplateViewmodels[index];
                         else
                         {
-                            SelectedExcursionType = new SkiathosParent_ViewModel(StartingRepository, NavigationViewModel);
+                            SelectedExcursionType = new SkiathosParent_ViewModel(NavigationViewModel);
                         }
 
                         break;

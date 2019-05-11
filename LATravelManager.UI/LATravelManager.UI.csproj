@@ -218,6 +218,7 @@
     <Compile Include="Data\Workers\Lists.cs" />
     <Compile Include="ExcursionCategoryChangedMessage.cs" />
     <Compile Include="Helpers\Actor.cs" />
+    <Compile Include="Helpers\BasicDataManager.cs" />
     <Compile Include="Helpers\ExcursionComparer.cs" />
     <Compile Include="Helpers\PaymentInfo.cs" />
     <Compile Include="Message\ChangeChildViewModelMessage.cs" />

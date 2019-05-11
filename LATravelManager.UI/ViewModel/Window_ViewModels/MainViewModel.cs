@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight.Messaging;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
+using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
@@ -21,20 +22,21 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
         {
             Messenger.Default.Register<ChangeVisibilityMessage>(this, msg => { Visibility = msg.Visible ? Visibility.Visible : Visibility.Collapsed; });
             Messenger.Default.Register<IsBusyChangedMessage>(this, msg => { ManageIsBusy(msg.IsBusy); });
-            Messenger.Default.Register<LoginLogOutMessage>(this, async msg => { await ChangeViewModel(msg.Login); });
+
+          //  Messenger.Default.Register<LoginLogOutMessage>(this, async msg => { await ChangeViewModel(msg.Login); });
         }
 
-        private async Task ChangeViewModel(bool login)
+        public async Task ChangeViewModel()
         {
-            if (login)
+            if (StaticResources.User != null)
             {
-                SelectedViewmodel = new MainUserControl_ViewModel(StartingRepository);//TODO
+                SelectedViewmodel = new MainUserControl_ViewModel(this);//TODO
+                await (SelectedViewmodel as MainUserControl_ViewModel).LoadAsync();
             }
             else
             {
-                SelectedViewmodel = new LoginViewModel(StartingRepository);
+                SelectedViewmodel = new LoginViewModel(this);
             }
-            await SelectedViewmodel.LoadAsync();
             RaisePropertyChanged(nameof(MenuVisibility));
         }
 
@@ -44,11 +46,10 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
         private bool _IsBusy = false;
 
-        private IViewModel _SelectedViewmodel;
+        private ViewModelBase _SelectedViewmodel;
 
         private Visibility _Visibility;
 
-        private GenericRepository StartingRepository;
 
         #endregion Fields
 
@@ -79,7 +80,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
         {
             get
             {
-                if (Helpers.StaticResources.User != null && Helpers.StaticResources.User.Level <= 1)
+                if (StaticResources.User != null && StaticResources.User.Level <= 1)
                 {
                     return Visibility.Visible;
                 }
@@ -87,7 +88,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             }
         }
 
-        public IViewModel SelectedViewmodel
+        public ViewModelBase SelectedViewmodel
         {
             get
             {
@@ -106,10 +107,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             }
         }
 
-        /// <summary>
-        /// Sets and gets the Visibility property. Changes to that property's value raise the
-        /// PropertyChanged event.
-        /// </summary>
+
         public Visibility Visibility
         {
             get
@@ -128,41 +126,27 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                 RaisePropertyChanged();
             }
         }
-        public List<RoomType> RoomTypes { get; set; }
-        public List<Hotel> Hotels { get; set; }
-        public List<Country> Countries { get; set; }
+
         #endregion Properties
 
         #region Methods
 
+        public BasicDataManager BasicDataManager { get; set; }
+
         public async Task LoadAsync(GenericRepository startingRepository)
         {
-            StartingRepository = startingRepository;
+            BasicDataManager = new BasicDataManager();
 
-            await StartingRepository.LoadBasic();
+            await BasicDataManager.LoadAsync();
 
-            RoomTypes = await StartingRepository.GetAllAsync<RoomType>();
-            Hotels = await StartingRepository.GetAllAsync<Hotel>();
-            Countries = await StartingRepository.GetAllAsync<Country>();
 
-            RoomTypes =  StartingRepository.GetAllAsyncLocal<RoomType>();
-            Hotels =  StartingRepository.GetAllAsyncLocal<Hotel>();
-            Countries =  StartingRepository.GetAllAsyncLocal<Country>();
 #if DEBUG
-            Helpers.StaticResources.User = new User { BaseLocation = 1, Id = 1, Level = 0, UserName = "admin" };
+            StaticResources.User = new User { BaseLocation = 1, Id = 1, Level = 0, UserName = "admin" };
             RaisePropertyChanged(nameof(MenuVisibility));
 #endif
-            if (Helpers.StaticResources.User == null)
-                SelectedViewmodel = new LoginViewModel(StartingRepository);//TODO
-            else
-                SelectedViewmodel = new MainUserControl_ViewModel(StartingRepository);//TODO
-            await SelectedViewmodel.LoadAsync();
-        }
+            await ChangeViewModel();
 
-        //private void ChangeVisibility(ChangeVisibilityMessage msg)
-        //{
-        //    Visibility = msg.Visible ? Visibility.Visible : Visibility.Collapsed;
-        //}
+        }
 
         private void ManageIsBusy(bool add)
         {

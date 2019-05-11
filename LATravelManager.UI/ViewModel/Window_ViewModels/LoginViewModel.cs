@@ -1,11 +1,9 @@
-﻿using GalaSoft.MvvmLight.CommandWpf;
+﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.CommandWpf;
 using LATravelManager.Model.People;
 using LATravelManager.UI.Message;
-using LATravelManager.UI.Repositories;
 using LATravelManager.UI.Security;
-using LATravelManager.UI.ViewModel.BaseViewModels;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security;
 using System.Threading.Tasks;
@@ -13,14 +11,12 @@ using System.Windows.Input;
 
 namespace LATravelManager.UI.ViewModel.Window_ViewModels
 {
-    public class LoginViewModel : MyViewModelBase
+    public class LoginViewModel : ViewModelBase
     {
-        private readonly GenericRepository startingRepository;
-
-        public LoginViewModel(GenericRepository startingRepository)
+        public LoginViewModel(MainViewModel mainViewModel)
         {
-            this.startingRepository = startingRepository;
-            LoginCommand = new RelayCommand(async () => { await TryLogin(); }, CanLogin);
+            MainViewModel = mainViewModel;
+            LoginCommand = new RelayCommand(async ()=>  { await TryLoginAsync(); }, CanLogin);
             PossibleUser = new User();
         }
 
@@ -29,8 +25,6 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
         private bool _LoginFailed;
         private SecureString _PasswordSecureString;
         private User _PossibleUser;
-
-        public List<User> Users { get; set; }
 
         public string ErrorMessage
         {
@@ -110,6 +104,8 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             }
         }
 
+        public MainViewModel MainViewModel { get; }
+
         private bool CanLogin()
         {
             //Execution should only be possible if both Username and Password have been supplied
@@ -118,7 +114,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             return false;
         }
 
-        async private Task TryLogin()
+        private async Task TryLoginAsync()
         {
             try
             {
@@ -128,7 +124,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                 User userFound = null;
                 ErrorMessage = "Παρακαλώ περιμένετε...";
 
-                userFound = await startingRepository.FindUserAsync(PossibleUser.UserName.ToLower());
+                userFound = MainViewModel.BasicDataManager.Users.Where(u => u.UserName.Equals(PossibleUser.UserName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
                 if (userFound == null)
                 {
                     ErrorMessage = "Δεν βρέθηκε χρηστης.";
@@ -158,7 +154,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
                 ErrorMessage = "Επιτυχής σύνδεση!";
                 Helpers.StaticResources.User = userFound;
-                MessengerInstance.Send(new LoginLogOutMessage(true));
+               await MainViewModel.ChangeViewModel();
             }
             catch (Exception ex)
             {
@@ -168,16 +164,6 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             {
                 Mouse.OverrideCursor = Cursors.Arrow;
             }
-        }
-
-        public async override Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
-        {
-            Users = (await startingRepository.GetAllAsync<User>()).ToList();
-        }
-
-        public override Task ReloadAsync()
-        {
-            throw new NotImplementedException();
         }
     }
 }
