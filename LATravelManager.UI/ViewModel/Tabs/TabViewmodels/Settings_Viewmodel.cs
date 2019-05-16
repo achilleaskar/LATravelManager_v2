@@ -7,7 +7,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {
     public class Settings_Viewmodel : MyViewModelBaseAsync
     {
-        public Settings_Viewmodel()
+        public Settings_Viewmodel(Window_ViewModels.MainViewModel mainViewModel)
         {
         }
 

@@ -22,7 +22,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
     {
         #region Constructors
 
-        public Info_ViewModel()
+        public Info_ViewModel(Window_ViewModels.MainViewModel mainViewModel)
         {
             ToDepartureInfo = /*(Properties.Settings.Default.toDeparture >= DateTime.Today) ? Properties.Settings.Default.toDeparture :*/ DateTime.Today;
             FromDepartureInfo = /*(Properties.Settings.Default.fromDepartures > DateTime.Today) ? Properties.Settings.Default.fromDepartures :*/ DateTime.Today;

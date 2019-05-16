@@ -7,7 +7,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {
     public class AddRooms_ViewModel : MyViewModelBaseAsync
     {
-        public AddRooms_ViewModel()
+        public AddRooms_ViewModel(Window_ViewModels.MainViewModel mainViewModel)
         {
         }
 

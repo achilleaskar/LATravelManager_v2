@@ -22,9 +22,9 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Skiathos
         {
             try
             {
-                SelectedExcursion = new ExcursionWrapper(await GenericRepository.GetByIdAsync<Excursion>(29));
+                SelectedExcursion = new ExcursionWrapper(await StartingRepository.GetByIdAsync<Excursion>(29));
                     Model.BookingData.Booking booking = id > 0
-                        ? await GenericRepository.GetFullBookingByIdAsync(id)
+                        ? await StartingRepository.GetFullBookingByIdAsync(id)
                         : await CreateNewBooking();
 
                     InitializeBooking(booking);

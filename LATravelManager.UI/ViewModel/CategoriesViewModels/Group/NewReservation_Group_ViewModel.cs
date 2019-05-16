@@ -1,6 +1,7 @@
 ﻿using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
+using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Wrapper;
 using System;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Group
     {
         private bool _enabled;
 
-        public NewReservation_Group_ViewModel(GenericRepository genericRepository) : base(genericRepository)
+        public NewReservation_Group_ViewModel(MainViewModel mainViewModel) : base(mainViewModel)
         {
             MessengerInstance.Register<SelectedExcursionChangedMessage>(this, async exc => { await SelectedExcursionChanged(exc.SelectedExcursion); });
 
@@ -55,7 +56,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Group
                 if (SelectedExcursion != null || id > 0)
                 {
                     Model.BookingData.Booking booking = id > 0
-                        ? await GenericRepository.GetFullBookingByIdAsync(id)
+                        ? await StartingRepository.GetFullBookingByIdAsync(id)
                         : await CreateNewBooking();
 
                     InitializeBooking(booking);

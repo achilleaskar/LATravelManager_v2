@@ -18,9 +18,8 @@ public class NewReservationHelper : ViewModelBase
 {
     #region Constructors
 
-    public NewReservationHelper(GenericRepository context)
+    public NewReservationHelper()
     {
-        Context = context;
     }
 
     #endregion Constructors
@@ -33,7 +32,6 @@ public class NewReservationHelper : ViewModelBase
 
     #region Properties
 
-    public GenericRepository Context { get; }
 
     #endregion Properties
 

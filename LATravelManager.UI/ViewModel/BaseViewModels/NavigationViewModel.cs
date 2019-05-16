@@ -21,20 +21,23 @@ namespace LATravelManager.UI.ViewModel
             try
             {
                 MainUserControl_ViewModel = mainUserControl_ViewModel;
+                MainViewModel = mainViewModel;
+
                 _SecondaryTabs = new List<TabsBaseViewModel>();
                 SecondaryViewModels = new List<MyViewModelBaseAsync>();
+
                 SecondaryTabs.Add(new GlobalSearchTab());
                 SecondaryTabs.Add(new InfoTab());
                 SecondaryTabs.Add(new EconomicData_Tab());
                 SecondaryTabs.Add(new AddRoomsTab());
                 SecondaryTabs.Add(new SettingsTab());
-                MainViewModel = mainViewModel;
-                // SetTabs();
+                 
                 SecondaryViewModels.Add(new GlobalSearch_ViewModel(mainViewModel));
-                SecondaryViewModels.Add(new Info_ViewModel());
+                SecondaryViewModels.Add(new Info_ViewModel(mainViewModel));
                 SecondaryViewModels.Add(new EconomicData_ViewModel(mainViewModel));
-                SecondaryViewModels.Add(new AddRooms_ViewModel());
-                SecondaryViewModels.Add(new Settings_Viewmodel());
+                SecondaryViewModels.Add(new AddRooms_ViewModel(mainViewModel));
+                SecondaryViewModels.Add(new Settings_Viewmodel(mainViewModel));
+
                 SelectedTabChangedCommand = new RelayCommand(async () => { await SelectTab(SelectedPrimaryTabIndex); });
                 SelectedChildTabChangedCommand = new RelayCommand(async () => { await SelectTab(_SelectedSecondaryTabIndex, true); });
 

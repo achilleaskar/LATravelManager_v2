@@ -20,6 +20,12 @@ namespace LATravelManager.UI.Helpers
             Context = genericRepository;
         }
 
+        public async Task Refresh()
+        {
+            Context = new GenericRepository();
+            await LoadAsync();
+        }
+
         #endregion Constructors
 
         #region Fields

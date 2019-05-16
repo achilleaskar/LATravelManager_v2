@@ -11,6 +11,7 @@ using LATravelManager.UI.Data.Workers;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
+using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Wrapper;
 using System;
 using System.Collections.Generic;
@@ -30,10 +31,11 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
     {
         #region Constructors
 
-        public NewReservationGroup_Base(GenericRepository genericRepository)
+        public NewReservationGroup_Base(MainViewModel mainViewModel)
         {
-            GenericRepository = genericRepository;
-            NewReservationHelper = new NewReservationHelper(RefreshableContext);
+            StartingRepository = mainViewModel.StartingRepository;
+            BasicDataManager = mainViewModel.BasicDataManager;
+            NewReservationHelper = new NewReservationHelper();
             RoomsManager = new RoomsManager();
 
             //Commands
@@ -58,7 +60,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             PrintVoucherCommand = new RelayCommand(async () => { await PrintVoucher(); }, CanPrintDoc);
             PrintContractCommand = new RelayCommand(PrintContract, CanPrintDoc);
             Payment = new Payment();
-            
+
             FilteredRoomList = new ObservableCollection<RoomWrapper>();
             SelectedUserIndex = -1;
             Emails = new ObservableCollection<Email>();
@@ -314,7 +316,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
-        public GenericRepository GenericRepository { get; set; }
+        public GenericRepository StartingRepository { get; set; }
 
         public bool HB
         {
@@ -455,11 +457,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
-        private void PaymentChanged(object sender, PropertyChangedEventArgs e)
-        {
-            SaveCommand.RaiseCanExecuteChanged();
-        }
-
         public RelayCommand PrintContractCommand { get; set; }
 
         public RelayCommand PrintVoucherCommand { get; set; }
@@ -468,7 +465,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         public RelayCommand ReadNextLineCommand { get; set; }
 
-        public GenericRepository RefreshableContext { get; set; }
+        public BasicDataManager BasicDataManager { get; set; }
 
         public RoomsManager RoomsManager { get; set; }
 
@@ -580,7 +577,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 _SelectedPartnerIndex = value;
                 if (SelectedPartnerIndex >= 0 && (BookingWr.Partner == null || (BookingWr.Partner != null && BookingWr.Partner.Id != Partners[SelectedPartnerIndex].Id)))
                 {
-                    BookingWr.Partner = GenericRepository.GetById<Partner>(Partners[SelectedPartnerIndex].Id);
+                    BookingWr.Partner = StartingRepository.GetById<Partner>(Partners[SelectedPartnerIndex].Id);
                     Emails = (BookingWr.Partner.Emails != null && BookingWr.Partner.Emails.Count() > 0) ? new ObservableCollection<Email>(BookingWr.Partner.Emails.Split(',').Select(e => new Email(e))) : new ObservableCollection<Email>();
                     if (Emails.Count > 0)
                     {
@@ -654,7 +651,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 _SelectedUserIndex = value;
                 if (SelectedUserIndex >= 0 && (BookingWr.User == null || (BookingWr.User != null && BookingWr.User.Id != Users[SelectedUserIndex].Id)))
                 {
-                    BookingWr.User = GenericRepository.GetById<User>(Users[SelectedUserIndex].Id);
+                    BookingWr.User = StartingRepository.GetById<User>(Users[SelectedUserIndex].Id);
                 }
                 RaisePropertyChanged();
             }
@@ -680,7 +677,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
-        private bool AreContexesFree => (RefreshableContext != null && RefreshableContext.IsContextAvailable) && (GenericRepository != null && GenericRepository.IsContextAvailable);
+        private bool AreContexesFree => (BasicDataManager != null && BasicDataManager.IsContextAvailable) && (StartingRepository != null && StartingRepository.IsContextAvailable);
 
         #endregion Properties
 
@@ -725,15 +722,16 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         {
             try
             {
+                await Task.Delay(0);
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
-                if (reset)
-                {
-                    if (RefreshableContext != null && !RefreshableContext.IsTaskOk)
-                    {
-                        await RefreshableContext.LastTask;
-                    }
-                    RefreshableContext = new GenericRepository();
-                }
+                //if (reset)
+                //{
+                //    if (BasicDataManager != null && !BasicDataManager.IsTaskOk)
+                //    {
+                //        await BasicDataManager.LastTask;
+                //    }
+                //    BasicDataManager = new GenericRepository();
+                //}
                 AvailableHotels = new ObservableCollection<HotelWrapper>();
                 // AvailableHotels = new ObservableCollection<HotelWrapper>((await Task.Run(() => RoomsManager.GetAllAvailableRooms(RefreshableContext, BookingWr.CheckIn, BookingWr.CheckOut, SelectedExcursion, unSavedBooking: BookingWr.Model))));
                 FilteredRoomList = new ObservableCollection<RoomWrapper>();
@@ -809,7 +807,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         protected async Task<Booking> CreateNewBooking()
         {
-            return new Booking { Excursion = await GenericRepository.GetExcursionByIdAsync(SelectedExcursion.Id), CheckIn = BookingWr != null ? BookingWr.CheckIn : new DateTime(2018, 12, 28), CheckOut = BookingWr != null ? BookingWr.CheckOut : new DateTime(2018, 12, 30), User = await GenericRepository.GetByIdAsync<User>(StaticResources.User.Id) };
+            return new Booking { Excursion = await StartingRepository.GetExcursionByIdAsync(SelectedExcursion.Id), CheckIn = BookingWr != null ? BookingWr.CheckIn : new DateTime(2018, 12, 28), CheckOut = BookingWr != null ? BookingWr.CheckOut : new DateTime(2018, 12, 30), User = await StartingRepository.GetByIdAsync<User>(StaticResources.User.Id) };
         }
 
         protected void InitializeBooking(Booking booking)
@@ -821,7 +819,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 string x = e.PropertyName;
                 if (!HasChanges)
                 {
-                    HasChanges = GenericRepository.HasChanges();
+                    HasChanges = StartingRepository.HasChanges();
                     if (BookingWr.Id == 0)
                     {
                         HasChanges = true;
@@ -841,26 +839,17 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         {
             if (SelectedExcursion == null)
             {
-                SelectedExcursion = new ExcursionWrapper(await GenericRepository.GetExcursionByIdAsync(BookingWr.Excursion.Id));
+                SelectedExcursion = new ExcursionWrapper(await StartingRepository.GetExcursionByIdAsync(BookingWr.Excursion.Id));
             }
-            if (SelectedExcursion != null)
+            else
             {
                 try
                 {
                     MessengerInstance.Send(new IsBusyChangedMessage(true));
 
-                    if (RefreshableContext == null)
-                    {
-                        RefreshableContext = GenericRepository;
-                    }
-                    else
-                    {
-                        if (RefreshableContext != null && !RefreshableContext.IsTaskOk)
-                        {
-                            await RefreshableContext.LastTask;
-                        }
-                        RefreshableContext = new GenericRepository();
-                    }
+                   
+                   await BasicDataManager.Refresh();
+
                     RoomsManager = new RoomsManager();
 
                     int hotelId = SelectedHotelIndex > 0 && Hotels != null && SelectedHotelIndex < Hotels.Count ? Hotels[SelectedHotelIndex - 1].Id : 0;
@@ -872,11 +861,11 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                     }
                     int userId = SelectedUserIndex >= 0 && Users != null && SelectedUserIndex < Users.Count ? Users[SelectedUserIndex].Id : -1;
 
-                    Hotels = new ObservableCollection<Hotel>(await RefreshableContext.GetAllHotelsInCityAsync(SelectedExcursion.Destinations[0].Id));
-                    RoomTypes = new ObservableCollection<RoomType>(await RefreshableContext.GetAllAsync<RoomType>());
-                    StaticResources.StartingPlaces = new ObservableCollection<StartingPlace>(await RefreshableContext.GetAllAsyncSortedByName<StartingPlace>());
-                    Users = new ObservableCollection<User>(await RefreshableContext.GetAllAsyncSortedByName<User>());
-                    Partners = new ObservableCollection<Partner>(await RefreshableContext.GetAllAsyncSortedByName<Partner>());
+                    Hotels = new ObservableCollection<Hotel>( BasicDataManager.Hotels.Where(h=>h.City.Id==SelectedExcursion.Destinations[0].Id));
+                    RoomTypes = BasicDataManager.RoomTypes;
+                    StaticResources.StartingPlaces = BasicDataManager.StartingPlaces;
+                    Users = BasicDataManager.Users;
+                    Partners = BasicDataManager.Partners;
 
                     SelectedHotelIndex = hotelId > 0 ? Hotels.IndexOf(Hotels.Where(x => x.Id == hotelId).FirstOrDefault()) + 1 : 0;
                     SelectedRoomTypeIndex = roomTypeId > 0 ? RoomTypes.IndexOf(RoomTypes.Where(x => x.Id == roomTypeId).FirstOrDefault()) + 1 : 0;
@@ -1150,13 +1139,11 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                                 return true;
                             }
                         }
-
                     }
-
                 }
             }
             return false;
- //           return SelectedHotelIndex > 0 && SelectedRoomTypeIndex > 0 && AreBookingDataValid && (SelectedCustomer != null || All) && AreContexesFree;
+            //           return SelectedHotelIndex > 0 && SelectedRoomTypeIndex > 0 && AreBookingDataValid && (SelectedCustomer != null || All) && AreContexesFree;
         }
 
         private bool CanPrintDoc()
@@ -1203,7 +1190,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         private bool CanSave()
         {
-            if (BookingWr == null || (!HasChanges&&Payment.Amount==0) || !AreContexesFree)
+            if (BookingWr == null || (!HasChanges && Payment.Amount == 0) || !AreContexesFree)
             {
                 return false;
             }
@@ -1258,7 +1245,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                     BookingWr.ReservationsInBooking.Remove(r);
                     if (r.Id > 0)
                     {
-                        GenericRepository.Delete(r);
+                        StartingRepository.Delete(r);
                     }
                 }
             }
@@ -1294,12 +1281,12 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 SelectedHotelIndex = 0;
                 RaisePropertyChanged(nameof(IsPartners));
             }
-            GenericRepository.RejectChanges();
+            StartingRepository.RejectChanges();
         }
 
         private void DeletePayment()
         {
-            GenericRepository.Delete(SelectedPayment);
+            StartingRepository.Delete(SelectedPayment);
         }
 
         private string GetBookingDataValidationError(string propertyName)
@@ -1326,7 +1313,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
 
-                NewReservationHelper.MakeNonameReservation(BookingWr, await GenericRepository.GetByIdAsync<RoomType>(RoomTypes[SelectedRoomTypeIndex - 1].Id), HB, All, OnlyStay);
+                NewReservationHelper.MakeNonameReservation(BookingWr, await StartingRepository.GetByIdAsync<RoomType>(RoomTypes[SelectedRoomTypeIndex - 1].Id), HB, All, OnlyStay);
 
                 if (All)
                 {
@@ -1361,8 +1348,8 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
 
                 NewReservationHelper.OverBookHotelAsync(
-                      BookingWr, await GenericRepository.GetByIdAsync<Hotel>(Hotels[SelectedHotelIndex - 1].Id),
-                      await GenericRepository.GetByIdAsync<RoomType>(RoomTypes[SelectedRoomTypeIndex - 1].Id), All, OnlyStay, HB);
+                      BookingWr, await StartingRepository.GetByIdAsync<Hotel>(Hotels[SelectedHotelIndex - 1].Id),
+                      await StartingRepository.GetByIdAsync<RoomType>(RoomTypes[SelectedRoomTypeIndex - 1].Id), All, OnlyStay, HB);
                 if (All)
                 {
                     FilteredRoomList.Clear();
@@ -1383,13 +1370,18 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
+        private void PaymentChanged(object sender, PropertyChangedEventArgs e)
+        {
+            SaveCommand.RaiseCanExecuteChanged();
+        }
+
         private void PrintContract()
         {
             try
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
 
-                using (DocumentsManagement vm = new DocumentsManagement(RefreshableContext))
+                using (DocumentsManagement vm = new DocumentsManagement(BasicDataManager))
                 {
                     vm.PrintSingleBookingContract(BookingWr);
                 }
@@ -1410,7 +1402,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
 
-                using (DocumentsManagement vm = new DocumentsManagement(RefreshableContext))
+                using (DocumentsManagement vm = new DocumentsManagement(BasicDataManager))
                 {
                     await vm.PrintSingleBookingVoucher(BookingWr);
                 }
@@ -1431,7 +1423,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
 
-                NewReservationHelper.PutCustomersInRoomAsync(BookingWr, new RoomWrapper(await GenericRepository.GetByIdAsync<Room>(SelectedRoom.Id)), All, OnlyStay, HB);
+                NewReservationHelper.PutCustomersInRoomAsync(BookingWr, new RoomWrapper(await StartingRepository.GetByIdAsync<Room>(SelectedRoom.Id)), All, OnlyStay, HB);
                 if (All)
                 {
                     FilteredRoomList.Clear();
@@ -1597,7 +1589,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
 
-                BookingWr = await NewReservationHelper.SaveAsync(GenericRepository, Payment, BookingWr);
+                BookingWr = await NewReservationHelper.SaveAsync(StartingRepository, Payment, BookingWr);
                 FilteredRoomList.Clear();
                 Payment = new Payment();
                 BookedMessage = "H κράτηση αποθηκέυτηκε επιτυχώς";
@@ -1615,11 +1607,11 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         private async Task UpdateAll()
         {
-            if (RefreshableContext != null && !RefreshableContext.IsTaskOk)
+            if (BasicDataManager != null && !BasicDataManager.IsTaskOk)
             {
-                await RefreshableContext.LastTask;
+                await BasicDataManager.LastTask;
             }
-            RefreshableContext = new GenericRepository();
+            BasicDataManager = new GenericRepository();
             await ResetAllRefreshableDataASync();
             UpdateAllCommand.RaiseCanExecuteChanged();
         }
@@ -1660,10 +1652,9 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 {
                     return "Παρακαλώ τοποθετήστε όλους τους πελάτες σε δωμάτια";
                 }
-                if (BookingWr.NetPrice==0 && customer.Price==0)
+                if (BookingWr.NetPrice == 0 && customer.Price == 0)
                 {
                     return "Δέν έχετε ορίσει τιμή";
-
                 }
             }
             return null;

@@ -24,7 +24,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             if (StaticResources.User != null)
             {
                 SelectedViewmodel = new MainUserControl_ViewModel(this);//TODO
-               await (SelectedViewmodel as MainUserControl_ViewModel).LoadAsync();
+                await (SelectedViewmodel as MainUserControl_ViewModel).LoadAsync();
             }
             else
             {
@@ -103,11 +103,35 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
         public BasicDataManager BasicDataManager { get; set; }
 
-        public GenericRepository StartingRepository => BasicDataManager.Context;
+
+
+
+        private GenericRepository _StartingRepository;
+
+
+        public GenericRepository StartingRepository
+        {
+            get
+            {
+                return _StartingRepository;
+            }
+
+            set
+            {
+                if (_StartingRepository == value)
+                {
+                    return;
+                }
+
+                _StartingRepository = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public async Task LoadAsync()
         {
-            BasicDataManager = new BasicDataManager(new GenericRepository());
+            StartingRepository = new GenericRepository();
+            BasicDataManager = new BasicDataManager(StartingRepository);
 
             await BasicDataManager.LoadAsync();
 
@@ -115,7 +139,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             StaticResources.User = new User { BaseLocation = 1, Id = 1, Level = 0, UserName = "admin" };
             RaisePropertyChanged(nameof(MenuVisibility));
 #endif
-          await  ChangeViewModel();
+            await ChangeViewModel();
         }
 
         #endregion Methods
