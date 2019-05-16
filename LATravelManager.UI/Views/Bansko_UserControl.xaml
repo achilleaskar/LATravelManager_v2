@@ -3,10 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:LATravelManager.UI.Views"
              xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko"
              xmlns:views="clr-namespace:LATravelManager.UI.Views.Bansko"
-             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d"
              d:DesignHeight="450"
              Background="AliceBlue"
@@ -15,9 +13,9 @@
         <DataTemplate DataType="{x:Type viewmodels:NewReservation_Bansko_ViewModel}">
             <views:NewReservation_Bansko_UserControl />
         </DataTemplate>
-        <DataTemplate DataType="{x:Type viewmodels:Search_Bansko_ViewModel}">
+        <!--<DataTemplate DataType="{x:Type viewmodels:Search_Bansko_ViewModel}">
             <views:Search_Bansko_UserControl />
-        </DataTemplate>
+        </DataTemplate>-->
         <!--<DataTemplate DataType="{x:Type viewmodels:MoveReservation_Bansko_ViewModel}">
             <views:MoveReservation_Bansko_UserControl />
         </DataTemplate>

@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.CommandWpf;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.Tabs;
@@ -11,41 +12,45 @@ using System.Threading.Tasks;
 
 namespace LATravelManager.UI.ViewModel
 {
-    public class NavigationViewModel : ViewModelBase, IViewModel
+    public class NavigationViewModel : ViewModelBase, IViewModelAsync
     {
         #region Constructors
 
-        public NavigationViewModel(MainUserControl_ViewModel mainUserControl_ViewModel)
+        public NavigationViewModel(MainUserControl_ViewModel mainUserControl_ViewModel, MainViewModel mainViewModel)
         {
             try
             {
                 MainUserControl_ViewModel = mainUserControl_ViewModel;
                 _SecondaryTabs = new List<TabsBaseViewModel>();
-                SecondaryViewModels = new List<MyViewModelBase>();
+                SecondaryViewModels = new List<MyViewModelBaseAsync>();
                 SecondaryTabs.Add(new GlobalSearchTab());
                 SecondaryTabs.Add(new InfoTab());
                 SecondaryTabs.Add(new EconomicData_Tab());
                 SecondaryTabs.Add(new AddRoomsTab());
                 SecondaryTabs.Add(new SettingsTab());
+                MainViewModel = mainViewModel;
                 // SetTabs();
-                SecondaryViewModels.Add(new GlobalSearch_ViewModel());
+                SecondaryViewModels.Add(new GlobalSearch_ViewModel(mainViewModel));
                 SecondaryViewModels.Add(new Info_ViewModel());
-                SecondaryViewModels.Add(new EconomicData_ViewModel());
+                SecondaryViewModels.Add(new EconomicData_ViewModel(mainViewModel));
                 SecondaryViewModels.Add(new AddRooms_ViewModel());
                 SecondaryViewModels.Add(new Settings_Viewmodel());
-                MessengerInstance.Register<ResetNavigationTabsMessage>(this, async msg => { await SetTabs(); });
+                SelectedTabChangedCommand = new RelayCommand(async () => { await SelectTab(SelectedPrimaryTabIndex); });
+                SelectedChildTabChangedCommand = new RelayCommand(async () => { await SelectTab(_SelectedSecondaryTabIndex, true); });
+
             }
             catch (Exception ex)
             {
                 MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
             }
+
         }
 
         #endregion Constructors
 
         #region Fields
 
-        private readonly List<MyViewModelBase> SecondaryViewModels;
+        private readonly List<MyViewModelBaseAsync> SecondaryViewModels;
 
         private bool _Expanded = true;
 
@@ -62,6 +67,9 @@ namespace LATravelManager.UI.ViewModel
         #endregion Fields
 
         #region Properties
+
+        public RelayCommand SelectedTabChangedCommand { get; set; }
+        public RelayCommand SelectedChildTabChangedCommand { get; set; }
 
         /// <summary>
         /// Sets and gets the Expanded property. Changes to that property's value raise the
@@ -128,11 +136,7 @@ namespace LATravelManager.UI.ViewModel
                 }
 
                 _SelectedPrimaryTabIndex = value;
-                if (value >= 0 && value < Tabs.Count)
-                {
-                    Tabs[value].IsSelected = true;
-                    Task.Run(() => SelectTab(value));
-                }
+
                 RaisePropertyChanged();
             }
         }
@@ -152,11 +156,7 @@ namespace LATravelManager.UI.ViewModel
                 }
 
                 _SelectedSecondaryTabIndex = value;
-                if (value >= 0 && value < SecondaryTabs.Count)
-                {
-                    SecondaryTabs[value].IsSelected = true;
-                    Task.Run(() => SelectTab(value, true));
-                }
+
                 RaisePropertyChanged();
             }
         }
@@ -184,11 +184,13 @@ namespace LATravelManager.UI.ViewModel
             }
         }
 
+        public MainViewModel MainViewModel { get; }
+
         #endregion Properties
 
         #region Methods
 
-        public async Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
+        public async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
             await Task.Delay(0);
         }
@@ -198,39 +200,7 @@ namespace LATravelManager.UI.ViewModel
             throw new NotImplementedException();
         }
 
-        internal async Task SelectTab(int index, bool secondary = false)
-        {
-            for (int i = 0; i < Tabs.Count; i++)
-            {
-                if (!secondary && i == index)
-                {
-                    await parent.SetProperChildViewModel(index);
-                }
-                else
-                {
-                    Tabs[i].IsSelected = false;
-                }
-            }
-            for (int i = 0; i < SecondaryTabs.Count; i++)
-            {
-                if (secondary && i == index)
-                {
-                    await SelectSecondaryTab(i);
-                }
-                else
-                {
-                    SecondaryTabs[i].IsSelected = false;
-                }
-            }
-        }
-
-        private async Task SelectSecondaryTab(int tabIndex)
-        {
-            parent.SelectedChildViewModel = SecondaryViewModels[tabIndex];
-            await parent.SelectedChildViewModel.LoadAsync();
-        }
-
-        private async Task SetTabs()
+        public async Task SetTabs()
         {
             parent = MainUserControl_ViewModel.SelectedExcursionType;
             List<TabsBaseViewModel> tabs;
@@ -243,22 +213,60 @@ namespace LATravelManager.UI.ViewModel
                     Tabs.Add(tab);
                 }
             }
-            _SelectedPrimaryTabIndex = 0;
-            await SelectTab(0);
+            if (parent.SelectedChildViewModel == null)
+            {
+                _SelectedPrimaryTabIndex = 0;
+            }
+            else
+            {
+                _SelectedPrimaryTabIndex = parent.Childs.IndexOf(parent.SelectedChildViewModel);
+            }
+            await SelectTab(_SelectedPrimaryTabIndex);
+        }
+
+        internal async Task SelectTab(int index, bool secondary = false)
+        {
+            for (int i = 0; i < Tabs.Count; i++)
+            {
+                if (!secondary && i == index)
+                {
+                    if (!Tabs[index].IsSelected)
+                    {
+
+                        Tabs[index].IsSelected = true;
+                        await parent.SetProperChildViewModel(index);
+                    }
+                }
+                else
+                {
+
+                    Tabs[i].IsSelected = false;
+                }
+            }
+            for (int i = 0; i < SecondaryTabs.Count; i++)
+            {
+                if (secondary && i == index)
+                {
+                    if (!SecondaryTabs[index].IsSelected)
+                    {
+                        SecondaryTabs[index].IsSelected = true;
+                        await SelectSecondaryTab(i);
+                    }
+                }
+                else
+                {
+                    SecondaryTabs[i].IsSelected = false;
+                }
+            }
+        }
+
+        private async Task SelectSecondaryTab(int tabIndex)
+        {
+            parent.SelectedChildViewModel = SecondaryViewModels[tabIndex];
+            if (!parent.SelectedChildViewModel.IsLoaded)
+                await parent.SelectedChildViewModel.LoadAsync();
         }
 
         #endregion Methods
-
-        //private void SetProperViewModel()
-        //{
-        //    if (SelectedTabIndex >= 0)
-        //    {
-        //        if (!(ServiceLocator.Current.GetInstance<MainUserControl_ViewModel>().SelectedExcursionType is MainExcursionCategoryViewModelBase))
-        //            ServiceLocator.Current.GetInstance<MainUserControl_ViewModel>().SetProperViewModel();
-        //        MessengerInstance.Send(new SelectedTabChangedMessage(SelectedTabIndex));
-        //        if (SelectedSecondaryTabIndex >= 0)
-        //            SecondaryTabs[SelectedSecondaryTabIndex].IsSelected = false;
-        //    }
-        //}
     }
 }

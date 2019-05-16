@@ -13,9 +13,9 @@
         <DataTemplate DataType="{x:Type viewmodels:NewReservation_Group_ViewModel}">
             <views:NewReservation_Group_UserControl />
         </DataTemplate>
-        <DataTemplate DataType="{x:Type viewmodels:Search_Group_ViewModel}">
+        <!--<DataTemplate DataType="{x:Type viewmodels:Search_Group_ViewModel}">
             <views:Search_Group_UserControl />
-        </DataTemplate>
+        </DataTemplate>-->
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>

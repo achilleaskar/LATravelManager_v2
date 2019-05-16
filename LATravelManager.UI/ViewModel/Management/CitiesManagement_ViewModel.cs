@@ -1,5 +1,6 @@
 ﻿using LaTravelManager.BaseTypes;
 using LATravelManager.Model.Locations;
+using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
@@ -13,20 +14,20 @@ namespace LaTravelManager.ViewModel.Management
 {
     public class CitiesManagement_ViewModel : AddEditBase<CityWrapper, City>
     {
-        public CitiesManagement_ViewModel(GenericRepository context) : base(context)
+        public CitiesManagement_ViewModel(BasicDataManager context) : base(context)
         {
             ControlName = "Διαχείριση Πόλεων";
             Countries = new ObservableCollection<Country>();
         }
 
-        public override async Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
+        public override void ReLoad(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
             try
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
 
-                MainCollection = new ObservableCollection<CityWrapper>((await Context.GetAllCitiesAsyncSortedByName()).Select(c => new CityWrapper(c)));
-                Countries = new ObservableCollection<Country>(await Context.GetAllAsyncSortedByName<Country>());
+                MainCollection = new ObservableCollection<CityWrapper>(BasicDataManager.Cities.Select(c => new CityWrapper(c)));
+                Countries = new ObservableCollection<Country>(BasicDataManager.Countries);
             }
             catch (Exception ex)
             {
@@ -38,10 +39,7 @@ namespace LaTravelManager.ViewModel.Management
             }
         }
 
-        public override Task ReloadAsync()
-        {
-            throw new NotImplementedException();
-        }
+       
 
         private ObservableCollection<Country> _Countries;
 

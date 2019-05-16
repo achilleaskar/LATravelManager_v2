@@ -19,7 +19,7 @@ namespace LATravelManager.Model.Wrapper
                     ValidateAllProperties();
                 }
             }
-            catch (Exception ex)
+            catch (Exception )
             {
 
                 

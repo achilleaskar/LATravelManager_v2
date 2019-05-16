@@ -1,14 +1,9 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
-using LATravelManager.Model.Hotels;
-using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
-using LATravelManager.UI.ViewModel.BaseViewModels;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -20,10 +15,8 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
         public MainViewModel()
         {
+            Visibility = Visibility.Hidden;
             Messenger.Default.Register<ChangeVisibilityMessage>(this, msg => { Visibility = msg.Visible ? Visibility.Visible : Visibility.Collapsed; });
-            Messenger.Default.Register<IsBusyChangedMessage>(this, msg => { ManageIsBusy(msg.IsBusy); });
-
-          //  Messenger.Default.Register<LoginLogOutMessage>(this, async msg => { await ChangeViewModel(msg.Login); });
         }
 
         public async Task ChangeViewModel()
@@ -31,7 +24,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             if (StaticResources.User != null)
             {
                 SelectedViewmodel = new MainUserControl_ViewModel(this);//TODO
-                await (SelectedViewmodel as MainUserControl_ViewModel).LoadAsync();
+               await (SelectedViewmodel as MainUserControl_ViewModel).LoadAsync();
             }
             else
             {
@@ -44,35 +37,13 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
         #region Fields
 
-        private bool _IsBusy = false;
-
         private ViewModelBase _SelectedViewmodel;
 
         private Visibility _Visibility;
 
-
         #endregion Fields
 
         #region Properties
-
-        public bool IsBusy
-        {
-            get
-            {
-                return _IsBusy;
-            }
-
-            set
-            {
-                if (_IsBusy == value)
-                {
-                    return;
-                }
-
-                _IsBusy = value;
-                RaisePropertyChanged();
-            }
-        }
 
         public int IsBusyCounter { get; private set; }
 
@@ -107,7 +78,6 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             }
         }
 
-
         public Visibility Visibility
         {
             get
@@ -133,25 +103,19 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
         public BasicDataManager BasicDataManager { get; set; }
 
-        public async Task LoadAsync(GenericRepository startingRepository)
+        public GenericRepository StartingRepository => BasicDataManager.Context;
+
+        public async Task LoadAsync()
         {
-            BasicDataManager = new BasicDataManager();
+            BasicDataManager = new BasicDataManager(new GenericRepository());
 
             await BasicDataManager.LoadAsync();
-
 
 #if DEBUG
             StaticResources.User = new User { BaseLocation = 1, Id = 1, Level = 0, UserName = "admin" };
             RaisePropertyChanged(nameof(MenuVisibility));
 #endif
-            await ChangeViewModel();
-
-        }
-
-        private void ManageIsBusy(bool add)
-        {
-            _ = add ? IsBusyCounter++ : IsBusyCounter--;
-            IsBusy = IsBusyCounter > 0;
+          await  ChangeViewModel();
         }
 
         #endregion Methods

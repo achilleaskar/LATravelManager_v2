@@ -1,7 +1,9 @@
 ﻿using Autofac;
 using LATravelManager.UI.StartUp;
+using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Views;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -35,6 +37,8 @@ namespace LATravelManager.UI
                 }
             }
         }
+        public SplashScreen splashScreen;
+        public  MainViewModel _viewModel;
 
         private static void SelectAllText(object sender, RoutedEventArgs e)
         {
@@ -42,12 +46,20 @@ namespace LATravelManager.UI
             if (textBox != null)
                 textBox.SelectAll();
         }
-        private void Application_Startup(object sender, StartupEventArgs e)
+        private async void Application_Startup(object sender, StartupEventArgs e)
         {
-            Bootstrapper bootstrapper = new Bootstrapper();
-            IContainer container = bootstrapper.Bootstrap();
-            MainWindow mainWindow = container.Resolve<MainWindow>();
+            splashScreen = new SplashScreen("latravel_logo1.jpg");
+            splashScreen.Show(false);
+            // Bootstrapper bootstrapper = new Bootstrapper();
+            // IContainer container = bootstrapper.Bootstrap();
+            MainWindow mainWindow = new MainWindow();
+            _viewModel = new MainViewModel();
+            mainWindow.DataContext = _viewModel;
+            await _viewModel.LoadAsync();
+            splashScreen.Close(TimeSpan.FromMilliseconds(250));
+            // mainWindow.Visibility = Visibility.Hidden;
             mainWindow.Show();
+            mainWindow.WindowState = WindowState.Maximized;
         }
 
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);

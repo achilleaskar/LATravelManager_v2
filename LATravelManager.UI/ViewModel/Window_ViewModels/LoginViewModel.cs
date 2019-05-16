@@ -16,7 +16,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
         public LoginViewModel(MainViewModel mainViewModel)
         {
             MainViewModel = mainViewModel;
-            LoginCommand = new RelayCommand(async ()=>  { await TryLoginAsync(); }, CanLogin);
+            LoginCommand = new RelayCommand(async ()=> { await TryLoginAsync(); }, CanLogin);
             PossibleUser = new User();
         }
 

@@ -5,11 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d"
+             xmlns:viewmodel="clr-namespace:LATravelManager.UI.ViewModel"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             d:DataContext="{d:DesignInstance viewmodel:NavigationViewModel}"
              Width="Auto"
              Background="White"
              d:DesignHeight="450"
              d:DesignWidth="250">
-
     <UserControl.Resources>
         <Style TargetType="ListViewItem">
             <Setter Property="IsSelected"
@@ -27,7 +29,6 @@
             </Style.Triggers>
         </Style>
         <DataTemplate x:Key="SidePaneListViewTemplate">
-
             <StackPanel Orientation="Horizontal"
                         Visibility="{Binding Level, Converter={StaticResource UserToVisibilityConverter},  Mode=OneWay}">
                 <iconPacks:PackIconMaterial Kind="{Binding IconName}"
@@ -218,7 +219,13 @@
                           SelectedIndex="{Binding SelectedPrimaryTabIndex}"
                           BorderThickness="0"
                           Background="Transparent"
-                          ItemTemplate="{StaticResource SidePaneListViewTemplate}" />
+                          ItemTemplate="{StaticResource SidePaneListViewTemplate}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding Path=SelectedTabChangedCommand, Mode=OneWay}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ListView>
                 <StackPanel VerticalAlignment="Bottom"
                             Grid.Row="1"
                             ScrollViewer.CanContentScroll="False"
@@ -232,7 +239,13 @@
                               ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                               ScrollViewer.CanContentScroll="False"
                               SelectedIndex="{Binding SelectedSecondaryTabIndex}"
-                              ItemTemplate="{StaticResource SidePaneListViewTemplate}" />
+                              ItemTemplate="{StaticResource SidePaneListViewTemplate}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding Path=SelectedChildTabChangedCommand, Mode=OneWay}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ListView>
                 </StackPanel>
             </Grid>
         </Border>

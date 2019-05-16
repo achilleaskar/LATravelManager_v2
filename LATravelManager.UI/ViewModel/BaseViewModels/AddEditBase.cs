@@ -1,6 +1,8 @@
-﻿using GalaSoft.MvvmLight.CommandWpf;
+﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.CommandWpf;
 using LATravelManager.Model;
 using LATravelManager.Model.Wrapper;
+using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
@@ -12,13 +14,13 @@ using System.Threading.Tasks;
 
 namespace LaTravelManager.BaseTypes
 {
-    public abstract class AddEditBase<TWrapper, TEntity> : MyViewModelBase
+    public abstract class AddEditBase<TWrapper, TEntity> : ViewModelBase
         where TEntity : BaseModel, new()
         where TWrapper : ModelWrapper<TEntity>, new()
     {
         #region Constructors
 
-        public AddEditBase(GenericRepository context)
+        public AddEditBase(BasicDataManager basicDataManager)
         {
             AddEntityCommand = new RelayCommand(AddEntity, CanAddEntity);
             UpdateEntitiesCommand = new RelayCommand(async () => { await ReloadEntities(); }, true);
@@ -28,10 +30,11 @@ namespace LaTravelManager.BaseTypes
 
             MainCollection = new ObservableCollection<TWrapper>();
 
-            Context = context;
+            BasicDataManager = basicDataManager;
 
             SelectedEntity = new TWrapper();
         }
+        public abstract void ReLoad(int id = 0, MyViewModelBaseAsync previousViewModel = null);
 
         private void MainCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -98,7 +101,7 @@ namespace LaTravelManager.BaseTypes
         /// </summary>
         public RelayCommand ClearEntityCommand { get; }
 
-        public GenericRepository Context { get; set; }
+        public BasicDataManager BasicDataManager { get; set; }
 
         /// <summary>
         /// Sets and gets the MainCollection property. Changes to that property's value raise the
@@ -191,7 +194,7 @@ namespace LaTravelManager.BaseTypes
 
         public virtual bool CanSaveChanges()
         {
-            return Context.HasChanges() && SelectedEntity != null && !SelectedEntity.HasErrors;
+            return BasicDataManager.HasChanges() && SelectedEntity != null && !SelectedEntity.HasErrors;
         }
 
         public void EntityViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -204,7 +207,7 @@ namespace LaTravelManager.BaseTypes
             try
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
-                await Context.SaveAsync();
+                await BasicDataManager.SaveAsync();
                 ResultMessage = "Όι αλλαγές αποθηκεύτηκαν επιτυχώς";
             }
             catch (Exception ex)
@@ -221,7 +224,7 @@ namespace LaTravelManager.BaseTypes
         {
             try
             {
-                Context.Add(SelectedEntity.Model);
+                BasicDataManager.Add(SelectedEntity.Model);
                 MainCollection.Add(SelectedEntity);
                 ClearEntity();
                 ResultMessage = SelectedEntity.Title + " προστέθηκε επιτυχώς";
@@ -260,16 +263,18 @@ namespace LaTravelManager.BaseTypes
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
                 ResultMessage = "";
-                if (Context != null && !Context.IsTaskOk)
-                {
-                    await Context.LastTask;
-                }
-                Context = new GenericRepository();
+                //if (BasicDataManager != null && !BasicDataManager.IsTaskOk)
+                //{
+                //    await BasicDataManager.LastTask;
+                //}
+                
+                BasicDataManager = new BasicDataManager(new GenericRepository());
+                await BasicDataManager.LoadAsync();
                 if (SelectedEntity.Id > 0)
                 {
                     SelectedEntity = new TWrapper();
                 }
-                await LoadAsync();
+                ReLoad();
                 ResultMessage = "Η ενημέρωση ολοκληρώθηκε!";
             }
             catch (Exception ex)
@@ -286,7 +291,7 @@ namespace LaTravelManager.BaseTypes
         {
             try
             {
-                Context.Delete(SelectedEntity.Model);
+                BasicDataManager.Delete(SelectedEntity.Model);
                 MainCollection.Remove(SelectedEntity);
                 SelectedEntity = new TWrapper();
             }

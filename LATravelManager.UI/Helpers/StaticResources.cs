@@ -51,8 +51,8 @@ namespace LATravelManager.UI.Helpers
 
         public RequiredIfAttribute(string dependentProperty, object targetValue)
         {
-            this._dependentProperty = dependentProperty;
-            this._targetValue = targetValue;
+            _dependentProperty = dependentProperty;
+            _targetValue = targetValue;
         }
 
         #endregion Constructors

@@ -454,7 +454,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Group
 
         #region Methods
 
-        public override async Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
+        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
             await ReloadAsync();
         }

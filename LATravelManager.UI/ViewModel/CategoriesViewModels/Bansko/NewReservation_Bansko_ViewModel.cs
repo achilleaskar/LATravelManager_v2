@@ -10,9 +10,12 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
 {
     public class NewReservation_Bansko_ViewModel : NewReservationGroup_Base
     {
+        public NewReservation_Bansko_ViewModel(GenericRepository genericRepository) : base(genericRepository)
+        {
+        }
         #region Methods
 
-        public override async Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
+        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
             try
             {

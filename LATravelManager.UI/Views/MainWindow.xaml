@@ -11,7 +11,6 @@
         Height="840"
         Width="1335"
         Closed="Window_Closed"
-        WindowState="Maximized"
         WindowStartupLocation="CenterScreen">
     <Window.IsEnabled>
         <Binding Path="BindableProperty"

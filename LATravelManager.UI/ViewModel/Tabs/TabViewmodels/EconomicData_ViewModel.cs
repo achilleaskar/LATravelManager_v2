@@ -6,6 +6,7 @@ using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
+using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Wrapper;
 using System;
 using System.Collections.Generic;
@@ -17,11 +18,11 @@ using System.Windows.Data;
 
 namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {
-    public class EconomicData_ViewModel : MyViewModelBase
+    public class EconomicData_ViewModel : MyViewModelBaseAsync
     {
         #region Constructors
 
-        public EconomicData_ViewModel()
+        public EconomicData_ViewModel(MainViewModel mainViewModel)
         {
             Excursions = new ObservableCollection<Excursion>();
             ExcursionsCollectionView = CollectionViewSource.GetDefaultView(Excursions);
@@ -31,6 +32,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             ShowEconomicDataCommand = new RelayCommand<string>(async (obj) => { await ShowEconomicData(obj); }, CanShowPayments);
             UsersList = new ObservableCollection<PaymentInfo>();
             From = To = DateTime.Today;
+            MainViewModel = mainViewModel;
         }
 
         #endregion Constructors
@@ -300,9 +302,21 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         #region Methods
 
-        public override async Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
+        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
-            await ReloadAsync();
+            try
+            {
+                await ReloadAsync();
+
+            }
+            catch (Exception ex)
+            {
+                MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
+            }
+            finally
+            {
+                IsLoaded = true;
+            }
         }
 
         public override async Task ReloadAsync()
@@ -385,7 +399,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-      
+
 
 
 
@@ -507,6 +521,8 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
+        public MainViewModel MainViewModel { get; }
+
         private async Task ShowEconomicData(string parameter)
         {
             try
@@ -552,7 +568,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                     }
                     if (!UsersList.Any(u => u.User.Id == payment.User.Id))
                     {
-                        UsersList.Add(new PaymentInfo { User = Users.Where(u => u.Id == payment.User.Id).FirstOrDefault() });
+                        UsersList.Add(new PaymentInfo(MainViewModel) { User = Users.Where(u => u.Id == payment.User.Id).FirstOrDefault() });
                     }
                     UsersList.Where(u => u.User.Id == payment.User.Id).FirstOrDefault().Payments.Add(payment);
                 }

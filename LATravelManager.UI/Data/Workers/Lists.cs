@@ -22,7 +22,7 @@ using static LATravelManager.Model.Enums;
 
 namespace LATravelManager.UI.Data.Workers
 {
-    public class Lists : MyViewModelBase
+    public class Lists : MyViewModelBaseAsync
     {
         #region Constructors
 
@@ -860,7 +860,7 @@ namespace LATravelManager.UI.Data.Workers
         public DateTime From { get; }
         public DateTime To { get; }
 
-        public override async Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
+        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
             GenericRepository = new GenericRepository();
             Hotels = new ObservableCollection<Hotel>(await GenericRepository.GetAllHotelsInCityAsync(Excursion.Destinations[0].Id));

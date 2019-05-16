@@ -14,27 +14,24 @@ namespace LATravelManager.UI.Views
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly MainViewModel _viewModel;
 
         public GenericRepository StartingRepository;
-
-        public MainWindow(MainViewModel viewModel)
+        public MainWindow()
         {
+          
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+          
+
             InitializeComponent();
-            _viewModel = viewModel;
-            DataContext = _viewModel;
-            Loaded += MainWindow_Loaded;
-            StartingRepository = new GenericRepository();
+
+
+
 #if DEBUG
-            Helpers.StaticResources.StartingPlaces = new ObservableCollection<StartingPlace>(StartingRepository.GetAllSortedByName<StartingPlace>());
+            //Helpers.StaticResources.StartingPlaces = new ObservableCollection<StartingPlace>(StartingRepository.GetAllSortedByName<StartingPlace>());
 #endif
         }
 
-        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            await _viewModel.LoadAsync(StartingRepository);
-        }
+   
 
         private async void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="LATravelManager.UI.Views.Bansko.NewReservation_Bansko_UserControl"
+﻿<UserControl x:Class="LATravelManager.UI.Views.Skiathos.NewReservation_Skiathos_UserControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -6,8 +6,8 @@
              xmlns:helpers="clr-namespace:LATravelManager.UI.Helpers"
              xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-             xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko"
-             d:DataContext="{d:DesignInstance viewmodels:NewReservation_Bansko_ViewModel}"
+             xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.CategoriesViewModels.Skiathos"
+             d:DataContext="{d:DesignInstance viewmodels:NewReservation_Skiathos_ViewModel}"
              mc:Ignorable="d"
              KeyUp="UserControl_KeyUp"
              Background="White"
@@ -40,7 +40,6 @@
                     Value="False" />
         </Style>
     </UserControl.Resources>
-
     <ScrollViewer HorizontalScrollBarVisibility="Auto"
                   VerticalScrollBarVisibility="Auto">
         <Grid VerticalAlignment="Top"
@@ -53,7 +52,6 @@
                               Visibility="Collapsed" />
             <StackPanel Orientation="Horizontal">
                 <GroupBox Header="Διαθέσιμα Δωμάτια"
-                          Margin="5"
                           VerticalAlignment="Top">
                     <StackPanel>
                         <StackPanel.Resources>
@@ -66,7 +64,6 @@
                                         Value="Center" />
                             </Style>
                         </StackPanel.Resources>
-
                         <ListView ItemsSource="{Binding FilteredRoomList}"
                                   Grid.Row="1"
                                   Width="460"
@@ -220,7 +217,6 @@
                             <StackPanel Orientation="Horizontal"
                                         Margin="0,5"
                                         HorizontalAlignment="Right">
-
                                 <CheckBox Content="Όλοι"
                                           IsChecked="{Binding All}"
                                           VerticalAlignment="Center"
@@ -285,7 +281,7 @@
                             </StackPanel>
                             <StackPanel Orientation="Horizontal"
                                         Margin="0,5,0,0"
-                                        Visibility="{Binding IsPartners,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource booleanToVisibilityConverter}}">
+                                        Visibility="{Binding BookingWr.IsPartners,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource booleanToVisibilityConverter}}">
                                 <ComboBox Width="140"
                                           ItemsSource="{Binding Partners}"
                                           SelectedIndex="{Binding SelectedPartnerIndex,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
@@ -306,7 +302,6 @@
                             <StackPanel Orientation="Horizontal"
                                         Margin="0 0 0 5"
                                         Visibility="{Binding IsPartners,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource booleanToVisibilityConverter}}">
-
                                 <TextBlock Text="Email:"
                                            VerticalAlignment="Center"
                                            HorizontalAlignment="Left" />
@@ -433,13 +428,14 @@
                                           IsChecked="{Binding OnlyStay}" />
                                 <CheckBox Content="HB"
                                           IsChecked="{Binding HB }" />
+                                <CheckBox Content="Διαφ. Ημ."
+                                          IsChecked="{Binding BookingWr.DifferentDates }" />
                             </StackPanel>
                             <ComboBox ItemsSource="{Binding Users}"
                                       SelectedIndex="{Binding SelectedUserIndex}"
                                       DisplayMemberPath="UserName"
                                       Visibility="{Binding Converter={StaticResource UserToVisibilityConverter},ConverterParameter=1,  Mode=OneWay}"
                                       VerticalAlignment="Center" />
-
                             <TextBlock Text="{Binding ErrorsInCanAddReservationToRoom}"
                                        HorizontalAlignment="Center"
                                        FontSize="14"
@@ -450,7 +446,6 @@
                         </StackPanel>
                     </GroupBox>
                 </Grid>
-
                 <Border BorderThickness="1"
                         Height="250"
                         Visibility="Collapsed"
@@ -488,7 +483,6 @@
                         </StackPanel>
                         <StackPanel Grid.Row="1"
                                     VerticalAlignment="Center">
-
                             <Separator />
                             <TextBlock Text="{Binding SelectedCustomer.Reservation.CheckIn, StringFormat='{}{0:dd/MM/yyyy}'}" />
                             <Separator Width="10" />
@@ -640,13 +634,12 @@
                     <DataGrid Margin="5"
                               FontSize="12"
                               Height="250"
-                              Width="663"
+                              Width="700"
                               CanUserSortColumns="False"
                               LoadingRow="DataGrid_LoadingRow"
                               PreparingCellForEdit="CustomersDataGrid_PreparingCellForEdit"
                               x:Name="CustomersDataGrid"
                               KeyUp="DataGrid_KeyDown"
-                              CanUserDeleteRows="False"
                               HorizontalAlignment="Left"
                               ItemsSource="{Binding BookingWr.Customers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                               AutoGenerateColumns="False"
@@ -656,29 +649,20 @@
                             <Style TargetType="{x:Type ComboBox}">
                                 <Setter Property="Margin"
                                         Value="0" />
-                                <Style.Triggers>
-                                    <Trigger Property="Validation.HasError"
-                                             Value="True">
-
-                                        <Setter Property="ToolTip"
-                                                Value="{Binding RelativeSource={RelativeSource Self},
-            Path=(Validation.Errors)[0].ErrorContent}" />
-                                    </Trigger>
-                                </Style.Triggers>
                             </Style>
                         </DataGrid.Resources>
-                        <DataGrid.RowHeaderStyle>
-                            <Style TargetType="{x:Type DataGridRowHeader}">
-                                <Setter Property="Width"
-                                        Value="20" />
-                            </Style>
-                        </DataGrid.RowHeaderStyle>
                         <DataGrid.RowStyle>
                             <StaticResource ResourceKey="RowStyle" />
                         </DataGrid.RowStyle>
                         <DataGrid.RowValidationRules>
                             <helpers:RowDataInfoValidationRule ValidationStep="UpdatedValue" />
                         </DataGrid.RowValidationRules>
+                        <DataGrid.RowHeaderStyle>
+                            <Style TargetType="{x:Type DataGridRowHeader}">
+                                <Setter Property="Width"
+                                        Value="20" />
+                            </Style>
+                        </DataGrid.RowHeaderStyle>
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Δωμάτιο"
                                                 IsReadOnly="True"
@@ -693,20 +677,14 @@
                             <DataGridTextColumn Header="Όνομα"
                                                 MaxWidth="200"
                                                 MinWidth="90"
-                                                ElementStyle="{StaticResource DataGridColumnStyle}"
-                                                EditingElementStyle="{StaticResource DataGridEditingColumnStyle}"
                                                 Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                             <DataGridTextColumn Header="Επίθετο"
                                                 MinWidth="90"
                                                 MaxWidth="200"
-                                                ElementStyle="{StaticResource DataGridColumnStyle}"
-                                                EditingElementStyle="{StaticResource DataGridEditingColumnStyle}"
                                                 Binding="{Binding Surename, UpdateSourceTrigger=PropertyChanged}" />
                             <DataGridTextColumn Header="Τηλέφωνο"
                                                 MinWidth="80"
                                                 MaxWidth="200"
-                                                ElementStyle="{StaticResource DataGridColumnStyle}"
-                                                EditingElementStyle="{StaticResource DataGridEditingColumnStyle}"
                                                 Binding="{Binding Tel, UpdateSourceTrigger=PropertyChanged}" />
                             <DataGridTemplateColumn Header="Αναχώρηση"
                                                     Width="100"
@@ -724,14 +702,25 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <DataGridTextColumn Header="Τιμή"
-                                                Width="55"
-                                                ElementStyle="{StaticResource DataGridColumnStyle}"
-                                                EditingElementStyle="{StaticResource DataGridEditingColumnStyle}"
+                                                Width="35"
                                                 FontWeight="DemiBold"
                                                 FontSize="14"
                                                 Binding="{Binding Price, UpdateSourceTrigger=PropertyChanged}" />
+                            <DataGridTemplateColumn Header="Γέννηση"
+                                                    CellStyle="{StaticResource DataGridCellStyle}"
+                                                    Visibility="{Binding DataContext.SelectedExcursion.DOBNeeded, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <DatePicker Width="Auto"
+                                                    VerticalAlignment="Center"
+                                                    MinWidth="60"
+                                                    SelectedDate="{Binding DOB}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                             <DataGridComboBoxColumn Header="Ηλικία"
-                                                    ItemsSource="{x:Static helpers:StaticResources.AgesList}">
+                                                    ItemsSource="{x:Static helpers:StaticResources.AgesList}"
+                                                    Visibility="{Binding DataContext.SelectedExcursion.AgeNeeded, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">
                                 <DataGridComboBoxColumn.ElementStyle>
                                     <Style TargetType="{x:Type ComboBox}">
                                         <Setter Property="SelectedIndex"
@@ -749,12 +738,60 @@
                                     </Style>
                                 </DataGridComboBoxColumn.EditingElementStyle>
                             </DataGridComboBoxColumn>
+                            <DataGridTextColumn Header="Αρ. Ταυτ."
+                                                MinWidth="80"
+                                                MaxWidth="200"
+                                                Binding="{Binding PassportNum,UpdateSourceTrigger=PropertyChanged}"
+                                                Visibility="{Binding DataContext.SelectedExcursion.PassportNeeded, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}" />
+                            <DataGridTemplateColumn Header="Πάσο"
+                                                    Width="70"
+                                                    Visibility="{Binding DataContext.SelectedExcursion.DiscountsExist, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox Name="test"
+                                                  SelectedIndex="{Binding DeserveDiscount,UpdateSourceTrigger=PropertyChanged}"
+                                                  Foreground="{Binding RelativeSource={RelativeSource Self},Path=SelectedIndex,ConverterParameter=0, Converter={StaticResource SelectedIndexToForegroundConverter},UpdateSourceTrigger=PropertyChanged}">
+                                            <ComboBoxItem Content="ΟΧΙ" />
+                                            <ComboBoxItem Content="ΦΟΙΤΗΤ." />
+                                            <ComboBoxItem Content="ΠΟΛΥΤΕΚΝ.." />
+                                        </ComboBox>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                             <DataGridTemplateColumn Header="Λεωφορείο"
                                                     Visibility="{Binding DataContext.SelectedExcursion.IncludesBus, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <ComboBox SelectedIndex="{Binding CustomerHasBusIndex, UpdateSourceTrigger=PropertyChanged}"
                                                   Foreground="{Binding SelectedIndex, ConverterParameter=0, Converter={StaticResource SelectedIndexToForegroundConverter}, RelativeSource={RelativeSource Self}, UpdateSourceTrigger=PropertyChanged}">
+                                            <ComboBoxItem Content="ΝΑΙ" />
+                                            <ComboBoxItem Content="ΜΟΝΟ ΠΗΓΑΙΝΕ" />
+                                            <ComboBoxItem Content="ΜΟΝΟ ΕΠΙΣΤΡΟΦΗ" />
+                                            <ComboBoxItem Content="ΟΧΙ" />
+                                        </ComboBox>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Πλοίο"
+                                                    Visibility="{Binding DataContext.SelectedExcursion.IncludesShip, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox SelectedIndex="{Binding CustomerHasShipIndex,UpdateSourceTrigger=PropertyChanged}"
+                                                  Foreground="{Binding RelativeSource={RelativeSource Self},Path=SelectedIndex,ConverterParameter=0, Converter={StaticResource SelectedIndexToForegroundConverter},UpdateSourceTrigger=PropertyChanged}">
+                                            <ComboBoxItem Content="ΝΑΙ" />
+                                            <ComboBoxItem Content="ΜΟΝΟ ΠΗΓΑΙΝΕ" />
+                                            <ComboBoxItem Content="ΜΟΝΟ ΕΠΙΣΤΡΟΦΗ" />
+                                            <ComboBoxItem Content="ΟΧΙ" />
+                                        </ComboBox>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Αεροπλάνο"
+                                                    Visibility="{Binding DataContext.SelectedExcursion.IncludesPlane, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox SelectedIndex="{Binding CustomerHasPlaneIndex,UpdateSourceTrigger=PropertyChanged}"
+                                                  Foreground="{Binding RelativeSource={RelativeSource Self},Path=SelectedIndex,ConverterParameter=0, Converter={StaticResource SelectedIndexToForegroundConverter},UpdateSourceTrigger=PropertyChanged}">
                                             <ComboBoxItem Content="ΝΑΙ" />
                                             <ComboBoxItem Content="ΜΟΝΟ ΠΗΓΑΙΝΕ" />
                                             <ComboBoxItem Content="ΜΟΝΟ ΕΠΙΣΤΡΟΦΗ" />
@@ -783,7 +820,6 @@
                     </DataGrid>
                     <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Center">
-
                         <TextBlock Text="{Binding ErrorsInDatagrid}"
                                    FontSize="14"
                                    Foreground="Red"
@@ -819,7 +855,8 @@
                             Command="{Binding CheckOutCommand}" />
                     <Button Content="Καθαρισμός"
                             Margin="5,5,5,0"
-                            Command="{Binding ClearBookingCommand}" />
+                            Command="{Binding ClearBookingCommand}"
+                            Click="Button_Click" />
                 </StackPanel>
             </Grid>
         </Grid>

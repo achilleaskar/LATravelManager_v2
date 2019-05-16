@@ -1,5 +1,6 @@
 ﻿using LaTravelManager.BaseTypes;
 using LATravelManager.Model.People;
+using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
@@ -13,18 +14,18 @@ namespace LATravelManager.UI.ViewModel.Management
 {
     public class PartnerManagement_ViewModel : AddEditBase<PartnerWrapper, Partner>
     {
-        public PartnerManagement_ViewModel(GenericRepository context) : base(context)
+        public PartnerManagement_ViewModel(BasicDataManager context) : base(context)
         {
             ControlName = "Διαχείριση Συνεργατών";
         }
 
-        public override async Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
+        public override void ReLoad(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
             try
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
 
-                MainCollection = new ObservableCollection<PartnerWrapper>((await Context.GetAllAsyncSortedByName<Partner>()).Select(p => new PartnerWrapper(p)));
+                MainCollection = new ObservableCollection<PartnerWrapper>((BasicDataManager.Partners).Select(p => new PartnerWrapper(p)));
             }
             catch (Exception ex)
             {
@@ -36,9 +37,6 @@ namespace LATravelManager.UI.ViewModel.Management
             }
         }
 
-        public override Task ReloadAsync()
-        {
-            throw new NotImplementedException();
-        }
+       
     }
 }

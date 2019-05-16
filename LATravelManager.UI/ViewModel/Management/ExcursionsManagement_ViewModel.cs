@@ -19,10 +19,10 @@ namespace LaTravelManager.ViewModel.Management
     {
         #region Constructors
 
-        public ExcursionsManagement_ViewModel(GenericRepository context) : base(context)
+        public ExcursionsManagement_ViewModel(BasicDataManager context) : base(context)
         {
             ControlName = "Διαχείριση Εκδρομών";
-            OpenCitiesEditCommand = new RelayCommand(async () => { await OpenCitiesWindow(); }, CanEditWindows);
+            OpenCitiesEditCommand = new RelayCommand(OpenCitiesWindow, CanEditWindows);
             RemoveDateCommand = new RelayCommand(RemoveDate, CanRemoveDate);
             RemoveCityCommand = new RelayCommand(RemoveCity, CanRemoveCity);
             AddCityCommand = new RelayCommand(AddCity, CanAddCity);
@@ -183,15 +183,17 @@ namespace LaTravelManager.ViewModel.Management
 
         public bool ShowFinished { get; set; }
 
-        public override async Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
+
+        public override void ReLoad(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
             try
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
 
-                MainCollection = new ObservableCollection<ExcursionWrapper>((await Context.GetAllGroupExcursionsAsync(showFinished: ShowFinished)).OrderBy(ex => ex, new ExcursionComparer()).Select(c => new ExcursionWrapper(c)));
-                Cities = new ObservableCollection<City>(await Context.GetAllCitiesAsyncSortedByName());
-                ExcursionCategories = new ObservableCollection<ExcursionCategory>(await Context.GetAllAsync<ExcursionCategory>());
+                MainCollection = new ObservableCollection<ExcursionWrapper>(BasicDataManager.Excursions.Where(c => ShowFinished || c.ExcursionDates.Any(d => d.CheckIn >= DateTime.Today)).Select(c => new ExcursionWrapper(c)));
+
+                Cities = BasicDataManager.Cities;
+                ExcursionCategories = BasicDataManager.ExcursionCategories;
             }
             catch (Exception ex)
             {
@@ -203,14 +205,14 @@ namespace LaTravelManager.ViewModel.Management
             }
         }
 
-        public async Task OpenCitiesWindow()
+        public void OpenCitiesWindow()
         {
             try
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
 
-                CitiesManagement_ViewModel vm = new CitiesManagement_ViewModel(Context);
-                await vm.LoadAsync();
+                CitiesManagement_ViewModel vm = new CitiesManagement_ViewModel(BasicDataManager);
+                vm.ReLoad();
                 MessengerInstance.Send(new OpenChildWindowCommand(new CitiesManagement_Window { DataContext = vm }));
             }
             catch (Exception ex)
@@ -223,10 +225,7 @@ namespace LaTravelManager.ViewModel.Management
             }
         }
 
-        public override Task ReloadAsync()
-        {
-            throw new NotImplementedException();
-        }
+
 
         private void AddCity()
         {
@@ -257,7 +256,7 @@ namespace LaTravelManager.ViewModel.Management
 
         private bool CanEditWindows()
         {
-            return Context.IsContextAvailable;
+            return true;
         }
 
         private bool CanRemoveCity()

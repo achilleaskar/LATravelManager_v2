@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 {
-    public class NewReservation_Personal_ViewModel : MyViewModelBase
+    public class NewReservation_Personal_ViewModel : MyViewModelBaseAsync
     {
 
         #region Constructors
@@ -303,7 +303,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 
         #region Methods
 
-        public override async Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
+        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
             try
             {

@@ -3,6 +3,7 @@ using LATravelManager.Model.Excursions;
 using LATravelManager.Model.LocalModels;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Wrapper;
+using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.Wrapper;
@@ -17,7 +18,7 @@ using System.Windows.Input;
 
 namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {
-    public class Info_ViewModel : MyViewModelBase
+    public class Info_ViewModel : MyViewModelBaseAsync
     {
         #region Constructors
 
@@ -235,11 +236,25 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         #region Methods
 
-        public override async Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
+        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
-            Context = new GenericRepository();
+           
 
-            Excursions = new ObservableCollection<Excursion>((await Context.GetAllAsync<Excursion>()).OrderBy(e => e.ExcursionDates.OrderBy(ed => ed.CheckIn).FirstOrDefault().CheckIn));
+            try
+            {
+                Context = new GenericRepository();
+
+                Excursions = new ObservableCollection<Excursion>((await Context.GetAllAsync<Excursion>()).OrderBy(e => e.ExcursionDates.OrderBy(ed => ed.CheckIn).FirstOrDefault().CheckIn));
+
+            }
+            catch (Exception ex)
+            {
+                MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
+            }
+            finally
+            {
+                IsLoaded = true;
+            }
         }
 
         public override Task ReloadAsync()

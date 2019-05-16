@@ -13,9 +13,9 @@
         <DataTemplate DataType="{x:Type viewmodels:NewReservation_Personal_ViewModel}">
             <views:NewReservation_Personal_UserControl />
         </DataTemplate>
-        <DataTemplate DataType="{x:Type viewmodels:Search_Personal_ViewModel}">
+        <!--<DataTemplate DataType="{x:Type viewmodels:Search_Personal_ViewModel}">
             <views:Search_Personal_UserControl />
-        </DataTemplate>
+        </DataTemplate>-->
         <!--<DataTemplate DataType="{x:Type viewmodels:MoveReservation_Bansko_ViewModel}">
             <views:MoveReservation_Bansko_UserControl />
         </DataTemplate>

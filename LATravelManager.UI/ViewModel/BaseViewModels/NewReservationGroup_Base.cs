@@ -26,13 +26,13 @@ using static LATravelManager.Model.Enums;
 
 namespace LATravelManager.UI.ViewModel.BaseViewModels
 {
-    public abstract class NewReservationGroup_Base : MyViewModelBase
+    public abstract class NewReservationGroup_Base : MyViewModelBaseAsync
     {
         #region Constructors
 
-        public NewReservationGroup_Base()
+        public NewReservationGroup_Base(GenericRepository genericRepository)
         {
-            GenericRepository = new GenericRepository();
+            GenericRepository = genericRepository;
             NewReservationHelper = new NewReservationHelper(RefreshableContext);
             RoomsManager = new RoomsManager();
 
@@ -714,7 +714,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
-        public override abstract Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null);
+        public override abstract Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null);
 
         public override async Task ReloadAsync()
         {

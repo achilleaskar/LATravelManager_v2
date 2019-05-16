@@ -7,32 +7,37 @@
              xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.Parents"
              xmlns:tabs="clr-namespace:LATravelManager.UI.ViewModel.Tabs.TabViewmodels"
              xmlns:tabViews="clr-namespace:LATravelManager.UI.Views.Tabs"
-             xmlns:windows="clr-namespace:LATravelManager.UI.ViewModel.Window_ViewModels"
-             d:DataContext="{d:DesignInstance windows:MainUserControl_ViewModel}"
+             xmlns:viewmodel="clr-namespace:LATravelManager.UI.ViewModel.Window_ViewModels"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             d:DataContext="{d:DesignInstance viewmodel:MainUserControl_ViewModel}"
              x:Class="LATravelManager.UI.Views.Main_UserControl"
              mc:Ignorable="d"
              Background="White"
              d:DesignHeight="450"
              d:DesignWidth="800">
-        <UserControl.Resources>
-            <DataTemplate DataType="{x:Type viewmodels:BanskoParent_ViewModel}">
-                <views:Bansko_UserControl />
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type viewmodels:GroupParent_ViewModel}">
-                <views:GroupExcursions_UserControl />
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type viewmodels:PersonalParent_ViewModel}">
-                <views:Personal_UserControl />
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type tabs:GlobalSearch_ViewModel}">
-                <tabViews:GlobalSearch_UserControl />
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type tabs:Info_ViewModel}">
-                <tabViews:InfoTab_UserControl />
-            </DataTemplate>  <DataTemplate DataType="{x:Type tabs:EconomicData_ViewModel}">
-                <tabViews:EconomicData_UserControl />
-            </DataTemplate>
-            <!--  <DataTemplate DataType="{x:Type viewmodels:PersonalExcursion_ViewModel}">
+    <UserControl.Resources>
+        <DataTemplate DataType="{x:Type viewmodels:BanskoParent_ViewModel}">
+            <views:Bansko_UserControl />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:GroupParent_ViewModel}">
+            <views:GroupExcursions_UserControl />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:PersonalParent_ViewModel}">
+            <views:Personal_UserControl />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:SkiathosParent_ViewModel}">
+            <views:Skiathos_UserControl />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type tabs:GlobalSearch_ViewModel}">
+            <tabViews:GlobalSearch_UserControl />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type tabs:Info_ViewModel}">
+            <tabViews:InfoTab_UserControl />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type tabs:EconomicData_ViewModel}">
+            <tabViews:EconomicData_UserControl />
+        </DataTemplate>
+        <!--  <DataTemplate DataType="{x:Type viewmodels:PersonalExcursion_ViewModel}">
                 <views:PersonalExcursions_UserControl />
             </DataTemplate>
             <DataTemplate DataType="{x:Type viewmodels:ThirdPartyExcursions_ViewModel}">
@@ -41,7 +46,7 @@
             <DataTemplate DataType="{x:Type viewmodels:AddRooms_ViewModel}">
                 <views:AddRooms_UserControl />
             </DataTemplate>-->
-        </UserControl.Resources>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -92,7 +97,6 @@
                 </Border>
                 <Label Content="{Binding UserName}" />
                 <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
-
                 <Button Content="Αποσύνδεση"
                         Margin="5,0"
                         VerticalAlignment="Center"
@@ -111,6 +115,11 @@
             <TabControl Grid.Column="1"
                         SelectedIndex="{Binding SelectedTemplateIndex}"
                         ItemsSource="{Binding Templates}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction Command="{Binding Path=SelectedTemplateChanged, Mode=OneWay}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
                 <TabControl.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Name}"

@@ -5,6 +5,7 @@ using LATravelManager.Model.BookingData;
 using LATravelManager.Model.People;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Group;
+using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Views.Bansko;
 using System;
 using System.Collections.ObjectModel;
@@ -14,126 +15,36 @@ namespace LATravelManager.UI.Helpers
 {
     public class PaymentInfo : ViewModelBase
     {
+
         #region Constructors
 
-        private float _Total;
-
-        public float Total
+        public PaymentInfo(MainViewModel mainViewModel)
         {
-            get
-            {
-                return _Total;
-            }
-
-            set
-            {
-                if (_Total == value)
-                {
-                    return;
-                }
-
-                _Total = value;
-                RaisePropertyChanged();
-            }
+            Payments = new ObservableCollection<Payment>();
+            OpenBookingCommand = new RelayCommand(async () => { await OpenBooking(); }, CanOpenBooking);
+            MainViewModel = mainViewModel;
         }
 
-        private float _Cash;
+        #endregion Constructors
 
-        public float Cash
-        {
-            get
-            {
-                return _Cash;
-            }
-
-            set
-            {
-                if (_Cash == value)
-                {
-                    return;
-                }
-
-                _Cash = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private float _Peiraios;
-
-
-        public float Peiraios
-        {
-            get
-            {
-                return _Peiraios;
-            }
-
-            set
-            {
-                if (_Peiraios == value)
-                {
-                    return;
-                }
-
-                _Peiraios = value;
-                RaisePropertyChanged();
-            }
-        }
-
-
-
-
-        private float _Ethniki;
-
-
-        public float Ethniki
-        {
-            get
-            {
-                return _Ethniki;
-            }
-
-            set
-            {
-                if (_Ethniki == value)
-                {
-                    return;
-                }
-
-                _Ethniki = value;
-                RaisePropertyChanged();
-            }
-        }
-
-
-
-
-        private float _Eurobank;
-
-
-        public float Eurobank
-        {
-            get
-            {
-                return _Eurobank;
-            }
-
-            set
-            {
-                if (_Eurobank == value)
-                {
-                    return;
-                }
-
-                _Eurobank = value;
-                RaisePropertyChanged();
-            }
-        }
-
-
+        #region Fields
 
         private float _AlphaBank;
+        private float _Cash;
+        private float _Ethniki;
+        private float _Eurobank;
+        private ObservableCollection<Payment> _Payments;
+        private float _Peiraios;
+        private Payment _SelectedPayment;
+        private float _Total;
 
+        private User _User;
+
+        private float _VISA;
+
+        #endregion Fields
+
+        #region Properties
 
         public float AlphaBank
         {
@@ -154,7 +65,158 @@ namespace LATravelManager.UI.Helpers
             }
         }
 
-        private float _VISA;
+        public float Cash
+        {
+            get
+            {
+                return _Cash;
+            }
+
+            set
+            {
+                if (_Cash == value)
+                {
+                    return;
+                }
+
+                _Cash = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public float Ethniki
+        {
+            get
+            {
+                return _Ethniki;
+            }
+
+            set
+            {
+                if (_Ethniki == value)
+                {
+                    return;
+                }
+
+                _Ethniki = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public float Eurobank
+        {
+            get
+            {
+                return _Eurobank;
+            }
+
+            set
+            {
+                if (_Eurobank == value)
+                {
+                    return;
+                }
+
+                _Eurobank = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public RelayCommand OpenBookingCommand { get; set; }
+
+        public ObservableCollection<Payment> Payments
+        {
+            get
+            {
+                return _Payments;
+            }
+
+            set
+            {
+                if (_Payments == value)
+                {
+                    return;
+                }
+
+                _Payments = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public float Peiraios
+        {
+            get
+            {
+                return _Peiraios;
+            }
+
+            set
+            {
+                if (_Peiraios == value)
+                {
+                    return;
+                }
+
+                _Peiraios = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public Payment SelectedPayment
+        {
+            get
+            {
+                return _SelectedPayment;
+            }
+
+            set
+            {
+                if (_SelectedPayment == value)
+                {
+                    return;
+                }
+
+                _SelectedPayment = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public float Total
+        {
+            get
+            {
+                return _Total;
+            }
+
+            set
+            {
+                if (_Total == value)
+                {
+                    return;
+                }
+
+                _Total = value;
+                RaisePropertyChanged();
+            }
+        }
+        public User User
+        {
+            get
+            {
+                return _User;
+            }
+
+            set
+            {
+                if (_User == value)
+                {
+                    return;
+                }
+
+                _User = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public float VISA
         {
@@ -175,21 +237,11 @@ namespace LATravelManager.UI.Helpers
             }
         }
 
-        public PaymentInfo()
-        {
-            Payments = new ObservableCollection<Payment>();
-            OpenBookingCommand = new RelayCommand(async () => { await OpenBooking(); }, CanOpenBooking);
-        }
+        public MainViewModel MainViewModel { get; }
 
-        #endregion Constructors
+        #endregion Properties
 
-        #region Fields
-
-        private ObservableCollection<Payment> _Payments;
-        private Payment _SelectedPayment;
-        private User _User;
-
-        #endregion Fields
+        #region Methods
 
         public void LoadAmounts()
         {
@@ -223,72 +275,6 @@ namespace LATravelManager.UI.Helpers
 
             }
         }
-
-        #region Properties
-
-        public RelayCommand OpenBookingCommand { get; set; }
-
-        public ObservableCollection<Payment> Payments
-        {
-            get
-            {
-                return _Payments;
-            }
-
-            set
-            {
-                if (_Payments == value)
-                {
-                    return;
-                }
-
-                _Payments = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public Payment SelectedPayment
-        {
-            get
-            {
-                return _SelectedPayment;
-            }
-
-            set
-            {
-                if (_SelectedPayment == value)
-                {
-                    return;
-                }
-
-                _SelectedPayment = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public User User
-        {
-            get
-            {
-                return _User;
-            }
-
-            set
-            {
-                if (_User == value)
-                {
-                    return;
-                }
-
-                _User = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        #endregion Properties
-
-        #region Methods
-
         private bool CanOpenBooking()
         {
             return SelectedPayment != null;
@@ -298,7 +284,7 @@ namespace LATravelManager.UI.Helpers
         {
             try
             {
-                NewReservation_Group_ViewModel viewModel = new NewReservation_Group_ViewModel();
+                NewReservation_Group_ViewModel viewModel = new NewReservation_Group_ViewModel(MainViewModel.StartingRepository);
                 await viewModel.LoadAsync(SelectedPayment.Booking.Id);
                 MessengerInstance.Send(new OpenChildWindowCommand(new EditBooking_Bansko_Window(), viewModel));
             }
@@ -309,5 +295,6 @@ namespace LATravelManager.UI.Helpers
         }
 
         #endregion Methods
+
     }
 }

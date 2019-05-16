@@ -9,6 +9,7 @@ using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Group;
+using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Views.Bansko;
 using LATravelManager.UI.Wrapper;
 using System;
@@ -21,11 +22,11 @@ using System.Windows.Data;
 
 namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {
-    internal class GlobalSearch_ViewModel : MyViewModelBase
+    internal class GlobalSearch_ViewModel : MyViewModelBaseAsync
     {
         #region Constructors
 
-        public GlobalSearch_ViewModel()
+        public GlobalSearch_ViewModel(MainViewModel mainViewModel)
         {
             FilteredReservations = new ObservableCollection<ReservationWrapper>();
             ReservationsCollectionView = CollectionViewSource.GetDefaultView(FilteredReservations);
@@ -45,6 +46,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
             CheckIn = DateTime.Today;
             CheckOut = DateTime.Today.AddDays(3);
+            MainViewModel = mainViewModel;
             // MessengerInstance.Register<SelectedExcursionChangedMessage>(this, async exc => { await SelectedExcursionChanged(exc.SelectedExcursion); });
         }
 
@@ -431,9 +433,22 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         #region Methods
 
-        public override async Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
+        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
-            await ReloadAsync();
+          
+
+            try
+            {
+                await ReloadAsync();
+            }
+            catch (Exception ex)
+            {
+                MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
+            }
+            finally
+            {
+                IsLoaded = true;
+            }
         }
 
         public override async Task ReloadAsync()
@@ -505,6 +520,8 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
+        public MainViewModel MainViewModel { get; }
+
         private bool CanShowReservations(string arg)
         {
             return IsOk;
@@ -540,7 +557,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         {
             try
             {
-                NewReservation_Group_ViewModel viewModel = new NewReservation_Group_ViewModel();
+                NewReservation_Group_ViewModel viewModel = new NewReservation_Group_ViewModel(MainViewModel.StartingRepository);
                 await viewModel.LoadAsync(SelectedReservation.Booking.Id);
                 MessengerInstance.Send(new OpenChildWindowCommand(new EditBooking_Bansko_Window(), viewModel));
             }

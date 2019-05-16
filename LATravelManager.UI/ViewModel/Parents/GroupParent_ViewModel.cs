@@ -1,23 +1,22 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
 using LATravelManager.UI.Helpers;
-using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Group;
 using LATravelManager.UI.ViewModel.Tabs;
 using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
+using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Wrapper;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace LATravelManager.UI.ViewModel.Parents
 {
     public class GroupParent_ViewModel : ExcursionCategory_ViewModelBase
     {
-        public GroupParent_ViewModel(GenericRepository startingReposiroty, NavigationViewModel navigationViewModel) : base(startingReposiroty, navigationViewModel)
+        public GroupParent_ViewModel(MainViewModel mainViewModel) : base(mainViewModel)
         {
             GroupExcursions = new ObservableCollection<ExcursionWrapper>();
-            UpdateExcursionsCommand = new RelayCommand(async () => { await ReloadAsync(); }, CanUpdate);
+            UpdateExcursionsCommand = new RelayCommand(Reload, CanUpdate);
 
             Tabs.Add(new MakeReservationTab { Index = Tabs.Count });
             // Tabs.Add(new SearchTab { Index = Tabs.Count });
@@ -27,7 +26,7 @@ namespace LATravelManager.UI.ViewModel.Parents
             LoadChildViewModels();
         }
 
-        public bool Enable => SelectedExcursion != null || SelectedChildViewModel is GlobalSearch_ViewModel|| SelectedChildViewModel is Info_ViewModel; 
+        public bool Enable => SelectedExcursion != null || SelectedChildViewModel is GlobalSearch_ViewModel || SelectedChildViewModel is Info_ViewModel;
 
         public override void ChildChanged()
         {
@@ -37,12 +36,12 @@ namespace LATravelManager.UI.ViewModel.Parents
 
         private bool CanUpdate()
         {
-            return StartingReposiroty.IsContextAvailable;
+            return BasicDataManager.IsContextAvailable;
         }
 
-        public override async Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
+        public override void Load(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
-            GroupExcursions = new ObservableCollection<ExcursionWrapper>((await StartingReposiroty.GetAllGroupExcursionsAsync()).OrderBy(ex => ex, new ExcursionComparer()).Select(c => new ExcursionWrapper(c)));
+            GroupExcursions = new ObservableCollection<ExcursionWrapper>(BasicDataManager.GroupExcursions.Select(c => new ExcursionWrapper(c)));
         }
 
         public RelayCommand UpdateExcursionsCommand { get; set; }
@@ -70,21 +69,16 @@ namespace LATravelManager.UI.ViewModel.Parents
 
         public void LoadChildViewModels()
         {
-            Childs.Add(new NewReservation_Group_ViewModel());
+            Childs.Add(new NewReservation_Group_ViewModel(MainViewModel.StartingRepository));
             //Childs.Add(new Search_Group_ViewModel());
             //Childs.Add(new MoveReservation_Bansko_ViewModel());
             //Childs.Add(new Lists_Bansko_ViewModel());
             //Childs.Add(new OptionalActivities_Bansko_ViewModel());
         }
 
-        public override async Task ReloadAsync()
+        public override void Reload()
         {
-            if (StartingReposiroty != null && !StartingReposiroty.IsTaskOk)
-            {
-                await StartingReposiroty.LastTask;
-            }
-            StartingReposiroty = new GenericRepository();
-            GroupExcursions = new ObservableCollection<ExcursionWrapper>((await StartingReposiroty.GetAllGroupExcursionsAsync()).OrderBy(ex => ex, new ExcursionComparer()).Select(c => new ExcursionWrapper(c)));
+            Load();
             UpdateExcursionsCommand.RaiseCanExecuteChanged();
         }
     }

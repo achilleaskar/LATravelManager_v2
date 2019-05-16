@@ -2,6 +2,7 @@
 using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Wrapper;
+using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.Security;
 using LATravelManager.UI.ViewModel.BaseViewModels;
@@ -17,7 +18,7 @@ namespace LaTravelManager.ViewModel.Management
     {
         #region Constructors
 
-        public UsersManagement_viewModel(GenericRepository context) : base(context)
+        public UsersManagement_viewModel(BasicDataManager context) : base(context)
         {
             ControlName = "Διαχείριση Χρηστών";
             PassWord = new SecureString();
@@ -163,19 +164,16 @@ namespace LaTravelManager.ViewModel.Management
                 SelectedEntity = new UserWrapper();
             }
 
-            return Context.HasChanges() && Context.IsContextAvailable;
+            return BasicDataManager.HasChanges() && BasicDataManager.IsContextAvailable;
         }
 
-        public override async Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
+        public override void ReLoad(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
-            MainCollection = new ObservableCollection<UserWrapper>((await Context.GetAllUsersAsyncSortedByUserName()).Select(u => new UserWrapper(u)));
-            BaseLocations = new ObservableCollection<StartingPlace>(await Context.GetAllAsyncSortedByName<StartingPlace>());
+            MainCollection = new ObservableCollection<UserWrapper>((BasicDataManager.Users).Select(u => new UserWrapper(u)));
+            BaseLocations = new ObservableCollection<StartingPlace>(BasicDataManager.StartingPlaces);
         }
 
-        public override Task ReloadAsync()
-        {
-            throw new NotImplementedException();
-        }
+
 
         #endregion Methods
     }

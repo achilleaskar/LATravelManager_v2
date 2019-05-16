@@ -228,12 +228,12 @@
     <Compile Include="NotifyTaskCompletion.cs" />
     <Compile Include="ViewModel\BaseViewModels\AddEditBase.cs" />
     <Compile Include="ViewModel\BaseViewModels\GroupChilds_BaseViewModel.cs" />
+    <Compile Include="ViewModel\BaseViewModels\IViewModel.cs" />
+    <Compile Include="ViewModel\BaseViewModels\MyViewModelBase.cs" />
     <Compile Include="ViewModel\BaseViewModels\NewReservationGroup_Base.cs" />
-    <Compile Include="ViewModel\CategoriesViewModels\Bansko\Search_Bansko_ViewModel.cs" />
     <Compile Include="ViewModel\CategoriesViewModels\Group\NewReservation_Group_ViewModel.cs" />
-    <Compile Include="ViewModel\CategoriesViewModels\Group\Search_Group_ViewModel.cs" />
     <Compile Include="ViewModel\CategoriesViewModels\Personal\NewReservation_Personal_ViewModel.cs" />
-    <Compile Include="ViewModel\CategoriesViewModels\Personal\Search_Personal_ViewModel.cs" />
+    <Compile Include="ViewModel\CategoriesViewModels\Skiathos\NewReservation_Skiathos_ViewModel.cs" />
     <Compile Include="ViewModel\Management\CitiesManagement_ViewModel.cs" />
     <Compile Include="ViewModel\Management\CountriesManagement_ViewModel.cs" />
     <Compile Include="ViewModel\Management\ExcursionsManagement_ViewModel.cs" />
@@ -254,7 +254,7 @@
     <Compile Include="ViewModel\BaseViewModels\BanskoChilds_BaseViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModels\ExcursionCategory_ViewModelBase.cs" />
     <Compile Include="ViewModel\BaseViewModels\INavigationViewModel.cs" />
-    <Compile Include="ViewModel\BaseViewModels\IViewModel.cs" />
+    <Compile Include="ViewModel\BaseViewModels\IViewModelAsync.cs" />
     <Compile Include="ViewModel\Tabs\EconomicData_Tab.cs" />
     <Compile Include="ViewModel\Tabs\GlobalSearchTab.cs" />
     <Compile Include="ViewModel\Tabs\InfoTab.cs" />
@@ -262,14 +262,14 @@
     <Compile Include="ViewModel\Tabs\TabViewmodels\GlobalSearch_ViewModel.cs" />
     <Compile Include="ViewModel\Tabs\TabViewmodels\Info_ViewModel.cs" />
     <Compile Include="ViewModel\Window_ViewModels\MainUserControl_ViewModel.cs" />
-    <Compile Include="ViewModel\BaseViewModels\MyViewModelBase.cs" />
+    <Compile Include="ViewModel\BaseViewModels\MyViewModelBaseAsync.cs" />
     <Compile Include="ViewModel\BaseViewModels\TabsBaseViewModel.cs" />
     <Compile Include="ViewModel\Parents\BanskoParent_ViewModel.cs" />
     <Compile Include="ViewModel\CategoriesViewModels\Bansko\NewReservation_Bansko_ViewModel.cs" />
     <Compile Include="ViewModel\CategoriesViewModels\ChildViewModel.cs" />
     <Compile Include="ViewModel\CategoriesViewModels\IChildViewModel.cs" />
     <Compile Include="ViewModel\Parents\PersonalParent_ViewModel.cs" />
-    <Compile Include="ViewModel\CategoriesViewModels\Skiathos\SkiathosParent_ViewModel.cs" />
+    <Compile Include="ViewModel\Parents\SkiathosParent_ViewModel.cs" />
     <Compile Include="ViewModel\CategoriesViewModels\ThirdParty\ThirdPartyParent_ViewModel.cs" />
     <Compile Include="ViewModel\Tabs\AddRoomsTab.cs" />
     <Compile Include="ViewModel\Tabs\ListManagementTab.cs" />
@@ -302,9 +302,6 @@
     <Compile Include="Views\Bansko\OptionalActivities_Bansko_UserControl.xaml.cs">
       <DependentUpon>OptionalActivities_Bansko_UserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Bansko\Search_Bansko_UserControl.xaml.cs">
-      <DependentUpon>Search_Bansko_UserControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Bansko_UserControl.xaml.cs">
       <DependentUpon>Bansko_UserControl.xaml</DependentUpon>
     </Compile>
@@ -313,9 +310,6 @@
     </Compile>
     <Compile Include="Views\Group\NewReservation_Group_UserControl.xaml.cs">
       <DependentUpon>NewReservation_Group_UserControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Group\Search_Group_UserControl.xaml.cs">
-      <DependentUpon>Search_Group_UserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Login_UserControl.xaml.cs">
       <DependentUpon>Login_UserControl.xaml</DependentUpon>
@@ -350,14 +344,17 @@
     <Compile Include="Views\Personal\NewReservation_Personal_UserControl.xaml.cs">
       <DependentUpon>NewReservation_Personal_UserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Personal\Search_Personal_UserControl.xaml.cs">
-      <DependentUpon>Search_Personal_UserControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Personal_UserControl.xaml.cs">
       <DependentUpon>Personal_UserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Services\PlaneService_UserControl.xaml.cs">
       <DependentUpon>PlaneService_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Skiathos\NewReservation_Skiathos_UserControl.xaml.cs">
+      <DependentUpon>NewReservation_Skiathos_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Skiathos_UserControl.xaml.cs">
+      <DependentUpon>Skiathos_UserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Tabs\EconomicData_UserControl.xaml.cs">
       <DependentUpon>EconomicData_UserControl.xaml</DependentUpon>
@@ -413,10 +410,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Bansko\Search_Bansko_UserControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\Bansko_UserControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -428,10 +421,6 @@
     <Page Include="Views\Group\NewReservation_Group_UserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Group\Search_Group_UserControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Views\Login_UserControl.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -477,10 +466,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Personal\Search_Personal_UserControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Personal_UserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -488,6 +473,14 @@
     <Page Include="Views\Services\PlaneService_UserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Skiathos\NewReservation_Skiathos_UserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Skiathos_UserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Tabs\EconomicData_UserControl.xaml">
       <SubType>Designer</SubType>
@@ -573,7 +566,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <SplashScreen Include="Images\01_latravel_logo1.jpg" />
+    <None Include="Images\01_latravel_logo1.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Resource Include="Images\gobansko.jpg" />
     <Resource Include="Images\gotoskiathos.jpg" />
     <Resource Include="Images\icon.png" />
@@ -606,6 +601,11 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="latravel_logo1.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild" Condition=" '$(Configuration)' == 'Release'">

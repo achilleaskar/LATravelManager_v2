@@ -1,5 +1,8 @@
-﻿using LATravelManager.UI.Message;
+﻿using GalaSoft.MvvmLight;
+using LATravelManager.UI.Helpers;
+using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
+using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Wrapper;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,27 +13,29 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
     {
         #region Constructors
 
-        public ExcursionCategory_ViewModelBase(GenericRepository startingReposiroty, NavigationViewModel navigationViewModel)
+       public BasicDataManager BasicDataManager => MainViewModel.BasicDataManager;
+
+
+        public ExcursionCategory_ViewModelBase(MainViewModel mainViewModel)
         {
-            Childs = new List<MyViewModelBase>();
+            Childs = new List<MyViewModelBaseAsync>();
             Tabs = new List<TabsBaseViewModel>();
-            StartingReposiroty = startingReposiroty;
-            NavigationViewModel = navigationViewModel;
+            MainViewModel = mainViewModel;
         }
 
         #endregion Constructors
 
         #region Fields
 
-        private List<MyViewModelBase> _Childs;
-        private MyViewModelBase _SelectedChildViewModel;
+        private List<MyViewModelBaseAsync> _Childs;
+        private MyViewModelBaseAsync _SelectedChildViewModel;
         private ExcursionWrapper _SelectedExcursion;
 
         #endregion Fields
 
         #region Properties
 
-        public List<MyViewModelBase> Childs
+        public List<MyViewModelBaseAsync> Childs
         {
             get
             {
@@ -49,9 +54,8 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
-        public NavigationViewModel NavigationViewModel { get; }
 
-        public MyViewModelBase SelectedChildViewModel
+        public MyViewModelBaseAsync SelectedChildViewModel
         {
             get
             {
@@ -93,8 +97,8 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
-        public GenericRepository StartingReposiroty { get; set; }
         public List<TabsBaseViewModel> Tabs { get; internal set; }
+        public MainViewModel MainViewModel { get; }
 
         #endregion Properties
 

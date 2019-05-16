@@ -222,7 +222,7 @@ namespace LATravelManager.UI.Wrapper
                 (new RoomWrapper(reservationWr.Room)).CancelReservation(reservationWr);
             if (reservationWr.NoNameRoom != null)
                 (new RoomWrapper(reservationWr.NoNameRoom)).CancelReservation(reservationWr);
-            reservationWr.NoNameRoom = this.Model;
+            reservationWr.NoNameRoom = Model;
             PlanDailyInfo tmpPlanInfo = null;
             RoomStateEnum roomState = RoomStateEnum.MovaBleNoName;
             while (tmpDate < reservationWr.CheckOut)

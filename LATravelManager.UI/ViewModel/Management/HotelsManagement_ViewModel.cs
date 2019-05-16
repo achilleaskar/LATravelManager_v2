@@ -1,6 +1,7 @@
 ﻿using LaTravelManager.BaseTypes;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.Locations;
+using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
@@ -14,7 +15,7 @@ namespace LaTravelManager.ViewModel.Management
 {
     public class HotelsManagement_ViewModel : AddEditBase<HotelWrapper, Hotel>
     {
-        public HotelsManagement_ViewModel(GenericRepository context) : base(context)
+        public HotelsManagement_ViewModel(BasicDataManager context) : base(context)
         {
             ControlName = "Διαχείριση Ξενοδοχείων";
         }
@@ -69,28 +70,18 @@ namespace LaTravelManager.ViewModel.Management
             }
         }
 
-        public override async Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
+        public override void ReLoad(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
             try
             {
-                if (Context.HasChanges())
-                {
-                    await Context.SaveAsync();
-                }
 
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
 
-                Cities = new ObservableCollection<City>(await Context.GetAllCitiesAsyncSortedByName());
-                HotelCategories = new ObservableCollection<HotelCategory>(await Context.GetAllAsync<HotelCategory>());
-                if (Context.HasChanges())
-                {
-                    await Context.SaveAsync();
-                }
-                MainCollection = new ObservableCollection<HotelWrapper>((await Context.GetAllAsyncSortedByName<Hotel>()).Select(c => new HotelWrapper(c)));
-                if (Context.HasChanges())
-                {
-                    await Context.SaveAsync();
-                }
+                Cities = BasicDataManager.Cities;
+                HotelCategories = BasicDataManager.HotelCategories;
+
+                MainCollection = new ObservableCollection<HotelWrapper>(BasicDataManager.Hotels.Select(c => new HotelWrapper(c)));
+
             }
             catch (Exception ex)
             {
@@ -100,11 +91,6 @@ namespace LaTravelManager.ViewModel.Management
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(false));
             }
-        }
-
-        public override Task ReloadAsync()
-        {
-            throw new NotImplementedException();
         }
     }
 }

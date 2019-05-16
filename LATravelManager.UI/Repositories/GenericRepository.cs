@@ -21,7 +21,7 @@ namespace LATravelManager.UI.Repositories
 
         public GenericRepository()
         {
-            this.Context = new MainDatabase();
+            Context = new MainDatabase();
             Context.Database.Log = Console.Write;
             IsContextAvailable = true;
         }
@@ -115,9 +115,9 @@ namespace LATravelManager.UI.Repositories
 
         internal async Task LoadBasic()
         {
-           await Context.RoomTypes.LoadAsync();
-           await Context.Countries.LoadAsync();
-           await Context.Hotels.LoadAsync();
+            await Context.RoomTypes.LoadAsync();
+            await Context.Countries.LoadAsync();
+            await Context.Hotels.LoadAsync();
         }
 
         public async Task<IEnumerable<Reservation>> GetAllReservationsByCreationDate(DateTime afterThisDay, int excursionId)
@@ -181,13 +181,13 @@ namespace LATravelManager.UI.Repositories
             {
 
                 return await RunTask(Context.Set<Excursion>()
-                .Where(c => c.ExcursionType.Category == Enums.ExcursionTypeEnum.Group && (showFinished || c.ExcursionDates.Any(d => d.CheckIn >= DateTime.Today)))
+                .Where(c => c.ExcursionType.Category == Enums.ExcursionTypeEnum.Group)
                 .Include(c => c.Destinations.Select(d => d.Country))
                 .Include(c => c.ExcursionType)
                 .Include(c => c.ExcursionDates)
                 .ToListAsync);
             }
-            catch (Exception )
+            catch (Exception)
             {
 
                 return null;
@@ -218,7 +218,7 @@ namespace LATravelManager.UI.Repositories
             {
                 return Context.Set<TEntity>().OrderBy(x => x.Name).ToList();
             }
-            catch (Exception )
+            catch (Exception)
             {
                 return null;
             }
@@ -268,16 +268,16 @@ namespace LATravelManager.UI.Repositories
         public List<TEntity> GetAllAsyncLocal<TEntity>(Expression<Func<TEntity, bool>> filter = null) where TEntity : BaseModel
         {
 
-            return  Context.Set<TEntity>().Local.ToList();
+            return Context.Set<TEntity>().Local.ToList();
         }
 
-            public async Task<List<TEntity>> GetAllAsync<TEntity>(Expression<Func<TEntity, bool>> filter = null) where TEntity : BaseModel
+        public async Task<List<TEntity>> GetAllAsync<TEntity>(Expression<Func<TEntity, bool>> filter = null) where TEntity : BaseModel
         {
 
-            return await Context.Set<TEntity>().ToListAsync();
+
             if (filter == null)
             {
-                
+
                 return await RunTask(Context.Set<TEntity>().ToListAsync);
             }
             else
@@ -403,8 +403,8 @@ namespace LATravelManager.UI.Repositories
             });
 
             IEnumerable<DbEntityEntry> changes = from e in Context.ChangeTracker.Entries()
-                          where e.State != EntityState.Unchanged
-                          select e;
+                                                 where e.State != EntityState.Unchanged
+                                                 select e;
 
             foreach (DbEntityEntry change in changes)
             {

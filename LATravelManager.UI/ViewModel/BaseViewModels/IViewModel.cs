@@ -1,12 +1,16 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace LATravelManager.UI.ViewModel.BaseViewModels
 {
     public interface IViewModel
     {
-        Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null);
+        void Load(int id = 0, MyViewModelBaseAsync previousViewModel = null);
 
-        Task ReloadAsync();
+        void Reload();
 
         bool IsLoaded { get; set; }
     }

@@ -1,23 +1,24 @@
 ﻿using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
+using LATravelManager.UI.ViewModel.Window_ViewModels;
 using System.Threading.Tasks;
 
 namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
 {
     public class ThirdPartyParent_ViewModel : ExcursionCategory_ViewModelBase
     {
-        public ThirdPartyParent_ViewModel(GenericRepository startingReposiroty, NavigationViewModel navigationViewModel) : base(startingReposiroty, navigationViewModel)
+        public ThirdPartyParent_ViewModel(MainViewModel mainViewModel) : base(mainViewModel)
         {
         }
 
-        public override Task LoadAsync(int id = 0, MyViewModelBase previousViewModel = null)
+        public override async void Load(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
-            return Task.Delay(0);
+            await Task.Delay(0);
         }
 
-        public override Task ReloadAsync()
+        public override void Reload()
         {
-            return Task.Delay(0);
+            throw new System.NotImplementedException();
         }
     }
 }
