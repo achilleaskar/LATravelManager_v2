@@ -2,6 +2,7 @@
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
+using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Wrapper;
 using System;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
 {
     public class NewReservation_Bansko_ViewModel : NewReservationGroup_Base
     {
-        public NewReservation_Bansko_ViewModel(GenericRepository genericRepository) : base(genericRepository)
+        public NewReservation_Bansko_ViewModel(MainViewModel mainViewModel) : base(mainViewModel)
         {
         }
         #region Methods

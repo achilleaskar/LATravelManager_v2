@@ -13,25 +13,45 @@
              d:DesignHeight="450"
              d:DesignWidth="250">
     <UserControl.Resources>
+        <ControlTemplate x:Key="ItemSelected"
+                         TargetType='{x:Type ListViewItem}'>
+            <StackPanel Background="LightBlue">
+                <GridViewRowPresenter Content="{TemplateBinding Content}"
+                                      Columns="{TemplateBinding GridView.ColumnCollection}" />
+            </StackPanel>
+        </ControlTemplate>
+        <ControlTemplate x:Key="ItemDeSelected"
+                         TargetType='{x:Type ListViewItem}'>
+            <StackPanel Background="Transparent">
+                <GridViewRowPresenter Content="{TemplateBinding Content}"
+                                      Columns="{TemplateBinding GridView.ColumnCollection}" />
+            </StackPanel>
+        </ControlTemplate>
+        <Style x:Key="myHeaderStyle"
+               TargetType="{x:Type GridViewColumnHeader}">
+            <Setter Property="Visibility"
+                    Value="Collapsed" />
+        </Style>
         <Style TargetType="ListViewItem">
-            <Setter Property="IsSelected"
-                    Value="{Binding IsSelected}" />
             <Style.Triggers>
-                <Trigger Property="IsMouseOver"
-                         Value="True">
-                    <Setter Property="Cursor"
-                            Value="Hand" />
-                </Trigger>
-                <DataTrigger Binding="{Binding IsSelected}">
-                    <Setter Property="Background"
-                            Value="LightBlue" />
+                <DataTrigger Binding="{Binding Path=Selected}"
+                             Value="True">
+                    <Setter Property="Template"
+                            Value="{StaticResource ItemSelected}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=Selected}"
+                             Value="False">
+                    <Setter Property="Template"
+                            Value="{StaticResource ItemDeSelected}" />
                 </DataTrigger>
             </Style.Triggers>
+            <Setter Property="IsSelected"
+                    Value="{Binding Selected, Mode=OneWay}" />
         </Style>
         <DataTemplate x:Key="SidePaneListViewTemplate">
             <StackPanel Orientation="Horizontal"
                         Visibility="{Binding Level, Converter={StaticResource UserToVisibilityConverter},  Mode=OneWay}">
-                <iconPacks:PackIconMaterial Kind="{Binding IconName}"
+                <iconPacks:PackIconMaterial Kind="{Binding IconName}" Foreground="DarkBlue"
                                             Height="30"
                                             Width="30" />
                 <Label Content="{Binding Content}" />
@@ -218,13 +238,17 @@
                           ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                           SelectedIndex="{Binding SelectedPrimaryTabIndex}"
                           BorderThickness="0"
-                          Background="Transparent"
-                          ItemTemplate="{StaticResource SidePaneListViewTemplate}">
+                          Background="Transparent">
                     <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="SelectionChanged">
+                        <i:EventTrigger EventName="MouseLeftButtonUp">
                             <i:InvokeCommandAction Command="{Binding Path=SelectedTabChangedCommand, Mode=OneWay}" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
+                    <ListView.View>
+                        <GridView ColumnHeaderContainerStyle="{StaticResource myHeaderStyle}">
+                            <GridViewColumn CellTemplate="{StaticResource SidePaneListViewTemplate}" />
+                        </GridView>
+                    </ListView.View>
                 </ListView>
                 <StackPanel VerticalAlignment="Bottom"
                             Grid.Row="1"
@@ -232,19 +256,23 @@
                             CanHorizontallyScroll="False"
                             ScrollViewer.HorizontalScrollBarVisibility="Hidden">
                     <Separator Background="Gray"
-                               Margin="0" />
+                               Margin="0 5" />
                     <ListView ItemsSource="{Binding SecondaryTabs}"
                               BorderThickness="0"
                               Background="Transparent"
                               ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                               ScrollViewer.CanContentScroll="False"
-                              SelectedIndex="{Binding SelectedSecondaryTabIndex}"
-                              ItemTemplate="{StaticResource SidePaneListViewTemplate}">
+                              SelectedIndex="{Binding SelectedSecondaryTabIndex}">
                         <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
+                            <i:EventTrigger EventName="MouseLeftButtonUp">
                                 <i:InvokeCommandAction Command="{Binding Path=SelectedChildTabChangedCommand, Mode=OneWay}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
+                        <ListView.View>
+                            <GridView ColumnHeaderContainerStyle="{StaticResource myHeaderStyle}">
+                                <GridViewColumn CellTemplate="{StaticResource SidePaneListViewTemplate}" />
+                            </GridView>
+                        </ListView.View>
                     </ListView>
                 </StackPanel>
             </Grid>

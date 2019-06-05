@@ -46,7 +46,7 @@ namespace LATravelManager.Model.People
 
         public override string ToString()
         {
-            return Name;
+            return UserName;
         }
 
         #endregion Methods

@@ -1,28 +1,79 @@
-﻿using LATravelManager.UI.Wrapper;
+﻿using LATravelManager.Model.Hotels;
+using LATravelManager.Model.Wrapper;
+using LATravelManager.UI.Wrapper;
 using System;
+using System.Windows.Media;
 using static LATravelManager.Model.Enums;
 
 namespace LATravelManager.Model.LocalModels
 {
     public class PlanDailyInfo : BaseModel
     {
+
         #region Fields
 
-        public const string DatePropertyName = nameof(Date);
-
-        public const string IsAllotmentsPropertyName = nameof(IsAllotment);
-        public const string ReservationPropertyName = nameof(Reservation);
-        public const string RoomStatePropertyName = nameof(RoomState);
+        private SolidColorBrush _CellColor;
         private DateTime _Date;
-
-        private bool _IsAllotment = false;
+        private bool _IsDateSelected;
         private ReservationWrapper _Reservation;
-        public DayStateEnum DayState { get; set; }
+        private RoomWrapper _Room;
+
+
+
+
+
+        private RoomTypeEnum _RoomTypeEnm;
+
+
+        public RoomTypeEnum RoomTypeEnm
+        {
+            get
+            {
+                return _RoomTypeEnm;
+            }
+
+            set
+            {
+                if (_RoomTypeEnm == value)
+                {
+                    return;
+                }
+
+                _RoomTypeEnm = value;
+                RaisePropertyChanged();
+            }
+        }
+
         private RoomStateEnum _RoomState;
+
+        private string _Text;
 
         #endregion Fields
 
         #region Properties
+
+        public SolidColorBrush CellColor
+        {
+            get
+            {
+                return _CellColor;
+            }
+
+            set
+            {
+                if (_CellColor == value)
+                {
+                    return;
+                }
+                if (Id == 11996)
+                {
+
+                }
+
+                _CellColor = value;
+                RaisePropertyChanged();
+            }
+        }
 
         /// <summary>
         /// Sets and gets the Date property. Changes to that property's value raise the
@@ -43,30 +94,34 @@ namespace LATravelManager.Model.LocalModels
                 }
 
                 _Date = value;
-                RaisePropertyChanged(DatePropertyName);
+                RaisePropertyChanged();
             }
         }
+
+        public DayStateEnum DayState { get; set; }
 
         /// <summary>
         /// Sets and gets the MyProperty property. Changes to that property's value raise the
         /// PropertyChanged event.
         /// </summary>
-        public bool IsAllotment
-        {
-            get
-            {
-                return _IsAllotment;
-            }
+      
 
+        public bool IsDateSelected
+        {
+            get => _IsDateSelected;
             set
             {
-                if (_IsAllotment == value)
+                if (_IsDateSelected != value)
                 {
-                    return;
-                }
+                    _IsDateSelected = value;
+                    if (value)
+                        CellColor.Opacity = 0.4;
+                    else
+                        CellColor.Opacity = 1;
 
-                _IsAllotment = value;
-                RaisePropertyChanged(IsAllotmentsPropertyName);
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(CellColor));
+                }
             }
         }
 
@@ -89,10 +144,28 @@ namespace LATravelManager.Model.LocalModels
                 }
 
                 _Reservation = value;
-                RaisePropertyChanged(ReservationPropertyName);
+                RaisePropertyChanged();
             }
         }
 
+        public RoomWrapper Room
+        {
+            get
+            {
+                return _Room;
+            }
+
+            set
+            {
+                if (_Room == value)
+                {
+                    return;
+                }
+
+                _Room = value;
+                RaisePropertyChanged();
+            }
+        }
         /// <summary>
         /// Sets and gets the RoomState property. Changes to that property's value raise the
         /// PropertyChanged event.
@@ -106,16 +179,78 @@ namespace LATravelManager.Model.LocalModels
 
             set
             {
-                if (_RoomState == value)
+                if (_RoomState != value)
+                {
+                    _RoomState = value;
+                    switch (value)
+                    {
+                        case RoomStateEnum.NotAvailable:
+                            CellColor = new SolidColorBrush(Colors.DarkGray);
+                            Text = " ";
+                            break;
+
+                        case RoomStateEnum.Available:
+                            if (RoomTypeEnm==RoomTypeEnum.Allotment)
+                                CellColor = new SolidColorBrush(Colors.DeepSkyBlue);
+                            else if(RoomTypeEnm == RoomTypeEnum.Booking)
+                                CellColor = new SolidColorBrush(Colors.Blue);
+                            else
+                                CellColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#72e600"));
+                            Text = " ";
+                            break;
+
+                        case RoomStateEnum.MovableNoName:
+                            CellColor = new SolidColorBrush(Colors.Yellow);
+                            break;
+
+                        case RoomStateEnum.NotMovableNoName:
+                            CellColor = new SolidColorBrush(Colors.Orange);
+                            break;
+
+                        case RoomStateEnum.Booked:
+                            CellColor = new SolidColorBrush(Colors.Red);
+                            break;
+
+                        case RoomStateEnum.OverBookedByMistake:
+                            CellColor = new SolidColorBrush(Colors.Pink);
+                            break;
+                        case RoomStateEnum.Allotment:
+                            CellColor = new SolidColorBrush(Colors.DeepSkyBlue);
+                            break;
+                        case RoomStateEnum.Booking:
+                            CellColor = new SolidColorBrush(Colors.Blue);
+                            break;
+
+                        default:
+                            CellColor = new SolidColorBrush(Colors.White);
+                            break;
+                    }
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(CellColor));
+                }
+            }
+        }
+
+        public string Text
+        {
+            get
+            {
+                return _Text;
+            }
+
+            set
+            {
+                if (_Text == value)
                 {
                     return;
                 }
 
-                _RoomState = value;
-                RaisePropertyChanged(RoomStatePropertyName);
+                _Text = value;
+                RaisePropertyChanged();
             }
         }
 
         #endregion Properties
     }
+
 }

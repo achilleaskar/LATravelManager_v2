@@ -1,13 +1,13 @@
 ﻿using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.People;
-using LATravelManager.Model.Wrapper;
+using LATravelManager.UI.Wrapper;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using static LATravelManager.Model.Enums;
 
-namespace LATravelManager.UI.Wrapper
+namespace LATravelManager.Model.Wrapper
 {
     public class ReservationWrapper : ModelWrapper<Reservation>
     {
@@ -31,33 +31,63 @@ namespace LATravelManager.UI.Wrapper
 
         #region Properties
 
-        public float Recieved { get; set; }
-        public float Remaining { get; set; }
-        public float FullPrice { get; set; }
+        public decimal Recieved { get; set; }
+        public decimal Remaining { get; set; }
+        public decimal FullPrice { get; set; }
 
         public void CalculateAmounts()
         {
-            float total = 0;
-
-            Recieved = 0;
-            foreach (Payment payment in Booking.Payments)
-                Recieved += payment.Amount;
-
-            if (!Booking.IsPartners)
+            if (ExcursionType != ExcursionTypeEnum.Personal && ExcursionType != ExcursionTypeEnum.ThirdParty)
             {
-                foreach (Reservation r in Booking.ReservationsInBooking)
+                decimal total = 0;
+
+                Recieved = 0;
+                foreach (Payment payment in Booking.Payments)
                 {
-                    foreach (Customer c in r.CustomersList)
-                    {
-                        total += c.Price;
-                    }
+                    Recieved += payment.Amount;
                 }
-                FullPrice = total;
-                Remaining = total - Recieved;
+
+                if (!Booking.IsPartners)
+                {
+                    foreach (Reservation r in Booking.ReservationsInBooking)
+                    {
+                        foreach (Customer c in r.CustomersList)
+                        {
+                            total += c.Price;
+                        }
+                    }
+                    FullPrice = total;
+                    Remaining = total - Recieved;
+                }
+                else
+                {
+                    Remaining = Booking.NetPrice - Recieved;
+                }
             }
-            else
+            //else if (ExcursionType==ExcursionTypeEnum.Personal)
+            //{
+            //    PersonalModel.CalculateRemainingAmount();
+            //}
+        }
+
+        private ExcursionTypeEnum _ExcursionType;
+
+        public ExcursionTypeEnum ExcursionType
+        {
+            get
             {
-                Remaining = Booking.NetPrice - Recieved;
+                return _ExcursionType;
+            }
+
+            set
+            {
+                if (_ExcursionType == value)
+                {
+                    return;
+                }
+
+                _ExcursionType = value;
+                RaisePropertyChanged();
             }
         }
 
@@ -67,52 +97,202 @@ namespace LATravelManager.UI.Wrapper
             set { SetValue(value); }
         }
 
+        private Personal_BookingWrapper _PersonalModel;
+
+        public Personal_BookingWrapper PersonalModel
+        {
+            get
+            {
+                return _PersonalModel;
+            }
+
+            set
+            {
+                if (_PersonalModel == value)
+                {
+                    return;
+                }
+
+                _PersonalModel = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string User
+        {
+            get
+            {
+                switch (ExcursionType)
+                {
+                    case ExcursionTypeEnum.Bansko:
+                    case ExcursionTypeEnum.Skiathos:
+                    case ExcursionTypeEnum.Group:
+                        return Booking.User.ToString();
+
+                    case ExcursionTypeEnum.Personal:
+                        return PersonalModel.User!=null? PersonalModel.User.ToString():"";
+
+                    case ExcursionTypeEnum.ThirdParty:
+                        return "";
+
+                    default:
+                        return "";
+                }
+            }
+        }
+
+        public string Partner
+        {
+            get
+            {
+                switch (ExcursionType)
+                {
+                    case ExcursionTypeEnum.Bansko:
+                    case ExcursionTypeEnum.Skiathos:
+                    case ExcursionTypeEnum.Group:
+                        return Booking.IsPartners ? Booking.Partner.Name : "";
+
+                    case ExcursionTypeEnum.Personal:
+                    case ExcursionTypeEnum.ThirdParty:
+                        return "";
+
+                    default:
+                        return "";
+                }
+            }
+        }
+
+        public string To => GetDestination();
+
+        private string GetDestination()
+        {
+            switch (ExcursionType)
+            {
+                case ExcursionTypeEnum.Bansko:
+                case ExcursionTypeEnum.Skiathos:
+                case ExcursionTypeEnum.Group:
+                    return Booking.Excursion.Name;
+
+                case ExcursionTypeEnum.Personal:
+                    return PersonalModel.GetDestinations();
+
+                case ExcursionTypeEnum.ThirdParty:
+                    return "";
+
+                default:
+                    return "";
+            }
+        }
+
         public DateTime CheckIn
         {
             get
             {
-                if (Booking != null && !Booking.DifferentDates)
-                {
-                    return Booking.ExcursionDate == null ? Booking.CheckIn : Booking.ExcursionDate.CheckIn;
-                }
                 DateTime minValue = new DateTime();
-                foreach (Customer customer in CustomersList)
+                DateTime maxValue = new DateTime();
+
+                if (ExcursionType == ExcursionTypeEnum.Personal && PersonalModel != null)
                 {
-                    if (minValue.Year < 2000)
+                    foreach (var s in PersonalModel.Services)
                     {
-                        minValue = customer.CheckIn;
-                    }
-                    else if (customer.CheckIn < minValue)
-                    {
-                        minValue = customer.CheckIn;
+                        if (minValue.Year < 2000)
+                        {
+                            minValue = s.TimeGo;
+                        }
+                        else if (s.TimeGo < minValue)
+                        {
+                            minValue = s.TimeGo;
+                        }
+
+                        if (maxValue.Year < 2000)
+                        {
+                            maxValue = s.TimeReturn;
+                        }
+                        else if (s.TimeReturn > maxValue)
+                        {
+                            maxValue = s.TimeReturn;
+                        }
                     }
                 }
+                else
+                {
+                    if (Booking != null && !Booking.DifferentDates)
+                    {
+                        return Booking.ExcursionDate == null ? Booking.CheckIn : Booking.ExcursionDate.CheckIn;
+                    }
+                    foreach (Customer customer in CustomersList)
+                    {
+                        if (minValue.Year < 2000)
+                        {
+                            minValue = customer.CheckIn;
+                        }
+                        else if (customer.CheckIn < minValue)
+                        {
+                            minValue = customer.CheckIn;
+                        }
+
+                        if (maxValue.Year < 2000)
+                        {
+                            maxValue = customer.CheckOut;
+                        }
+                        else if (customer.CheckOut > maxValue)
+                        {
+                            maxValue = customer.CheckOut;
+                        }
+                    }
+                }
+                CheckOut = maxValue;
                 return minValue;
             }
         }
 
+        public DateTime _CheckOut;
+
         public DateTime CheckOut
         {
+            set { _CheckOut = value; }
             get
             {
-                if (Booking != null && !Booking.DifferentDates)
+                if (_CheckOut == null || _CheckOut.Year < 2000)
                 {
-                    return Booking.ExcursionDate == null ? Booking.CheckOut : Booking.ExcursionDate.CheckOut;
-                }
+                    DateTime maxValue = new DateTime();
+                    if (ExcursionType == ExcursionTypeEnum.Personal && PersonalModel != null)
+                    {
+                        foreach (var s in PersonalModel.Services)
+                        {
+                            if (maxValue.Year < 2000)
+                            {
+                                maxValue = s.TimeReturn;
+                            }
+                            else if (s.TimeReturn > maxValue)
+                            {
+                                maxValue = s.TimeReturn;
+                            }
+                        }
+                        _CheckOut = maxValue;
+                    }
+                    else
+                    {
+                        if (Booking != null && !Booking.DifferentDates)
+                        {
+                            return Booking.ExcursionDate == null ? Booking.CheckOut : Booking.ExcursionDate.CheckOut;
+                        }
 
-                DateTime maxValue = new DateTime();
-                foreach (Customer customer in CustomersList)
-                {
-                    if (maxValue.Year < 2000)
-                    {
-                        maxValue = customer.CheckOut;
-                    }
-                    else if (customer.CheckOut > maxValue)
-                    {
-                        maxValue = customer.CheckOut;
+                        foreach (Customer customer in CustomersList)
+                        {
+                            if (maxValue.Year < 2000)
+                            {
+                                maxValue = customer.CheckOut;
+                            }
+                            else if (customer.CheckOut > maxValue)
+                            {
+                                maxValue = customer.CheckOut;
+                            }
+                        }
+                        _CheckOut = maxValue;
                     }
                 }
-                return maxValue;
+                return _CheckOut;
             }
         }
 
@@ -235,15 +415,29 @@ namespace LATravelManager.UI.Wrapper
             {
                 return true;
             }
-            if (Booking == null)
+            if (ExcursionType != ExcursionTypeEnum.Personal && ExcursionType != ExcursionTypeEnum.ThirdParty)
             {
-                return false;
-            }
-            if ((!string.IsNullOrEmpty(Booking.Comment) && Booking.Comment.ToUpper().Contains(key)) || (Booking.IsPartners && Booking.Partner.Name.ToUpper().Contains(key)))
-            {
-                return true;
+                if (Booking == null)
+                {
+                    return false;
+                }
+                if ((!string.IsNullOrEmpty(Booking.Comment) && Booking.Comment.ToUpper().Contains(key)) || (Booking.IsPartners && Booking.Partner.Name.ToUpper().Contains(key)))
+                {
+                    return true;
+                }
             }
 
+            else
+            {
+                if (PersonalModel == null)
+                {
+                    return false;
+                }
+                if ((!string.IsNullOrEmpty(PersonalModel.Comment) && PersonalModel.Comment.ToUpper().Contains(key)) || (PersonalModel.IsPartners && PersonalModel.Partner.Name.ToUpper().Contains(key)))
+                {
+                    return true;
+                }
+            }
             foreach (Customer c in CustomersList)
             {
                 if (c.Name.ToUpper().StartsWith(key) || c.Surename.ToUpper().StartsWith(key) || (c.Tel != null && c.Tel.StartsWith(key)) || (!string.IsNullOrEmpty(c.Comment) && c.Comment.ToUpper().Contains(key)) || (c.Email != null && c.Email.ToUpper().StartsWith(key))

@@ -5,6 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko"
              xmlns:views="clr-namespace:LATravelManager.UI.Views.Bansko"
+             xmlns:categories="clr-namespace:LATravelManager.UI.ViewModel.CategoriesViewModels"
+             xmlns:view="clr-namespace:LATravelManager.UI.Views"
              mc:Ignorable="d"
              d:DesignHeight="450"
              Background="AliceBlue"
@@ -12,6 +14,9 @@
     <UserControl.Resources>
         <DataTemplate DataType="{x:Type viewmodels:NewReservation_Bansko_ViewModel}">
             <views:NewReservation_Bansko_UserControl />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type categories:Plan_ViewModel}">
+            <view:Plan_UserControl />
         </DataTemplate>
         <!--<DataTemplate DataType="{x:Type viewmodels:Search_Bansko_ViewModel}">
             <views:Search_Bansko_UserControl />

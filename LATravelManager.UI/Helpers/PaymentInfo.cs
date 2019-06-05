@@ -29,24 +29,24 @@ namespace LATravelManager.UI.Helpers
 
         #region Fields
 
-        private float _AlphaBank;
-        private float _Cash;
-        private float _Ethniki;
-        private float _Eurobank;
+        private decimal _AlphaBank;
+        private decimal _Cash;
+        private decimal _Ethniki;
+        private decimal _Eurobank;
         private ObservableCollection<Payment> _Payments;
-        private float _Peiraios;
+        private decimal _Peiraios;
         private Payment _SelectedPayment;
-        private float _Total;
+        private decimal _Total;
 
         private User _User;
 
-        private float _VISA;
+        private decimal _VISA;
 
         #endregion Fields
 
         #region Properties
 
-        public float AlphaBank
+        public decimal AlphaBank
         {
             get
             {
@@ -65,7 +65,7 @@ namespace LATravelManager.UI.Helpers
             }
         }
 
-        public float Cash
+        public decimal Cash
         {
             get
             {
@@ -84,7 +84,7 @@ namespace LATravelManager.UI.Helpers
             }
         }
 
-        public float Ethniki
+        public decimal Ethniki
         {
             get
             {
@@ -103,7 +103,7 @@ namespace LATravelManager.UI.Helpers
             }
         }
 
-        public float Eurobank
+        public decimal Eurobank
         {
             get
             {
@@ -143,7 +143,7 @@ namespace LATravelManager.UI.Helpers
             }
         }
 
-        public float Peiraios
+        public decimal Peiraios
         {
             get
             {
@@ -181,7 +181,7 @@ namespace LATravelManager.UI.Helpers
             }
         }
 
-        public float Total
+        public decimal Total
         {
             get
             {
@@ -218,7 +218,7 @@ namespace LATravelManager.UI.Helpers
             }
         }
 
-        public float VISA
+        public decimal VISA
         {
             get
             {
@@ -284,7 +284,7 @@ namespace LATravelManager.UI.Helpers
         {
             try
             {
-                NewReservation_Group_ViewModel viewModel = new NewReservation_Group_ViewModel(MainViewModel.StartingRepository);
+                NewReservation_Group_ViewModel viewModel = new NewReservation_Group_ViewModel(MainViewModel);
                 await viewModel.LoadAsync(SelectedPayment.Booking.Id);
                 MessengerInstance.Send(new OpenChildWindowCommand(new EditBooking_Bansko_Window(), viewModel));
             }

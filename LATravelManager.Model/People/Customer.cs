@@ -1,6 +1,9 @@
 ﻿using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Excursions;
+using LATravelManager.Model.Services;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace LATravelManager.Model.People
@@ -9,9 +12,15 @@ namespace LATravelManager.Model.People
     {
         public Customer()
         {
+            Services = new ObservableCollection<Service>();
+         
             Age = 18;
             //DOB = DateTime.Now.AddYears(-20);
         }
+
+      
+
+        public  ICollection<Service> Services { get; }
 
         #region Properties
 
@@ -50,7 +59,7 @@ namespace LATravelManager.Model.People
         [StringLength(20, ErrorMessage = "Πολύ μεγάλο")]
         public string PassportNum { get; set; }
 
-        public float Price { get; set; }
+        public decimal Price { get; set; }
 
         public Reservation Reservation { get; set; }
 
@@ -70,5 +79,10 @@ namespace LATravelManager.Model.People
         public string Tel { get; set; }
 
         #endregion Properties
+
+        public override string ToString()
+        {
+            return Surename + " " + Name;
+        }
     }
 }

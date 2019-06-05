@@ -32,10 +32,18 @@
             NotAvailable,
             Allotment,
             Available,
-            MovaBleNoName,
+            MovableNoName,
             NotMovableNoName,
             Booked,
-            OverBookedByMistake
+            OverBookedByMistake,
+            Booking
+        }
+
+        public enum RoomTypeEnum
+        {
+            Available,
+            Allotment,
+            Booking
         }
 
         public enum GrafeiaXriston

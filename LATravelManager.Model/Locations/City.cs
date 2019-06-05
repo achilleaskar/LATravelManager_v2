@@ -23,7 +23,7 @@ namespace LATravelManager.Model.Locations
         public List<Hotel> Hotels { get; set; }
 
         [Required(ErrorMessage = "Πρέπει να επιλέξετε χώρα!")]
-        public virtual Country Country { get; set; }
+        public  Country Country { get; set; }
 
         [Required(ErrorMessage = "Το Όνομα Πόλης απαιτείται!")]
         [StringLength(20, MinimumLength = 3, ErrorMessage = "Το Όνομα Πόλης μπορεί να είναι απο 3 έως 20 χαρακτήρες.")]

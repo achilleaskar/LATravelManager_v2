@@ -106,6 +106,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         internal async Task SetProperChildViewModel(int index)
         {
+
             if (index < Childs.Count)
             {
                 SelectedChildViewModel = Childs[index];

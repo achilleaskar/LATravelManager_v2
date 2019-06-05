@@ -13,6 +13,7 @@
              d:DesignWidth="1130">
     <UserControl.Resources>
         <converters:UserToVisibility x:Key="UserToVisibilityConverter" />
+        <converters:FloadToStringValueConverter x:Key="FtoSConverter" />
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -112,7 +113,6 @@
                              Margin="0,0,5,0" />
                 </StackPanel>
                 <StackPanel>
-
                     <Label Content="Πωλητής:"
                            VerticalAlignment="Center" />
                     <ComboBox  Width="85"
@@ -132,7 +132,6 @@
                     </ComboBox>
                 </StackPanel>
                 <StackPanel>
-
                     <Label Content="Εκδρομή:"
                            VerticalAlignment="Center" />
                     <ComboBox  Width="105"
@@ -142,9 +141,7 @@
                                ItemsSource="{Binding ExcursionsCollectionView}"
                                SelectedIndex="{Binding ExcursionIndexBookingFilter}" />
                 </StackPanel>
-
                 <StackPanel>
-
                     <Label Content="Κατηγορία:"
                            VerticalAlignment="Center" />
                     <ComboBox  Width="105"
@@ -158,12 +155,15 @@
                         <ComboBoxItem Content="Εκδρομές Τρίτων" />
                     </ComboBox>
                 </StackPanel>
-
-                <CheckBox Content="Όλοκληρωμένες"
-                          VerticalAlignment="Bottom"
-                          Margin="5 0"
-                          IsChecked="{Binding Completed}" />
-
+                <StackPanel VerticalAlignment="Bottom">
+                    <CheckBox Content="Τράπεζα"
+                              Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
+                              Margin="5 0"
+                              IsChecked="{Binding Bank}" />
+                    <CheckBox Content="Όλοκληρωμένες"
+                              Margin="5 0"
+                              IsChecked="{Binding Completed}" />
+                </StackPanel>
                 <Button Content="PrintRoomingLists"
                         Margin="5,0"
                         Command="{Binding PrintRoomingListsCommand}" />
@@ -179,6 +179,7 @@
             </StackPanel>
         </StackPanel>
         <DataGrid Grid.Row="1"
+                  Name="datagrid"
                   Margin="0,5,0,0"
                   CanUserSortColumns="True"
                   HorizontalAlignment="Stretch"
@@ -216,6 +217,11 @@
                 </Style>
             </DataGrid.RowStyle>
             <DataGrid.Columns>
+                <DataGridCheckBoxColumn Header="Απ."
+                                        Binding="{Binding Booking.Reciept}"
+                                        Width="29"
+                                        Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
+                                        IsReadOnly="True" />
                 <DataGridTextColumn Header="Αναχ."
                                     Width="45"
                                     Binding="{Binding CheckIn ,StringFormat='{}{0:dd/MM}'}" />
@@ -226,6 +232,9 @@
                                     Width="250"
                                     CanUserResize="True"
                                     Binding="{Binding Names}" />
+                <DataGridTextColumn Header="Προορισμός"
+                                    Width="115"
+                                    Binding="{Binding To}" />
                 <DataGridTextColumn Header="Ξενοδοχείο"
                                     Width="115"
                                     Binding="{Binding HotelName}" />
@@ -234,10 +243,10 @@
                                     Binding="{Binding RoomTypeName}" />
                 <DataGridTextColumn Header="Έδωσε"
                                     Width="45"
-                                    Binding="{Binding Recieved }" />
+                                    Binding="{Binding Recieved,Converter={StaticResource FtoSConverter } }" />
                 <DataGridTextColumn Header="Υπόλοιπο"
                                     Width="45"
-                                    Binding="{Binding Remaining }" />
+                                    Binding="{Binding Remaining ,Converter={StaticResource FtoSConverter } }" />
                 <DataGridTextColumn Header="Τηλέφωνο"
                                     Width="105"
                                     MinWidth="85"
@@ -245,13 +254,13 @@
                 <DataGridTextColumn Header="Γραφείο"
                                     Width="125"
                                     MinWidth="85"
-                                    Binding="{Binding Booking.Partner.Name}" />
+                                    Binding="{Binding Partner}" />
                 <DataGridTextColumn Header="Σημείωση"
                                     Width="190"
                                     Binding="{Binding Booking.Comment}" />
                 <DataGridTextColumn Header="Πωλητής"
                                     Width="190"
-                                    Binding="{Binding Booking.User.UserName}" />
+                                    Binding="{Binding User}"  />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

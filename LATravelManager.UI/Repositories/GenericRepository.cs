@@ -22,7 +22,7 @@ namespace LATravelManager.UI.Repositories
         public GenericRepository()
         {
             Context = new MainDatabase();
-            Context.Database.Log = Console.Write;
+            //Context.Database.Log = Console.Write;
             IsContextAvailable = true;
         }
 
@@ -58,9 +58,9 @@ namespace LATravelManager.UI.Repositories
             }
         }
 
-        internal void DeletePayments(Booking booking)
+        internal void DeletePayments(int bookingId)
         {
-            List<Payment> toDelete = Context.Payments.Where(p => p.Booking.Id == booking.Id).ToList();
+            List<Payment> toDelete = Context.Payments.Where(p => p.Booking.Id == bookingId).ToList();
             Context.Payments.RemoveRange(toDelete);
         }
 
@@ -68,17 +68,23 @@ namespace LATravelManager.UI.Repositories
 
         public async Task<List<Hotel>> GetAllHotelsInCityAsync(int cityId)
         {
-            return await RunTask(Context.Hotels.Where(x => x.City.Id == cityId).OrderBy(h => h.Name).AsNoTracking().ToListAsync);
+            return await RunTask(Context.Hotels.Where(x => x.City.Id == cityId).OrderBy(h => h.Name).ToListAsync);
         }
 
-        public async Task<List<Hotel>> GetAllHotelsWithRoomsInCityAsync(DateTime minDay, DateTime maxDay, int cityId)
+        public async Task<List<Room>> GetAllRoomsInCityAsync(DateTime minDay, DateTime maxDay, int cityId)
         {
-            return await RunTask(Context.Hotels.Where(x => x.City.Id == cityId)
-                .Include(x => x.City)
-                .Include(x => x.HotelCategory)
-                .Include(x => x.Rooms.Select(r => r.DailyBookingInfo))
-                .Include(x => x.Rooms.Select(r => r.RoomType))
-                .Where(x => x.Rooms.Any(z => z.StartDate <= maxDay && z.EndDate > minDay))
+            return await RunTask(Context.Rooms.Where(x => x.Hotel.City.Id == cityId
+            && x.DailyBookingInfo.Any(d => d.Date <= maxDay) && x.DailyBookingInfo.Any(d => d.Date >= minDay))
+                .Include(x => x.Hotel.HotelCategory)
+                .Include(x => x.DailyBookingInfo)
+                .Include(x => x.RoomType)
+                .ToListAsync);
+        }
+        public async Task<List<Option>> GetAllPendingOptions()
+        {
+            var limit = DateTime.Today.AddDays(2);
+            return await RunTask(Context.Options.Where(ο => ο.Date <= limit)
+                .Include(x => x.Room.Hotel)
                 .ToListAsync);
         }
 
@@ -87,12 +93,13 @@ namespace LATravelManager.UI.Repositories
         //    return await RunTask(Context.Users.Where(u => u.UserName.Equals(userName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefaultAsync);
         //}
 
-        public async Task<IEnumerable<Booking>> GetAllBookingInPeriod(DateTime minDay, DateTime maxDay, int excursionId)
+        public async Task<IEnumerable<Booking>> GetAllBookingInPeriodNoTracking(DateTime minDay, DateTime maxDay, int excursionId)
         {
             return await RunTask(Context.Bookings.Where(c => c.Excursion.Id == excursionId && c.CheckIn <= maxDay && c.CheckOut > minDay)
                 .Include(f => f.Partner)
                 .Include(f => f.ExcursionDate)
                 .Include(f => f.User)
+                .Include(f => f.Excursion)
                 .Include(f => f.ReservationsInBooking.Select(i => i.CustomersList))
                 .Include(f => f.ReservationsInBooking.Select(i => i.Room))
                 .Include(f => f.ReservationsInBooking.Select(i => i.NoNameRoomType))
@@ -105,6 +112,7 @@ namespace LATravelManager.UI.Repositories
             return await RunTask(Context.Bookings
                 .Include(f => f.Partner)
                 .Include(f => f.User)
+                .Include(f => f.Excursion)
                 .Include(f => f.ExcursionDate)
                 .Include(f => f.ReservationsInBooking.Select(i => i.CustomersList))
                 .Include(f => f.ReservationsInBooking.Select(i => i.Room))
@@ -179,7 +187,6 @@ namespace LATravelManager.UI.Repositories
         {
             try
             {
-
                 return await RunTask(Context.Set<Excursion>()
                 .Where(c => c.ExcursionType.Category == Enums.ExcursionTypeEnum.Group)
                 .Include(c => c.Destinations.Select(d => d.Country))
@@ -189,9 +196,16 @@ namespace LATravelManager.UI.Repositories
             }
             catch (Exception)
             {
-
                 return null;
             }
+        }
+
+        internal async Task<List<Hotel>> GetAllHotelsAsync<T>()
+        {
+            return await RunTask(Context.Hotels.OrderBy(h => h.Name)
+                .Include(h => h.HotelCategory)
+                .Include(h => h.City)
+                .ToListAsync);
         }
 
         public async Task<IEnumerable<Excursion>> GetAllExcursionsAsync()
@@ -203,13 +217,20 @@ namespace LATravelManager.UI.Repositories
             .ToListAsync);
         }
 
-        public async Task<Excursion> GetExcursionByIdAsync(int id)
+        public async Task<Excursion> GetExcursionByIdAsync(int id, bool local = false)
         {
-            return await RunTask(Context.Set<Excursion>().Where(c => c.Id == id)
-            .Include(c => c.Destinations.Select(d => d.Country))
-            .Include(c => c.ExcursionType)
-            .Include(c => c.ExcursionDates)
-            .FirstOrDefaultAsync);
+            if (!local)
+            {
+                return await RunTask(Context.Set<Excursion>().Where(c => c.Id == id)
+                .Include(c => c.Destinations.Select(d => d.Country))
+                .Include(c => c.ExcursionType)
+                .Include(c => c.ExcursionDates)
+                .FirstOrDefaultAsync);
+            }
+            else
+            {
+                return Context.Set<Excursion>().Local.Where(c => c.Id == id).FirstOrDefault();
+            }
         }
 
         public IEnumerable<TEntity> GetAllSortedByName<TEntity>() where TEntity : BaseModel, INamed
@@ -232,9 +253,17 @@ namespace LATravelManager.UI.Repositories
             return await RunTask(Context.Set<TEntity>().Where(x => x.Name == name).FirstOrDefaultAsync);
         }
 
-        public virtual async Task<TEntity> GetByIdAsync<TEntity>(int id) where TEntity : BaseModel
+        public virtual async Task<TEntity> GetByIdAsync<TEntity>(int id, bool local = false) where TEntity : BaseModel
         {
-            return await RunTask(() => Context.Set<TEntity>().FindAsync(id));
+            if (!local)
+            {
+                var x = await RunTask(() => Context.Set<TEntity>().FindAsync(id));
+                return x;
+            }
+            else
+            {
+                return Context.Set<TEntity>().Local.Where(x => x.Id == id).FirstOrDefault();
+            }
         }
 
         public virtual TEntity GetById<TEntity>(int id) where TEntity : BaseModel
@@ -247,10 +276,13 @@ namespace LATravelManager.UI.Repositories
             return await RunTask(Context.Bookings.Where(b => b.Id == id)
             .Include(f => f.Partner)
                 .Include(f => f.User)
+                .Include(f => f.Excursion)
                 .Include(f => f.ExcursionDate)
                 .Include(f => f.Payments.Select(p => p.User))
                 .Include(f => f.ReservationsInBooking.Select(i => i.CustomersList))
                 .Include(f => f.ReservationsInBooking.Select(i => i.Room))
+                .Include(f => f.ReservationsInBooking.Select(i => i.Room.RoomType))
+                .Include(f => f.ReservationsInBooking.Select(i => i.Room.Hotel))
                 .Include(f => f.ReservationsInBooking.Select(i => i.NoNameRoomType))
                 .Include(f => f.ReservationsInBooking.Select(i => i.Hotel))
                 .FirstOrDefaultAsync);
@@ -259,25 +291,24 @@ namespace LATravelManager.UI.Repositories
         public virtual async Task<Personal_Booking> GetFullPersonalBookingByIdAsync(int id)
         {
             return await RunTask(Context.Personal_Bookings.Where(b => b.Id == id)
-            .Include(f => f.Partner)
                 .Include(f => f.User)
-                .Include(f => f.Payments.Select(p => p.User))
+                .Include(f => f.Customers)
+                .Include(f => f.Customers.Select(s => s.Services))
+                .Include(f => f.Partner)
+                .Include(f => f.Services)
+                .Include(f => f.Payments)
                 .FirstOrDefaultAsync);
         }
 
         public List<TEntity> GetAllAsyncLocal<TEntity>(Expression<Func<TEntity, bool>> filter = null) where TEntity : BaseModel
         {
-
             return Context.Set<TEntity>().Local.ToList();
         }
 
         public async Task<List<TEntity>> GetAllAsync<TEntity>(Expression<Func<TEntity, bool>> filter = null) where TEntity : BaseModel
         {
-
-
             if (filter == null)
             {
-
                 return await RunTask(Context.Set<TEntity>().ToListAsync);
             }
             else
@@ -300,6 +331,21 @@ namespace LATravelManager.UI.Repositories
                .Include(f => f.Booking.Partner)
                .Include(f => f.Booking.Payments)
                .Include(f => f.Booking.ReservationsInBooking.Select(i => i.CustomersList))
+               .ToListAsync);
+        }
+
+        internal async Task<IEnumerable<Room>> GetAllRoomsFiltered(int cityId = -1, int hotelId = -1, int roomTypeId = -1)
+        {
+            return await RunTask(Context.Rooms
+               .Where(r =>
+               (cityId == -1 || r.Hotel.City.Id == cityId) &&
+               (hotelId == -1 || r.Hotel.Id == hotelId) &&
+               (roomTypeId == -1 || r.RoomType.Id == roomTypeId))
+               .Include(f => f.Hotel)
+               .Include(f => f.Hotel.HotelCategory)
+               .Include(f => f.Hotel.City)
+               .Include(f => f.DailyBookingInfo)
+               .Include(f => f.RoomType)
                .ToListAsync);
         }
 
@@ -356,6 +402,18 @@ namespace LATravelManager.UI.Repositories
             }
             System.Data.Entity.Core.Objects.ObjectStateEntry objectStateEntry = ((IObjectContextAdapter)Context).ObjectContext.ObjectStateManager.GetObjectStateEntry(entry.Entity);
             return objectStateEntry.EntityKey.EntityKeyValues[0].Value;
+        }
+
+        internal async Task<Room> GetRoomById(int roomId)
+        {
+            return await RunTask(Context.Rooms
+                .Where(r => r.Id == roomId)
+                .Include(f => f.Hotel)
+                .Include(f => f.Hotel.HotelCategory)
+                .Include(f => f.Hotel.City)
+                .Include(f => f.DailyBookingInfo)
+                .Include(f => f.RoomType)
+                .FirstOrDefaultAsync);
         }
 
         public bool HasChanges()
@@ -466,23 +524,39 @@ namespace LATravelManager.UI.Repositories
         internal async Task<List<Reservation>> GetAllReservationsFiltered(int excursionId, int userId, bool completed, int category, DateTime dateLimit)
         {
             return await RunTask(Context.Reservations
-               .Where(c =>
-               c.Booking.CreatedDate >= dateLimit &&
-               (category >= 0 ? (int)c.Booking.Excursion.ExcursionType.Category == category : true) &&
-               (excursionId == 0 || c.Booking.Excursion.Id == excursionId) &&
-               (userId == 0 || c.Booking.User.Id == userId) &&
-               (completed || c.Booking.CheckIn >= DateTime.Today))
-               .Include(f => f.Booking.User)
-               .Include(f => f.Booking.ExcursionDate)
-               .Include(f => f.Booking.Partner)
-              .Include(f => f.Booking.Payments)
-               .Include(f => f.Booking.ReservationsInBooking.Select(i => i.CustomersList))
-               .Include(f => f.Room.Hotel)
-               .Include(f => f.Room.RoomType)
-               .Include(f => f.CustomersList)
-               .Include(f => f.Hotel)
-               .Include(f => f.NoNameRoomType)
-               .ToListAsync);
+                  .Where(c =>
+                  c.Booking.CreatedDate >= dateLimit &&
+                  (category >= 0 ? (int)c.Booking.Excursion.ExcursionType.Category == category : true) &&
+                  (excursionId == 0 || c.Booking.Excursion.Id == excursionId) &&
+                  (userId == 0 || c.Booking.User.Id == userId) &&
+                  (completed || c.Booking.CheckIn >= DateTime.Today))
+                  .Include(f => f.Booking.User)
+                  .Include(f => f.Booking.ExcursionDate)
+                  .Include(f => f.Booking.Partner)
+                  .Include(f => f.Booking.Excursion)
+                  .Include(f => f.Booking.Payments)
+                  .Include(f => f.Booking.ReservationsInBooking.Select(i => i.CustomersList))
+                  .Include(f => f.Room.Hotel)
+                  .Include(f => f.Room.RoomType)
+                  .Include(f => f.CustomersList)
+                  .Include(f => f.Hotel)
+                  .Include(f => f.NoNameRoomType)
+                  .ToListAsync);
+        }
+
+        internal async Task<List<Personal_Booking>> GetAllPersonalBookingsFiltered(int userId, bool completed, DateTime dateLimit)
+        {
+            return await RunTask(Context.Personal_Bookings
+                .Where(c =>
+                c.CreatedDate >= dateLimit &&
+                (userId == 0 || c.User.Id == userId) &&
+                (completed || c.Services.Any(s => s.TimeReturn >= DateTime.Today)))
+                .Include(f => f.User)
+                .Include(f => f.Customers)
+                .Include(f => f.Partner)
+                .Include(f => f.Services)
+                .Include(f => f.Payments)
+                .ToListAsync);
         }
     }
 }

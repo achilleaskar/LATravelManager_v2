@@ -7,6 +7,8 @@ namespace LATravelManager.Model.Hotels
     {
         #region Fields
 
+        public Room Room { get; set; }
+
         public const string DatePropertyName = nameof(Date);
 
         public const string NotePropertyName = nameof(Note);

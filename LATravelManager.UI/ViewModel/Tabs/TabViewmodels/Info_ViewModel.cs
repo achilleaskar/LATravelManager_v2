@@ -3,6 +3,7 @@ using LATravelManager.Model.Excursions;
 using LATravelManager.Model.LocalModels;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Wrapper;
+using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
@@ -78,10 +79,9 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         {
             get
             {
-                string tmpError = "";
                 foreach (string property in ValidateDepartureInfoProperties)
                 {
-                    tmpError = GetDepartureInfoError(property);
+                    string tmpError = GetDepartureInfoError(property);
                     if (tmpError != null)
                     {
                         ShowDepartureInfoError = tmpError;
@@ -142,8 +142,18 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 }
 
                 _Excursions = value;
+                ExcursionsCollectionView = CollectionViewSource.GetDefaultView(Excursions);
+                ExcursionsCollectionView.Filter = CustomerExcursionsFilter;
+
+
                 RaisePropertyChanged();
             }
+        }
+
+        private bool CustomerExcursionsFilter(object item)
+        {
+            Excursion excursion = item as Excursion;
+            return Completed || excursion.ExcursionDates.Any(d => d.CheckIn >= DateTime.Today);
         }
 
         public DateTime FromDateTime
@@ -236,6 +246,50 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         #region Methods
 
+
+        public ICollectionView ExcursionsCollectionView
+        {
+            get
+            {
+                return _ExcursionsCollectionView;
+            }
+
+            set
+            {
+                if (_ExcursionsCollectionView == value)
+                {
+                    return;
+                }
+
+                _ExcursionsCollectionView = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private bool _Completed;
+
+
+        public bool Completed
+        {
+            get
+            {
+                return _Completed;
+            }
+
+            set
+            {
+                if (_Completed == value)
+                {
+                    return;
+                }
+
+                _Completed = value;
+                ExcursionsCollectionView.Refresh();
+
+                RaisePropertyChanged();
+            }
+        }
+
         public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
            
@@ -244,7 +298,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             {
                 Context = new GenericRepository();
 
-                Excursions = new ObservableCollection<Excursion>((await Context.GetAllAsync<Excursion>()).OrderBy(e => e.ExcursionDates.OrderBy(ed => ed.CheckIn).FirstOrDefault().CheckIn));
+                Excursions = new ObservableCollection<Excursion>((await Context.GetAllExcursionsAsync()).OrderBy(e => e.ExcursionDates.OrderBy(ed => ed.CheckIn).FirstOrDefault().CheckIn));
 
             }
             catch (Exception ex)
@@ -296,7 +350,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         internal async Task ShowDepartureInfo()
         {
             Mouse.OverrideCursor = Cursors.Wait;
-            Bookings = (await Context.GetAllBookingInPeriod(FromDepartureInfo, ToDepartureInfo, SelectedFilterExcursion.Id)).Select(b => new BookingWrapper(b)).ToList();
+            Bookings = (await Context.GetAllBookingInPeriodNoTracking(FromDepartureInfo, ToDepartureInfo, SelectedFilterExcursion.Id)).Select(b => new BookingWrapper(b)).ToList();
             DateTime tmpDate = FromDepartureInfo;
             AllDaysDeparturesList.Clear();
             DailyDepartureInfo dayDeparture = new DailyDepartureInfo();
@@ -430,7 +484,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
 
         private ICollectionView _AllDaysDeparturesCollectionView;
-
+        private ICollectionView _ExcursionsCollectionView;
 
         public ICollectionView AllDaysDeparturesCollectionView
         {

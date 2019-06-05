@@ -77,9 +77,15 @@ namespace LaTravelManager.ViewModel.Management
 
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
 
-                Cities = BasicDataManager.Cities;
+                Cities = new ObservableCollection<City>(BasicDataManager.Context.GetAllSortedByName<City>());
                 HotelCategories = BasicDataManager.HotelCategories;
+                foreach (Hotel item in BasicDataManager.Hotels)
+                {
+                    if (Cities.Contains(item.City))
+                    {
 
+                    }
+                }
                 MainCollection = new ObservableCollection<HotelWrapper>(BasicDataManager.Hotels.Select(c => new HotelWrapper(c)));
 
             }

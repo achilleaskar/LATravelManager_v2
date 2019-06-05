@@ -11,9 +11,9 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         {
             MessengerInstance.Register<DeselectAllOtherTabsMessage>(this, (msg) =>
             {
-                if (IsSelected && GetType().Name != msg.NewTab)
+                if (Selected && GetType().Name != msg.NewTab)
                 {
-                    IsSelected = false;
+                    Selected = false;
                 }
             });
         }
@@ -25,7 +25,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         public bool IsChild;
         private string _Content = string.Empty;
 
-        private bool _IsSelected = false;
+        private bool _Selected = false;
 
         private int _Level;
 
@@ -60,21 +60,21 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         /// Sets and gets the IsSelected property. Changes to that property's value raise the
         /// PropertyChanged event.
         /// </summary>
-        public bool IsSelected
+        public bool Selected
         {
             get
             {
-                return _IsSelected;
+                return _Selected;
             }
 
             set
             {
-                if (_IsSelected == value)
+                if (_Selected == value)
                 {
                     return;
                 }
 
-                _IsSelected = value;
+                _Selected = value;
                 //   TabItemClicked();
                 RaisePropertyChanged();
             }

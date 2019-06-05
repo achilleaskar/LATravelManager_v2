@@ -29,7 +29,7 @@ namespace LATravelManager.UI.Views.Skiathos
 
         public static T GetVisualChild<T>(Visual parent) where T : Visual
         {
-            T child = default(T);
+            T child = default;
             int numVisuals = VisualTreeHelper.GetChildrenCount(parent);
             for (int i = 0; i < numVisuals; i++)
             {

@@ -9,15 +9,8 @@ namespace LATravelManager.Model.Plan
     {
         #region Fields
 
-        public const string DatePropertyName = nameof(Date);
-
-        public const string IsAllotmentPropertyName = nameof(IsAllotment);
-        public const string ReservationPropertyName = nameof(Reservation);
-        public const string RoomStatePropertyName = nameof(RoomState);
         private DateTime _Date;
-        private bool _IsAllotment = false;
         private Reservation _Reservation;
-        private RoomStateEnum _RoomState;
 
         #endregion Fields
 
@@ -27,10 +20,9 @@ namespace LATravelManager.Model.Plan
 
         private int _MinimunStay;
 
-        /// <summary>
-        /// Sets and gets the MinimunStay property.
-        /// Changes to that property's value raise the PropertyChanged event.
-        /// </summary>
+
+
+       
         public int MinimunStay
         {
             get
@@ -50,10 +42,6 @@ namespace LATravelManager.Model.Plan
             }
         }
 
-        /// <summary>
-        /// Sets and gets the Date property. Changes to that property's value raise the
-        /// PropertyChanged event.
-        /// </summary>
         public DateTime Date
         {
             get
@@ -69,37 +57,35 @@ namespace LATravelManager.Model.Plan
                 }
 
                 _Date = value;
-                RaisePropertyChanged(DatePropertyName);
+                RaisePropertyChanged();
             }
         }
 
-        /// <summary>
-        /// Sets and gets the IsAllotment property. Changes to that property's value raise the
-        /// PropertyChanged event.
-        /// </summary>
-        public bool IsAllotment
+
+
+
+        private RoomTypeEnum _RoomTypeEnm;
+
+
+        public RoomTypeEnum RoomTypeEnm
         {
             get
             {
-                return _IsAllotment;
+                return _RoomTypeEnm;
             }
 
             set
             {
-                if (_IsAllotment == value)
+                if (_RoomTypeEnm == value)
                 {
                     return;
                 }
 
-                _IsAllotment = value;
-                RaisePropertyChanged(IsAllotmentPropertyName);
+                _RoomTypeEnm = value;
+                RaisePropertyChanged();
             }
         }
 
-        /// <summary>
-        /// Sets and gets the Reservation property. Changes to that property's value raise the
-        /// PropertyChanged event.
-        /// </summary>
         [NotMapped]
         public Reservation Reservation
         {
@@ -116,37 +102,13 @@ namespace LATravelManager.Model.Plan
                 }
 
                 _Reservation = value;
-                RaisePropertyChanged(ReservationPropertyName);
+                RaisePropertyChanged();
             }
         }
 
         public RoomStateEnum GetRoomState()
         {
             throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Sets and gets the RoomState property. Changes to that property's value raise the
-        /// PropertyChanged event.
-        /// </summary>
-        [NotMapped]
-        public RoomStateEnum RoomState
-        {
-            get
-            {
-                return _RoomState;
-            }
-
-            set
-            {
-                if (_RoomState == value)
-                {
-                    return;
-                }
-
-                _RoomState = value;
-                RaisePropertyChanged(RoomStatePropertyName);
-            }
         }
 
         #endregion Properties

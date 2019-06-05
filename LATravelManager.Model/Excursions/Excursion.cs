@@ -16,22 +16,22 @@ namespace LATravelManager.Model.Excursions
             Destinations = new ObservableCollection<City>();
         }
 
-        public DateTime FirstDate => ExcursionDates.OrderBy(e => e.CheckIn).FirstOrDefault().CheckIn;
+        public DateTime FirstDate => ExcursionDates!=null && ExcursionDates.Count>0 ? ExcursionDates.OrderBy(e => e.CheckIn).FirstOrDefault().CheckIn : new DateTime(1,1,1,1,1,1);
 
         #endregion Constructors
 
         #region Properties
 
-        public virtual ObservableCollection<City> Destinations { get; set; }
+        public  ObservableCollection<City> Destinations { get; set; }
 
         public bool DiscountsExist { get; set; }
         public bool NightStart { get; set; }
         public bool DOBNeeded { get; set; }
 
-        public virtual ObservableCollection<ExcursionDate> ExcursionDates { get; set; }
+        public  ObservableCollection<ExcursionDate> ExcursionDates { get; set; }
 
         [Required]
-        public virtual ExcursionCategory ExcursionType { get; set; }
+        public  ExcursionCategory ExcursionType { get; set; }
 
         public bool IncludesBus { get; set; }
 

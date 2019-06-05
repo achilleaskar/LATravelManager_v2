@@ -4,14 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Loaded="MainWindow_OnLoaded"
+        Language="el-Gr"
         xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.Window_ViewModels"
         xmlns:views="clr-namespace:LATravelManager.UI.Views"
         d:DataContext="{d:DesignInstance viewmodels:MainViewModel}"
         Height="840"
         Width="1335"
         Closed="Window_Closed"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+       Initialized="Window_Initialized">
     <Window.IsEnabled>
         <Binding Path="BindableProperty"
                  Source="{StaticResource MessageListener}" />

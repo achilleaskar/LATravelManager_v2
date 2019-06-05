@@ -2,11 +2,13 @@
 using LATravelManager.Model.People;
 using LATravelManager.Model.Services;
 using LATravelManager.Model.Wrapper;
+using LATravelManager.UI.Helpers;
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Globalization;
+using System.Linq;
+using System.Text;
 
 namespace LATravelManager.UI.Wrapper
 {
@@ -17,65 +19,94 @@ namespace LATravelManager.UI.Wrapper
         public Personal_BookingWrapper() : this(new Personal_Booking())
         {
         }
-
+        internal string GetDestinations()
+        {
+            var sb = new StringBuilder();
+            foreach (var s in Services)
+            {
+                sb.Append(s.To);
+                sb.Append(", ");
+            }
+            return sb.ToString().TrimEnd(',', ' ');
+        }
         public Personal_BookingWrapper(Personal_Booking model) : base(model)
         {
-            Customers.CollectionChanged += Customers_CollectionChanged;
+            CustomerWrappers = new ObservableCollection<CustomerWrapper>(Customers.Select(c => new CustomerWrapper(c)));
+            CustomerWrappers.CollectionChanged += Customers_CollectionChanged;
             Payments.CollectionChanged += Payments_CollectionChanged;
             Services.CollectionChanged += Services_CollectionChanged;
+            CalculateRemainingAmount();
         }
 
-        public int IdCounter { get; set; }
-
-        private void Customers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void Services_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Remove)
             {
-                foreach (CustomerWrapper customer in e.OldItems)
+                foreach (Service service in e.OldItems)
                 {
                     //Removed items
-                    customer.PropertyChanged -= EntityViewModelPropertyChanged;
+                    service.PropertyChanged -= EntityViewModelPropertyChanged;
                 }
             }
             else if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                foreach (Customer customer in e.NewItems)
+                foreach (Service service in e.NewItems)
                 {
-                    if (customer.Id == 0)
+                    if (service.Id == 0)
                     {
                         IdCounter--;
-                        customer.Id = --IdCounter;
+                        service.Id = --IdCounter;
                     }
-                    customer.PropertyChanged += EntityViewModelPropertyChanged;
+                    service.PropertyChanged += EntityViewModelPropertyChanged;
                 }
             }
             CalculateRemainingAmount();
         }
 
-        private void EntityViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-        }
 
-        private void Payments_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        public decimal ExtraProfit
         {
-            throw new NotImplementedException();
-        }
+            get
+            {
+                return GetValue<decimal>();
+            }
 
-        private void Services_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
+            set
+            {
+                SetValue(value);
+                CalculateRemainingAmount();
+                RaisePropertyChanged();
+            }
         }
 
         #endregion Constructors
 
+        private string _ErrorsInCanSaveBooking;
+
+        public string ErrorsInCanSaveBooking
+        {
+            get
+            {
+                return _ErrorsInCanSaveBooking;
+            }
+
+            set
+            {
+                if (_ErrorsInCanSaveBooking == value)
+                {
+                    return;
+                }
+
+                _ErrorsInCanSaveBooking = value;
+                RaisePropertyChanged();
+            }
+        }
+
         #region Fields
 
-        private float _Commision;
-        private string _CommisionString;
-        private float _FullPrice;
-        private string _FullPriceString;
-        private float _NetPrice;
-        private string _NetPriceString;
-        private float _Remaining;
+        private decimal _FullPrice;
+        private decimal _NetPrice;
+        private decimal _Remaining;
 
         #endregion Fields
 
@@ -89,69 +120,25 @@ namespace LATravelManager.UI.Wrapper
             set { SetValue(value); }
         }
 
-        public float Commision
+      
+
+        private ObservableCollection<CustomerWrapper> _CustomerWrappers;
+
+        public ObservableCollection<CustomerWrapper> CustomerWrappers
         {
             get
             {
-                return GetValue<float>();
+                return _CustomerWrappers;
             }
 
             set
             {
-                if (_Commision == value)
+                if (_CustomerWrappers == value)
                 {
                     return;
                 }
-                _Commision = (float)Math.Round(value, 2);
-                SetValue(_Commision);
-                CommisionString = _Commision.ToString();
-                _FullPrice = FullPrice;
-                if (IsPartners && _Commision > 0 && _Commision < 100)
-                {
-                    NetPrice = _FullPrice - (_FullPrice * _Commision / 100);
-                }
-                else if (_Commision == 0)
-                {
-                    NetPrice = _FullPrice;
-                }
-            }
-        }
 
-        public string CommisionString
-        {
-            get
-            {
-                return _CommisionString;
-            }
-
-            set
-            {
-                if (_CommisionString == value)
-                {
-                    return;
-                }
-                _CommisionString = value;
-                if (!string.IsNullOrEmpty(_CommisionString))
-                {
-                    if (float.TryParse(value.Replace(',', '.'), NumberStyles.Any, new CultureInfo("en-US"), out float tmpFloat))
-                    {
-                        tmpFloat = (float)Math.Round(tmpFloat, 2);
-                        Commision = tmpFloat;
-                        if (_CommisionString[_CommisionString.Length - 1] != '.' && _CommisionString[_CommisionString.Length - 1] != ',')
-                        {
-                            _CommisionString = tmpFloat.ToString();
-                        }
-                    }
-                    else
-                    {
-                        _CommisionString = Commision.ToString();
-                    }
-                }
-                else
-                {
-                    _CommisionString = "0";
-                    Commision = 0;
-                }
+                _CustomerWrappers = value;
                 RaisePropertyChanged();
             }
         }
@@ -162,7 +149,12 @@ namespace LATravelManager.UI.Wrapper
             set { SetValue(value); }
         }
 
-        public float FullPrice
+
+
+
+
+
+        public decimal FullPrice
         {
             get
             {
@@ -176,61 +168,13 @@ namespace LATravelManager.UI.Wrapper
                     return;
                 }
 
-                _FullPrice = (float)Math.Round(value, 2);
-                _Commision = Commision;
-                FullPriceString = _FullPrice.ToString();
-                if (IsPartners)
-                {
-                    if (_Commision > 0 && _Commision < 100 && value > 0)
-                    {
-                        NetPrice = _FullPrice * (1 - _Commision / 100);
-                    }
-                    else if (_Commision == 0)
-                    {
-                        NetPrice = _FullPrice;
-                    }
-                }
-            }
-        }
-
-        public string FullPriceString
-        {
-            get
-            {
-                return _FullPriceString;
-            }
-
-            set
-            {
-                if (_FullPriceString == value)
-                {
-                    return;
-                }
-                _FullPriceString = value;
-                if (!string.IsNullOrEmpty(_FullPriceString))
-                {
-                    if (float.TryParse(value.Replace(',', '.'), NumberStyles.Any, new CultureInfo("en-US"), out float tmpFloat))
-                    {
-                        tmpFloat = (float)Math.Round(tmpFloat, 2);
-                        FullPrice = tmpFloat;
-                        if (_FullPriceString[_FullPriceString.Length - 1] != '.' && _FullPriceString[_FullPriceString.Length - 1] != ',')
-                        {
-                            _FullPriceString = tmpFloat.ToString();
-                        }
-                    }
-                    else
-                    {
-                        _FullPriceString = FullPrice.ToString();
-                    }
-                }
-                else
-                {
-                    _FullPriceString = "0";
-                    FullPrice = 0;
-                }
+                _FullPrice = value;
+                ExtraProfit = FullPrice - NetPrice - ServiceProfit;
                 RaisePropertyChanged();
             }
         }
+
+        public int IdCounter { get; set; }
 
         public bool IsNotPartners => !IsPartners;
 
@@ -241,35 +185,17 @@ namespace LATravelManager.UI.Wrapper
             set
             {
                 SetValue(value);
-
-                if (!value)
-                {
-                    Partner = null;
-
-                    Calculating = true;
-                    if (FullPrice > 0)
-                    {
-                        float tmpPrice = FullPrice / Customers.Count;
-                        foreach (Customer customer in Customers)
-                            customer.Price = tmpPrice;
-                    }
-                    Calculating = false;
-                }
-                CommisionString = Commision.ToString();
-
-                CalculateRemainingAmount();
-                RaisePropertyChanged();
                 RaisePropertyChanged(nameof(IsNotPartners));
             }
         }
 
         public string Names => GetNames();
 
-        public float NetPrice
+        public decimal NetPrice
         {
             get
             {
-                return GetValue<float>();
+                return _NetPrice;
             }
 
             set
@@ -279,50 +205,7 @@ namespace LATravelManager.UI.Wrapper
                     return;
                 }
 
-                _NetPrice = (float)Math.Round(value, 2);
-                SetValue(_NetPrice);
-                NetPriceString = _NetPrice.ToString();
-                Remaining = _NetPrice - Recieved;
-                FullPrice = (Commision == 100) ? 0 : (float)Math.Round(100 * _NetPrice / (100 - Commision), 2);
-                CalculateRemainingAmount();
-            }
-        }
-
-        public string NetPriceString
-        {
-            get
-            {
-                return _NetPriceString;
-            }
-
-            set
-            {
-                if (_NetPriceString == value)
-                {
-                    return;
-                }
-                _NetPriceString = value;
-                if (!string.IsNullOrEmpty(_NetPriceString))
-                {
-                    if (float.TryParse(value.Replace(',', '.'), NumberStyles.Any, new CultureInfo("en-US"), out float tmpFloat))
-                    {
-                        tmpFloat = (float)Math.Round(tmpFloat, 2);
-                        NetPrice = tmpFloat;
-                        if (_NetPriceString[_NetPriceString.Length - 1] != '.' && _NetPriceString[_NetPriceString.Length - 1] != ',')
-                        {
-                            _NetPriceString = tmpFloat.ToString();
-                        }
-                    }
-                    else
-                    {
-                        _NetPriceString = _NetPrice.ToString();
-                    }
-                }
-                else
-                {
-                    _NetPriceString = "0";
-                    NetPrice = 0;
-                }
+                _NetPrice = value;
                 RaisePropertyChanged();
             }
         }
@@ -338,18 +221,23 @@ namespace LATravelManager.UI.Wrapper
             get { return GetValue<ObservableCollection<Payment>>(); }
         }
 
-        public float Recieved
+        public ObservableCollection<Service> Services
+        {
+            get { return GetValue<ObservableCollection<Service>>(); }
+        }
+
+        public decimal Recieved
         {
             get
             {
-                float recieved = 0;
+                decimal recieved = 0;
                 foreach (Payment payment in Payments)
                     recieved += payment.Amount;
                 return recieved;
             }
         }
 
-        public float Remaining
+        public decimal Remaining
         {
             get
             {
@@ -363,17 +251,12 @@ namespace LATravelManager.UI.Wrapper
                     return;
                 }
 
-                if (Math.Abs(_Remaining - value) > 0.001)
+                if (Math.Abs(_Remaining - value) > 0.00001m)
                 {
-                    _Remaining = (float)Math.Round(value, 1);
+                    _Remaining = Math.Round(value, 1);
                     RaisePropertyChanged();
                 }
             }
-        }
-
-        public ObservableCollection<Service> Services
-        {
-            get { return GetValue<ObservableCollection<Service>>(); }
         }
 
         public User User
@@ -382,9 +265,119 @@ namespace LATravelManager.UI.Wrapper
             set { SetValue(value); }
         }
 
-        private void CalculateRemainingAmount()
+        #endregion Properties
+
+        #region Methods
+
+
+
+
+       
+
+
+
+
+        private decimal _ServiceProfit;
+
+
+        public decimal ServiceProfit
         {
-            throw new NotImplementedException();
+            get
+            {
+                return _ServiceProfit;
+            }
+
+            set
+            {
+                if (_ServiceProfit == value)
+                {
+                    return;
+                }
+
+                _ServiceProfit = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public void CalculateRemainingAmount()
+        {
+            decimal tmpNet = 0, tmpProfit = 0;
+            foreach (var s in Services)
+            {
+                tmpNet += s.NetPrice;
+                tmpProfit += s.Profit;
+
+            }
+
+
+            NetPrice = tmpNet;
+            ServiceProfit = tmpProfit;
+            TotalProfit = ServiceProfit + ExtraProfit;
+            FullPrice = NetPrice + TotalProfit;
+            Remaining = FullPrice - Recieved;
+        }
+
+
+
+
+        private decimal _TotalProfit;
+
+
+        public decimal TotalProfit
+        {
+            get
+            {
+                return _TotalProfit;
+            }
+
+            set
+            {
+                if (_TotalProfit == value)
+                {
+                    return;
+                }
+
+                _TotalProfit = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private void Customers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                foreach (CustomerWrapper customer in e.OldItems)
+                {
+                    //Removed items
+                    customer.PropertyChanged -= EntityViewModelPropertyChanged;
+                    Customers.Remove(customer.Model);
+                }
+            }
+            else if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (CustomerWrapper customer in e.NewItems)
+                {
+                    if (customer.Id == 0)
+                    {
+                        IdCounter--;
+                        customer.Id = --IdCounter;
+                        Customers.Add(customer.Model);
+                    }
+                    customer.PropertyChanged += EntityViewModelPropertyChanged;
+                }
+            }
+        }
+
+        private void EntityViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Customer.Services))
+            {
+                RaisePropertyChanged(nameof(Customers));
+            }
+            else if (e.PropertyName == nameof(Service.NetPrice) || e.PropertyName == nameof(Service.Profit))
+            {
+                CalculateRemainingAmount();
+            }
         }
 
         private string GetNames()
@@ -392,6 +385,12 @@ namespace LATravelManager.UI.Wrapper
             throw new NotImplementedException();
         }
 
-        #endregion Properties
+        private void Payments_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            RaisePropertyChanged(nameof(Recieved));
+            CalculateRemainingAmount();
+        }
+
+        #endregion Methods
     }
 }

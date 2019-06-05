@@ -169,7 +169,7 @@
                                                 Width="55"
                                                 FontWeight="DemiBold"
                                                 FontSize="14"
-                                                Binding="{Binding Price, UpdateSourceTrigger=PropertyChanged}" />
+                                                Binding="{Binding Price, UpdateSourceTrigger=PropertyChanged,Converter={StaticResource FtoSConverter}}" />
                             <DataGridTemplateColumn Header="Γέννηση"
                                                     CellStyle="{StaticResource DataGridCellStyle}"
                                                     Visibility="{Binding DataContext.SelectedExcursion.DOBNeeded, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">
@@ -332,10 +332,10 @@
                                     VerticalAlignment="Center">
                             <Separator />
                             <TextBlock Background="LightGray"
-                                       Text="{Binding SelectedCustomer.Reservation.CheckIn, StringFormat='{}{0:dd/MM/yyyy}'}" />
+                                       Text="{Binding SelectedCustomer.CheckIn, StringFormat='{}{0:dd/MM/yyyy}'}" />
                             <Separator Width="10" />
                             <TextBlock Background="LightGray"
-                                       Text="{Binding SelectedCustomer.Reservation.CheckOut, StringFormat='{}{0:dd/MM/yyyy}'}" />
+                                       Text="{Binding SelectedCustomer.CheckOut, StringFormat='{}{0:dd/MM/yyyy}'}" />
                             <Separator />
                         </StackPanel>
                         <StackPanel Grid.Row="2"
@@ -509,7 +509,7 @@
                                                         DisplayMemberBinding="{Binding Date, StringFormat='{}{0:dd/MM/yyyy-HH:mm}'}" />
                                         <GridViewColumn Header="Ποσό"
                                                         Width="40"
-                                                        DisplayMemberBinding="{Binding Amount}" />
+                                                        DisplayMemberBinding="{Binding Amount,Converter={StaticResource FtoSConverter}}" />
                                         <GridViewColumn Header="Μέθοδος"
                                                         Width="70" />
                                         <!--DisplayMemberBinding="{Binding Method, Converter={StaticResource IntToPaymentMethod}}" />-->
@@ -704,10 +704,6 @@
                                                                                FontSize="16"
                                                                                VerticalAlignment="Center" />
                                                                     <!--Text="{Binding Converter={StaticResource RoomTypeToRoomsLeftConverter}}"-->
-                                                                    <Button Content="No Name"
-                                                                            Command="{Binding DataContext.BookRoomNoNameCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}, Mode=FindAncestor}}"
-                                                                            CommandParameter="{Binding Name}"
-                                                                            Margin="5,0" />
                                                                     <!--Visibility="{Binding Converter={StaticResource RoomsHotelsToVisibilityConverter}}"
                                                                    -->
                                                                 </StackPanel>
@@ -758,6 +754,16 @@
                                           Unchecked="IsPartnerCheckBox_Unchecked"
                                           HorizontalAlignment="Left"
                                           IsChecked="{Binding IsPartners,UpdateSourceTrigger=PropertyChanged}"
+                                          VerticalAlignment="Center" />
+                                <TextBlock FlowDirection="LeftToRight"
+                                           VerticalAlignment="Center"
+                                           Margin="15 0 5 0 "
+                                           Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
+                                           HorizontalAlignment="Left"
+                                           Text="Απόδειξη" />
+                                <CheckBox HorizontalAlignment="Left"
+                                          Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
+                                          IsChecked="{Binding BookingWr.Reciept,UpdateSourceTrigger=PropertyChanged}"
                                           VerticalAlignment="Center" />
                             </StackPanel>
                             <StackPanel Orientation="Horizontal"
@@ -813,7 +819,7 @@
                                 <TextBlock Text="Προμήθεια (%):"
                                            Grid.Row="1"
                                            HorizontalAlignment="Left" />
-                                <TextBox Text="{Binding BookingWr.Commision,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                <TextBox Text="{Binding BookingWr.Commision,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                          Margin="5,0,5,5"
                                          VerticalAlignment="Center"
                                          MinWidth="40"
@@ -868,7 +874,7 @@
                                            VerticalAlignment="Center"
                                            Width="50"
                                            Grid.Column="1"
-                                           Text="{Binding BookingWr.Recieved,UpdateSourceTrigger=PropertyChanged}"
+                                           Text="{Binding BookingWr.Recieved,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource FtoSConverter}}"
                                            Margin="0,0,5,0" />
                                 <Label Content="Υπόλοιπο:"
                                        Grid.Row="4"
@@ -876,7 +882,7 @@
                                        Margin="0,0,5,0" />
                                 <TextBlock Grid.Row="4"
                                            Width="50"
-                                           Text="{Binding BookingWr.Remaining,UpdateSourceTrigger=PropertyChanged}"
+                                           Text="{Binding BookingWr.Remaining,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource FtoSConverter}}"
                                            VerticalAlignment="Center"
                                            Grid.Column="1"
                                            Margin="0,0,5,0" />
@@ -901,7 +907,7 @@
                                          Margin="0,0,5,0" />
                             </StackPanel>
                             <ComboBox ItemsSource="{Binding Users}"
-                                      SelectedItem="{Binding SelectedUser}"
+                                      SelectedIndex="{Binding SelectedUserIndex}"
                                       DisplayMemberPath="UserName"
                                       Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}"
                                       Margin="0"

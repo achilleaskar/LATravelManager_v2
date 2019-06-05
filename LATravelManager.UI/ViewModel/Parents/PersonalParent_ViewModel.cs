@@ -27,7 +27,7 @@ namespace LATravelManager.UI.ViewModel.Parents
 
         public void LoadChildViewModels()
         {
-            Childs.Add(new NewReservation_Personal_ViewModel());
+            Childs.Add(new NewReservation_Personal_ViewModel(MainViewModel));
             //Childs.Add(new Search_Personal_ViewModel());
             //Childs.Add(new MoveReservation_Bansko_ViewModel());
             //Childs.Add(new Lists_Bansko_ViewModel());

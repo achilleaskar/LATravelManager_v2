@@ -1,4 +1,5 @@
-﻿using LATravelManager.Model;
+﻿using LATravelManager.DataAccess.Migrations;
+using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Hotels;
@@ -13,7 +14,7 @@ namespace LATravelManager.DataAccess
 {
     // Code-Based Configuration and Dependency resolution
     //[DbConfigurationType(typeof(MySqlEFConfiguration))]
-    [DbConfigurationType(typeof(MySqlEFConfiguration))]
+    //[DbConfigurationType(typeof(MySqlEFConfiguration))]
     public class MainDatabase : DbContext
     {
         #region Constructors
@@ -21,6 +22,8 @@ namespace LATravelManager.DataAccess
         public MainDatabase() : base("LADatabase")
         {
             Configuration.ValidateOnSaveEnabled = false;
+            
+            DbConfiguration.SetConfiguration(new ContextConfiguration());
         }
 
         #endregion Constructors
@@ -34,6 +37,7 @@ namespace LATravelManager.DataAccess
         public DbSet<City> Cities { get; set; }
         public DbSet<Country> Countries { get; set; }
         public DbSet<Customer> Customers { get; set; }
+        public DbSet<Option> Options { get; set; }
         public DbSet<ExcursionCategory> ExcursionCategories { get; set; }
         public DbSet<Excursion> Excursions { get; set; }
         public DbSet<HotelCategory> HotelCategories { get; set; }

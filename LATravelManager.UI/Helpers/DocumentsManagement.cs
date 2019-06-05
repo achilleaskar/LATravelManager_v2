@@ -91,7 +91,7 @@ namespace LATravelManager.UI.Helpers
             int customersCount;
             using (GenericRepository Context = new GenericRepository())
             {
-                List<Booking> AllBookings = (await Context.GetAllBookingInPeriod(new DateTime(2018, 09, 01), new DateTime(2019, 09, 01), 2)).ToList();
+                List<Booking> AllBookings = (await Context.GetAllBookingInPeriodNoTracking(new DateTime(2018, 09, 01), new DateTime(2019, 09, 01), 2)).ToList();
 
                 if (AllBookings.Count > 0)
                 {

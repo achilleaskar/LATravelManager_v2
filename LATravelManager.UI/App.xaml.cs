@@ -1,8 +1,8 @@
-﻿using Autofac;
-using LATravelManager.UI.StartUp;
-using LATravelManager.UI.ViewModel.Window_ViewModels;
+﻿using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Views;
 using System;
+using System.Globalization;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,6 +22,13 @@ namespace LATravelManager.UI
             EventManager.RegisterClassHandler(typeof(TextBox), UIElement.GotKeyboardFocusEvent,
               new RoutedEventHandler(SelectAllText), true);
 
+            var vCulture = new CultureInfo("el-GR");
+
+            Thread.CurrentThread.CurrentCulture = vCulture;
+            Thread.CurrentThread.CurrentUICulture = vCulture;
+            CultureInfo.DefaultThreadCurrentCulture = vCulture;
+            CultureInfo.DefaultThreadCurrentUICulture = vCulture;
+
             base.OnStartup(e);
         }
 
@@ -37,17 +44,19 @@ namespace LATravelManager.UI
                 }
             }
         }
+
         public SplashScreen splashScreen;
-        public  MainViewModel _viewModel;
+        public MainViewModel _viewModel;
 
         private static void SelectAllText(object sender, RoutedEventArgs e)
         {
-            TextBox textBox = e.OriginalSource as TextBox;
-            if (textBox != null)
+            if (e.OriginalSource is TextBox textBox)
                 textBox.SelectAll();
         }
+
         private async void Application_Startup(object sender, StartupEventArgs e)
         {
+           
             splashScreen = new SplashScreen("latravel_logo1.jpg");
             splashScreen.Show(false);
             // Bootstrapper bootstrapper = new Bootstrapper();

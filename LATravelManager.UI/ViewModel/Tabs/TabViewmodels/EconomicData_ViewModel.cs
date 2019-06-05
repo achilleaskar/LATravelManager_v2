@@ -329,8 +329,8 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             int userId = UserIndexBookingFilter > 0 ? Users[UserIndexBookingFilter - 1].Id : 0;
             int excursionId = ExcursionIndexBookingFilter > 0 ? Excursions[ExcursionIndexBookingFilter - 1].Id : 0;
 
-            Users = new ObservableCollection<User>(await Context.GetAllAsyncSortedByName<User>());
-            Excursions = new ObservableCollection<Excursion>((await Context.GetAllAsync<Excursion>()).OrderBy(e => e.ExcursionDates.OrderBy(ed => ed.CheckIn).FirstOrDefault().CheckIn));
+            Users = MainViewModel.BasicDataManager.Users;// new ObservableCollection<User>(await Context.GetAllAsyncSortedByName<User>());
+            Excursions = MainViewModel.BasicDataManager.Excursions;//new ObservableCollection<Excursion>((await Context.GetAllAsync<Excursion>()).OrderBy(e => e.ExcursionDates.OrderBy(ed => ed.CheckIn).FirstOrDefault().CheckIn));
             ShowEconomicDataCommand.RaiseCanExecuteChanged();
             ExcursionsCollectionView = CollectionViewSource.GetDefaultView(Excursions);
             ExcursionsCollectionView.Refresh();
@@ -357,9 +357,9 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             await Task.Delay(0);
         }
 
-        private float _Total;
+        private decimal _Total;
 
-        public float Total
+        public decimal Total
         {
             get
             {
@@ -378,9 +378,9 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-        private float _Cash;
+        private decimal _Cash;
 
-        public float Cash
+        public decimal Cash
         {
             get
             {
@@ -404,10 +404,10 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
 
 
-        private float _Peiraios;
+        private decimal _Peiraios;
 
 
-        public float Peiraios
+        public decimal Peiraios
         {
             get
             {
@@ -429,10 +429,10 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
 
 
-        private float _Ethniki;
+        private decimal _Ethniki;
 
 
-        public float Ethniki
+        public decimal Ethniki
         {
             get
             {
@@ -454,10 +454,10 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
 
 
-        private float _Eurobank;
+        private decimal _Eurobank;
 
 
-        public float Eurobank
+        public decimal Eurobank
         {
             get
             {
@@ -478,10 +478,10 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
 
 
-        private float _AlphaBank;
+        private decimal _AlphaBank;
 
 
-        public float AlphaBank
+        public decimal AlphaBank
         {
             get
             {
@@ -500,9 +500,9 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-        private float _VISA;
+        private decimal _VISA;
 
-        public float VISA
+        public decimal VISA
         {
             get
             {

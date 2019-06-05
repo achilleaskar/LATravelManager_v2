@@ -1,0 +1,20 @@
+﻿<Window x:Class="LATravelManager.UI.Views.Personal.EditPersonalBooking_Window"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LATravelManager.UI.Views.Personal"
+        xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.CategoriesViewModels.Personal"
+        xmlns:viewms="clr-namespace:LATravelManager.UI.Views.Personal"
+        d:DataContext="{d:DesignInstance viewmodels:NewReservation_Personal_ViewModel}"
+        mc:Ignorable="d"
+        Closing="Window_Closing"
+        Background="White"
+        WindowStartupLocation="CenterOwner"
+        SizeToContent="WidthAndHeight"
+        d:DesignHeight="800"
+        d:DesignWidth="1200">
+    <Grid>
+        <viewms:NewReservation_Personal_UserControl DataContext="{Binding}"  />
+    </Grid>
+</Window>

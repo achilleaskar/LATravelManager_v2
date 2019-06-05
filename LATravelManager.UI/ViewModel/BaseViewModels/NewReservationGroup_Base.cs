@@ -4,7 +4,6 @@ using GalaSoft.MvvmLight.CommandWpf;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.LocalModels;
-using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Data.Workers;
@@ -39,7 +38,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             RoomsManager = new RoomsManager();
 
             //Commands
-            ShowFilteredRoomsCommand = new RelayCommand(async () => { await ShowFilteredRoomsAsync(true); }, CanShowFilteredRooms);
+            ShowFilteredRoomsCommand = new RelayCommand(async () => { await ShowFilteredRoomsAsync(); }, CanShowFilteredRooms);
             ClearBookingCommand = new RelayCommand(async () => { await ClearBooking(); });
             ReadNextLineCommand = new RelayCommand(ReadNextLine);
             AddCustomerCommand = new RelayCommand(AddRandomCustomer);
@@ -113,7 +112,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         private Payment _SelectedPayment;
 
-        private Room _SelectedRoom;
+        private RoomWrapper _SelectedRoom;
 
         private int _SelectedRoomTypeIndex;
 
@@ -201,6 +200,8 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 RaisePropertyChanged();
             }
         }
+
+        public BasicDataManager BasicDataManager { get; set; }
 
         public string BookedMessage
         {
@@ -316,8 +317,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
-        public GenericRepository StartingRepository { get; set; }
-
         public bool HB
         {
             get
@@ -354,7 +353,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         }
 
         public bool IsAnyReservationResSelected => SelectedCustomer != null && SelectedCustomer.Reservation != null;
-
         public bool IsAnyResSelected => SelectedCustomer != null && SelectedCustomer.Reservation != null;
 
         public bool IsPartners
@@ -397,7 +395,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         }
 
         public RelayCommand ManagePartnersCommand { get; set; }
-
         public NewReservationHelper NewReservationHelper { get; set; }
 
         public bool OnlyStay
@@ -458,15 +455,9 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         }
 
         public RelayCommand PrintContractCommand { get; set; }
-
         public RelayCommand PrintVoucherCommand { get; set; }
-
         public RelayCommand PutCustomersInRoomCommand { get; set; }
-
         public RelayCommand ReadNextLineCommand { get; set; }
-
-        public BasicDataManager BasicDataManager { get; set; }
-
         public RoomsManager RoomsManager { get; set; }
 
         public ObservableCollection<RoomType> RoomTypes
@@ -604,7 +595,31 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
-        public Room SelectedRoom
+
+
+
+        private ObservableCollection<RoomTypeWrapper> _FilteredRoomTypesList;
+
+
+        public ObservableCollection<RoomTypeWrapper> FilteredRoomTypesList
+        {
+            get
+            {
+                return _FilteredRoomTypesList;
+            }
+
+            set
+            {
+                if (_FilteredRoomTypesList == value)
+                {
+                    return;
+                }
+
+                _FilteredRoomTypesList = value;
+                RaisePropertyChanged();
+            }
+        }
+        public RoomWrapper SelectedRoom
         {
             get => _SelectedRoom;
 
@@ -658,7 +673,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         }
 
         public RelayCommand ShowFilteredRoomsCommand { get; set; }
-
+        public GenericRepository StartingRepository { get; set; }
         public RelayCommand UpdateAllCommand { get; set; }
 
         public ObservableCollection<User> Users
@@ -718,27 +733,19 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             await ResetAllRefreshableDataASync();
         }
 
-        public async Task ShowFilteredRoomsAsync(bool reset = true)
+        public async Task ShowFilteredRoomsAsync()
         {
             try
             {
-                await Task.Delay(0);
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
-                //if (reset)
-                //{
-                //    if (BasicDataManager != null && !BasicDataManager.IsTaskOk)
-                //    {
-                //        await BasicDataManager.LastTask;
-                //    }
-                //    BasicDataManager = new GenericRepository();
-                //}
-                AvailableHotels = new ObservableCollection<HotelWrapper>();
-                // AvailableHotels = new ObservableCollection<HotelWrapper>((await Task.Run(() => RoomsManager.GetAllAvailableRooms(RefreshableContext, BookingWr.CheckIn, BookingWr.CheckOut, SelectedExcursion, unSavedBooking: BookingWr.Model))));
+
+                AvailableHotels = new ObservableCollection<HotelWrapper>((await RoomsManager.GetAllAvailableRooms(BookingWr.CheckIn, BookingWr.CheckOut, SelectedExcursion, unSavedBooking: BookingWr.Model)));
                 FilteredRoomList = new ObservableCollection<RoomWrapper>();
-                List<RoomWrapper> tmplist = new List<RoomWrapper>();
+                List<RoomTypeWrapper> tmplist = new List<RoomTypeWrapper>();
 
                 int allotmentDays = 0;
                 bool addThis = false;
+                int indexOfRoomtype = 0, indexOfHotel = 0;
 
                 foreach (HotelWrapper hotel in AvailableHotels)
                 {
@@ -746,12 +753,13 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                     {
                         foreach (RoomWrapper room in hotel.RoomWrappers)
                         {
+                            indexOfHotel = indexOfRoomtype = -1;
                             allotmentDays = 0;
                             addThis = true;
                             for (int i = 0; i < room.PlanDailyInfo.Count; i++)
                             {
-                                addThis &= room.PlanDailyInfo[i].RoomState == RoomStateEnum.Available || room.PlanDailyInfo[i].RoomState == RoomStateEnum.MovaBleNoName || room.PlanDailyInfo[i].RoomState == RoomStateEnum.Allotment;
-                                if (room.PlanDailyInfo[i].IsAllotment)
+                                addThis &= room.PlanDailyInfo[i].RoomState == RoomStateEnum.Available || room.PlanDailyInfo[i].RoomState == RoomStateEnum.MovableNoName || room.PlanDailyInfo[i].RoomState == RoomStateEnum.Allotment;
+                                if (room.PlanDailyInfo[i].RoomTypeEnm == RoomTypeEnum.Allotment)
                                 {
                                     allotmentDays++;
                                 }
@@ -759,6 +767,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                             //todelete
                             if (addThis)
                             {
+
                                 if (allotmentDays > 0)
                                 {
                                     if (room.PlanDailyInfo.Count != allotmentDays)
@@ -777,7 +786,26 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                                     // room.IsAllotment = false;
                                     room.LocalNote = "";
                                 }
-                                tmplist.Add(room);
+
+                                indexOfRoomtype = tmplist.FindIndex(x => x.RoomType == room.RoomType);
+                                if (indexOfRoomtype >= 0)
+                                {
+                                    indexOfHotel = tmplist[indexOfRoomtype].Hotels.FindIndex(x => x.Hotel == room.Hotel);
+                                }
+                                else
+                                {
+                                    indexOfRoomtype = tmplist.Count;
+                                    tmplist.Add(new RoomTypeWrapper { Hotels = new ObservableCollection<RoomsInHotel>(), RoomType = room.RoomType });
+                                }
+                                if (indexOfHotel >= 0)
+                                {
+                                    tmplist[indexOfRoomtype].Hotels[indexOfHotel].Rooms.Add(room);
+                                }
+                                else
+                                {
+                                    tmplist[indexOfRoomtype].Hotels.Add(new RoomsInHotel { Rooms = new List<RoomWrapper>(), Hotel = room.Hotel });
+                                    tmplist[indexOfRoomtype].Hotels[0].Rooms.Add(room);
+                                }
                             }
                             else
                             {
@@ -787,11 +815,12 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 }
                 //TODO an mporei na fygei
 
-                FilteredRoomList = new ObservableCollection<RoomWrapper>(tmplist.OrderBy(f => f.RoomType.MinCapacity).ToList());
-                CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(FilteredRoomList);
-                PropertyGroupDescription groupDescription = new PropertyGroupDescription(nameof(Hotel));
-                view.GroupDescriptions.Add(groupDescription);
+               // FilteredRoomList = new ObservableCollection<RoomWrapper>(tmplist.OrderBy(f => f.RoomType.MinCapacity).ToList());
+                //CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(FilteredRoomList);
+               // PropertyGroupDescription groupDescription = new PropertyGroupDescription(nameof(RoomType));
+               // view.GroupDescriptions.Add(groupDescription);
                 RaisePropertyChanged(nameof(FilteredRoomList));
+                FilteredRoomTypesList = new ObservableCollection<RoomTypeWrapper>(tmplist);
             }
             catch (Exception ex)
             {
@@ -807,7 +836,14 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         protected async Task<Booking> CreateNewBooking()
         {
-            return new Booking { Excursion = await StartingRepository.GetExcursionByIdAsync(SelectedExcursion.Id), CheckIn = BookingWr != null ? BookingWr.CheckIn : new DateTime(2018, 12, 28), CheckOut = BookingWr != null ? BookingWr.CheckOut : new DateTime(2018, 12, 30), User = await StartingRepository.GetByIdAsync<User>(StaticResources.User.Id) };
+            var b = new Booking { CheckIn = BookingWr != null ? BookingWr.CheckIn : new DateTime(2019, 06, 14), CheckOut = BookingWr != null ? BookingWr.CheckOut : new DateTime(2019, 06, 17) };
+            var e = await StartingRepository.GetExcursionByIdAsync(SelectedExcursion.Id, true);
+            var u = await StartingRepository.GetByIdAsync<User>(StaticResources.User.Id, true);
+            b.User = u;
+            b.Excursion = e;
+
+            return b;
+            //return new Booking { Excursion = e, CheckIn = BookingWr != null ? BookingWr.CheckIn : new DateTime(2018, 12, 28), CheckOut = BookingWr != null ? BookingWr.CheckOut : new DateTime(2018, 12, 30), User = u};
         }
 
         protected void InitializeBooking(Booking booking)
@@ -835,20 +871,20 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
-        protected async Task ResetAllRefreshableDataASync()
+        protected async Task ResetAllRefreshableDataASync(bool makeNew = false)
         {
             if (SelectedExcursion == null)
             {
                 SelectedExcursion = new ExcursionWrapper(await StartingRepository.GetExcursionByIdAsync(BookingWr.Excursion.Id));
             }
-            else
+            if (SelectedExcursion != null)
             {
                 try
                 {
                     MessengerInstance.Send(new IsBusyChangedMessage(true));
 
-                   
-                   await BasicDataManager.Refresh();
+                    if (makeNew)
+                        await BasicDataManager.Refresh();
 
                     RoomsManager = new RoomsManager();
 
@@ -861,7 +897,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                     }
                     int userId = SelectedUserIndex >= 0 && Users != null && SelectedUserIndex < Users.Count ? Users[SelectedUserIndex].Id : -1;
 
-                    Hotels = new ObservableCollection<Hotel>( BasicDataManager.Hotels.Where(h=>h.City.Id==SelectedExcursion.Destinations[0].Id));
+                    Hotels = new ObservableCollection<Hotel>(BasicDataManager.Hotels.Where(h => h.City.Id == SelectedExcursion.Destinations[0].Id));
                     RoomTypes = BasicDataManager.RoomTypes;
                     StaticResources.StartingPlaces = BasicDataManager.StartingPlaces;
                     Users = BasicDataManager.Users;
@@ -1070,7 +1106,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
-        private void Booking_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void Booking_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             //TODO mporei na mporei na ginei kalytera vazontas to mesa sto checkin
             //episis na to kanw na vazei ws epistrofi thn epomenh kyriakh ektos apo xristugenna
@@ -1117,10 +1153,16 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         private bool CanMakeNoNameReservation()
         {//TODO tsekare to opws kai ola ta TODO
-            if (SelectedRoomTypeIndex <= 0 || (SelectedCustomer == null && !All) || FilteredRoomList.Count == 0 || !AreBookingDataValid || !AreContexesFree)
+            if (NumOfSelectedCustomers > 1 && !FilteredRoomList.Any(r => r.RoomType.MinCapacity <= NumOfSelectedCustomers && r.RoomType.MaxCapacity >= NumOfSelectedCustomers) || (NumOfSelectedCustomers == 1 && !FilteredRoomList.Any(r => r.RoomType.MinCapacity == 2)))
             {
                 return false;
             }
+
+            if (SelectedRoomTypeIndex <= 0 || (SelectedCustomer == null && !All) || !AreBookingDataValid || !AreContexesFree)
+            {
+                return false;
+            }
+
             return true;
         }
 
@@ -1381,7 +1423,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
 
-                using (DocumentsManagement vm = new DocumentsManagement(BasicDataManager))
+                using (DocumentsManagement vm = new DocumentsManagement(BasicDataManager.Context))
                 {
                     vm.PrintSingleBookingContract(BookingWr);
                 }
@@ -1402,7 +1444,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
 
-                using (DocumentsManagement vm = new DocumentsManagement(BasicDataManager))
+                using (DocumentsManagement vm = new DocumentsManagement(BasicDataManager.Context))
                 {
                     await vm.PrintSingleBookingVoucher(BookingWr);
                 }
@@ -1423,7 +1465,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
 
-                NewReservationHelper.PutCustomersInRoomAsync(BookingWr, new RoomWrapper(await StartingRepository.GetByIdAsync<Room>(SelectedRoom.Id)), All, OnlyStay, HB);
+                NewReservationHelper.PutCustomersInRoomAsync(BookingWr, new RoomWrapper(await StartingRepository.GetRoomById(SelectedRoom.Id)), All, OnlyStay, HB);
                 if (All)
                 {
                     FilteredRoomList.Clear();
@@ -1527,9 +1569,9 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                                         if (c.CellValue != null)
                                         {
                                             string tmpValue = c.CellValue.Text.Replace('.', ',');
-                                            if (tmpCustomerWr.Price < 1 && float.TryParse(tmpValue, out float price))
+                                            if (tmpCustomerWr.Price < 1 && decimal.TryParse(tmpValue, out decimal price))
                                             {
-                                                tmpCustomerWr.Price = (float)Math.Round(price, 2); ;
+                                                tmpCustomerWr.Price = Math.Round(price, 2); ;
                                             }
                                             if (tmpCustomerWr.Price <= 0)
                                             {
@@ -1594,6 +1636,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 Payment = new Payment();
                 BookedMessage = "H κράτηση αποθηκέυτηκε επιτυχώς";
                 HasChanges = false;
+                MessengerInstance.Send(new ReservationChanged_Message(BookingWr.Model));
             }
             catch (Exception ex)
             {
@@ -1607,12 +1650,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         private async Task UpdateAll()
         {
-            if (BasicDataManager != null && !BasicDataManager.IsTaskOk)
-            {
-                await BasicDataManager.LastTask;
-            }
-            BasicDataManager = new GenericRepository();
-            await ResetAllRefreshableDataASync();
+            await ResetAllRefreshableDataASync(true);
             UpdateAllCommand.RaiseCanExecuteChanged();
         }
 
@@ -1661,5 +1699,22 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         }
 
         #endregion Methods
+    }
+
+    public class RoomTypeWrapper
+    {
+        public RoomType RoomType { get; set; }
+        public int RoomsCounter { get; set; }
+        public int AvailableRooms { get; set; }
+
+        public ObservableCollection<RoomsInHotel> Hotels { get; set; }
+    }
+
+    public class RoomsInHotel
+    {
+        public Hotel Hotel { get; set; }
+        public List<RoomWrapper> Rooms { get; set; }
+
+
     }
 }

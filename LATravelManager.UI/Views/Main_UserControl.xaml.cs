@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using LATravelManager.UI.ViewModel.Window_ViewModels;
+using System.Windows.Controls;
 
 namespace LATravelManager.UI.Views
 {
@@ -12,8 +13,12 @@ namespace LATravelManager.UI.Views
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (e.OriginalSource is TabControl & DataContext is MainUserControl_ViewModel)
+            {
+                (DataContext as MainUserControl_ViewModel).SelectedTemplateChangedCommand.Execute(null);
+            }
         }
     }
 }

@@ -4,7 +4,6 @@ using LATravelManager.Model;
 using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
-using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using System;
 using System.Collections.ObjectModel;
@@ -226,7 +225,7 @@ namespace LaTravelManager.BaseTypes
             {
                 BasicDataManager.Add(SelectedEntity.Model);
                 MainCollection.Add(SelectedEntity);
-                ClearEntity();
+               // ClearEntity();
                 ResultMessage = SelectedEntity.Title + " προστέθηκε επιτυχώς";
                 RemoveEntityCommand.RaiseCanExecuteChanged();
             }
@@ -267,8 +266,8 @@ namespace LaTravelManager.BaseTypes
                 //{
                 //    await BasicDataManager.LastTask;
                 //}
-                
-                BasicDataManager = new BasicDataManager(new GenericRepository());
+
+                await BasicDataManager.Refresh();
                 await BasicDataManager.LoadAsync();
                 if (SelectedEntity.Id > 0)
                 {

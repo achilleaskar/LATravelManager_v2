@@ -1,4 +1,5 @@
-﻿using LATravelManager.UI.Wrapper;
+﻿using LATravelManager.Model.Wrapper;
+using LATravelManager.UI.Wrapper;
 using System.Collections.Generic;
 
 namespace LATravelManager.Model.LocalModels

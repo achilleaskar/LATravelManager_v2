@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace LATravelManager.UI.Views
+namespace LATravelManager.UI.Views.Tabs
 {
     /// <summary>
     /// Interaction logic for AddRooms_Group_ViewModel.xaml

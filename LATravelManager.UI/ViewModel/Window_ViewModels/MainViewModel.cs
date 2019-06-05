@@ -1,9 +1,14 @@
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
+using LATravelManager.Model.Hotels;
 using LATravelManager.Model.People;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
+using LATravelManager.UI.Wrapper;
+using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -128,6 +133,22 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             }
         }
 
+
+        public async Task LoadOptions()
+        {
+            List<Option> options = await StartingRepository.GetAllPendingOptions();
+
+            if (options.Count > 0)
+            {
+                var builder = new StringBuilder();
+                foreach (Option option in options)
+                {
+                    builder.Append("-Η Option για το δωμάτιο στο " + option.Room.Hotel.Name + "," + (new RoomWrapper(option.Room).Dates + " λήγει στις " + option.Date.ToShortDateString() + Environment.NewLine));
+                }
+                MessageBox.Show(builder.ToString(), "Προσοχή");
+            }
+        }
+
         public async Task LoadAsync()
         {
             StartingRepository = new GenericRepository();
@@ -135,11 +156,12 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
             await BasicDataManager.LoadAsync();
 
+            
 #if DEBUG
             StaticResources.User = new User { BaseLocation = 1, Id = 1, Level = 0, UserName = "admin" };
             RaisePropertyChanged(nameof(MenuVisibility));
 #endif
-            await ChangeViewModel();
+            await ChangeViewModel().ContinueWith(async (t1)=> { await LoadOptions(); });
         }
 
         #endregion Methods

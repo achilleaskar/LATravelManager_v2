@@ -5,6 +5,7 @@ using LATravelManager.Model.Wrapper;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Windows;
 using static LATravelManager.Model.Enums;
@@ -34,7 +35,39 @@ namespace LATravelManager.UI.Wrapper
 
         #endregion Fields
 
+        [NotMapped]
+        public bool Handled { get; set; }
+
+        private bool _Merged;
+
+        public bool Merged
+        {
+            get
+            {
+                return _Merged;
+            }
+
+            set
+            {
+                if (_Merged == value)
+                {
+                    return;
+                }
+
+                _Merged = value;
+                RaisePropertyChanged();
+            }
+        }
+
         #region Properties
+
+        public bool CanMerge(List<PlanDailyInfo> datesNeeded)
+        {
+            for (var i = 0; i < PlanDailyInfo.Count; i++)
+                if (datesNeeded[i].RoomState != RoomStateEnum.NotAvailable && PlanDailyInfo[i].RoomState != RoomStateEnum.NotAvailable) //ksanades to
+                    return false;
+            return true;
+        }
 
         public List<BookingInfoPerDay> DailyBookingInfo
         {
@@ -172,11 +205,8 @@ namespace LATravelManager.UI.Wrapper
                 if (tmpDate == PlanDailyInfo[i].Date)
                 {
                     bool positive;
-                    if ((PlanDailyInfo[i].RoomState == RoomStateEnum.Available && (!PlanDailyInfo[i].IsAllotment || includeAllotment)) ||
-                       (PlanDailyInfo[i].RoomState == RoomStateEnum.MovaBleNoName && includeSelf))
-                    // || (includeSelf && DailyBookingInfo[i].Reservation != null &&
-                    // DailyBookingInfo[i].Reservation.Id == reservation.Id &&
-                    // DailyBookingInfo[i].Reservation.Room.Hotel.Id == 0))
+                    if ((PlanDailyInfo[i].RoomState == RoomStateEnum.Available && (PlanDailyInfo[i].RoomTypeEnm==RoomTypeEnum.Available || (includeAllotment&& PlanDailyInfo[i].RoomTypeEnm == RoomTypeEnum.Booking))) ||
+                       (PlanDailyInfo[i].RoomState == RoomStateEnum.MovableNoName && includeSelf))
                     {
                         positive = true;
                     }
@@ -207,9 +237,15 @@ namespace LATravelManager.UI.Wrapper
 
         public bool CanFit(ReservationWrapper reservationWr)
         {
+
             if (reservationWr.CustomersList.Count >= RoomType.MinCapacity && reservationWr.CustomersList.Count <= RoomType.MaxCapacity)
             {
                 return true;
+            }
+            if (reservationWr.CustomersList.Count==1 && RoomType.MinCapacity==2)
+            {
+                return true;
+
             }
             return false;
         }
@@ -224,7 +260,7 @@ namespace LATravelManager.UI.Wrapper
                 (new RoomWrapper(reservationWr.NoNameRoom)).CancelReservation(reservationWr);
             reservationWr.NoNameRoom = Model;
             PlanDailyInfo tmpPlanInfo = null;
-            RoomStateEnum roomState = RoomStateEnum.MovaBleNoName;
+            RoomStateEnum roomState = RoomStateEnum.MovableNoName;
             while (tmpDate < reservationWr.CheckOut)
             {
                 dayNum++;
@@ -275,7 +311,7 @@ namespace LATravelManager.UI.Wrapper
                         MessageBox.Show("Egine m@l@ki@");
                         return;
                     }
-                    if (tmpPlanInfo.RoomState == RoomStateEnum.Available || tmpPlanInfo.RoomState == RoomStateEnum.MovaBleNoName || tmpPlanInfo.RoomState == RoomStateEnum.Allotment)
+                    if (tmpPlanInfo.RoomState == RoomStateEnum.Available || tmpPlanInfo.RoomState == RoomStateEnum.MovableNoName || tmpPlanInfo.RoomState == RoomStateEnum.Allotment)
                     {
                         tmpPlanInfo.Reservation = reservationWr;
                         tmpPlanInfo.RoomState = RoomStateEnum.Booked;
@@ -298,7 +334,7 @@ namespace LATravelManager.UI.Wrapper
             }
         }
 
-        internal bool IsAvailable(DateTime checkIn, DateTime checkOut)
+        public bool IsAvailable(DateTime checkIn, DateTime checkOut)
         {
             DateTime tmpDate = checkIn;
             BookingInfoPerDay tmpBookedInfo = null;

@@ -133,10 +133,7 @@
                                                                                FontSize="16"
                                                                                VerticalAlignment="Center" />
                                                                     <!--Text="{Binding Converter={StaticResource RoomTypeToRoomsLeftConverter}}"-->
-                                                                    <Button Content="No Name"
-                                                                            Command="{Binding DataContext.BookRoomNoNameCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}, Mode=FindAncestor}}"
-                                                                            CommandParameter="{Binding Name}"
-                                                                            Margin="5,0" />
+                                                                  
                                                                     <!--Visibility="{Binding Converter={StaticResource RoomsHotelsToVisibilityConverter}}"
                                                                    -->
                                                                 </StackPanel>
@@ -337,7 +334,7 @@
                                 <TextBlock Text="Προμήθεια (%):"
                                            Grid.Row="1"
                                            HorizontalAlignment="Left" />
-                                <TextBox Text="{Binding BookingWr.Commision,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                <TextBox Text="{Binding BookingWr.Commision,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                          Margin="5,0,5,5"
                                          VerticalAlignment="Center"
                                          MinWidth="40"
@@ -392,7 +389,7 @@
                                            VerticalAlignment="Center"
                                            Width="50"
                                            Grid.Column="1"
-                                           Text="{Binding BookingWr.Recieved,UpdateSourceTrigger=PropertyChanged}"
+                                           Text="{Binding BookingWr.Recieved,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource FtoSConverter}}"
                                            Margin="0,0,5,0" />
                                 <Label Content="Υπόλοιπο:"
                                        Grid.Row="4"
@@ -400,7 +397,7 @@
                                        Margin="0,0,5,0" />
                                 <TextBlock Grid.Row="4"
                                            Width="50"
-                                           Text="{Binding BookingWr.Remaining,UpdateSourceTrigger=PropertyChanged}"
+                                           Text="{Binding BookingWr.Remaining,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource FtoSConverter}}"
                                            VerticalAlignment="Center"
                                            Grid.Column="1"
                                            Margin="0,0,5,0" />
@@ -615,7 +612,7 @@
                                                         DisplayMemberBinding="{Binding Date, StringFormat='{}{0:dd/MM/yyyy-HH:mm}'}" />
                                         <GridViewColumn Header="Ποσό"
                                                         Width="40"
-                                                        DisplayMemberBinding="{Binding Amount}" />
+                                                        DisplayMemberBinding="{Binding Amount,Converter={StaticResource FtoSConverter}}" />
                                         <GridViewColumn Header="Μέθοδος"
                                                         Width="70" />
                                         <GridViewColumn Header="Χρήστης"
@@ -729,7 +726,7 @@
                                                 EditingElementStyle="{StaticResource DataGridEditingColumnStyle}"
                                                 FontWeight="DemiBold"
                                                 FontSize="14"
-                                                Binding="{Binding Price, UpdateSourceTrigger=PropertyChanged}" />
+                                                Binding="{Binding Price, UpdateSourceTrigger=PropertyChanged,Converter={StaticResource FtoSConverter } }" />
                             <DataGridComboBoxColumn Header="Ηλικία"
                                                     ItemsSource="{x:Static helpers:StaticResources.AgesList}">
                                 <DataGridComboBoxColumn.ElementStyle>

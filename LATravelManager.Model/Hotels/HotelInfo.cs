@@ -78,7 +78,7 @@ namespace LATravelManager.Model.Hotels
         /// PropertyChanged event.
         /// </summary>
         [Required]
-        public virtual Hotel Hotel
+        public  Hotel Hotel
         {
             get
             {

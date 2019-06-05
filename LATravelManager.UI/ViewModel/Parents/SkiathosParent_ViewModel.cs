@@ -1,5 +1,6 @@
 ﻿using LATravelManager.UI.Helpers;
 using LATravelManager.UI.ViewModel.BaseViewModels;
+using LATravelManager.UI.ViewModel.CategoriesViewModels;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Skiathos;
 using LATravelManager.UI.ViewModel.Tabs;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
@@ -13,7 +14,7 @@ namespace LATravelManager.UI.ViewModel.Parents
         public SkiathosParent_ViewModel(MainViewModel mainViewModel) : base(mainViewModel)
         {
             Tabs.Add(new MakeReservationTab { Index = Tabs.Count });
-            // Tabs.Add(new SearchTab { Index = Tabs.Count });
+            Tabs.Add(new PlanTab { Index = Tabs.Count });
             // Tabs.Add(new MoveTab { Index = Tabs.Count });
             // Tabs.Add(new ListManagementTab { Index = Tabs.Count });
             // Tabs.Add(new OptionalActivitiesTab { Index = Tabs.Count });
@@ -32,8 +33,8 @@ namespace LATravelManager.UI.ViewModel.Parents
 
         public void LoadChildViewModels()
         {
-            Childs.Add(new NewReservation_Skiathos_ViewModel(MainViewModel.StartingRepository));
-            //Childs.Add(new Search_Group_ViewModel());
+            Childs.Add(new NewReservation_Skiathos_ViewModel(MainViewModel));
+            Childs.Add(new Plan_ViewModel(this,MainViewModel));
             //Childs.Add(new MoveReservation_Bansko_ViewModel());
             //Childs.Add(new Lists_Bansko_ViewModel());
             //Childs.Add(new OptionalActivities_Bansko_ViewModel());

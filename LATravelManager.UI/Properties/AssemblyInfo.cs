@@ -50,11 +50,12 @@ using System.Windows;
 
 [assembly: log4net.Config.XmlConfigurator(ConfigFile = "log4net.config")]
 [assembly: NeutralResourcesLanguage("el-GR")]
-[assembly: AssemblyVersion("0.1.1")]
+[assembly: AssemblyVersion("0.2.4")]
+[assembly: AssemblyFileVersion("0.2.4")]
 
 /*
     cd "LATravelManager.UI\bin\Release"
     nuget pack .\LaTravelManager.nuspec
-    squirrel --releasify .\LATravelManager.UI\bin\Release\LATravelManager.0.0.9.nupkg
+    squirrel --releasify .\LATravelManager.UI\bin\Release\LATravelManager.0.2.3.nupkg --no-msi
 
 */

@@ -1,6 +1,6 @@
 ﻿using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Repositories;
-using LATravelManager.UI.Wrapper;
 using System;
 using System.Threading.Tasks;
 
@@ -31,13 +31,26 @@ namespace LATravelManager.UI.Helpers
 
         internal async Task DeleteReservation(ReservationWrapper selectedReservation)
         {
-            if (selectedReservation.Booking.ReservationsInBooking.Count == 1)
+            if (selectedReservation.ExcursionType == Model.Enums.ExcursionTypeEnum.ThirdParty)
             {
-                Context.DeletePayments(selectedReservation.Booking);
-                Context.Delete(selectedReservation.Booking);
+                throw new Exception("Mphkse sta tritwn");
+            }
+            else if (selectedReservation.ExcursionType == Model.Enums.ExcursionTypeEnum.Personal)
+            {
+                Context.DeletePayments(selectedReservation.PersonalModel.Id);
+                Context.Delete(selectedReservation.PersonalModel.Model);
             }
             else
-                Context.Delete(selectedReservation.Model);
+            {
+                if (selectedReservation.Booking.ReservationsInBooking.Count == 1)
+                {
+                    Context.DeletePayments(selectedReservation.Booking.Id);
+                    Context.Delete(selectedReservation.Booking);
+                }
+                else
+
+                    Context.Delete(selectedReservation.Model);
+            }
             await Context.SaveAsync();
         }
 

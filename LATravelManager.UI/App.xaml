@@ -18,7 +18,7 @@
             <BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" />
             <local:MessageListener x:Key="MessageListener" />
             <Style x:Key="styleCalendar"
-                   TargetType="{x:Type Calendar}">
+                   TargetType="{x:Type Calendar}" >
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type Calendar}">

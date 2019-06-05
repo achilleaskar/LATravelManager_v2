@@ -10,7 +10,7 @@ namespace LATravelManager.Model.BookingData
     {
         #region Fields + Constructors
 
-        private float _Amount;
+        private decimal _Amount;
         private string _AmountString;
 
         private string _Comment = string.Empty;
@@ -68,7 +68,7 @@ namespace LATravelManager.Model.BookingData
         #region Properties
 
         [NotMapped]
-        public double EPSILON { get; private set; } = 0.00001;
+        public decimal EPSILON { get; private set; } = 0.0001m;
 
         /// <summary>
         /// Sets and gets the Amount property. Changes to that property's value raise the
@@ -78,7 +78,7 @@ namespace LATravelManager.Model.BookingData
         /// Sets and gets the Price property. Changes to that property's value raise the
         /// PropertyChanged event.
         /// </summary>
-        public float Amount
+        public decimal Amount
         {
             get
             {
@@ -94,7 +94,7 @@ namespace LATravelManager.Model.BookingData
 
                 if (Math.Abs(value - _Amount) > EPSILON)
                 {
-                    _Amount = (float)Math.Round(value, 2);
+                    _Amount = Math.Round(value, 2);
                     AmountString = value.ToString();
                 }
                 RaisePropertyChanged(AmountPropertyName);
@@ -124,9 +124,9 @@ namespace LATravelManager.Model.BookingData
 
                 if (!string.IsNullOrEmpty(_AmountString))
                 {
-                    if (float.TryParse(value.Replace(',', '.'), NumberStyles.Any, new CultureInfo("en-US"), out float tmpDouble))
+                    if (decimal.TryParse(value.Replace(',', '.'), NumberStyles.Any, new CultureInfo("en-US"), out decimal tmpDouble))
                     {
-                        tmpDouble = (float)Math.Round(tmpDouble, 2);
+                        tmpDouble = Math.Round(tmpDouble, 2);
                         Amount = tmpDouble;
                         RaisePropertyChanged(AmountStringPropertyName);
                         if (_AmountString[_AmountString.Length - 1] != '.' && _AmountString[_AmountString.Length - 1] != ',')
@@ -226,7 +226,7 @@ namespace LATravelManager.Model.BookingData
         /// PropertyChanged event.
         /// </summary>
         [Required]
-        public virtual User User
+        public  User User
         {
             get
             {

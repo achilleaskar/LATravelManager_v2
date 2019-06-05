@@ -1,7 +1,7 @@
 ﻿using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.People;
-using LATravelManager.UI.Wrapper;
+using LATravelManager.UI.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -37,9 +37,9 @@ namespace LATravelManager.Model.Wrapper
 
         private ObservableCollection<CustomerWrapper> _Customers;
         private bool _DateChanged = false;
-        private float _FullPrice;
-        private float _Recieved;
-        private float _Remaining;
+        private decimal _FullPrice;
+        private decimal _Recieved;
+        private decimal _Remaining;
         private bool Calculating;
         private int IdCounter;
 
@@ -97,9 +97,9 @@ namespace LATravelManager.Model.Wrapper
             set { SetValue(value); }
         }
 
-        public float Commision
+        public decimal Commision
         {
-            get { return GetValue<float>(); }
+            get { return GetValue<decimal>(); }
             set
             {
                 if (value > 100)
@@ -185,7 +185,7 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
-        public float FullPrice
+        public decimal FullPrice
         {
             get
             {
@@ -248,7 +248,7 @@ namespace LATravelManager.Model.Wrapper
                     Calculating = true;
                     if (FullPrice >= 0)
                     {
-                        float tmpPrice = (float)Math.Round(FullPrice / Customers.Count, 2);
+                        decimal tmpPrice = Math.Round(FullPrice / Customers.Count, 2);
                         foreach (CustomerWrapper customer in Customers)
                             customer.Price = tmpPrice;
                     }
@@ -265,15 +265,15 @@ namespace LATravelManager.Model.Wrapper
 
         public string Names => GetNames();
 
-        public float NetPrice
+        public decimal NetPrice
         {
-            get { return GetValue<float>(); }
+            get { return GetValue<decimal>(); }
             set
             {
                 SetValue(value);
                 if (Commision > 0)
                 {
-                    FullPrice = (Commision == 100) ? 0 : (float)Math.Round(value / (1 - (Commision / 100)), 2);
+                    FullPrice = (Commision == 100) ? 0 : Math.Round(value / (1 - (Commision / 100)), 2);
                 }
                 CalculateRemainingAmount();
             }
@@ -285,12 +285,18 @@ namespace LATravelManager.Model.Wrapper
             set { SetValue(value); }
         }
 
+        public bool Reciept
+        {
+            get { return GetValue<bool>(); }
+            set { SetValue(value); }
+        }
+
         public ObservableCollection<Payment> Payments
         {
             get { return GetValue<ObservableCollection<Payment>>(); }
         }
 
-        public float Recieved
+        public decimal Recieved
         {
             set
             {
@@ -307,7 +313,7 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
-        public float Remaining
+        public decimal Remaining
         {
             get
             {
@@ -321,9 +327,9 @@ namespace LATravelManager.Model.Wrapper
                     return;
                 }
 
-                if (Math.Abs(_Remaining - value) > 0.001)
+                if (Math.Abs(_Remaining - value) > 0.0001m)
                 {
-                    _Remaining = (float)Math.Round(value, 1);
+                    _Remaining = Math.Round(value, 1);
                     RaisePropertyChanged();
                 }
             }
@@ -345,25 +351,25 @@ namespace LATravelManager.Model.Wrapper
             get { return GetValue<User>(); }
             set { SetValue(value); }
         }
+
         public string PartnerEmail
         {
             get { return GetValue<string>(); }
             set { SetValue(value); }
         }
 
-      
         #endregion Properties
 
         #region Methods
 
         public bool AreDatesValid()
         {
-            return CheckIn.Year > 2010 && CheckOut.Year > 2010 && (Excursion.ExcursionType.Category != ExcursionTypeEnum.Group || ExcursionDate != null);
+            return CheckIn.Year > 2010 && CheckOut.Year > 2010 && (ExcursionDate != null || Excursion.ExcursionType.Category != ExcursionTypeEnum.Group);
         }
 
         public void CalculateRemainingAmount()
         {
-            float total = 0;
+            decimal total = 0;
 
             _Recieved = 0;
             foreach (Payment payment in Payments)
@@ -446,7 +452,7 @@ namespace LATravelManager.Model.Wrapper
             {
                 if (Customers.Count > 1)
                 {
-                    if (Math.Abs(Customers[Customers.Count - 1].Price) < 0.01)
+                    if (Math.Abs(Customers[Customers.Count - 1].Price) < 0.00001m)
                     {
                         Customers[Customers.Count - 1].Price = Customers[0].Price;
                     }
@@ -582,7 +588,7 @@ namespace LATravelManager.Model.Wrapper
             }
             if (IsPartners)
             {
-                FullPrice = (Commision == 100) ? 0 : (float)Math.Round(100 * NetPrice / (100 - Commision), 2);
+                FullPrice = (Commision == 100) ? 0 : Math.Round(100 * NetPrice / (100 - Commision), 2);
             }
             if (Id == 0)
             {
@@ -629,7 +635,6 @@ namespace LATravelManager.Model.Wrapper
 
         public bool PhoneMissing;
 
-
         public string ValidateBooking()
         {
             PhoneMissing = true;
@@ -639,7 +644,6 @@ namespace LATravelManager.Model.Wrapper
                 {
                     if (IsPartners || (customer.Tel != null && customer.Tel.Length >= 10))
                     {
-
                         PhoneMissing = false;
                     }
                 }
@@ -667,12 +671,10 @@ namespace LATravelManager.Model.Wrapper
             if (Excursion != null && Excursion.ExcursionType.Category == ExcursionTypeEnum.Group && Excursion.ExcursionDates == null)
             {
                 return "Παρακαλώ επιλέξτε ημερομηνίες";
-
             }
 
             return null;
         }
-
 
         #endregion Methods
     }

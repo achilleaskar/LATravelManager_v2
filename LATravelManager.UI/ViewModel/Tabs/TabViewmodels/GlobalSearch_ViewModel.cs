@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
+using GalaSoft.MvvmLight.Messaging;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.People;
@@ -9,9 +10,12 @@ using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Group;
+using LATravelManager.UI.ViewModel.CategoriesViewModels.Personal;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Views.Bansko;
+using LATravelManager.UI.Views.Personal;
 using LATravelManager.UI.Wrapper;
+using NuGet;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -19,12 +23,35 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using static LATravelManager.Model.Enums;
 
 namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {
     internal class GlobalSearch_ViewModel : MyViewModelBaseAsync
     {
         #region Constructors
+
+        private bool _Bank;
+
+        public bool Bank
+        {
+            get
+            {
+                return _Bank;
+            }
+
+            set
+            {
+                if (_Bank == value)
+                {
+                    return;
+                }
+
+                _Bank = value;
+                ReservationsCollectionView.Refresh();
+                RaisePropertyChanged();
+            }
+        }
 
         public GlobalSearch_ViewModel(MainViewModel mainViewModel)
         {
@@ -43,37 +70,23 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             EditBookingCommand = new RelayCommand(async () => { await EditBooking(); }, CanEditBooking);
             DeleteReservationCommand = new RelayCommand(DeleteReservation, CanDeleteReservation);
             DeleteBookingCommand = new RelayCommand(DeleteBooking, CanDeleteBooking);
+            Messenger.Default.Register<ReservationChanged_Message>(this, ReservationChanged);
 
             CheckIn = DateTime.Today;
             CheckOut = DateTime.Today.AddDays(3);
             MainViewModel = mainViewModel;
-            // MessengerInstance.Register<SelectedExcursionChangedMessage>(this, async exc => { await SelectedExcursionChanged(exc.SelectedExcursion); });
         }
 
-        private bool CanPrintRoomingLists()
+        private void ReservationChanged(ReservationChanged_Message obj)
         {
-            return ExcursionIndexBookingFilter > 0;
-        }
+            List<ReservationWrapper> toremove = FilteredReservations.Where(r => r.ExcursionType != ExcursionTypeEnum.Personal && r.Booking.Id == obj.Booking.Id).ToList();
 
-        private Excursion _SelectedExcursionFilter;
-
-        public Excursion SelectedExcursionFilter
-        {
-            get
+            foreach (var r in toremove)
             {
-                return _SelectedExcursionFilter;
+                FilteredReservations.Remove(r);
             }
-
-            set
-            {
-                if (_SelectedExcursionFilter == value)
-                {
-                    return;
-                }
-
-                _SelectedExcursionFilter = value;
-                RaisePropertyChanged();
-            }
+            FilteredReservations.AddRange(obj.Booking.ReservationsInBooking.Select(w => new ReservationWrapper(w)));
+            ReservationsCollectionView.Refresh();
         }
 
         #endregion Constructors
@@ -81,21 +94,32 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         #region Fields
 
         private DateTime _CheckIn;
+
         private DateTime _CheckOut;
+
         private bool _Completed = false;
+
         private bool _EnableCheckInFilter = false;
+
         private bool _EnableCheckOutFilter = false;
+
         private int _ExcursionCategoryIndexBookingFilter;
 
         private int _ExcursionIndexBookingFilter;
 
         private ObservableCollection<Excursion> _Excursions;
 
+        private ICollectionView _ExcursionsCollectionView;
+
         private ObservableCollection<ReservationWrapper> _FilteredReservations = new ObservableCollection<ReservationWrapper>();
 
         private string _FilterString = string.Empty;
 
+        private bool _IsOk = true;
+
         private Booking _SelectedBooking;
+
+        private Excursion _SelectedExcursionFilter;
 
         private ReservationWrapper _SelectedReservation;
 
@@ -166,6 +190,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 }
 
                 _Completed = value;
+                ExcursionsCollectionView.Refresh();
                 RaisePropertyChanged();
             }
         }
@@ -284,8 +309,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-        private ICollectionView _ExcursionsCollectionView;
-
         public ICollectionView ExcursionsCollectionView
         {
             get
@@ -345,10 +368,35 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
+        public bool IsOk
+        {
+            get
+            {
+                return _IsOk;
+            }
+
+            set
+            {
+                if (_IsOk == value)
+                {
+                    return;
+                }
+
+                _IsOk = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public MainViewModel MainViewModel { get; }
+
         public RelayCommand PrintAllLettersCommand { get; set; }
+
         public RelayCommand PrintAllVouchersCommand { get; set; }
+
         public RelayCommand PrintListCommand { get; set; }
+
         public RelayCommand PrintRoomingListsCommand { get; set; }
+
         public ICollectionView ReservationsCollectionView { get; set; }
 
         public Booking SelectedBooking
@@ -366,6 +414,25 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 }
 
                 _SelectedBooking = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public Excursion SelectedExcursionFilter
+        {
+            get
+            {
+                return _SelectedExcursionFilter;
+            }
+
+            set
+            {
+                if (_SelectedExcursionFilter == value)
+                {
+                    return;
+                }
+
+                _SelectedExcursionFilter = value;
                 RaisePropertyChanged();
             }
         }
@@ -435,11 +502,13 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
-          
-
             try
             {
-                await ReloadAsync();
+                Context = new GenericRepository();
+                Users = MainViewModel.BasicDataManager.Users;
+                Excursions = MainViewModel.BasicDataManager.Excursions;
+                SearchBookingsHelper = new SearchBookingsHelper(Context);
+                await Task.Delay(0);
             }
             catch (Exception ex)
             {
@@ -453,20 +522,17 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         public override async Task ReloadAsync()
         {
-            if (Context == null)
-            {
-            }
             if (Context != null && !Context.IsTaskOk)
             {
                 await Context.LastTask;
             }
             Context = new GenericRepository();
             int userId = UserIndexBookingFilter > 0 ? Users[UserIndexBookingFilter - 1].Id : 0;
-            int excursionId = ExcursionIndexBookingFilter > 0 ?(ExcursionsCollectionView.CurrentItem as Excursion).Id : 0;
+            int excursionId = ExcursionIndexBookingFilter > 0 ? (ExcursionsCollectionView.CurrentItem as Excursion).Id : 0;
             Users = new ObservableCollection<User>(await Context.GetAllAsyncSortedByName<User>());
             Excursions = new ObservableCollection<Excursion>((await Context.GetAllExcursionsAsync()));
+
             SearchBookingsHelper = new SearchBookingsHelper(Context);
-           
 
             UserIndexBookingFilter = userId > 0 ? Users.IndexOf(Users.Where(u => u.Id == userId).FirstOrDefault()) + 1 : 0;
             if (excursionId > 0)
@@ -481,7 +547,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             {
                 ExcursionCategoryIndexBookingFilter = 0;
             }
-            // sele = excursionId > 0 ? Excursions.IndexOf(Excursions.Where(e => e.Id == excursionId).FirstOrDefault()) + 1 : 0;
         }
 
         private bool CanDeleteBooking()
@@ -499,44 +564,30 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             return SelectedReservation != null;
         }
 
-        private bool _IsOk = true;
-
-        public bool IsOk
+        private bool CanPrintRoomingLists()
         {
-            get
-            {
-                return _IsOk;
-            }
-
-            set
-            {
-                if (_IsOk == value)
-                {
-                    return;
-                }
-
-                _IsOk = value;
-                RaisePropertyChanged();
-            }
+            return ExcursionIndexBookingFilter > 0;
         }
-
-        public MainViewModel MainViewModel { get; }
 
         private bool CanShowReservations(string arg)
         {
             return IsOk;
         }
 
-        private bool CustomerFilter(object item)
-        {
-            ReservationWrapper reservation = item as ReservationWrapper;
-            return reservation.Contains(FilterString) && (!EnableCheckInFilter || reservation.CheckIn == CheckIn) && (!EnableCheckOutFilter || reservation.CheckOut == CheckOut) && (UserIndexBookingFilter == 0 || reservation.Booking.User.Id == Users[UserIndexBookingFilter - 1].Id);
-        }
-
         private bool CustomerExcursionsFilter(object item)
         {
             Excursion excursion = item as Excursion;
-            return excursion.ExcursionDates.Any(d => d.CheckIn >= DateTime.Today)|| excursion.Id==0;
+            return Completed || excursion.ExcursionDates.Any(d => d.CheckIn >= DateTime.Today) || excursion.Id == 0;
+        }
+
+        private bool CustomerFilter(object item)
+        {
+            ReservationWrapper reservation = item as ReservationWrapper;
+            return reservation.Contains(FilterString) &&
+                (!EnableCheckInFilter || reservation.CheckIn == CheckIn) &&
+                (!EnableCheckOutFilter || reservation.CheckOut == CheckOut) &&
+                (UserIndexBookingFilter == 0 || reservation.Booking.User.Id == Users[UserIndexBookingFilter - 1].Id) &&
+                (!Bank || (reservation.ExcursionType != ExcursionTypeEnum.Personal && reservation.ExcursionType != ExcursionTypeEnum.ThirdParty && reservation.Booking.Payments.Any(p => p.PaymentMethod > 0)) || ((reservation.ExcursionType == ExcursionTypeEnum.Personal) && reservation.PersonalModel.Payments.Any(p => p.PaymentMethod > 0)));
         }
 
         private async void DeleteBooking()
@@ -557,9 +608,22 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         {
             try
             {
-                NewReservation_Group_ViewModel viewModel = new NewReservation_Group_ViewModel(MainViewModel.StartingRepository);
-                await viewModel.LoadAsync(SelectedReservation.Booking.Id);
-                MessengerInstance.Send(new OpenChildWindowCommand(new EditBooking_Bansko_Window(), viewModel));
+                if (SelectedReservation.ExcursionType == ExcursionTypeEnum.Personal)
+                {
+                    NewReservation_Personal_ViewModel viewModel = new NewReservation_Personal_ViewModel(MainViewModel);
+                    await viewModel.LoadAsync(SelectedReservation.PersonalModel.Id);
+                    MessengerInstance.Send(new OpenChildWindowCommand(new EditPersonalBooking_Window(), viewModel));
+                }
+                else if (SelectedReservation.ExcursionType == ExcursionTypeEnum.ThirdParty)
+                {
+                }
+                else
+                {
+                    bool reciept = SelectedReservation.Booking.Reciept;
+                    NewReservation_Group_ViewModel viewModel = new NewReservation_Group_ViewModel(MainViewModel);
+                    await viewModel.LoadAsync(SelectedReservation.Booking.Id);
+                    MessengerInstance.Send(new OpenChildWindowCommand(new EditBooking_Bansko_Window(), viewModel));
+                }
             }
             catch (Exception ex)
             {
@@ -697,10 +761,19 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             {
                 IsOk = false;
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
-                await ReloadAsync();
+                //await ReloadAsync();
+                Context = new GenericRepository();
+
+                SearchBookingsHelper = new SearchBookingsHelper(Context);
                 DateTime dateLimit = SearchBookingsHelper.GetDateLimit(parameter);
 
-                List<ReservationWrapper> list = (await Context.GetAllReservationsFiltered(ExcursionIndexBookingFilter > 0 ? (ExcursionsCollectionView.CurrentItem as Excursion).Id : 0, UserIndexBookingFilter > 0 ? Users[UserIndexBookingFilter - 1].Id : 0, Completed, ExcursionCategoryIndexBookingFilter > 0 ? ExcursionCategoryIndexBookingFilter : -1, dateLimit)).Select(r => new ReservationWrapper(r)).ToList();
+                List<ReservationWrapper> list = (await Context.GetAllReservationsFiltered(ExcursionIndexBookingFilter > 0 ? (ExcursionsCollectionView.CurrentItem as Excursion).Id : 0, UserIndexBookingFilter > 0 ? Users[UserIndexBookingFilter - 1].Id : 0, Completed, ExcursionCategoryIndexBookingFilter > 0 ? ExcursionCategoryIndexBookingFilter - 1 : -1, dateLimit)).Select(r => new ReservationWrapper(r)).ToList();
+                if (ExcursionIndexBookingFilter == 0 && (ExcursionCategoryIndexBookingFilter == 3 || ExcursionCategoryIndexBookingFilter == 0))
+                {
+                    list.AddRange((await Context.GetAllPersonalBookingsFiltered(UserIndexBookingFilter > 0 ? Users[UserIndexBookingFilter - 1].Id : 0, Completed, dateLimit)).Select(r => new ReservationWrapper { Id = r.Id, ExcursionType = ExcursionTypeEnum.Personal, PersonalModel = new Personal_BookingWrapper(r), CustomersList = r.Customers.ToList() }).ToList());
+                }
+
+                list = list.OrderBy(r => r.CreatedDate).ToList();
 
                 //foreach (var r in list)
                 //{
@@ -711,6 +784,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 Parallel.ForEach(FilteredReservations, wr => wr.CalculateAmounts());
                 ReservationsCollectionView = CollectionViewSource.GetDefaultView(FilteredReservations);
                 ReservationsCollectionView.Filter = CustomerFilter;
+                ReservationsCollectionView.SortDescriptions.Add(new SortDescription("Id", ListSortDirection.Ascending));
             }
             catch (Exception ex)
             {

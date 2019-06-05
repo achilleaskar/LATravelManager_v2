@@ -14,6 +14,7 @@ using LATravelManager.UI.Views.Management;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -39,7 +40,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
             MessengerInstance.Register<IsBusyChangedMessage>(this, msg => { ManageIsBusy(msg.IsBusy); });
 
-            SelectedTemplateChanged = new RelayCommand(async () => { await SetProperViewModel(); });
+            SelectedTemplateChangedCommand = new RelayCommand(async () => { await SetProperViewModel(); });
 
             MainViewModel = mainViewModel;
 
@@ -79,7 +80,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                 }
 
                 _IsBusy = value;
-                Application.Current.Dispatcher.Invoke((Action)delegate
+                Application.Current.Dispatcher.Invoke(delegate
                 {
                     if (value)
                         Mouse.OverrideCursor = Cursors.Wait;
@@ -146,7 +147,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             }
         }
 
-        public RelayCommand SelectedTemplateChanged { get; set; }
+        public RelayCommand SelectedTemplateChangedCommand { get; set; }
 
         public int SelectedTemplateIndex
         {
@@ -206,10 +207,11 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
         public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
-            NavigationViewModel = new NavigationViewModel(this,MainViewModel);
+            NavigationViewModel = new NavigationViewModel(this, MainViewModel);
             Templates = MainViewModel.BasicDataManager.ExcursionCategories;
 
-            await SetProperViewModel();
+            await Task.Delay(0);
+           // await SetProperViewModel();
         }
 
         public void OpenCitiesWindow()

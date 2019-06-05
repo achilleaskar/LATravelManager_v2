@@ -1,10 +1,8 @@
-﻿using LATravelManager.Model.Locations;
-using LATravelManager.UI.Repositories;
-using LATravelManager.UI.ViewModel.Window_ViewModels;
+﻿using LATravelManager.UI.Repositories;
 using Squirrel;
 using System;
-using System.Collections.ObjectModel;
 using System.Net;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace LATravelManager.UI.Views
@@ -14,26 +12,26 @@ namespace LATravelManager.UI.Views
     /// </summary>
     public partial class MainWindow : Window
     {
-
         public GenericRepository StartingRepository;
+
         public MainWindow()
         {
-          
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-          
 
             InitializeComponent();
-
-
-
-#if DEBUG
-            //Helpers.StaticResources.StartingPlaces = new ObservableCollection<StartingPlace>(StartingRepository.GetAllSortedByName<StartingPlace>());
-#endif
         }
 
-   
 
-        private async void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            Application.Current.Shutdown();
+
+            Environment.Exit(0);
+        }
+
+
+
+        private async void Window_Initialized(object sender, EventArgs e)
         {
             try
             {
@@ -54,13 +52,6 @@ namespace LATravelManager.UI.Views
                     MessageBox.Show("Error updating:" + ex.Message + "   " + ex.InnerException != null ? ex.InnerException.Message : "");
                 throw ex;
             }
-        }
-
-        private void Window_Closed(object sender, EventArgs e)
-        {
-            Application.Current.Shutdown();
-
-            Environment.Exit(0);
         }
     }
 }

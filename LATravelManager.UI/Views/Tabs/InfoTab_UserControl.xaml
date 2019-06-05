@@ -5,6 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:LATravelManager.UI.Views.Tabs"
              xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
+             xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.Tabs.TabViewmodels"
+             d:DataContext="{d:DesignInstance viewmodels:Info_ViewModel}"
              mc:Ignorable="d"
              d:DesignHeight="450"
              d:DesignWidth="800">
@@ -46,6 +48,10 @@
                                    VerticalAlignment="Center"
                                    ItemsSource="{Binding Excursions}"
                                    SelectedItem="{Binding SelectedFilterExcursion}" />
+                        <CheckBox Content="Ολοκληρωμένες"
+                                  VerticalAlignment="Center"
+                                  Margin="5 0"
+                                  IsChecked="{Binding Completed}" />
                         <Button Content="Προβολή"
                                 Command="{Binding ShowDepartureInfoCommand}"
                                 Margin="5,0" />
@@ -186,7 +192,9 @@
                 </Grid>
             </TabItem>
             <!--<TabItem Header="Ιστορικό Ενεργειών">
-                --><!--Visibility="{Binding Converter={StaticResource UserToVisibilityValueConverter},ConverterParameter=3,  Mode=OneWay}">--><!--
+                -->
+            <!--Visibility="{Binding Converter={StaticResource UserToVisibilityValueConverter},ConverterParameter=3,  Mode=OneWay}">-->
+            <!--
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -276,7 +284,8 @@
                                   Margin="5"
                                   IsChecked="{Binding ShowSingleNights}" />
                     </StackPanel>
-                    --><!--<ListView ItemsSource="{Binding ReservationsInfoList}"
+                    -->
+            <!--<ListView ItemsSource="{Binding ReservationsInfoList}"
                               Grid.Row="1">
 
                         <ListView.View>
@@ -320,7 +329,8 @@
                                 </GroupStyle.ContainerStyle>
                             </GroupStyle>
                         </ListView.GroupStyle>
-                    </ListView>--><!--
+                    </ListView>-->
+            <!--
                     <TreeView x:Name="MainTreeView"
                               Grid.Row="1"
                               Margin="10"

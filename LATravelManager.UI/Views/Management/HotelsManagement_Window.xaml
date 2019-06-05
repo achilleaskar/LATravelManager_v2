@@ -55,7 +55,7 @@
                        Grid.Column="0" />
                 <ComboBox ItemsSource="{Binding Cities}"
                           DisplayMemberPath="Name"
-                          SelectedItem="{Binding SelectedEntity.City ,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                          SelectedValue="{Binding SelectedEntity.City ,ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
                           Grid.Row="2"
                           Margin="0,5,5,5"
                           Grid.Column="1" />
@@ -115,7 +115,8 @@
                           SelectedItem="{Binding SelectedEntity}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Όνομα"
-                                            Binding="{Binding Name}" Width="120" />
+                                            Binding="{Binding Name}"
+                                            Width="120" />
                         <DataGridTextColumn Header="Κατηγορία"
                                             Width="100"
                                             Binding="{Binding HotelCategory.Name}" />

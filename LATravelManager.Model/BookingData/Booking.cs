@@ -10,6 +10,14 @@ namespace LATravelManager.Model.BookingData
 {
     public class Booking : EditTracker
     {
+
+
+
+      
+
+
+        public bool Reciept { get; set; }
+
         public Booking()
         {
             Payments = new ObservableCollection<Payment>();
@@ -96,28 +104,28 @@ namespace LATravelManager.Model.BookingData
 
         public string Comment { get; set; }
 
-        public float Commision { get; set; }
+        public decimal Commision { get; set; }
 
         public bool DifferentDates { get; set; }
 
         [Required]
-        public virtual Excursion Excursion { get; set; }
+        public  Excursion Excursion { get; set; }
 
         public string PartnerEmail { get; set; }
         public bool IsPartners { get; set; }
 
-        public float NetPrice { get; set; }
+        public decimal NetPrice { get; set; }
 
-        public virtual Partner Partner { get; set; }
+        public  Partner Partner { get; set; }
 
-        public virtual ICollection<Payment> Payments { get; }
+        public  ICollection<Payment> Payments { get; }
 
-        public virtual ObservableCollection<Reservation> ReservationsInBooking { get; }
+        public  ObservableCollection<Reservation> ReservationsInBooking { get; }
 
         public bool SecondDepart { get; set; }
 
         [Required]
-        public virtual User User { get; set; }
+        public  User User { get; set; }
 
         #endregion Properties
     }

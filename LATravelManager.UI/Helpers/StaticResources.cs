@@ -3,6 +3,7 @@ using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
 using LATravelManager.UI.Repositories;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -23,8 +24,8 @@ namespace LATravelManager.UI.Helpers
 
         public static async void CalculateSum(GenericRepository genericRepository)
         {
-            System.Collections.Generic.IEnumerable<Booking> bookings = await genericRepository.GetAllBookingInPeriod(new DateTime(2018, 10, 1), new DateTime(2019, 04, 1), 2);
-            float sum = 0;
+           IEnumerable<Booking> bookings = await genericRepository.GetAllBookingInPeriodNoTracking(new DateTime(2018, 10, 1), new DateTime(2019, 04, 1), 2);
+            decimal sum = 0;
             foreach (Booking b in bookings)
             {
                 if (b.IsPartners)
@@ -43,6 +44,29 @@ namespace LATravelManager.UI.Helpers
                 }
             }
         }
+
+        ///<summary>Finds the index of the first item matching an expression in an enumerable.</summary>
+        ///<param name="items">The enumerable to search.</param>
+        ///<param name="predicate">The expression to test the items against.</param>
+        ///<returns>The index of the first matching item, or -1 if no items match.</returns>
+        public static int FindIndex<T>(this IEnumerable<T> items, Func<T, bool> predicate)
+        {
+            if (items == null) throw new ArgumentNullException("items");
+            if (predicate == null) throw new ArgumentNullException("predicate");
+
+            int retVal = 0;
+            foreach (var item in items)
+            {
+                if (predicate(item)) return retVal;
+                retVal++;
+            }
+            return -1;
+        }
+        ///<summary>Finds the index of the first occurrence of an item in an enumerable.</summary>
+        ///<param name="items">The enumerable to search.</param>
+        ///<param name="item">The item to find.</param>
+        ///<returns>The index of the first matching item, or -1 if the item was not found.</returns>
+        public static int IndexOf2<T>(this IEnumerable<T> items, T item) { return items.FindIndex(i => EqualityComparer<T>.Default.Equals(item, i)); }
     }
 
     public class RequiredIfAttribute : ValidationAttribute

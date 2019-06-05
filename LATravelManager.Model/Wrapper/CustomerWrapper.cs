@@ -1,13 +1,15 @@
 ﻿using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.People;
+using LATravelManager.Model.Services;
 using LATravelManager.Model.Wrapper;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows.Media;
 using static LATravelManager.Model.Enums;
 
-namespace LATravelManager.UI.Wrapper
+namespace LATravelManager.UI.Helpers
 {
     public class CustomerWrapper : ModelWrapper<Customer>
     {
@@ -19,6 +21,14 @@ namespace LATravelManager.UI.Wrapper
 
         public CustomerWrapper(Customer model) : base(model)
         {
+            Services.CollectionChanged += Services_CollectionChanged;
+        }
+
+        private void Services_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            RaisePropertyChanged(nameof(NumOfServices));
+            RaisePropertyChanged(nameof(Services));
+
         }
 
         #endregion Constructors
@@ -41,9 +51,31 @@ namespace LATravelManager.UI.Wrapper
             set { SetValue(value); }
         }
 
+
+
+
+
+
+        public int NumOfServices => Services.Count;
+
         public DateTime CheckIn
         {
-            get { return GetValue<DateTime>(); }
+            get
+            {
+                if (Reservation==null )
+                {
+                    return DateTime.Today;
+                }
+                if ( Reservation.Booking.DifferentDates)
+                {
+                    return GetValue<DateTime>();
+                }
+                else
+                {
+                    return new ReservationWrapper(Reservation).CheckIn;
+                }
+            }
+
             set
             {
                 SetValue(value);
@@ -56,7 +88,21 @@ namespace LATravelManager.UI.Wrapper
 
         public DateTime CheckOut
         {
-            get { return GetValue<DateTime>(); }
+            get
+            {
+                if (Reservation == null)
+                {
+                    return DateTime.Today;
+                }
+                if (Reservation.Booking.DifferentDates)
+                {
+                    return GetValue<DateTime>();
+                }
+                else
+                {
+                    return new ReservationWrapper(Reservation).CheckOut;
+                }
+            }
             set
             {
                 SetValue(value);
@@ -162,12 +208,12 @@ namespace LATravelManager.UI.Wrapper
         public string PassportNum
         {
             get { return GetValue<string>(); }
-            set { SetValue(value); }
+            set { SetValue(value.ToUpper()); }
         }
 
-        public float Price
+        public decimal Price
         {
-            get { return GetValue<float>(); }
+            get { return GetValue<decimal>(); }
             set { SetValue(value); }
         }
 
@@ -251,6 +297,11 @@ namespace LATravelManager.UI.Wrapper
                 value = (value != null) ? value.ToUpper() : value;
                 SetValue(value);
             }
+        }
+
+        public ObservableCollection<Service> Services
+        {
+            get { return GetValue<ObservableCollection<Service>>(); }
         }
 
         public string Surename

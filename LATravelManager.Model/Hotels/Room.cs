@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LATravelManager.Model.Hotels
 {
@@ -20,20 +21,22 @@ namespace LATravelManager.Model.Hotels
 
         #region Properties
 
-        public virtual List<BookingInfoPerDay> DailyBookingInfo { get; set; }
+        public  List<BookingInfoPerDay> DailyBookingInfo { get; set; }
 
+        [NotMapped]
         public DateTime EndDate { get; set; }
 
         [Required]
-        public virtual Hotel Hotel { get; set; }
+        public  Hotel Hotel { get; set; }
 
         public string Note { get; set; }
 
-        public virtual ObservableCollection<Option> Options { get; set; }
+        public  ObservableCollection<Option> Options { get; set; }
 
         [Required(ErrorMessage = "Επιλέξτε τύπο δωματίου")]
-        public virtual RoomType RoomType { get; set; }
+        public  RoomType RoomType { get; set; }
 
+        [NotMapped]
         public DateTime StartDate { get; set; }
 
         #endregion Properties

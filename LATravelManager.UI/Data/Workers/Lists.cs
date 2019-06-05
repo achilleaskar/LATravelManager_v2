@@ -5,6 +5,7 @@ using LATravelManager.Model.Hotels;
 using LATravelManager.Model.Lists;
 using LATravelManager.Model.LocalModels;
 using LATravelManager.Model.People;
+using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.Wrapper;
@@ -675,7 +676,7 @@ namespace LATravelManager.UI.Data.Workers
             List<RoomingList> rl = new List<RoomingList>();
             IEnumerable<Booking> tmplist = null;
             List<Reservation> tmpress = new List<Reservation>();
-            tmplist = (await GenericRepository.GetAllBookingInPeriod(From, To, Excursion.Id));
+            tmplist = (await GenericRepository.GetAllBookingInPeriodNoTracking(From, To, Excursion.Id));
             
             foreach (Booking b in tmplist)
             {

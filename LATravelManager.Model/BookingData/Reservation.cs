@@ -22,7 +22,7 @@ namespace LATravelManager.Model.BookingData
         [Required]
         public Booking Booking { get; set; }
 
-        public virtual List<Customer> CustomersList { get; set; }
+        public  List<Customer> CustomersList { get; set; }
 
         [StringLength(20)]
         public string FirstHotel { get; set; }
@@ -31,14 +31,14 @@ namespace LATravelManager.Model.BookingData
 
         public Hotel Hotel { get; set; }
 
-        public virtual RoomType NoNameRoomType { get; set; }
+        public  RoomType NoNameRoomType { get; set; }
 
         public bool OnlyStay { get; set; }
 
         [Required]
         public ReservationTypeEnum ReservationType { get; set; }
 
-        public virtual Room Room { get; set; }
+        public  Room Room { get; set; }
 
         public bool Transfer { get; set; }
 

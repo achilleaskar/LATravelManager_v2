@@ -31,7 +31,7 @@ namespace LATravelManager.Model.Lists
         /// Sets and gets the Customers property. Changes to that property's value raise the
         /// PropertyChanged event.
         /// </summary>
-        public virtual ObservableCollection<Customer> Customers
+        public  ObservableCollection<Customer> Customers
         {
             get
             {
@@ -54,7 +54,7 @@ namespace LATravelManager.Model.Lists
         /// Sets and gets the Excursion property. Changes to that property's value raise the
         /// PropertyChanged event.
         /// </summary>
-        public virtual Excursion Excursion
+        public  Excursion Excursion
         {
             get
             {
