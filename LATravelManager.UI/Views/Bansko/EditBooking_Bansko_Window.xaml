@@ -21,6 +21,8 @@
         <converters:BrushColorConverter x:Key="BrushColorConverter" />
         <converters:FloadToStringValueConverter x:Key="FtoSConverter" />
         <converters:IsGroupConverter x:Key="isGroupConverter" />
+        <converters:RoomsLeftToVisibilityConverter x:Key="RoomsLeftToVisibilityConverter" />
+        <converters:RoomTypeToRoomsLeftConverter x:Key="RoomTypeToRoomsLeftConverter" />
         <converters:SelectedIndexToForegroundConverter x:Key="SelectedIndexToForegroundConverter" />
         <Style TargetType="{x:Type Border}">
             <Setter Property="BorderBrush"
@@ -627,12 +629,13 @@
                                         VerticalAlignment="Center"
                                         Command="{Binding PutCustomersInRoomCommand}"
                                         Margin="0,0,5,0" />
-                                <Button Content="Noname"
+                                <!--<Button Content="Noname"
                                         VerticalAlignment="Center"
                                         Command="{Binding BookRoomNoNameCommand}"
-                                        Margin="0,0,5,0" />
+                                        Margin="0,0,5,0" />-->
                                 <Button Content="OverBook"
                                         VerticalAlignment="Center"
+                                        Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}"
                                         Command="{Binding OverBookHotelCommand}"
                                         Margin="0,0,5,0" />
                                 <Button Content="Transfer"
@@ -683,8 +686,8 @@
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate>
-                                                        <Expander IsExpanded="True">
-                                                            <!--IsEnabled="{Binding Converter={StaticResource RoomsLeftToVisibilityConverter}}">-->
+                                                        <Expander IsExpanded="False"
+                                                                  IsEnabled="{Binding Converter={StaticResource RoomsLeftToVisibilityConverter}}">
                                                             <Expander.Header>
                                                                 <StackPanel Orientation="Horizontal">
                                                                     <TextBlock Text="{Binding ItemCount}"
@@ -702,10 +705,13 @@
                                                                     <TextBlock FontWeight="Bold"
                                                                                Foreground="Black"
                                                                                FontSize="16"
+                                                                               Text="{Binding Converter={StaticResource RoomTypeToRoomsLeftConverter}}"
                                                                                VerticalAlignment="Center" />
-                                                                    <!--Text="{Binding Converter={StaticResource RoomTypeToRoomsLeftConverter}}"-->
-                                                                    <!--Visibility="{Binding Converter={StaticResource RoomsHotelsToVisibilityConverter}}"
-                                                                   -->
+                                                                    <!--Visibility="{Binding Converter={StaticResource RoomsHotelsToVisibilityConverter}}"-->
+                                                                    <Button Content="No Name"
+                                                                            Command="{Binding DataContext.BookRoomNoNameCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}, Mode=FindAncestor}}"
+                                                                            CommandParameter="{Binding Name}"
+                                                                            Margin="5,0" />
                                                                 </StackPanel>
                                                             </Expander.Header>
                                                             <ItemsPresenter />
@@ -920,15 +926,19 @@
                                     Command="{Binding PrintVoucherCommand}" />
                             <Button Content="Σύμβαση"
                                     Margin="5,5,5,0"
+                                    Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}"
                                     Command="{Binding PrintContractCommand}" />
                             <Button Content="Προσθήκη πελάτη"
                                     Margin="5,5,5,0"
+                                    Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}"
                                     Command="{Binding AddCustomerCommand}" />
                             <Button Content="Προσθήκη απο αρχείο"
                                     Margin="5,5,5,0"
+                                    Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}"
                                     Command="{Binding AddFromFileCommand}" />
                             <Button Content="Read Next Line"
                                     Margin="5,5,5,0"
+                                    Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}"
                                     Command="{Binding ReadNextLineCommand}" />
                             <Button Content="CheckOut"
                                     Margin="5,5,5,0"

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LATravelManager.Model.Hotels
 {
@@ -25,6 +26,8 @@ namespace LATravelManager.Model.Hotels
         #endregion Fields
 
 
+        [NotMapped]
+        public int freeRooms { get; set; }
 
 
         private int _Index;

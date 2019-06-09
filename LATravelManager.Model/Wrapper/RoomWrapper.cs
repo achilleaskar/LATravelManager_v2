@@ -237,17 +237,17 @@ namespace LATravelManager.UI.Wrapper
 
         public bool CanFit(ReservationWrapper reservationWr)
         {
+            return reservationWr.NoNameRoomType.Id == RoomType.Id;
+            //if (reservationWr.CustomersList.Count >= RoomType.MinCapacity && reservationWr.CustomersList.Count <= RoomType.MaxCapacity)
+            //{
+            //    return true;
+            //}
+            //if (reservationWr.CustomersList.Count==1 && RoomType.MinCapacity==2)
+            //{
+            //    return true;
 
-            if (reservationWr.CustomersList.Count >= RoomType.MinCapacity && reservationWr.CustomersList.Count <= RoomType.MaxCapacity)
-            {
-                return true;
-            }
-            if (reservationWr.CustomersList.Count==1 && RoomType.MinCapacity==2)
-            {
-                return true;
-
-            }
-            return false;
+            //}
+            //return false;
         }
 
         public bool MakeNoNameReservation(ReservationWrapper reservationWr)
@@ -298,6 +298,10 @@ namespace LATravelManager.UI.Wrapper
         {
             try
             {
+                if (Id==1800)
+                {
+
+                }
                 DateTime tmpDate = reservationWr.CheckIn;
                 int dayNum = 0;
                 PlanDailyInfo tmpPlanInfo = null;

@@ -71,9 +71,10 @@ namespace LATravelManager.UI.Repositories
             return await RunTask(Context.Hotels.Where(x => x.City.Id == cityId).OrderBy(h => h.Name).ToListAsync);
         }
 
-        public async Task<List<Room>> GetAllRoomsInCityAsync(DateTime minDay, DateTime maxDay, int cityId)
+        public async Task<List<Room>> GetAllRoomsInCityAsync(DateTime minDay, DateTime maxDay, int cityId, int selectedRoomTypeId=0)
         {
             return await RunTask(Context.Rooms.Where(x => x.Hotel.City.Id == cityId
+            && (selectedRoomTypeId==0||x.RoomType.Id==selectedRoomTypeId)
             && x.DailyBookingInfo.Any(d => d.Date <= maxDay) && x.DailyBookingInfo.Any(d => d.Date >= minDay))
                 .Include(x => x.Hotel.HotelCategory)
                 .Include(x => x.DailyBookingInfo)

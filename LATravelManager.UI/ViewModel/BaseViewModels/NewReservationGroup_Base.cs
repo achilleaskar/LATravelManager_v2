@@ -47,7 +47,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             DeletePaymentCommand = new RelayCommand(DeletePayment, CanDeletePayment);
             UpdateAllCommand = new RelayCommand(async () => { await UpdateAll(); }, CanUpdateAll);
 
-            BookRoomNoNameCommand = new RelayCommand(async () => { await MakeNonameReservation(); }, CanMakeNoNameReservation);
+            BookRoomNoNameCommand = new RelayCommand<RoomType>(async (obj) => { await MakeNonameReservation(obj); }, CanMakeNoNameReservation);
             OverBookHotelCommand = new RelayCommand(async () => { await OverBookHotelAsync(); }, CanOverBookHotel);
             PutCustomersInRoomCommand = new RelayCommand(async () => { await PutCustomersInRoomAsync(); }, CanPutCustomersInRoom);
             AddTransferCommand = new RelayCommand(AddTransfer, CanAddTransfer);
@@ -120,7 +120,23 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         private ObservableCollection<User> _Users;
 
-        private int NumOfSelectedCustomers;
+        private int _NumOfSelectedCustomers;
+
+        public int NumOfSelectedCustomers
+        {
+            get { return _NumOfSelectedCustomers; }
+            set
+            {
+                if (_NumOfSelectedCustomers == value)
+                {
+                    return;
+                }
+
+                _NumOfSelectedCustomers = value;
+                RaisePropertyChanged();
+            }
+        }
+
 
         #endregion Fields
 
@@ -181,6 +197,10 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                         NumOfSelectedCustomers++;
                     }
                 }
+                if (All)
+                {
+                    NumOfSelectedCustomers = BookingWr.Customers.Count;
+                }
                 return areAnyUnhandled && NumOfSelectedCustomers == 0;
             }
         }
@@ -239,7 +259,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
-        public RelayCommand BookRoomNoNameCommand { get; set; }
+        public RelayCommand<RoomType> BookRoomNoNameCommand { get; set; }
 
         public RelayCommand CheckOutCommand { get; set; }
 
@@ -738,36 +758,54 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             try
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
-
+                //if (reset)
+                //{
+                //    if (BasicDataManager != null && !BasicDataManager.IsTaskOk)
+                //    {
+                //        await BasicDataManager.LastTask;
+                //    }
+                //    BasicDataManager = new GenericRepository();
+                //}
                 AvailableHotels = new ObservableCollection<HotelWrapper>((await RoomsManager.GetAllAvailableRooms(BookingWr.CheckIn, BookingWr.CheckOut, SelectedExcursion, unSavedBooking: BookingWr.Model)));
                 FilteredRoomList = new ObservableCollection<RoomWrapper>();
-                List<RoomTypeWrapper> tmplist = new List<RoomTypeWrapper>();
+                List<RoomWrapper> tmplist = new List<RoomWrapper>();
 
                 int allotmentDays = 0;
-                bool addThis = false;
-                int indexOfRoomtype = 0, indexOfHotel = 0;
+                bool addThis, isfree;
+
+
 
                 foreach (HotelWrapper hotel in AvailableHotels)
                 {
-                    if (SelectedHotelIndex == 0 || hotel.Id == Hotels[SelectedHotelIndex - 1].Id)
                     {
                         foreach (RoomWrapper room in hotel.RoomWrappers)
                         {
-                            indexOfHotel = indexOfRoomtype = -1;
                             allotmentDays = 0;
-                            addThis = true;
-                            for (int i = 0; i < room.PlanDailyInfo.Count; i++)
+                            isfree = addThis = true;
+
+                            foreach (PlanDailyInfo pi in room.PlanDailyInfo)
                             {
-                                addThis &= room.PlanDailyInfo[i].RoomState == RoomStateEnum.Available || room.PlanDailyInfo[i].RoomState == RoomStateEnum.MovableNoName || room.PlanDailyInfo[i].RoomState == RoomStateEnum.Allotment;
-                                if (room.PlanDailyInfo[i].RoomTypeEnm == RoomTypeEnum.Allotment)
+                                if (!addThis)
                                 {
-                                    allotmentDays++;
+                                    break;
                                 }
+                                addThis &= pi.RoomState == RoomStateEnum.Available
+                                    || pi.RoomState == RoomStateEnum.MovableNoName
+                                    || pi.RoomState == RoomStateEnum.Allotment;
+                                isfree &= pi.RoomState == RoomStateEnum.Available;
+
+                                //if (room.PlanDailyInfo[i].IsAllotment)
+                                //{
+                                //    allotmentDays++;
+                                //}
                             }
+                            if (isfree)
+                                room.RoomType.freeRooms++;
+                            addThis &= SelectedHotelIndex == 0 || hotel.Id == Hotels[SelectedHotelIndex - 1].Id;
+
                             //todelete
                             if (addThis)
                             {
-
                                 if (allotmentDays > 0)
                                 {
                                     if (room.PlanDailyInfo.Count != allotmentDays)
@@ -787,41 +825,106 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                                     room.LocalNote = "";
                                 }
 
-                                indexOfRoomtype = tmplist.FindIndex(x => x.RoomType == room.RoomType);
-                                if (indexOfRoomtype >= 0)
-                                {
-                                    indexOfHotel = tmplist[indexOfRoomtype].Hotels.FindIndex(x => x.Hotel == room.Hotel);
-                                }
-                                else
-                                {
-                                    indexOfRoomtype = tmplist.Count;
-                                    tmplist.Add(new RoomTypeWrapper { Hotels = new ObservableCollection<RoomsInHotel>(), RoomType = room.RoomType });
-                                }
-                                if (indexOfHotel >= 0)
-                                {
-                                    tmplist[indexOfRoomtype].Hotels[indexOfHotel].Rooms.Add(room);
-                                }
-                                else
-                                {
-                                    tmplist[indexOfRoomtype].Hotels.Add(new RoomsInHotel { Rooms = new List<RoomWrapper>(), Hotel = room.Hotel });
-                                    tmplist[indexOfRoomtype].Hotels[0].Rooms.Add(room);
-                                }
-                            }
-                            else
-                            {
+                                tmplist.Add(room);
                             }
                         }
                     }
                 }
                 //TODO an mporei na fygei
 
-               // FilteredRoomList = new ObservableCollection<RoomWrapper>(tmplist.OrderBy(f => f.RoomType.MinCapacity).ToList());
-                //CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(FilteredRoomList);
-               // PropertyGroupDescription groupDescription = new PropertyGroupDescription(nameof(RoomType));
-               // view.GroupDescriptions.Add(groupDescription);
+                FilteredRoomList = new ObservableCollection<RoomWrapper>(tmplist.OrderBy(f => f.RoomType.MinCapacity).ToList());
+                CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(FilteredRoomList);
+                PropertyGroupDescription groupDescription = new PropertyGroupDescription(nameof(RoomType));
+                view.GroupDescriptions.Add(groupDescription);
                 RaisePropertyChanged(nameof(FilteredRoomList));
-                FilteredRoomTypesList = new ObservableCollection<RoomTypeWrapper>(tmplist);
             }
+            //try
+            //{
+            //    MessengerInstance.Send(new IsBusyChangedMessage(true));
+
+            //    AvailableHotels = new ObservableCollection<HotelWrapper>((await RoomsManager.GetAllAvailableRooms(BookingWr.CheckIn, BookingWr.CheckOut, SelectedExcursion, unSavedBooking: BookingWr.Model)));
+            //    FilteredRoomList = new ObservableCollection<RoomWrapper>();
+            //    List<RoomTypeWrapper> tmplist = new List<RoomTypeWrapper>();
+
+            //    int allotmentDays = 0;
+            //    bool addThis = false;
+            //    int indexOfRoomtype = 0, indexOfHotel = 0;
+
+            //    foreach (HotelWrapper hotel in AvailableHotels)
+            //    {
+            //        if (SelectedHotelIndex == 0 || hotel.Id == Hotels[SelectedHotelIndex - 1].Id)
+            //        {
+            //            foreach (RoomWrapper room in hotel.RoomWrappers)
+            //            {
+            //                indexOfHotel = indexOfRoomtype = -1;
+            //                allotmentDays = 0;
+            //                addThis = true;
+            //                for (int i = 0; i < room.PlanDailyInfo.Count; i++)
+            //                {
+            //                    addThis &= room.PlanDailyInfo[i].RoomState == RoomStateEnum.Available || room.PlanDailyInfo[i].RoomState == RoomStateEnum.MovableNoName || room.PlanDailyInfo[i].RoomState == RoomStateEnum.Allotment;
+            //                    if (room.PlanDailyInfo[i].RoomTypeEnm == RoomTypeEnum.Allotment)
+            //                    {
+            //                        allotmentDays++;
+            //                    }
+            //                }
+            //                //todelete
+            //                if (addThis)
+            //                {
+
+            //                    if (allotmentDays > 0)
+            //                    {
+            //                        if (room.PlanDailyInfo.Count != allotmentDays)
+            //                        {
+            //                            //room.IsAllotment = true;
+            //                            room.LocalNote = "Allotment" + ((allotmentDays == 1) ? " η 1 μέρα" : (" οι " + allotmentDays + " ημέρες."));
+            //                        }
+            //                        else
+            //                        {
+            //                            // room.IsAllotment = true;
+            //                            room.LocalNote = "Allotment";
+            //                        }
+            //                    }
+            //                    else
+            //                    {
+            //                        // room.IsAllotment = false;
+            //                        room.LocalNote = "";
+            //                    }
+
+            //                    indexOfRoomtype = tmplist.FindIndex(x => x.RoomType == room.RoomType);
+            //                    if (indexOfRoomtype >= 0)
+            //                    {
+            //                        indexOfHotel = tmplist[indexOfRoomtype].Hotels.FindIndex(x => x.Hotel == room.Hotel);
+            //                    }
+            //                    else
+            //                    {
+            //                        indexOfRoomtype = tmplist.Count;
+            //                        tmplist.Add(new RoomTypeWrapper { Hotels = new ObservableCollection<RoomsInHotel>(), RoomType = room.RoomType });
+            //                    }
+            //                    if (indexOfHotel >= 0)
+            //                    {
+            //                        tmplist[indexOfRoomtype].Hotels[indexOfHotel].Rooms.Add(room);
+            //                    }
+            //                    else
+            //                    {
+            //                        tmplist[indexOfRoomtype].Hotels.Add(new RoomsInHotel { Rooms = new List<RoomWrapper>(), Hotel = room.Hotel });
+            //                        tmplist[indexOfRoomtype].Hotels[0].Rooms.Add(room);
+            //                    }
+            //                }
+            //                else
+            //                {
+            //                }
+            //            }
+            //        }
+            //    }
+            //    //TODO an mporei na fygei
+
+            //   // FilteredRoomList = new ObservableCollection<RoomWrapper>(tmplist.OrderBy(f => f.RoomType.MinCapacity).ToList());
+            //    //CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(FilteredRoomList);
+            //   // PropertyGroupDescription groupDescription = new PropertyGroupDescription(nameof(RoomType));
+            //   // view.GroupDescriptions.Add(groupDescription);
+            //    RaisePropertyChanged(nameof(FilteredRoomList));
+            //    FilteredRoomTypesList = new ObservableCollection<RoomTypeWrapper>(tmplist);
+            //}
             catch (Exception ex)
             {
                 MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
@@ -1151,9 +1254,10 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             return SelectedPayment != null && AreContexesFree;
         }
 
-        private bool CanMakeNoNameReservation()
+        private bool CanMakeNoNameReservation(RoomType roomType)
         {//TODO tsekare to opws kai ola ta TODO
-            if (NumOfSelectedCustomers > 1 && !FilteredRoomList.Any(r => r.RoomType.MinCapacity <= NumOfSelectedCustomers && r.RoomType.MaxCapacity >= NumOfSelectedCustomers) || (NumOfSelectedCustomers == 1 && !FilteredRoomList.Any(r => r.RoomType.MinCapacity == 2)))
+            if (roomType == null || (NumOfSelectedCustomers > 1 && !(roomType.MinCapacity <= NumOfSelectedCustomers && roomType.MaxCapacity >= NumOfSelectedCustomers))
+                || (NumOfSelectedCustomers == 1 && roomType.MinCapacity != 2))
             {
                 return false;
             }
@@ -1349,13 +1453,13 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             return error;
         }
 
-        private async Task MakeNonameReservation()
+        private async Task MakeNonameReservation(RoomType roomtype)
         {
             try
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
 
-                NewReservationHelper.MakeNonameReservation(BookingWr, await StartingRepository.GetByIdAsync<RoomType>(RoomTypes[SelectedRoomTypeIndex - 1].Id), HB, All, OnlyStay);
+                NewReservationHelper.MakeNonameReservation(BookingWr, await StartingRepository.GetByIdAsync<RoomType>(roomtype.Id), HB, All, OnlyStay);
 
                 if (All)
                 {

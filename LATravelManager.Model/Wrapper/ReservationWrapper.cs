@@ -70,24 +70,31 @@ namespace LATravelManager.Model.Wrapper
             //}
         }
 
-        private ExcursionTypeEnum _ExcursionType;
-
         public ExcursionTypeEnum ExcursionType
         {
             get
             {
-                return _ExcursionType;
-            }
-
-            set
-            {
-                if (_ExcursionType == value)
+                if (Booking != null)
+                    if (Booking.Excursion.Id == 2)
+                    {
+                        return ExcursionTypeEnum.Bansko;
+                    }
+                    else if (Booking.Excursion.Id == 29)
+                    {
+                        return ExcursionTypeEnum.Skiathos;
+                    }
+                    else
+                    {
+                        return ExcursionTypeEnum.Group;
+                    }
+                else if (PersonalModel != null)
                 {
-                    return;
+                    return ExcursionTypeEnum.Personal;
                 }
-
-                _ExcursionType = value;
-                RaisePropertyChanged();
+                else
+                {
+                    throw new Exception("den einai personal kai dn exei booking");
+                }
             }
         }
 
@@ -130,7 +137,7 @@ namespace LATravelManager.Model.Wrapper
                         return Booking.User.ToString();
 
                     case ExcursionTypeEnum.Personal:
-                        return PersonalModel.User!=null? PersonalModel.User.ToString():"";
+                        return PersonalModel.User != null ? PersonalModel.User.ToString() : "";
 
                     case ExcursionTypeEnum.ThirdParty:
                         return "";
@@ -426,7 +433,6 @@ namespace LATravelManager.Model.Wrapper
                     return true;
                 }
             }
-
             else
             {
                 if (PersonalModel == null)
@@ -495,31 +501,49 @@ namespace LATravelManager.Model.Wrapper
         private string GetRoomTypeName()
         {
             string roomname = "";
-            switch (CustomersList.Count)
+            if (Room != null)
             {
-                case 1:
-                    roomname = "SINGLE";
-                    break;
+                if (Room.RoomType != null)
+                {
+                    roomname = Room.RoomType.Name;
+                }
+            }
+            else if (NoNameRoomType != null)
+            {
+                roomname = NoNameRoomType.Name;
+            }
+            else if (ReservationType == ReservationTypeEnum.Transfer)
+            {
+                return "TRANSFER";
+            }
+            else
+            {
+                switch (CustomersList.Count)
+                {
+                    case 1:
+                        roomname = "SINGLE_";
+                        break;
 
-                case 2:
-                    roomname = "DOUBLE";
-                    break;
+                    case 2:
+                        roomname = "DOUBLE_";
+                        break;
 
-                case 3:
-                    roomname = "TRIPLE";
-                    break;
+                    case 3:
+                        roomname = "TRIPLE_";
+                        break;
 
-                case 4:
-                    roomname = "QUAD";
-                    break;
+                    case 4:
+                        roomname = "QUAD_";
+                        break;
 
-                case 5:
-                    roomname = "5BED";
-                    break;
+                    case 5:
+                        roomname = "5BED_";
+                        break;
 
-                case 6:
-                    roomname = "6BED";
-                    break;
+                    case 6:
+                        roomname = "6BED_";
+                        break;
+                }
             }
 
             if (HB)

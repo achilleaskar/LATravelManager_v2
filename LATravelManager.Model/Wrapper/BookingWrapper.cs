@@ -47,6 +47,58 @@ namespace LATravelManager.Model.Wrapper
 
         #region Properties
 
+        private string ValidateToDatetime()
+        {
+            if (CheckOut < DateTime.Now)
+            {
+                return "Η επιλεγμένη ημερομηνία επιστροφής έχει παρέλθει!";
+            }
+            if (CheckOut < CheckIn)
+            {
+                return "Η επιλεγμένη ημερομηνία επιστροφής είναι νωρίτερα απο την ημερομηνία έναρξης.";
+            }
+            if (CheckOut == CheckIn)
+            {
+                return "Η ημερομηνία επιστροφής δεν΄μπορεί να είναι η ίδια με την ημερομηνία έναρξης.";
+            }
+            if ((CheckOut.DayOfWeek == DayOfWeek.Monday || CheckOut.DayOfWeek == DayOfWeek.Tuesday || CheckOut.DayOfWeek == DayOfWeek.Friday) && !FreeDatesBool)
+            {
+                return "Επιτρεπόμενες μέρες επιστροφής μόνο Τετάρτη, Πέμπτη, Σάββατο και Κυριακή!";
+            }
+            return null;
+        }
+
+        private bool _FreeDatesBool;
+
+        public bool FreeDatesBool
+        {
+            get { return _FreeDatesBool; }
+            set
+            {
+                if (_FreeDatesBool == value)
+                {
+                    return;
+                }
+                _FreeDatesBool = value;
+                RaisePropertyChanged();
+                ValidateFromDatetime();
+                ValidateToDatetime();
+            }
+        }
+
+        private string ValidateFromDatetime()
+        {
+            if (CheckIn < DateTime.Now.AddDays(-1) && !FreeDatesBool)
+            {
+                return "Η επιλεγμένη ημερομηνία έναρξης έχει παρέλθει.";
+            }
+            if ((CheckIn.DayOfWeek == DayOfWeek.Monday || CheckIn.DayOfWeek == DayOfWeek.Tuesday || CheckIn.DayOfWeek == DayOfWeek.Friday) && !FreeDatesBool)
+            {
+                return "Επιτρεπόμενες μέρες αναχώρησης μόνο Τετάρτη, Πέμπτη, Σάββατο και Κυριακή!";
+            }
+            return null;
+        }
+
         public DateTime CheckIn
         {
             get { return GetValue<DateTime>(); }
@@ -66,6 +118,8 @@ namespace LATravelManager.Model.Wrapper
                         c.CheckIn = value;
                     }
                 }
+
+                DatesError = ValidateFromDatetime();
             }
         }
 
@@ -88,6 +142,7 @@ namespace LATravelManager.Model.Wrapper
                         c.CheckOut = value;
                     }
                 }
+                DatesError = ValidateToDatetime();
             }
         }
 
@@ -359,6 +414,24 @@ namespace LATravelManager.Model.Wrapper
         }
 
         #endregion Properties
+
+        private string _DatesError;
+
+        public string DatesError
+        {
+            get { return _DatesError; }
+            set
+            {
+
+                if (_DatesError == value)
+                {
+                    return;
+                }
+                _DatesError = value;
+                RaisePropertyChanged();
+            }
+        }
+
 
         #region Methods
 

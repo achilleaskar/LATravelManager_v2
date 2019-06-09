@@ -29,69 +29,9 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {
     internal class GlobalSearch_ViewModel : MyViewModelBaseAsync
     {
-        #region Constructors
+        #region Fields
 
         private bool _Bank;
-
-        public bool Bank
-        {
-            get
-            {
-                return _Bank;
-            }
-
-            set
-            {
-                if (_Bank == value)
-                {
-                    return;
-                }
-
-                _Bank = value;
-                ReservationsCollectionView.Refresh();
-                RaisePropertyChanged();
-            }
-        }
-
-        public GlobalSearch_ViewModel(MainViewModel mainViewModel)
-        {
-            FilteredReservations = new ObservableCollection<ReservationWrapper>();
-            ReservationsCollectionView = CollectionViewSource.GetDefaultView(FilteredReservations);
-            Excursions = new ObservableCollection<Excursion>();
-            ExcursionsCollectionView = CollectionViewSource.GetDefaultView(Excursions);
-            ExcursionsCollectionView.Filter = CustomerExcursionsFilter;
-
-            PrintRoomingListsCommand = new RelayCommand(async () => { await PrintRoomingLists(); }, CanPrintRoomingLists);
-            PrintAllVouchersCommand = new RelayCommand(async () => { await PrintAllVouchers(); });
-            PrintAllLettersCommand = new RelayCommand(PrintAllLetters);
-            PrintListCommand = new RelayCommand(async () => { await PrintList(); });
-
-            ShowReservationsCommand = new RelayCommand<string>(async (obj) => { await ShowReservations(obj); }, CanShowReservations);
-            EditBookingCommand = new RelayCommand(async () => { await EditBooking(); }, CanEditBooking);
-            DeleteReservationCommand = new RelayCommand(DeleteReservation, CanDeleteReservation);
-            DeleteBookingCommand = new RelayCommand(DeleteBooking, CanDeleteBooking);
-            Messenger.Default.Register<ReservationChanged_Message>(this, ReservationChanged);
-
-            CheckIn = DateTime.Today;
-            CheckOut = DateTime.Today.AddDays(3);
-            MainViewModel = mainViewModel;
-        }
-
-        private void ReservationChanged(ReservationChanged_Message obj)
-        {
-            List<ReservationWrapper> toremove = FilteredReservations.Where(r => r.ExcursionType != ExcursionTypeEnum.Personal && r.Booking.Id == obj.Booking.Id).ToList();
-
-            foreach (var r in toremove)
-            {
-                FilteredReservations.Remove(r);
-            }
-            FilteredReservations.AddRange(obj.Booking.ReservationsInBooking.Select(w => new ReservationWrapper(w)));
-            ReservationsCollectionView.Refresh();
-        }
-
-        #endregion Constructors
-
-        #region Fields
 
         private DateTime _CheckIn;
 
@@ -131,7 +71,55 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         #endregion Fields
 
+        #region Constructors
+
+        public GlobalSearch_ViewModel(MainViewModel mainViewModel)
+        {
+            FilteredReservations = new ObservableCollection<ReservationWrapper>();
+            ReservationsCollectionView = CollectionViewSource.GetDefaultView(FilteredReservations);
+            Excursions = new ObservableCollection<Excursion>();
+            ExcursionsCollectionView = CollectionViewSource.GetDefaultView(Excursions);
+            ExcursionsCollectionView.Filter = CustomerExcursionsFilter;
+
+            PrintRoomingListsCommand = new RelayCommand(async () => { await PrintRoomingLists(); }, CanPrintRoomingLists);
+            PrintAllVouchersCommand = new RelayCommand(async () => { await PrintAllVouchers(); });
+            PrintAllLettersCommand = new RelayCommand(PrintAllLetters);
+            PrintListCommand = new RelayCommand(async () => { await PrintList(); });
+
+            ShowReservationsCommand = new RelayCommand<string>(async (obj) => { await ShowReservations(obj); }, CanShowReservations);
+            EditBookingCommand = new RelayCommand(async () => { await EditBooking(); }, CanEditBooking);
+            DeleteReservationCommand = new RelayCommand(DeleteReservation, CanDeleteReservation);
+            DeleteBookingCommand = new RelayCommand(DeleteBooking, CanDeleteBooking);
+            Messenger.Default.Register<ReservationChanged_Message>(this, ReservationChanged);
+
+            CheckIn = DateTime.Today;
+            CheckOut = DateTime.Today.AddDays(3);
+            MainViewModel = mainViewModel;
+        }
+
+        #endregion Constructors
+
         #region Properties
+
+        public bool Bank
+        {
+            get
+            {
+                return _Bank;
+            }
+
+            set
+            {
+                if (_Bank == value)
+                {
+                    return;
+                }
+
+                _Bank = value;
+                ReservationsCollectionView.Refresh();
+                RaisePropertyChanged();
+            }
+        }
 
         public DateTime CheckIn
         {
@@ -599,8 +587,9 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         {
             if (SelectedReservation != null)
             {
-                await SearchBookingsHelper.DeleteReservation(SelectedReservation);
-                FilteredReservations.Remove(SelectedReservation);
+                var tmpRes = SelectedReservation;
+                FilteredReservations.Remove(tmpRes);
+                await SearchBookingsHelper.DeleteReservation(tmpRes);
             }
         }
 
@@ -755,6 +744,21 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             await listmanager.PrintAllRoomingLists();
         }
 
+        private void ReservationChanged(ReservationChanged_Message obj)
+        {
+            List<ReservationWrapper> toremove = FilteredReservations.Where(r => r.ExcursionType != ExcursionTypeEnum.Personal && r.Booking.Id == obj.Booking.Id).ToList();
+
+            foreach (var r in toremove)
+            {
+                FilteredReservations.Remove(r);
+            }
+            if (toremove.Count > 0)
+            {
+                FilteredReservations.AddRange(obj.Booking.ReservationsInBooking.Select(w => new ReservationWrapper(w)));
+                ReservationsCollectionView.Refresh();
+            }
+        }
+
         private async Task ShowReservations(string parameter)
         {
             try
@@ -770,7 +774,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 List<ReservationWrapper> list = (await Context.GetAllReservationsFiltered(ExcursionIndexBookingFilter > 0 ? (ExcursionsCollectionView.CurrentItem as Excursion).Id : 0, UserIndexBookingFilter > 0 ? Users[UserIndexBookingFilter - 1].Id : 0, Completed, ExcursionCategoryIndexBookingFilter > 0 ? ExcursionCategoryIndexBookingFilter - 1 : -1, dateLimit)).Select(r => new ReservationWrapper(r)).ToList();
                 if (ExcursionIndexBookingFilter == 0 && (ExcursionCategoryIndexBookingFilter == 3 || ExcursionCategoryIndexBookingFilter == 0))
                 {
-                    list.AddRange((await Context.GetAllPersonalBookingsFiltered(UserIndexBookingFilter > 0 ? Users[UserIndexBookingFilter - 1].Id : 0, Completed, dateLimit)).Select(r => new ReservationWrapper { Id = r.Id, ExcursionType = ExcursionTypeEnum.Personal, PersonalModel = new Personal_BookingWrapper(r), CustomersList = r.Customers.ToList() }).ToList());
+                    list.AddRange((await Context.GetAllPersonalBookingsFiltered(UserIndexBookingFilter > 0 ? Users[UserIndexBookingFilter - 1].Id : 0, Completed, dateLimit)).Select(r => new ReservationWrapper { Id = r.Id, PersonalModel = new Personal_BookingWrapper(r), CustomersList = r.Customers.ToList() }).ToList());
                 }
 
                 list = list.OrderBy(r => r.CreatedDate).ToList();

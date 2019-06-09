@@ -7,7 +7,8 @@ using static LATravelManager.Model.Enums;
 
 namespace LATravelManager.Model.LocalModels
 {
-    public class PlanDailyInfo : BaseModel
+    public class 
+        PlanDailyInfo : BaseModel
     {
 
         #region Fields

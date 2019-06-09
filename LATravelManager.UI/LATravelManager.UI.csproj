@@ -60,10 +60,10 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>DF83AE5521ACFC214E6892831D2224F7F1157E08</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>740FAE1121347655B753AA5A5F3D9E29113B92A1</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>LATravelManager.UI_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>LATravelManager.UI_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
@@ -230,7 +230,9 @@
     <Compile Include="Converters\FloadToStringValueConverter.cs" />
     <Compile Include="Converters\IsGroupConverter.cs" />
     <Compile Include="Converters\MulticonverterForDate.cs" />
+    <Compile Include="Converters\RoomsLeftToVisibilityConverter.cs" />
     <Compile Include="Converters\RoomToColorConverter.cs" />
+    <Compile Include="Converters\RoomTypeToRoomsLeftConverter.cs" />
     <Compile Include="Converters\ToolTipVisibilityConverter.cs" />
     <Compile Include="Data\Workers\Lists.cs" />
     <Compile Include="ExcursionCategoryChangedMessage.cs" />
@@ -639,7 +641,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="LATravelManager.UI_TemporaryKey.pfx" />
+    <None Include="LATravelManager.UI_1_TemporaryKey.pfx" />
     <None Include="log4net.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

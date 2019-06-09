@@ -58,6 +58,7 @@ public class NewReservationHelper : ViewModelBase
             ReservationType = ReservationTypeEnum.Noname,
             FirstHotel = "ΝΟ ΝΑΜΕ",
             HB = hb,
+            Booking=booking.Model,
             NoNameRoomType = roomType,
             OnlyStay = onlystay
         };
@@ -111,6 +112,7 @@ public class NewReservationHelper : ViewModelBase
             ReservationType = ReservationTypeEnum.Overbooked,
             FirstHotel = hotel.Name,
             Hotel = hotel,
+            Booking=bookingWr.Model,
             NoNameRoomType = roomType,
             OnlyStay = onlyStay,
             HB = hb
@@ -165,7 +167,8 @@ public class NewReservationHelper : ViewModelBase
             OnlyStay = onlyStay,
             Room = SelectedRoom.Model,
             FirstHotel = SelectedRoom.Hotel.Name,
-            HB = hb
+            HB = hb,
+            Booking=booking.Model
         };
         foreach (CustomerWrapper customer in booking.Customers)
         {
@@ -263,6 +266,7 @@ public class NewReservationHelper : ViewModelBase
         Reservation newRes = new Reservation
         {
             ReservationType = ReservationTypeEnum.Transfer,
+            Booking=booking.Model,
             FirstHotel = "TRANSFER"
         };
         foreach (CustomerWrapper customer in booking.Customers)
