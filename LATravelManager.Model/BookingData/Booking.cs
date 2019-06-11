@@ -10,12 +10,6 @@ namespace LATravelManager.Model.BookingData
 {
     public class Booking : EditTracker
     {
-
-
-
-      
-
-
         public bool Reciept { get; set; }
 
         public Booking()
@@ -33,7 +27,6 @@ namespace LATravelManager.Model.BookingData
             StringBuilder sb = new StringBuilder();
             if (ReservationsInBooking.Count > 0)
             {
-
                 foreach (Customer customer in ReservationsInBooking[0].CustomersList)
                 {
                     sb.Append(customer.Surename + " " + customer.Name + ", ");
@@ -109,23 +102,23 @@ namespace LATravelManager.Model.BookingData
         public bool DifferentDates { get; set; }
 
         [Required]
-        public  Excursion Excursion { get; set; }
+        public Excursion Excursion { get; set; }
 
         public string PartnerEmail { get; set; }
         public bool IsPartners { get; set; }
 
         public decimal NetPrice { get; set; }
 
-        public  Partner Partner { get; set; }
+        public Partner Partner { get; set; }
 
-        public  ICollection<Payment> Payments { get; }
+        public ICollection<Payment> Payments { get; }
 
-        public  ObservableCollection<Reservation> ReservationsInBooking { get; }
+        public ObservableCollection<Reservation> ReservationsInBooking { get; }
 
         public bool SecondDepart { get; set; }
 
         [Required]
-        public  User User { get; set; }
+        public User User { get; set; }
 
         #endregion Properties
     }

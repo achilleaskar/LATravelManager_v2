@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace LATravelManager.Model.People
 {
@@ -48,6 +50,8 @@ namespace LATravelManager.Model.People
         {
             return UserName;
         }
+
+        public string FullName => Surename + " " + Name;
 
         #endregion Methods
     }

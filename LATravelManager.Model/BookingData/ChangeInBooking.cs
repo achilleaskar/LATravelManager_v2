@@ -102,7 +102,7 @@ namespace LATravelManager.Model.BookingData
         /// Changes to that property's value raise the PropertyChanged event.
         /// </summary>
         public User User
-        {   
+        {
             get
             {
                 return _User;

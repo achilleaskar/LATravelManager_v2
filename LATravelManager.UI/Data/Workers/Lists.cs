@@ -375,7 +375,7 @@ namespace LATravelManager.UI.Data.Workers
                     myWorksheet.Cells["B" + lineNum + ":B" + (lineNum + reservation.CustomersList.Count - 1)].Merge = true;
                     myWorksheet.Cells["G" + lineNum].Value = reservation.HB ? "HB" : "BB";
                     myWorksheet.Cells["G" + lineNum + ":G" + (lineNum + reservation.CustomersList.Count - 1)].Merge = true;
-                    myWorksheet.Cells["F" + lineNum].Value = reservation.RoomTypeName;
+                    myWorksheet.Cells["F" + lineNum].Value = reservation.RoomTypeNameByNum;
                     myWorksheet.Cells["F" + lineNum + ":F" + (lineNum + reservation.CustomersList.Count - 1)].Merge = true;
                     foreach (Customer customer in reservation.CustomersList)
                     {
@@ -677,27 +677,40 @@ namespace LATravelManager.UI.Data.Workers
             IEnumerable<Booking> tmplist = null;
             List<Reservation> tmpress = new List<Reservation>();
             tmplist = (await GenericRepository.GetAllBookingInPeriodNoTracking(From, To, Excursion.Id));
-            
+            RoomingList rmList;
+            RoomingList nonameroominglist = new RoomingList { Hotel = new HotelWrapper { Name = "NO NAME" } };
+
             foreach (Booking b in tmplist)
             {
                 tmpress.AddRange(b.ReservationsInBooking);
             }
+
+            foreach (var r in tmpress)
+            {
+                if (r.ReservationType == ReservationTypeEnum.Normal && r.Hotel == null)
+                {
+                    r.Hotel = r.Room.Hotel;
+                }
+                else if (r.ReservationType == ReservationTypeEnum.Noname)
+                {
+                    nonameroominglist.Reservations.Add(new ReservationWrapper(r));
+                }
+                else
+                {
+
+                }
+            }
             List<IGrouping<(Hotel Hotel, DateTime CheckIn, DateTime CheckOut), ReservationWrapper>> wrers =
-                tmpress.Where(r=>r.ReservationType==ReservationTypeEnum.Normal || r.ReservationType == ReservationTypeEnum.Overbooked).Select(x => new ReservationWrapper(x)).GroupBy(r => (r.Hotel, r.CheckIn, r.CheckOut)).ToList()
+                tmpress.Where(r => r.ReservationType == ReservationTypeEnum.Normal || r.ReservationType == ReservationTypeEnum.Overbooked).Select(x => new ReservationWrapper(x)).GroupBy(r => (r.Hotel, r.CheckIn, r.CheckOut)).ToList()
              .OrderBy(t => t.Key.Hotel.Name).ThenBy(ti => ti.Key.CheckIn).ThenBy(to => to.Key.CheckOut).ToList();
-            RoomingList rmList;
-            RoomingList nonameroominglist = new RoomingList { Hotel = new HotelWrapper { Name = "NO NAME" } };
+
+
 
             foreach (IGrouping<(Hotel Hotel, DateTime CheckIn, DateTime CheckOut), ReservationWrapper> group in wrers)
             {
                 rmList = new RoomingList { Hotel = new HotelWrapper(group.Key.Hotel) };
                 foreach (ReservationWrapper res in group.OrderBy(r => r.Booking.Id))
-                {
-                    if (res.ReservationType == ReservationTypeEnum.Noname)
-                        nonameroominglist.Reservations.Add(res);
-                    else
-                        rmList.Reservations.Add(res);
-                }
+                    rmList.Reservations.Add(res);
                 rl.Add(rmList);
             }
             if (nonameroominglist.Reservations.Count > 0)

@@ -22,7 +22,7 @@ namespace LATravelManager.Model.Excursions
 
         #region Properties
 
-        public  ObservableCollection<City> Destinations { get; set; }
+        public virtual ObservableCollection<City> Destinations { get; set; }
 
         public bool DiscountsExist { get; set; }
         public bool NightStart { get; set; }

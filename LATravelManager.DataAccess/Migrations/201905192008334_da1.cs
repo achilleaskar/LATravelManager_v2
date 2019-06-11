@@ -1,8 +1,7 @@
 namespace LATravelManager.DataAccess.Migrations
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class da1 : DbMigration
     {
         public override void Up()
@@ -10,18 +9,17 @@ namespace LATravelManager.DataAccess.Migrations
             CreateTable(
                 "dbo.ServiceCustomers",
                 c => new
-                    {
-                        Service_Id = c.Int(nullable: false),
-                        Customer_Id = c.Int(nullable: false),
-                    })
+                {
+                    Service_Id = c.Int(nullable: false),
+                    Customer_Id = c.Int(nullable: false),
+                })
                 .PrimaryKey(t => new { t.Service_Id, t.Customer_Id })
                 .ForeignKey("dbo.Services", t => t.Service_Id, cascadeDelete: true)
                 .ForeignKey("dbo.Customers", t => t.Customer_Id, cascadeDelete: true)
                 .Index(t => t.Service_Id)
                 .Index(t => t.Customer_Id);
-            
         }
-        
+
         public override void Down()
         {
             AddColumn("dbo.Customers", "PlaneService_Id", c => c.Int());

@@ -102,7 +102,7 @@ namespace LATravelManager.UI.Repositories
                 .Include(f => f.User)
                 .Include(f => f.Excursion)
                 .Include(f => f.ReservationsInBooking.Select(i => i.CustomersList))
-                .Include(f => f.ReservationsInBooking.Select(i => i.Room))
+                .Include(f => f.ReservationsInBooking.Select(i => i.Room).Select(r=>r.RoomType))
                 .Include(f => f.ReservationsInBooking.Select(i => i.NoNameRoomType))
                 .Include(f => f.ReservationsInBooking.Select(i => i.Hotel))
                 .ToListAsync);
@@ -535,6 +535,7 @@ namespace LATravelManager.UI.Repositories
                   .Include(f => f.Booking.ExcursionDate)
                   .Include(f => f.Booking.Partner)
                   .Include(f => f.Booking.Excursion)
+                  .Include(f => f.Booking.Excursion.ExcursionType)
                   .Include(f => f.Booking.Payments)
                   .Include(f => f.Booking.ReservationsInBooking.Select(i => i.CustomersList))
                   .Include(f => f.Room.Hotel)
@@ -542,7 +543,7 @@ namespace LATravelManager.UI.Repositories
                   .Include(f => f.CustomersList)
                   .Include(f => f.Hotel)
                   .Include(f => f.NoNameRoomType)
-                  .ToListAsync);
+                  .ToListAsync) ;
         }
 
         internal async Task<List<Personal_Booking>> GetAllPersonalBookingsFiltered(int userId, bool completed, DateTime dateLimit)

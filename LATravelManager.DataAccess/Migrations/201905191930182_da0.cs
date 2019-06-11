@@ -1,8 +1,7 @@
 namespace LATravelManager.DataAccess.Migrations
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class da0 : DbMigration
     {
         public override void Up()
@@ -15,7 +14,7 @@ namespace LATravelManager.DataAccess.Migrations
             AlterColumn("dbo.Personal_Booking", "Commision", c => c.Decimal(nullable: false, precision: 18, scale: 2));
             AlterColumn("dbo.Personal_Booking", "NetPrice", c => c.Decimal(nullable: false, precision: 18, scale: 2));
         }
-        
+
         public override void Down()
         {
             AlterColumn("dbo.Personal_Booking", "NetPrice", c => c.Single(nullable: false));

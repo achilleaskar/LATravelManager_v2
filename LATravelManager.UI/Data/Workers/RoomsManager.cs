@@ -205,7 +205,7 @@ namespace LATravelManager.UI.Data.Workers
                     {
                         if (reservation.ReservationType == ReservationTypeEnum.Noname)
                         {
-                            
+
                         }
                         if (reservation.ReservationType == ReservationTypeEnum.Noname)
                         {
@@ -629,10 +629,14 @@ namespace LATravelManager.UI.Data.Workers
 
         private static bool IsOtherFree(ReservationWrapper reservation, List<HotelWrapper> plan)
         {
+            if (reservation.Id == 2898)
+            {
+
+            }
             foreach (HotelWrapper hotel in plan)
                 // if (hotel.Id != 21 && hotel.Id != 22 && hotel.Id != 23 && hotel.Id != 42)
                 foreach (RoomWrapper roomWr in hotel.RoomWrappers)
-                    if ((reservation.CustomersList.Count >= roomWr.RoomType.MinCapacity && reservation.CustomersList.Count <= roomWr.RoomType.MaxCapacity) || (reservation.CustomersList.Count == 1 && roomWr.RoomType.MinCapacity == 2))
+                    if (reservation.NoNameRoomType.Id == roomWr.RoomType.Id)
                         if (roomWr.CanAddReservationToRoom(reservation, false, false))
                             return true;
             return false;
@@ -648,6 +652,10 @@ namespace LATravelManager.UI.Data.Workers
                     for (int i = 0; i < room.PlanDailyInfo.Count; i++)
                     {
                         PlanDailyInfo day = room.PlanDailyInfo[i];
+                        if (day.Reservation != null && day.Reservation.Id == 2898)
+                        {
+
+                        }
                         if (day.DayState == DayStateEnum.FirstDay && day.RoomState == RoomStateEnum.MovableNoName)
                         {
                             if (!IsOtherFree(day.Reservation, plan))
@@ -659,6 +667,8 @@ namespace LATravelManager.UI.Data.Workers
                                     tmpdate = tmpdate.AddDays(1);
                                     i++;
                                 }
+                                if(tmpdate == day.Reservation.CheckOut&&i>0)
+                                i--;
                             }
                         }
                     }

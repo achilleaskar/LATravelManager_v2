@@ -411,6 +411,71 @@ namespace LATravelManager.Model.Wrapper
             set { SetValue(value); }
         }
 
+        public string RoomTypeNameByNum => GetRoomTypeNameByNum();
+
+        private string GetRoomTypeNameByNum()
+        {
+            bool handled = false;
+            string roomname = "";
+            if (Room != null)
+            {
+                if (CustomersList.Count == 2 && (Room.RoomType.Id == 2 || Room.RoomType.Id == 3))
+                {
+                    roomname = Room.RoomType.Name;
+                    handled = true;
+                }
+            }
+            else if (NoNameRoomType != null)
+            {
+                if (CustomersList.Count == 2 && (NoNameRoomType.Id == 2 || NoNameRoomType.Id == 3))
+                {
+                    roomname = NoNameRoomType.Name;
+                    handled = true;
+
+                }
+            }
+            else if (ReservationType == ReservationTypeEnum.Transfer)
+            {
+                return "TRANSFER";
+            }
+            if (!handled)
+            {
+                switch (CustomersList.Count)
+                {
+                    case 1:
+                        roomname = "SINGLE";
+                        break;
+                    case 2:
+                        roomname = "TWIN";
+                        break;
+
+                    case 3:
+                        roomname = "TRIPLE";
+                        break;
+
+                    case 4:
+                        roomname = "QUAD";
+                        break;
+
+                    case 5:
+                        roomname = "5BED";
+                        break;
+
+                    case 6:
+                        roomname = "6BED";
+                        break;
+                }
+            }
+
+            if (HB)
+            {
+                roomname += "-HB";
+            }
+
+            return roomname;
+
+        }
+
         #endregion Properties
 
         #region Methods

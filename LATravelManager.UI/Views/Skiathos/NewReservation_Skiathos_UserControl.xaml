@@ -215,13 +215,15 @@
                             <StackPanel Orientation="Horizontal"
                                         Margin="0,5"
                                         HorizontalAlignment="Right">
-                                <TextBlock Text="{Binding BookingWr.DatesError}" TextWrapping="Wrap" Foreground="Red" Width="190"/>
+                                <TextBlock Text="{Binding BookingWr.DatesError}"
+                                           TextWrapping="Wrap"
+                                           Foreground="Red"
+                                           Width="190" />
                                 <StackPanel>
-                                    
-                                <CheckBox Content="Όλοι"
-                                          IsChecked="{Binding All}"
-                                          VerticalAlignment="Center"
-                                          Margin="5 0" />
+                                    <CheckBox Content="Όλοι"
+                                              IsChecked="{Binding All}"
+                                              VerticalAlignment="Center"
+                                              Margin="5 0" />
                                     <CheckBox Content="Ημερ."
                                               IsChecked="{Binding BookingWr.FreeDatesBool}"
                                               Visibility="{Binding ConverterParameter=3, Converter={StaticResource UserToVisibilityConverter}}"
@@ -250,7 +252,8 @@
                                         VerticalAlignment="Center"
                                         Command="{Binding AddTransferCommand}"
                                         Margin="0,0,5,0" />
-                                <Button Cursor="Hand" VerticalAlignment="Center"
+                                <Button Cursor="Hand"
+                                        VerticalAlignment="Center"
                                         Command="{Binding UpdateAllCommand}"
                                         HorizontalAlignment="Left">
                                     <iconPacks:PackIconFontAwesome Kind="SyncSolid"
@@ -602,6 +605,13 @@
                                                        Stretch="Fill" />
                                             </MenuItem.Icon>
                                         </MenuItem>
+                                        <MenuItem Header="Εκτ. Απόδειξης"
+                                                  Command="{Binding DataContext.PrintRecieptCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
+                                            <MenuItem.Icon>
+                                                <Image MaxHeight="20"
+                                                       Stretch="Fill" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
                                     </ContextMenu>
                                 </ListView.Resources>
                                 <ListView.ItemContainerStyle>
@@ -649,10 +659,10 @@
                               x:Name="CustomersDataGrid"
                               KeyUp="DataGrid_KeyDown"
                               HorizontalAlignment="Left"
-                              ItemsSource="{Binding BookingWr.Customers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              ItemsSource="{Binding BookingWr.CustomersCV, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                               AutoGenerateColumns="False"
-                              SelectedItem="{Binding SelectedCustomer}"
-                              CanUserAddRows="True">
+                              SelectedItem="{Binding SelectedCustomer,
+                              TargetNullValue={x:Static CollectionView.NewItemPlaceholder}}">
                         <DataGrid.Resources>
                             <Style TargetType="{x:Type ComboBox}">
                                 <Setter Property="Margin"

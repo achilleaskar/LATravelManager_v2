@@ -52,8 +52,8 @@
             <Label Content="Ημερομηνία:"
                    Grid.Row="1" />
             <Label Grid.Row="1"
-                   Width="100"
-                   HorizontalAlignment="Left"
+                   Width="110"
+                   HorizontalAlignment="Right"
                    Grid.Column="1"
                    Content="{Binding TimeGo,StringFormat='{}{0:dd/MM/yyyy-HH:mm}'}" />
             <Label Content="Κέρδος:"
@@ -67,7 +67,7 @@
                    Grid.Row="2"
                    Grid.Column="2" />
             <Label Content="{Binding NetPrice,Converter={StaticResource floatToStringConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                   Grid.Row="2"
+                   Grid.Row="2" HorizontalAlignment="Left"
                    Grid.Column="3" />
         </Grid>
     </GroupBox>

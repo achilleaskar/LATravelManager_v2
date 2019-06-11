@@ -66,10 +66,7 @@ namespace LATravelManager.Model.LocalModels
                 {
                     return;
                 }
-                if (Id == 11996)
-                {
-
-                }
+                
 
                 _CellColor = value;
                 RaisePropertyChanged();

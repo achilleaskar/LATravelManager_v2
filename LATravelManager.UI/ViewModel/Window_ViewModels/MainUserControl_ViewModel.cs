@@ -199,7 +199,9 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
         public List<ExcursionCategory_ViewModelBase> TemplateViewmodels { get; set; }
 
-        public string UserName => StaticResources.User != null ? StaticResources.User.Name : "Error";
+        public string UserName => StaticResources.User != null ?
+            $"{StaticResources.User.Name} {((!string.IsNullOrEmpty(StaticResources.User.Surename)&& StaticResources.User.Surename.Length>4)? StaticResources.User.Surename.Substring(0,5):"")}" 
+            : "Error";
 
         #endregion Properties
 

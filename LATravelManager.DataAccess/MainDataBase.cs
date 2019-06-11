@@ -7,7 +7,6 @@ using LATravelManager.Model.Lists;
 using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Plan;
-using MySql.Data.Entity;
 using System.Data.Entity;
 
 namespace LATravelManager.DataAccess
@@ -22,7 +21,7 @@ namespace LATravelManager.DataAccess
         public MainDatabase() : base("LADatabase")
         {
             Configuration.ValidateOnSaveEnabled = false;
-            
+
             DbConfiguration.SetConfiguration(new ContextConfiguration());
         }
 

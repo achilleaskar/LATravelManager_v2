@@ -19,6 +19,7 @@ namespace LATravelManager.UI.Wrapper
         public Personal_BookingWrapper() : this(new Personal_Booking())
         {
         }
+
         internal string GetDestinations()
         {
             var sb = new StringBuilder();
@@ -29,6 +30,7 @@ namespace LATravelManager.UI.Wrapper
             }
             return sb.ToString().TrimEnd(',', ' ');
         }
+
         public Personal_BookingWrapper(Personal_Booking model) : base(model)
         {
             CustomerWrappers = new ObservableCollection<CustomerWrapper>(Customers.Select(c => new CustomerWrapper(c)));
@@ -62,7 +64,6 @@ namespace LATravelManager.UI.Wrapper
             }
             CalculateRemainingAmount();
         }
-
 
         public decimal ExtraProfit
         {
@@ -120,8 +121,6 @@ namespace LATravelManager.UI.Wrapper
             set { SetValue(value); }
         }
 
-      
-
         private ObservableCollection<CustomerWrapper> _CustomerWrappers;
 
         public ObservableCollection<CustomerWrapper> CustomerWrappers
@@ -148,11 +147,6 @@ namespace LATravelManager.UI.Wrapper
             get { return GetValue<ObservableCollection<Customer>>(); }
             set { SetValue(value); }
         }
-
-
-
-
-
 
         public decimal FullPrice
         {
@@ -269,16 +263,7 @@ namespace LATravelManager.UI.Wrapper
 
         #region Methods
 
-
-
-
-       
-
-
-
-
         private decimal _ServiceProfit;
-
 
         public decimal ServiceProfit
         {
@@ -306,9 +291,7 @@ namespace LATravelManager.UI.Wrapper
             {
                 tmpNet += s.NetPrice;
                 tmpProfit += s.Profit;
-
             }
-
 
             NetPrice = tmpNet;
             ServiceProfit = tmpProfit;
@@ -317,11 +300,7 @@ namespace LATravelManager.UI.Wrapper
             Remaining = FullPrice - Recieved;
         }
 
-
-
-
         private decimal _TotalProfit;
-
 
         public decimal TotalProfit
         {
@@ -341,6 +320,8 @@ namespace LATravelManager.UI.Wrapper
                 RaisePropertyChanged();
             }
         }
+
+        public bool PhoneMissing { get; private set; }
 
         private void Customers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -389,6 +370,43 @@ namespace LATravelManager.UI.Wrapper
         {
             RaisePropertyChanged(nameof(Recieved));
             CalculateRemainingAmount();
+        }
+
+        public string ValidatePersonalBooking()
+        {
+            PhoneMissing = true;
+            foreach (CustomerWrapper customer in CustomerWrappers)
+            {
+                if (PhoneMissing)
+                {
+                    if (IsPartners || (customer.Tel != null && customer.Tel.Length >= 10))
+                    {
+                        PhoneMissing = false;
+                    }
+                }
+                if (customer.HasErrors)
+                {
+                    return customer.GetFirstError();
+                }
+            }
+            if (Customers.Count <= 0)
+            {
+                return "Προσθέστε Πελάτες!";
+            }
+            if (PhoneMissing && !IsPartners)
+            {
+                return "Παρακαλώ προσθέστε έστω έναν αριθμό τηλεφώνου!";
+            }
+            if (IsPartners && NetPrice <= 0)
+            {
+                return "Δέν έχετε ορίσει ΝΕΤ τιμή!";
+            }
+            if (IsPartners && Partner == null)
+            {
+                return "Δέν έχετε επιλέξει συνεργάτη";
+            }
+
+            return null;
         }
 
         #endregion Methods

@@ -24,7 +24,7 @@ namespace LATravelManager.UI.Helpers
 
         public static async void CalculateSum(GenericRepository genericRepository)
         {
-           IEnumerable<Booking> bookings = await genericRepository.GetAllBookingInPeriodNoTracking(new DateTime(2018, 10, 1), new DateTime(2019, 04, 1), 2);
+            IEnumerable<Booking> bookings = await genericRepository.GetAllBookingInPeriodNoTracking(new DateTime(2018, 10, 1), new DateTime(2019, 04, 1), 2);
             decimal sum = 0;
             foreach (Booking b in bookings)
             {
@@ -62,11 +62,129 @@ namespace LATravelManager.UI.Helpers
             }
             return -1;
         }
+
         ///<summary>Finds the index of the first occurrence of an item in an enumerable.</summary>
         ///<param name="items">The enumerable to search.</param>
         ///<param name="item">The item to find.</param>
         ///<returns>The index of the first matching item, or -1 if the item was not found.</returns>
         public static int IndexOf2<T>(this IEnumerable<T> items, T item) { return items.FindIndex(i => EqualityComparer<T>.Default.Equals(item, i)); }
+
+        internal static string ConvertAmountToWords(decimal number)
+        {
+            int numberint = (int)number;
+            number %= 1;
+
+            if (numberint == 0)
+                return "ΜΗΔΕΝ ΕΥΡΩ";
+
+            if (numberint < 0)
+                return "ΜΕΙΟΝ " + ConvertAmountToWords(Math.Abs(numberint));
+
+            string words = "";
+
+            if ((numberint / 1000000) > 1)
+            {
+                words += ConvertAmountToWords(numberint / 1000000) + " ΕΚΑΤΟΜΜΥΡΙΑ ";
+                numberint %= 1000000;
+            }
+            if ((numberint / 1000000) == 1)
+            {
+                words += ConvertAmountToWords(numberint / 1000000) + " ΕΚΑΤΟΜΜΥΡΙΟ ";
+                numberint %= 1000000;
+            }
+
+            if ((numberint / 1000) > 1)
+            {
+                words += ConvertAmountToWords(numberint / 1000) + " ΧΙΛΙΑΔΕΣ ";
+                numberint %= 1000;
+            }
+
+            if ((numberint / 1000) == 1)
+            {
+                words += "ΧΙΛΙΑ ";
+                numberint %= 1000;
+            }
+
+            if ((numberint / 100) > 0)
+            {
+                switch (numberint / 100)
+                {
+                    case 1:
+                        if (numberint % 100 == 0)
+                        {
+                            words += "ΕΚΑΤΟ ";
+                        }
+                        else
+                        {
+                            words += "ΕΚΑΤΟN ";
+                        }
+                        break;
+
+                    case 2:
+                        words += "ΔΙΑΚΟΣΙΑ ";
+                        break;
+
+                    case 3:
+                        words += "ΤΡΙΑΚΟΣΙΑ ";
+                        break;
+
+                    case 4:
+                        words += "ΤΕΤΡΑΚΟΣΙΑ ";
+                        break;
+
+                    case 5:
+                        words += "ΠΕΝΤΑΚΟΣΙΑ ";
+                        break;
+
+                    case 6:
+                        words += "ΕΞΑΚΟΣΙΑ ";
+                        break;
+
+                    case 7:
+                        words += "ΕΠΤΑΚΟΣΙΑ ";
+                        break;
+
+                    case 8:
+                        words += "ΟΧΤΑΚΟΣΙΑ ";
+                        break;
+
+                    case 9:
+                        words += "ΕΝΝΙΑΚΟΣΙΑ ";
+                        break;
+
+                    default:
+                        break;
+                }
+                numberint %= 100;
+            }
+
+            if (numberint > 0)
+            {
+                var unitsMap = new[] { "ΜΗΔΕΝ", "ΕΝΑ", "ΔΥΟ", "ΤΡΙΑ", "ΤΕΣΣΕΤΑ", "ΠΕΝΤΕ", "ΕΞΙ", "ΕΠΤΑ", "ΟΚΤΩ", "ΕΝΝΕΑ", "ΔΕΚΑ", "ΕΝΤΕΚΑ", "ΔΩΔΕΚΑ", "ΔΕΚΑΤΡΙΑ", "ΔΕΚΑΤΕΣΣΕΡΑ", "ΔΕΚΑΠΕΝΤΕ", "ΔΕΚΑΕΞΙ", "ΔΕΚΑΕΠΤΑ", "ΔΕΚΑΟΚΤΩ", "ΔΕΚΑΕΝΝΕΑ" };
+                var tensMap = new[] { "ΜΗΔΕΝ", "ΔΕΚΑ", "ΕΙΚΟΣΙ", "ΤΡΙΑΝΤΑ", "ΣΑΡΑΝΤΑ", "ΠΕΝΗΝΤΑ", "ΕΞΗΝΤΑ", "ΕΒΔΟΜΗΝΤΑ", "ΟΓΔΟΝΤΑ", "ΕΝΝΕΝΗΝΤΑ" };
+
+                if (numberint < 20)
+                    words += unitsMap[numberint / 1];
+                else
+                {
+                    words += tensMap[numberint / 10];
+                    if ((numberint % 10) > 0)
+                        words += " " + unitsMap[numberint % 10];
+                }
+            }
+
+            words += " ΕΥΡΩ";
+
+            if (number > 0)
+            {
+                number *= 100;
+
+                words += " KAI " + ConvertAmountToWords(number);
+                words = words.Remove(words.Length - 5) + " ΛΕΠΤΑ ";
+            }
+
+            return words;
+        }
     }
 
     public class RequiredIfAttribute : ValidationAttribute

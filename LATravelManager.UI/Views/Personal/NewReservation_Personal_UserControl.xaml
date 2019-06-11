@@ -22,6 +22,8 @@
         <converters:UserToVisibility x:Key="UserToVisibilityConverter" />
         <converters:FloadToStringValueConverter x:Key="floatToStringConverter" />
         <converters:SelectedIndexToForegroundConverter x:Key="SelectedIndexToForegroundConverter" />
+        <CollectionViewSource x:Key="CustomersCVS"
+                              Source="{Binding PersonalWr.CustomerWrappers}" />
         <Style x:Key="myHeaderStyle"
                TargetType="{x:Type GridViewColumnHeader}">
             <Setter Property="Visibility"
@@ -39,7 +41,7 @@
         </Style>
         <Style x:Key="RowStyle"
                TargetType="{x:Type DataGridRow}">
-            <Style.Triggers>
+            <!--<Style.Triggers>
                 <Trigger Property="Validation.HasError"
                          Value="true">
                     <Setter Property="BorderThickness"
@@ -49,10 +51,9 @@
                     <Setter Property="ToolTip"
                             Value="{Binding (Validation.Errors)[0].ErrorContent, RelativeSource={RelativeSource Self}}" />
                 </Trigger>
-            </Style.Triggers>
+            </Style.Triggers>-->
             <Setter Property="IsSelected"
-                    Value="{Binding IsSelected, Mode=TwoWay,
-                             UpdateSourceTrigger=PropertyChanged}" />
+                    Value="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" />
         </Style>
         <Style x:Key="TextBlockDataError"
                TargetType="{x:Type TextBox}">
@@ -108,9 +109,10 @@
                               x:Name="CustomersDataGrid"
                               KeyUp="DataGrid_KeyDown"
                               HorizontalAlignment="Left"
-                              ItemsSource="{Binding PersonalWr.CustomerWrappers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              ItemsSource="{Binding Source={StaticResource CustomersCVS}}"
                               AutoGenerateColumns="False"
-                              SelectedItem="{Binding SelectedCustomer}"
+                              SelectedItem="{Binding SelectedCustomer,
+                              TargetNullValue={x:Static CollectionView.NewItemPlaceholder}}"
                               CanUserAddRows="True">
                         <DataGrid.Resources>
                             <Style TargetType="{x:Type ComboBox}">
@@ -141,6 +143,21 @@
                                                 MinWidth="80"
                                                 MaxWidth="200"
                                                 Binding="{Binding Tel, UpdateSourceTrigger=PropertyChanged}" />
+                            <DataGridTemplateColumn Header="Αναχώρηση"
+                                                    Width="100"
+                                                    CellStyle="{StaticResource DataGridCellStyle}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox IsEditable="True"
+                                                  Width="Auto"
+                                                  VerticalAlignment="Top"
+                                                  MinWidth="60"
+                                                  Text="{Binding StartingPlace, UpdateSourceTrigger=PropertyChanged}"
+                                                  ItemsSource="{x:Static helpers:StaticResources.StartingPlaces}"
+                                                  DisplayMemberPath="Name" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                             <DataGridTemplateColumn Header="Γέννηση"
                                                     CellStyle="{StaticResource DataGridCellStyle}">
                                 <DataGridTemplateColumn.CellTemplate>
@@ -216,10 +233,21 @@
                               ItemsSource="{Binding Services}"
                               BorderThickness="0"
                               Margin="-4 0"
+                              SelectedItem="{Binding SelectedService}"
                               FontSize="12"
                               ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                               ScrollViewer.CanContentScroll="False">
+                      
                         <ListView.Resources>
+                            <ContextMenu x:Key="ItemContextMenu">
+                                <MenuItem Header="Επεξεργασία"
+                                          Command="{Binding DataContext.EditServiceCommand,ConverterParameter=Binding,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}">
+                                    <MenuItem.Icon>
+                                        <Image MaxHeight="20"
+                                               Stretch="Fill" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
                             <DataTemplate DataType="{x:Type services:PlaneService}">
                                 <ServicePreviews:PlaneService_Preview />
                             </DataTemplate>
@@ -239,6 +267,12 @@
                                 <ServicePreviews:TransferService_Preview />
                             </DataTemplate>
                         </ListView.Resources>
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="{x:Type ListViewItem}">
+                                <Setter Property="ContextMenu"
+                                        Value="{StaticResource ItemContextMenu}" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
                     </ListView>
                 </GroupBox>
             </StackPanel>
@@ -375,19 +409,19 @@
                                     <TextBlock Text="Net Κόστος:"
                                                HorizontalAlignment="Left" />
                                     <TextBlock Text="{Binding PersonalWr.NetPrice,Converter={StaticResource floatToStringConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                             Margin="5,0,5,5"
-                                             VerticalAlignment="Center"
-                                             Width="60"
-                                             Grid.Column="1" />
+                                               Margin="5,0,5,5"
+                                               VerticalAlignment="Center"
+                                               Width="60"
+                                               Grid.Column="1" />
                                     <TextBlock Text="Κέρδος Πακέτων:"
                                                Grid.Row="1"
                                                HorizontalAlignment="Left" />
                                     <TextBlock Text="{Binding PersonalWr.ServiceProfit,Converter={StaticResource floatToStringConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                             Margin="5,0,5,5"
-                                             VerticalAlignment="Center"
-                                             Width="60"
-                                             Grid.Row="1"
-                                             Grid.Column="1" />
+                                               Margin="5,0,5,5"
+                                               VerticalAlignment="Center"
+                                               Width="60"
+                                               Grid.Row="1"
+                                               Grid.Column="1" />
                                     <TextBlock Text="Extra Κερδος:"
                                                Grid.Row="2"
                                                HorizontalAlignment="Left" />
@@ -401,20 +435,20 @@
                                                Grid.Row="3"
                                                HorizontalAlignment="Left" />
                                     <TextBlock Text="{Binding PersonalWr.TotalProfit,Converter={StaticResource floatToStringConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                             Margin="5,0,5,5"
-                                             VerticalAlignment="Center"
-                                             Width="60"
-                                             Grid.Row="3"
-                                             Grid.Column="1" />
+                                               Margin="5,0,5,5"
+                                               VerticalAlignment="Center"
+                                               Width="60"
+                                               Grid.Row="3"
+                                               Grid.Column="1" />
                                     <TextBlock Text="Σύνολo Πακέτου:"
                                                Grid.Row="4"
                                                HorizontalAlignment="Left" />
                                     <TextBox Text="{Binding PersonalWr.FullPrice,Converter={StaticResource floatToStringConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                               Margin="5,0,5,5"
-                                               VerticalAlignment="Center"
-                                               Width="60"
-                                               Grid.Row="4"
-                                               Grid.Column="1" />
+                                             Margin="5,0,5,5"
+                                             VerticalAlignment="Center"
+                                             Width="60"
+                                             Grid.Row="4"
+                                             Grid.Column="1" />
                                 </Grid>
                                 <Border Margin="-5,0"
                                         BorderThickness="0,1,0,0"
@@ -433,8 +467,6 @@
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    
-                                 
                                     <Label Content="Προκαταβολή:"
                                            Grid.Row="3"
                                            Grid.Column="0"
@@ -468,6 +500,12 @@
                                              Text="{Binding PersonalWr.Comment,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                                              VerticalAlignment="Bottom" />
                                 </Grid>
+                                <ComboBox ItemsSource="{Binding Users}"
+                                          SelectedIndex="{Binding SelectedUserIndex}"
+                                          DisplayMemberPath="UserName"
+                                          Margin="5 5 5 0"
+                                          Visibility="{Binding Converter={StaticResource UserToVisibilityConverter},ConverterParameter=1,  Mode=OneWay}"
+                                          VerticalAlignment="Center" />
                                 <Button Content="Αποθήκευση"
                                         Margin="5,5,5,0"
                                         Command="{Binding SaveCommand}" />
@@ -486,7 +524,6 @@
                                            TextWrapping="Wrap"
                                            MaxHeight="100"
                                            MaxWidth="150" />
-                                
                             </StackPanel>
                         </GroupBox>
                     </Grid>

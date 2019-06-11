@@ -197,6 +197,27 @@ namespace LATravelManager.Model.BookingData
             }
         }
 
+        public string GetPaymentMethod()
+        {
+            switch (PaymentMethod)
+            {
+                case 0:
+                    return "ΜΕΤΡΗΤΑ";
+                case 1:
+                    return "ΤΡ. ΚΑΤΑΘΕΣΗ(ΠΕΙΡΑΩΣ)";
+                case 2:
+                    return "ΤΡ. ΚΑΤΑΘΕΣΗ(ΕΘΝΙΚΗ)";
+                case 3:
+                    return "ΤΡ. ΚΑΤΑΘΕΣΗ(EUROBANK)";
+                case 4:
+                    return "ΤΡ. ΚΑΤΑΘΕΣΗ(ALPHABANK)";
+                case 5:
+                    return "ΠΙΣΤΩΤΙΚΗ ΚΑΡΤΑ(POS)";
+                default:
+                    return "ERROR";
+            }
+        }
+
         /// <summary>
         /// Sets and gets the PaymentMethod property. Changes to that property's value raise the
         /// PropertyChanged event.
@@ -226,7 +247,7 @@ namespace LATravelManager.Model.BookingData
         /// PropertyChanged event.
         /// </summary>
         [Required]
-        public  User User
+        public User User
         {
             get
             {
@@ -261,10 +282,13 @@ namespace LATravelManager.Model.BookingData
 
                 case 2:
                     return "Εθνική";
+
                 case 3:
                     return "Eurobank";
+
                 case 4:
                     return "Alpha Bank";
+
                 case 5:
                     return "VISA";
             }

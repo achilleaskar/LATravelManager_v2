@@ -35,8 +35,77 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             SaveCommand = new RelayCommand(async () => { await SaveAsync(); }, CanSave);
             Payment = new Payment();
             MainViewModel = mainViewModel;
+
+            EditServiceCommand = new RelayCommand(EditService);
         }
 
+
+
+
+        private Service _SelectedService;
+
+
+        public Service SelectedService
+        {
+            get
+            {
+                return _SelectedService;
+            }
+
+            set
+            {
+                if (_SelectedService == value)
+                {
+                    return;
+                }
+
+                _SelectedService = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private void EditService()
+        {
+            SelectedServiceViewModel = Templates.Where(t => t.Service.Tittle == SelectedService.Tittle).FirstOrDefault();
+            SelectedServiceViewModel.Service = SelectedService;
+        }
+
+        public int SelectedUserIndex
+        {
+            get
+            {
+                return _SelectedUserIndex;
+            }
+            set
+            {
+                if (_SelectedUserIndex == value)
+                {
+                    return;
+                }
+                _SelectedUserIndex = value;
+                if (SelectedUserIndex >= 0 && (PersonalWr.User == null || (PersonalWr.User != null && PersonalWr.User.Id != Users[SelectedUserIndex].Id)))
+                {
+                    PersonalWr.User = StartingRepository.GetById<User>(Users[SelectedUserIndex].Id);
+                }
+                RaisePropertyChanged();
+            }
+        }
+
+        public ObservableCollection<User> Users
+        {
+            get => _Users;
+
+            set
+            {
+                if (_Users == value)
+                {
+                    return;
+                }
+
+                _Users = value;
+                RaisePropertyChanged();
+            }
+        }
         #endregion Constructors
 
         #region Fields
@@ -311,6 +380,8 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             }
         }
 
+        public RelayCommand EditServiceCommand { get; set; }
+
         public override Task ReloadAsync()
         {
             throw new NotImplementedException();
@@ -371,7 +442,12 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 
         private bool CanSave()
         {
-            return true;
+            return AreBookingDataValid && ValidateServices() == null;
+        }
+
+        private string ValidateServices()
+        {
+            return null;
         }
 
         private async Task ClearBooking()
@@ -473,8 +549,19 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
                 {
                     StartingRepository = MainViewModel.StartingRepository;
                 }
-
+                int userId = SelectedUserIndex >= 0 && Users != null && SelectedUserIndex < Users.Count ? Users[SelectedUserIndex].Id : -1;
                 int partnerId = SelectedPartnerIndex >= 0 && Partners != null && SelectedPartnerIndex < Partners.Count ? Partners[SelectedPartnerIndex].Id : -1;
+                Users = BasicDataManager.Users;
+                Partners = BasicDataManager.Partners;
+
+                if (SelectedUserIndex < 0)
+                {
+                    SelectedUserIndex = Users.IndexOf(Users.Where(x => x.Id == PersonalWr.User.Id).FirstOrDefault());
+                }
+                else
+                {
+                    SelectedUserIndex = Users.IndexOf(Users.Where(x => x.Id == userId).FirstOrDefault());
+                }
             }
             catch (Exception ex)
             {
@@ -490,7 +577,8 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 
 
         private string _BookedMessage;
-
+        private ObservableCollection<User> _Users;
+        private int _SelectedUserIndex;
 
         public string BookedMessage
         {
@@ -509,6 +597,65 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
                 _BookedMessage = value;
                 RaisePropertyChanged();
             }
+        }
+
+        public bool AreBookingDataValid
+        {
+            get
+            {
+                foreach (string property in ValidateRoomsProperties)
+                {
+                    ErrorsInDatagrid = GetBookingDataValidationError(property);
+                    if (ErrorsInDatagrid != null)
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+        private readonly string[] ValidateRoomsProperties =
+               {
+            nameof(PersonalWr),nameof(Payment)
+        };
+
+        private string GetBookingDataValidationError(string propertyName)
+        {
+            string error = null;
+
+            //Reservation.OnPropertyChanged("CanAddRows");
+            switch (propertyName)
+            {
+                case nameof(PersonalWr):
+                    error = ValidatePersonalWr();
+                    break;
+
+                case nameof(Payment):
+                    error = ValidatePayment();
+                    break;
+            }
+            return error;
+        }
+        private string ValidatePayment()
+        {
+            if (Payment.Amount > PersonalWr.Remaining)
+            {
+                return "Το ποσό υπερβαίνει το υπόλοιπο της κράτησης";
+            }
+
+            if (Payment.Amount < 0)
+            {
+                return "Το ποσό πληρωμής δεν μπορεί να είναι αρνητικό";
+            }
+            if (Payment.Amount > PersonalWr.Remaining)
+            {
+                return "Το ποσό πληρωμής υπερβαίνει το υπολειπόμενο ποσό";
+            }
+            return null;
+        }
+        private string ValidatePersonalWr()
+        {
+            return PersonalWr.ValidatePersonalBooking();
         }
 
         private async Task SaveAsync()
@@ -544,8 +691,8 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 
 
 
-         
-         
+
+
         }
 
         #endregion Methods

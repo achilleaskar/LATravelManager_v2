@@ -7,7 +7,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
+using System.Windows.Data;
 using System.Windows.Media;
 using static LATravelManager.Model.Enums;
 
@@ -46,6 +48,31 @@ namespace LATravelManager.Model.Wrapper
         #endregion Fields
 
         #region Properties
+
+
+
+
+        private ICollectionView _CustomersCV;
+
+
+        public ICollectionView CustomersCV
+        {
+            get
+            {
+                return _CustomersCV;
+            }
+
+            set
+            {
+                if (_CustomersCV == value)
+                {
+                    return;
+                }
+
+                _CustomersCV = value;
+                RaisePropertyChanged();
+            }
+        }
 
         private string ValidateToDatetime()
         {
@@ -187,6 +214,63 @@ namespace LATravelManager.Model.Wrapper
 
                 _Customers = value;
                 RaisePropertyChanged();
+                CustomersCV = CollectionViewSource.GetDefaultView(Customers);
+            }
+        }
+
+        public string GetPacketDescription()
+        {
+            if (Excursion != null)
+            {
+                return $"ΕΚΔΡΟΜΗ ΓΙΑ {Excursion.Destinations[0].Name.TrimEnd('Σ')} / {new ReservationWrapper(ReservationsInBooking[0]).Dates} / {Customers.Count} ΑΤΟΜΑ / {GetHotels()}";
+            }
+            else
+            {
+                return "ERROR";
+            }
+        }
+
+        private string GetHotels()
+        {
+            List<string> hotels = new List<string>();
+            foreach (var res in ReservationsInBooking)
+            {
+                if (res.Room != null && !hotels.Any(x => x == res.Room.Hotel.Name))
+                {
+                    hotels.Add("\""+res.Room.Hotel.Name+ "\"");
+                }
+                if (res.ReservationType == ReservationTypeEnum.Noname && !hotels.Any(x => x == "NO NAME"))
+                {
+                    hotels.Add("NO NAME");
+                }
+                if (res.ReservationType == ReservationTypeEnum.Transfer && !hotels.Any(x => x == "TRANSFER"))
+                {
+                    hotels.Add("TRANSFER");
+                }
+            }
+            if (hotels.Count == 1)
+            {
+                if (hotels[0] == "TRANSFER")
+                {
+                    return "ΜΟΝΟ ΜΕΤΑΦΟΡΑ";
+                }
+                else if (hotels[0] == "NO NAME")
+                {
+                    return "ΧΩΡΙΣ ΕΠΙΛΟΓΗ ΣΥΓΚΕΚΡΙΜΕΝΟΥ ΚΑΤΑΛΥΜΑΤΟΣ";
+                }
+                else
+                {
+                    return "ΜΕ ΔΙΑΜΟΝΗ ΣΤΟ ΚΑΤΑΛΥΜΑ " + hotels[0];
+
+                }
+            }
+            else if (hotels.Count > 1)
+            {
+                return "ΜΕ ΔΙΑΜΟΝΗ ΣΤA ΚΑΤΑΛΥΜΑTA "+string.Join("/", hotels);
+            }
+            else
+            {
+                return "ERROR";
             }
         }
 

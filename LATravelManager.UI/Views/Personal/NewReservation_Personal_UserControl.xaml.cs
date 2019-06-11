@@ -19,12 +19,12 @@ namespace LATravelManager.UI.Views.Personal
 
         private void IsPartnerCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            CustomersDataGrid.Columns[5].Visibility = Visibility.Collapsed;
+            //CustomersDataGrid.Columns[5].Visibility = Visibility.Collapsed;
         }
 
         private void IsPartnerCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            CustomersDataGrid.Columns[5].Visibility = Visibility.Visible;
+            //CustomersDataGrid.Columns[5].Visibility = Visibility.Visible;
         }
 
         public static T GetVisualChild<T>(Visual parent) where T : Visual
@@ -70,19 +70,19 @@ namespace LATravelManager.UI.Views.Personal
                   CustomersDataGrid.Columns[1]);
                 }
             }
-            else if (e.Key == Key.Delete && e.OriginalSource.GetType() != typeof(TextBox))
-            {
-                e.Handled = true;
-                (DataContext as NewReservation_Bansko_ViewModel).DeleteSelectedCustomers();
-            }
+            //else if (e.Key == Key.Delete && e.OriginalSource.GetType() != typeof(TextBox))
+            //{
+            //    e.Handled = true;
+            //    (DataContext as NewReservation_Bansko_ViewModel).DeleteSelectedCustomers();
+            //}
         }
 
         private void UserControl_KeyUp(object sender, KeyEventArgs e)
         {
-            if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.Z)
-            {
-                ((NewReservation_Bansko_ViewModel)DataContext).ReadNextLineCommand.Execute(null);
-            }
+            //if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.Z)
+            //{
+            //    ((NewReservation_Bansko_ViewModel)DataContext).ReadNextLineCommand.Execute(null);
+            //}
         }
 
         private void DataGrid_LoadingRow(object sender, DataGridRowEventArgs e)
@@ -92,11 +92,11 @@ namespace LATravelManager.UI.Views.Personal
 
         private void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (sender is ListViewItem lvi && lvi.DataContext is Room)
-            {
-                if ((DataContext as NewReservation_Bansko_ViewModel).PutCustomersInRoomCommand.CanExecute(null))
-                    (DataContext as NewReservation_Bansko_ViewModel).PutCustomersInRoomCommand.Execute(null);
-            }
+            //if (sender is ListViewItem lvi && lvi.DataContext is Room)
+            //{
+            //    if ((DataContext as NewReservation_Bansko_ViewModel).PutCustomersInRoomCommand.CanExecute(null))
+            //        (DataContext as NewReservation_Bansko_ViewModel).PutCustomersInRoomCommand.Execute(null);
+            //}
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

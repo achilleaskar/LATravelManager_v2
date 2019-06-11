@@ -45,6 +45,8 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             AddFromFileCommand = new RelayCommand(AddFromFile);
 
             DeletePaymentCommand = new RelayCommand(DeletePayment, CanDeletePayment);
+            PrintRecieptCommand = new RelayCommand(PrintReciept);
+
             UpdateAllCommand = new RelayCommand(async () => { await UpdateAll(); }, CanUpdateAll);
 
             BookRoomNoNameCommand = new RelayCommand<RoomType>(async (obj) => { await MakeNonameReservation(obj); }, CanMakeNoNameReservation);
@@ -65,6 +67,15 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             Emails = new ObservableCollection<Email>();
         }
 
+        private void PrintReciept()
+        {
+            if (DocumentsManagement == null)
+            {
+                DocumentsManagement = new DocumentsManagement(StartingRepository);
+            }
+            DocumentsManagement.PrintPaymentsReciept(SelectedPayment,SelectedCustomer.Model);
+        }
+
         #endregion Constructors
 
         #region Fields
@@ -73,6 +84,10 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 {
             nameof(BookingWr),nameof(Payment)
         };
+
+        public RelayCommand PrintRecieptCommand { get; set; }
+
+        public DocumentsManagement DocumentsManagement { get; set; }
 
         private bool _All = true;
         private ObservableCollection<HotelWrapper> _AvailableHotels;
@@ -136,7 +151,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 RaisePropertyChanged();
             }
         }
-
 
         #endregion Fields
 
@@ -615,11 +629,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
-
-
-
         private ObservableCollection<RoomTypeWrapper> _FilteredRoomTypesList;
-
 
         public ObservableCollection<RoomTypeWrapper> FilteredRoomTypesList
         {
@@ -639,6 +649,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 RaisePropertyChanged();
             }
         }
+
         public RoomWrapper SelectedRoom
         {
             get => _SelectedRoom;
@@ -766,14 +777,13 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 //    }
                 //    BasicDataManager = new GenericRepository();
                 //}
+                RoomsManager = new RoomsManager();
                 AvailableHotels = new ObservableCollection<HotelWrapper>((await RoomsManager.GetAllAvailableRooms(BookingWr.CheckIn, BookingWr.CheckOut, SelectedExcursion, unSavedBooking: BookingWr.Model)));
                 FilteredRoomList = new ObservableCollection<RoomWrapper>();
                 List<RoomWrapper> tmplist = new List<RoomWrapper>();
 
                 int allotmentDays = 0;
                 bool addThis, isfree;
-
-
 
                 foreach (HotelWrapper hotel in AvailableHotels)
                 {
@@ -870,7 +880,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             //                //todelete
             //                if (addThis)
             //                {
-
             //                    if (allotmentDays > 0)
             //                    {
             //                        if (room.PlanDailyInfo.Count != allotmentDays)
@@ -1262,7 +1271,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 return false;
             }
 
-            if (SelectedRoomTypeIndex <= 0 || (SelectedCustomer == null && !All) || !AreBookingDataValid || !AreContexesFree)
+            if ((SelectedCustomer == null && !All) || !AreBookingDataValid || !AreContexesFree)
             {
                 return false;
             }
@@ -1818,7 +1827,5 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
     {
         public Hotel Hotel { get; set; }
         public List<RoomWrapper> Rooms { get; set; }
-
-
     }
 }
