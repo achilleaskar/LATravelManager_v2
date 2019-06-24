@@ -93,7 +93,7 @@ namespace LATravelManager.Model.Wrapper
                 }
                 else
                 {
-                    throw new Exception("den einai personal kai dn exei booking");
+                    return ExcursionTypeEnum.Group;
                 }
             }
         }
@@ -412,6 +412,26 @@ namespace LATravelManager.Model.Wrapper
         }
 
         public string RoomTypeNameByNum => GetRoomTypeNameByNum();
+
+        public User UserWr
+        {
+            get
+            {
+                switch (ExcursionType)
+                {
+                    case ExcursionTypeEnum.Bansko:
+                    case ExcursionTypeEnum.Skiathos:
+                    case ExcursionTypeEnum.Group:
+                        return Booking.User;
+                    case ExcursionTypeEnum.Personal:
+                        return PersonalModel.User;
+                    case ExcursionTypeEnum.ThirdParty:
+
+                    default:
+                        return null;
+                }
+            }
+        }
 
         private string GetRoomTypeNameByNum()
         {

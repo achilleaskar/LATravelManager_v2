@@ -23,6 +23,7 @@ namespace LATravelManager.Model.BookingData
 
         public Payment()
         {
+
         }
 
         public Payment(Payment p)
@@ -55,13 +56,9 @@ namespace LATravelManager.Model.BookingData
             }
         }
 
-        public const string AmountPropertyName = nameof(Amount);
-        public const string AmountStringPropertyName = nameof(AmountString);
+       // public const string AmountStringPropertyName = nameof(AmountString);
 
-        public const string CommentPropertyName = nameof(Comment);
-        public const string DatePropertyName = nameof(Date);
-        public const string PaymentMethodPropertyName = nameof(PaymentMethod);
-        public const string UserPropertyName = nameof(User);
+
 
         #endregion Fields + Constructors
 
@@ -95,9 +92,9 @@ namespace LATravelManager.Model.BookingData
                 if (Math.Abs(value - _Amount) > EPSILON)
                 {
                     _Amount = Math.Round(value, 2);
-                    AmountString = value.ToString();
+                  //  AmountString = value.ToString();
                 }
-                RaisePropertyChanged(AmountPropertyName);
+                RaisePropertyChanged();
             }
         }
 
@@ -105,49 +102,49 @@ namespace LATravelManager.Model.BookingData
         /// Sets and gets the PriceString property. Changes to that property's value raise the
         /// PropertyChanged event.
         /// </summary>
-        [NotMapped]
-        public string AmountString
-        {
-            get
-            {
-                return _AmountString;
-            }
+        //[NotMapped]
+        //public string AmountString
+        //{
+        //    get
+        //    {
+        //        return _AmountString;
+        //    }
 
-            set
-            {
-                if (_AmountString == value)
-                {
-                    return;
-                }
+        //    set
+        //    {
+        //        if (_AmountString == value)
+        //        {
+        //            return;
+        //        }
 
-                _AmountString = value;
+        //        _AmountString = value;
 
-                if (!string.IsNullOrEmpty(_AmountString))
-                {
-                    if (decimal.TryParse(value.Replace(',', '.'), NumberStyles.Any, new CultureInfo("en-US"), out decimal tmpDouble))
-                    {
-                        tmpDouble = Math.Round(tmpDouble, 2);
-                        Amount = tmpDouble;
-                        RaisePropertyChanged(AmountStringPropertyName);
-                        if (_AmountString[_AmountString.Length - 1] != '.' && _AmountString[_AmountString.Length - 1] != ',')
-                        {
-                            _AmountString = tmpDouble.ToString();
-                        }
-                    }
-                    else
-                    {
-                        _AmountString = Amount.ToString();
-                    }
-                }
-                else
-                {
-                    _AmountString = "0";
-                    Amount = 0;
-                }
-                _AmountString = value;
-                RaisePropertyChanged(AmountStringPropertyName);
-            }
-        }
+        //        if (!string.IsNullOrEmpty(_AmountString))
+        //        {
+        //            if (decimal.TryParse(value.Replace(',', '.'), NumberStyles.Any, new CultureInfo("en-US"), out decimal tmpDouble))
+        //            {
+        //                tmpDouble = Math.Round(tmpDouble, 2);
+        //                Amount = tmpDouble;
+        //                RaisePropertyChanged(AmountStringPropertyName);
+        //                if (_AmountString[_AmountString.Length - 1] != '.' && _AmountString[_AmountString.Length - 1] != ',')
+        //                {
+        //                    _AmountString = tmpDouble.ToString();
+        //                }
+        //            }
+        //            else
+        //            {
+        //                _AmountString = Amount.ToString();
+        //            }
+        //        }
+        //        else
+        //        {
+        //            _AmountString = "0";
+        //            Amount = 0;
+        //        }
+        //        _AmountString = value;
+        //        RaisePropertyChanged(AmountStringPropertyName);
+        //    }
+        //}
 
         /// <summary>
         /// Sets and gets the Comment property. Changes to that property's value raise the
@@ -169,7 +166,7 @@ namespace LATravelManager.Model.BookingData
                 }
 
                 _Comment = value;
-                RaisePropertyChanged(CommentPropertyName);
+                RaisePropertyChanged();
             }
         }
 
@@ -193,7 +190,7 @@ namespace LATravelManager.Model.BookingData
                 }
 
                 _Date = value;
-                RaisePropertyChanged(DatePropertyName);
+                RaisePropertyChanged();
             }
         }
 
@@ -238,7 +235,7 @@ namespace LATravelManager.Model.BookingData
                 }
 
                 _PaymentMethod = value;
-                RaisePropertyChanged(PaymentMethodPropertyName);
+                RaisePropertyChanged();
             }
         }
 
@@ -262,7 +259,7 @@ namespace LATravelManager.Model.BookingData
                 }
 
                 _User = value;
-                RaisePropertyChanged(UserPropertyName);
+                RaisePropertyChanged();
             }
         }
 

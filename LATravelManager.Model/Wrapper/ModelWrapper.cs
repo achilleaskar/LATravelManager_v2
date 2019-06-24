@@ -1,4 +1,5 @@
-﻿using LATravelManager.UI.Wrapper;
+﻿using LATravelManager.Model.BookingData;
+using LATravelManager.UI.Wrapper;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -19,10 +20,10 @@ namespace LATravelManager.Model.Wrapper
                     ValidateAllProperties();
                 }
             }
-            catch (Exception )
+            catch (Exception)
             {
 
-                
+
             }
         }
 
@@ -60,7 +61,7 @@ namespace LATravelManager.Model.Wrapper
 
         public DateTime? ModifiedDate
         {
-            get { return GetValue<DateTime>(); }
+            get { return GetValue<DateTime?>(); }
             set { SetValue(value); }
         }
 
@@ -90,7 +91,7 @@ namespace LATravelManager.Model.Wrapper
 
         protected virtual TValue GetValue<TValue>([CallerMemberName]string propertyName = null)
         {
-            return (TValue)typeof(T).GetProperty(propertyName).GetValue(Model);
+                return (TValue)typeof(T).GetProperty(propertyName).GetValue(Model);
         }
 
         public DateTime CreatedDate

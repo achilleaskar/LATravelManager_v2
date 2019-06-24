@@ -1,10 +1,11 @@
-﻿using DocumentFormat.OpenXml.Packaging;
+﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Repositories;
-using LATravelManager.UI.Wrapper;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System;
@@ -18,6 +19,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using static LATravelManager.Model.Enums;
+using DW = DocumentFormat.OpenXml.Drawing.Wordprocessing;
+using PIC = DocumentFormat.OpenXml.Drawing.Pictures;
+using TEST = DocumentFormat.OpenXml.Drawing;
 
 namespace LATravelManager.UI.Helpers
 {
@@ -65,7 +69,6 @@ namespace LATravelManager.UI.Helpers
             return resultPath;
         }
 
-
         internal void PrintPaymentsReciept(Payment selectedPayment, Customer selectedCustomer)
         {
             string outputpath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
@@ -74,17 +77,27 @@ namespace LATravelManager.UI.Helpers
             Directory.CreateDirectory(outputpath + @"\Payments");
 
             CreateWordReciept(outputpath + @"\Payments\" + RecieptFilename, selectedPayment, selectedCustomer);
-
         }
 
         private void CreateWordReciept(string saveAs, Payment selectedPayment, Customer SelectedCustomer)
         {
-
             if (SelectedCustomer == null)
             {
                 SelectedCustomer = selectedPayment.Booking.ReservationsInBooking[0].CustomersList[0];
             }
-            string fileName = @"Sources\reciept.docx";
+            string fileName = "";
+            if (StaticResources.User.BaseLocation == 1)
+            {
+                fileName = @"Sources\reciept.docx";
+            }
+            else if (StaticResources.User.BaseLocation == 2)
+            {
+                fileName = @"Sources\reciept_larisa.docx";
+            }
+            else
+            {
+                return;
+            }
 
             File.Copy(fileName, saveAs, true);
 
@@ -133,13 +146,9 @@ namespace LATravelManager.UI.Helpers
                 }
                 catch (Exception)
                 {
-
                 }
             }
         }
-
-
-
 
         public string CreateFolder(DateTime date, string folderName, string city)
         {
@@ -386,7 +395,6 @@ namespace LATravelManager.UI.Helpers
 
         public void PrintSingleBookingContract(BookingWrapper booking)
         {
-            bool tranmess = false, nonamemess = false;
 
             foreach (Reservation res in booking.ReservationsInBooking)
             {
@@ -414,9 +422,11 @@ namespace LATravelManager.UI.Helpers
             PrintContract(booking);
         }
 
+        public bool nonamemess { get; set; }
+        public bool tranmess { get; set; }
+
         public async Task PrintSingleBookingVoucher(BookingWrapper booking)
         {
-            bool tranmess = false, nonamemess = false;
 
             foreach (Reservation res in booking.ReservationsInBooking)
             {
@@ -424,13 +434,10 @@ namespace LATravelManager.UI.Helpers
                 {
                     MessageBox.Show("Παρακαλώ τοποθετήστε τα NO NAME");
                     nonamemess = true;
-                    return;
                 }
                 else if (res.ReservationType == ReservationTypeEnum.NoRoom)
                 {
                     MessageBox.Show("Error");
-                    return;
-
                 }
                 //else if (res.ReservationType == Reservation.ReservationTypeEnum.Overbooked)
                 //{
@@ -440,8 +447,6 @@ namespace LATravelManager.UI.Helpers
                 {
                     MessageBox.Show("Η κράτηση είναι TRANSFER");
                     tranmess = true;
-                    return;
-
                 }
             }
             await PrintVoucher(booking);
@@ -450,31 +455,29 @@ namespace LATravelManager.UI.Helpers
         public async Task PrintVoucher(BookingWrapper booking)
         {
             string outputpath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-            bool tranmess = false, nonamemess = false;
 
             ReservationWrapper resWrapper;
             foreach (Reservation res in booking.ReservationsInBooking)
             {
                 resWrapper = new ReservationWrapper(res);
-                if (res.ReservationType == ReservationTypeEnum.Noname && !nonamemess)
+                if (res.ReservationType == ReservationTypeEnum.Noname)
                 {
-                    MessageBox.Show("Παρακαλώ τοποθετήστε τα NO NAME");
-                    nonamemess = true;
-                    break;
+                    // MessageBox.Show("Παρακαλώ τοποθετήστε τα NO NAME");
+                    continue;
                 }
                 else if (res.ReservationType == ReservationTypeEnum.NoRoom)
                 {
-                    MessageBox.Show("Error");
+                    // MessageBox.Show("Error");
+                    continue;
                 }
                 //else if (res.ReservationType == Reservation.ReservationTypeEnum.Overbooked)
                 //{
                 //    MessageBox.Show("Παρακαλώ τοποθετήστε τα OVER");
                 //}
-                else if (res.ReservationType == ReservationTypeEnum.Transfer && !tranmess)
+                else if (res.ReservationType == ReservationTypeEnum.Transfer)
                 {
-                    MessageBox.Show("Η κράτηση είναι TRANSFER");
-                    tranmess = true;
-                    break;
+                    // MessageBox.Show("Η κράτηση είναι TRANSFER");
+                    continue;
                 }
 
                 try
@@ -525,7 +528,7 @@ namespace LATravelManager.UI.Helpers
 
             foreach (Booking b in more)
             {
-                if (!bookings.Any(h => h.Id == b.Id))
+                if (bookings.Count > 0 && b.Excursion.Id == bookings[0].Excursion.Id && !bookings.Any(h => h.Id == b.Id))
                 {
                     bookings.Add(b);
                 }
@@ -746,6 +749,7 @@ namespace LATravelManager.UI.Helpers
                 fileInfo = new FileInfo(wbPath ?? throw new InvalidOperationException());
                 p.SaveAs(fileInfo);
                 Process.Start(wbPath);
+                p.Dispose();
             }
             else
                 MessageBox.Show("Δέν υπάρχουν άτομα που να πηγαίνουν τις συγκεκριμένες ημέρες απο τις επιλεγμένες πόλεις", "Σφάλμα");
@@ -753,20 +757,16 @@ namespace LATravelManager.UI.Helpers
 
         internal void PrintSingleBookingLetter(BookingWrapper booking)
         {
-            bool tranmess = false, nonamemess = false;
             foreach (Reservation res in booking.ReservationsInBooking)
             {
                 if (res.ReservationType == ReservationTypeEnum.Noname && !nonamemess)
                 {
                     MessageBox.Show("Παρακαλώ τοποθετήστε τα NO NAME");
                     nonamemess = true;
-                    return;
                 }
                 else if (res.ReservationType == ReservationTypeEnum.NoRoom)
                 {
                     MessageBox.Show("Error");
-                    return;
-
                 }
                 //else if (res.ReservationType == Reservation.ReservationTypeEnum.Overbooked)
                 //{
@@ -776,8 +776,6 @@ namespace LATravelManager.UI.Helpers
                 {
                     MessageBox.Show("Η κράτηση είναι TRANSFER");
                     tranmess = true;
-                    return;
-
                 }
             }
             PrintLetter(booking);
@@ -873,7 +871,7 @@ namespace LATravelManager.UI.Helpers
         {
             string fileName;
 
-            if (booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Group)
+            if (booking.Excursion.ExcursionType.Category != ExcursionTypeEnum.Bansko)
             {
                 if (booking.IsPartners)
                     fileName = @"Sources\group\Voucher_afirmo.docx";
@@ -921,7 +919,6 @@ namespace LATravelManager.UI.Helpers
                 customerStartingPlace.StartTime = "";
             }
 
-
             using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(saveAs, true))
             {
                 try
@@ -948,7 +945,7 @@ namespace LATravelManager.UI.Helpers
                     regexText = new Regex("regexcity");
                     docText = regexText.Replace(docText, booking.Excursion.Destinations[0].Name);
                     regexText = new Regex("regextel");
-                    docText = regexText.Replace(docText, (reservationWr.Room == null || reservationWr.Room.Hotel.Tel == "0" || reservationWr.Room.Hotel.Tel == null) ? "" : reservationWr.Room.Hotel.Tel);
+                    docText = regexText.Replace(docText, (reservationWr.Room == null || reservationWr.Room.Hotel.Tel[0] == '0' || reservationWr.Room.Hotel.Tel == null) ? "" : reservationWr.Room.Hotel.Tel);
                     regexText = new Regex("regexnames");
                     docText = regexText.Replace(docText, reservationWr.Names);
                     regexText = new Regex("regexcheckin");
@@ -982,7 +979,9 @@ namespace LATravelManager.UI.Helpers
                     regexText = new Regex("zgostart");
                     docText = regexText.Replace(docText, (booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Group) ? ((customerStartingPlace.Id < 0) ? "" : customerStartingPlace.ReturnTime) : ((customerStartingPlace.Id < 0) ? "" : customerStartingPlace.StartTime));
                     regexText = new Regex("zreturnstart");
-                    docText = regexText.Replace(docText, customerStartingPlace.Id == 19 ? "" : (booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Group) ? "10:00" : "13:00");
+                    docText = regexText.Replace(docText, customerStartingPlace.Id == 19 ? "" : (booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Group) ? "10:00" : "15:30");
+                    regexText = new Regex("zreturnplacee");
+                    docText = regexText.Replace(docText, booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Skiathos ? "Παλιό λιμάνι – γωνία - Μπούρτζι" : "");
                     regexText = new Regex("regexhotel");
                     docText = regexText.Replace(docText, reservationWr.HotelName);
                     regexText = new Regex("regexroomtype");
@@ -1005,21 +1004,104 @@ namespace LATravelManager.UI.Helpers
                     docText = regexText.Replace(docText, " X ");
                     regexText = new Regex("location");
                     docText = regexText.Replace(docText, "Θεσσαλονίκη");
+                    regexText = new Regex("regextax");
+                    docText = regexText.Replace(docText, reservationWr.ExcursionType == ExcursionTypeEnum.Skiathos ?
+                        "- Ο φόρος διαμονής καταβάλλεται επι τόπου στο κατάλυμα: Pension έως ξενοδοχεία 2* 0,5€ το δωμάτιο / βραδιά, ξενοδοχεία 3* 1,5€ το δωμάτιο ανά διανυκτέρευση." : "");
 
                     using (StreamWriter sw = new StreamWriter(wordDoc.MainDocumentPart.GetStream(FileMode.Create)))
                     {
                         sw.Write(docText);
                     }
+                    MainDocumentPart mainPart = wordDoc.MainDocumentPart;
 
+                    ImagePart imagePart = mainPart.AddImagePart(ImagePartType.Jpeg);
+                    string imageName = @"Sources\VoucherImages\" + reservationWr.Room.Hotel.Id + ".jpg";
+                    if (File.Exists(imageName))
+                    {
+                        using (FileStream stream = new FileStream(imageName, FileMode.Open))
+                        {
+                            imagePart.FeedData(stream);
+                        }
+
+                        AddImageToBody(wordDoc, mainPart.GetIdOfPart(imagePart));
+                    }
                     wordDoc.Close();
                     //Process.Start(saveAs);
                 }
                 catch (Exception)
                 {
-
-
                 }
             }
+        }
+
+        private static void AddImageToBody(WordprocessingDocument wordDoc, string relationshipId)
+        {
+            long LCX = (long)(7.35 * 914400L);
+            long LCY = (long)(4.17 * 914400L);
+            // Define the reference of the image.
+            var element =
+                 new Drawing(
+                     new DW.Inline(
+                        new DW.Extent() { Cx = LCX, Cy = LCY },
+                     new DW.EffectExtent()
+                     {
+                         LeftEdge = 0L,
+                         TopEdge = 0L,
+                         RightEdge = 0L,
+                         BottomEdge = 0L
+                     },
+                         new DW.DocProperties()
+                         {
+                             Id = 1U,
+                             Name = "Picture 1"
+                         },
+                         new DW.NonVisualGraphicFrameDrawingProperties(
+                             new TEST.GraphicFrameLocks() { NoChangeAspect = true }),
+                         new TEST.Graphic(
+                             new TEST.GraphicData(
+                                 new PIC.Picture(
+                                     new PIC.NonVisualPictureProperties(
+                                         new PIC.NonVisualDrawingProperties()
+                                         {
+                                             Id = 0U,
+                                             Name = "New Bitmap Image.jpg"
+                                         },
+                                         new PIC.NonVisualPictureDrawingProperties()),
+                                     new PIC.BlipFill(
+                                         new TEST.Blip(
+                                             new TEST.BlipExtensionList(
+                                                 new TEST.BlipExtension()
+                                                 {
+                                                     Uri = "{28A0092B-C50C-407E-A947-70E740481C1C}"
+                                                 })
+                                         )
+                                         {
+                                             Embed = relationshipId,
+                                             CompressionState = TEST.BlipCompressionValues.Print
+                                         },
+                                         new TEST.Stretch(
+                                             new TEST.FillRectangle())),
+                                     new PIC.ShapeProperties(
+                                         new TEST.Transform2D(
+                                             new TEST.Offset() { X = 0L, Y = 0L },
+                                             new TEST.Extents() { Cx = LCX, Cy = LCY }),
+                                         new TEST.PresetGeometry(
+                                             new TEST.AdjustValueList()
+                                         )
+                                         { Preset = TEST.ShapeTypeValues.Rectangle }))
+                             )
+                             { Uri = "http://schemas.openxmlformats.org/drawingml/2006/picture" })
+                     )
+                     {
+                         DistanceFromTop = 0U,
+                         DistanceFromBottom = 0U,
+                         DistanceFromLeft = 0U,
+                         DistanceFromRight = 0U,
+                         EditId = "50D07946"
+                     });
+
+            // Append the reference to body, the element should be in a Run.
+            wordDoc.MainDocumentPart.Document.Body.AppendChild(new Paragraph(new Run(element)));
         }
 
         #endregion Methods

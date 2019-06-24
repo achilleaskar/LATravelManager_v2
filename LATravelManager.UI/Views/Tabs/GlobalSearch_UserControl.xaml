@@ -91,7 +91,7 @@
             </Border>
             <StackPanel Orientation="Horizontal"
                         VerticalAlignment="Bottom"
-                        Margin="5,0">
+                        Margin="5,0 0 0">
                 <StackPanel.Resources>
                     <Style TargetType="Label">
                         <Setter Property="Padding"
@@ -101,79 +101,131 @@
                         <Setter Property="VerticalAlignment"
                                 Value="Bottom" />
                     </Style>
+                    <Style TargetType="ComboBox">
+                        <Style.Triggers>
+                            <Trigger Property="SelectedIndex"
+                                     Value="0">
+                                <Setter Property="Foreground"
+                                        Value="Black" />
+                            </Trigger>
+                        </Style.Triggers>
+                            <Setter Property="Foreground"
+                                    Value="Blue" />
+                    </Style>
+                   
+                    <Style TargetType="ComboBoxItem">
+                        <Setter Property="Foreground"
+                                Value="Black" />
+                    </Style>
                 </StackPanel.Resources>
-                <StackPanel>
-                    <Label Content="Λέξη Κλειδί:"
-                           VerticalAlignment="Center" />
-                    <TextBox Text="{Binding FilterString, Delay=100,UpdateSourceTrigger=PropertyChanged}"
-                             Width="100"
-                             Height="22"
-                             VerticalContentAlignment="Bottom"
-                             VerticalAlignment="Center"
-                             Margin="0,0,5,0" />
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal"
+                                VerticalAlignment="Bottom"
+                                Margin="5 0 5 5">
+                        <StackPanel Margin="0 0 5 0">
+                            <Label Content="Κατηγορία:"
+                                   VerticalAlignment="Bottom" />
+                            <ComboBox  Width="105"
+                                       VerticalAlignment="Center"
+                                       SelectedIndex="{Binding ExcursionCategoryIndexBookingFilter}">
+                                <ComboBoxItem Content="Όλες" />
+                                <ComboBoxItem Content="Μπάνσκο" />
+                                <ComboBoxItem Content="Σκιάθος" />
+                                <ComboBoxItem Content="Ατομικά" />
+                                <ComboBoxItem Content="Οργανωμένες" />
+                                <ComboBoxItem Content="Εκδρομές Τρίτων" />
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel>
+                            <Label Content="Εκδρομή:"
+                                   VerticalAlignment="Center" />
+                            <ComboBox  Width="105"
+                                       Margin="0 0 5 0"
+                                       IsSynchronizedWithCurrentItem="True"
+                                       VerticalAlignment="Center"
+                                       ItemsSource="{Binding ExcursionsCollectionView}"
+                                       SelectedIndex="{Binding ExcursionIndexBookingFilter}" />
+                        </StackPanel>
+                        <StackPanel>
+                            <Label Content="Γραφείο:"
+                                   VerticalAlignment="Center" />
+                            <ComboBox  Width="105"
+                                       VerticalAlignment="Center"
+                                       SelectedIndex="{Binding DepartmentIndexBookingFilter}">
+                                <ComboBoxItem Content="Όλα" />
+                                <ComboBoxItem Content="Θεσσαλονίκης" />
+                                <ComboBoxItem Content="Λάρισας" />
+                                <ComboBoxItem Content="Συνεργάτών" />
+                            </ComboBox>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal"
+                                VerticalAlignment="Bottom"
+                                Margin="5,0">
+                        <StackPanel>
+                            <Label Content="Λέξη Κλειδί:"
+                                   VerticalAlignment="Center" />
+                            <TextBox Text="{Binding FilterString, Delay=100,UpdateSourceTrigger=PropertyChanged}"
+                                     Width="100"
+                                     Height="22"
+                                     VerticalContentAlignment="Bottom"
+                                     VerticalAlignment="Center"
+                                     Margin="0,0,5,0" />
+                        </StackPanel>
+                        <StackPanel>
+                            <Label Content="Αρ. Κράτησης:"
+                                   VerticalAlignment="Center" />
+                            <TextBox Text="{Binding BookingIdFilter, Delay=100,UpdateSourceTrigger=PropertyChanged}"
+                                     Width="80"
+                                     Height="22"
+                                     VerticalContentAlignment="Bottom"
+                                     VerticalAlignment="Center"
+                                     Margin="0,0,5,0" />
+                        </StackPanel>
+                        <StackPanel>
+                            <Label Content="Πωλητής:"
+                                   VerticalAlignment="Center" />
+                            <ComboBox  Width="85"
+                                       VerticalAlignment="Center"
+                                       SelectedIndex="{Binding UserIndexBookingFilter}">
+                                <ComboBox.Resources>
+                                    <CollectionViewSource x:Key="UsersList"
+                                                          Source="{Binding Users}" />
+                                </ComboBox.Resources>
+                                <ComboBox.ItemsSource>
+                                    <CompositeCollection>
+                                        <ComboBoxItem Content="Όλοι" />
+                                        <CollectionContainer Collection="{Binding Source={StaticResource UsersList}}" />
+                                    </CompositeCollection>
+                                </ComboBox.ItemsSource>
+                            </ComboBox>
+                        </StackPanel>
+                    </StackPanel>
                 </StackPanel>
-                <StackPanel>
-                    <Label Content="Πωλητής:"
-                           VerticalAlignment="Center" />
-                    <ComboBox  Width="85"
-                               Margin="0 0 5 0"
-                               VerticalAlignment="Center"
-                               SelectedIndex="{Binding UserIndexBookingFilter}">
-                        <ComboBox.Resources>
-                            <CollectionViewSource x:Key="UsersList"
-                                                  Source="{Binding Users}" />
-                        </ComboBox.Resources>
-                        <ComboBox.ItemsSource>
-                            <CompositeCollection>
-                                <ComboBoxItem Content="Όλοι" />
-                                <CollectionContainer Collection="{Binding Source={StaticResource UsersList}}" />
-                            </CompositeCollection>
-                        </ComboBox.ItemsSource>
-                    </ComboBox>
-                </StackPanel>
-                <StackPanel>
-                    <Label Content="Εκδρομή:"
-                           VerticalAlignment="Center" />
-                    <ComboBox  Width="105"
-                               Margin="0 0 5 0"
-                               IsSynchronizedWithCurrentItem="True"
-                               VerticalAlignment="Center"
-                               ItemsSource="{Binding ExcursionsCollectionView}"
-                               SelectedIndex="{Binding ExcursionIndexBookingFilter}" />
-                </StackPanel>
-                <StackPanel>
-                    <Label Content="Κατηγορία:"
-                           VerticalAlignment="Center" />
-                    <ComboBox  Width="105"
-                               VerticalAlignment="Center"
-                               SelectedIndex="{Binding ExcursionCategoryIndexBookingFilter}">
-                        <ComboBoxItem Content="Όλες" />
-                        <ComboBoxItem Content="Μπάνσκο" />
-                        <ComboBoxItem Content="Σκιάθος" />
-                        <ComboBoxItem Content="Ατομικά" />
-                        <ComboBoxItem Content="Οργανωμένες" />
-                        <ComboBoxItem Content="Εκδρομές Τρίτων" />
-                    </ComboBox>
-                </StackPanel>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal"
+                        VerticalAlignment="Bottom">
                 <StackPanel VerticalAlignment="Bottom">
                     <CheckBox Content="Τράπεζα"
                               Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
-                              Margin="5 0"
                               IsChecked="{Binding Bank}" />
                     <CheckBox Content="Όλοκληρωμένες"
-                              Margin="5 0"
                               IsChecked="{Binding Completed}" />
                 </StackPanel>
                 <Button Content="PrintRoomingLists"
                         Margin="5,0"
+                        VerticalAlignment="Bottom"
                         Command="{Binding PrintRoomingListsCommand}" />
                 <Button Content="PrintAllVouchers"
                         Margin="5,0"
+                        VerticalAlignment="Bottom"
                         Command="{Binding PrintAllVouchersCommand}" />
                 <Button Content="PrintAllLetters"
+                        VerticalAlignment="Bottom"
                         Margin="5,0"
                         Command="{Binding PrintAllLettersCommand}" />
                 <Button Content="PrintList"
+                        VerticalAlignment="Bottom"
                         Margin="5,0"
                         Command="{Binding PrintListCommand}" />
             </StackPanel>
@@ -199,7 +251,13 @@
                             <iconPacks:PackIconFontAwesome Kind="EditRegular" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="Διαγραφή Κράτησης"
+                    <MenuItem Header="Διαγραφή Δωματίου"
+                              Command="{Binding DataContext.DeleteReservationCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}">
+                        <MenuItem.Icon>
+                            <iconPacks:PackIconFontAwesome Kind="TrashAltRegular" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Διαγραφή Παρέας"
                               Command="{Binding DataContext.DeleteReservationCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}">
                         <MenuItem.Icon>
                             <iconPacks:PackIconFontAwesome Kind="TrashAltRegular" />
@@ -260,7 +318,7 @@
                                     Binding="{Binding Booking.Comment}" />
                 <DataGridTextColumn Header="Πωλητής"
                                     Width="190"
-                                    Binding="{Binding User}"  />
+                                    Binding="{Binding User}" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

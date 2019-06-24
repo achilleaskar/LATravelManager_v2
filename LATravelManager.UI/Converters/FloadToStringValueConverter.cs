@@ -13,8 +13,24 @@ namespace LATravelManager.UI.Converters
             decimal decimalValue = (decimal)value;
 
             var decimalString = decimalValue.ToString();
+            string s = decimalString.IndexOfAny(new char[] { ',', '.' }) >= 0 ? decimalString.TrimEnd('0').TrimEnd('0').TrimEnd('.').TrimEnd(',') : decimalString;
+            int indexofcomma = s.IndexOf(',');
+            if (indexofcomma <= 0)
+            {
+                indexofcomma = s.Length;
+            }
+            if (indexofcomma > 3)
+            {
+                int firstDot = indexofcomma - 3;
+                while (firstDot > 0)
+                {
+                    s = s.Insert(firstDot, ".");
+                    firstDot -= 3;
+                }
 
-             return decimalString.IndexOfAny(new char[] { ',', '.' }) >= 0 ? decimalString.TrimEnd('0').TrimEnd('0').TrimEnd('.').TrimEnd(',') + " €" : decimalString;
+            }
+
+            return s + " €";
             //return decimalValue > 0 ? decimalValue.ToString() + " €" : "0 €";
         }
 

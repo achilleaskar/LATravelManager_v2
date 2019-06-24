@@ -57,6 +57,27 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             MainViewModel = mainViewModel;
         }
 
+        private int _BookingIdFilter;
+
+        public int BookingIdFilter
+        {
+            get
+            {
+                return _BookingIdFilter;
+            }
+
+            set
+            {
+                if (_BookingIdFilter == value)
+                {
+                    return;
+                }
+
+                _BookingIdFilter = value;
+                RaisePropertyChanged();
+            }
+        }
+
         #endregion Constructors
 
         #region Fields
@@ -251,6 +272,28 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
                 _ExcursionCategoryIndexBookingFilter = value;
                 RaisePropertyChanged();
+            }
+        }
+
+        private int _DepartmentIndexBookingFilter;
+
+        public int DepartmentIndexBookingFilter
+        {
+            get
+            {
+                return _DepartmentIndexBookingFilter;
+            }
+
+            set
+            {
+                if (_DepartmentIndexBookingFilter == value)
+                {
+                    return;
+                }
+
+                _DepartmentIndexBookingFilter = value;
+                RaisePropertyChanged();
+                ReservationsCollectionView.Refresh();
             }
         }
 
@@ -541,7 +584,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         private bool CanDeleteBooking()
         {
-            return SelectedBooking != null;
+            return SelectedReservation != null && SelectedReservation.Booking != null;
         }
 
         private bool CanDeleteReservation()
@@ -567,22 +610,24 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         private bool CustomerExcursionsFilter(object item)
         {
             Excursion excursion = item as Excursion;
-            return Completed || excursion.ExcursionDates.Any(d => d.CheckIn >= DateTime.Today) || excursion.Id == 0;
+            return Completed || excursion.ExcursionDates.Any(d => d.CheckOut >= DateTime.Today) || excursion.Id == 0;
         }
 
         private bool CustomerFilter(object item)
         {
             ReservationWrapper reservation = item as ReservationWrapper;
             return reservation.Contains(FilterString) &&
+                (BookingIdFilter == 0 || reservation.Booking.Id == BookingIdFilter) &&
                 (!EnableCheckInFilter || reservation.CheckIn == CheckIn) &&
                 (!EnableCheckOutFilter || reservation.CheckOut == CheckOut) &&
-                (UserIndexBookingFilter == 0 || reservation.Booking.User.Id == Users[UserIndexBookingFilter - 1].Id) &&
+                (UserIndexBookingFilter == 0 || reservation.UserWr.Id == Users[UserIndexBookingFilter - 1].Id) &&
+                (DepartmentIndexBookingFilter == 0 || reservation.UserWr.BaseLocation == DepartmentIndexBookingFilter) &&
                 (!Bank || (reservation.ExcursionType != ExcursionTypeEnum.Personal && reservation.ExcursionType != ExcursionTypeEnum.ThirdParty && reservation.Booking.Payments.Any(p => p.PaymentMethod > 0)) || ((reservation.ExcursionType == ExcursionTypeEnum.Personal) && reservation.PersonalModel.Payments.Any(p => p.PaymentMethod > 0)));
         }
 
         private async void DeleteBooking()
         {
-            await SearchBookingsHelper.DeleteBooking(SelectedBooking);
+            await SearchBookingsHelper.DeleteBooking(SelectedReservation.Booking);
         }
 
         private async void DeleteReservation()
@@ -744,6 +789,15 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         private async Task PrintRoomingLists()
         {
+            var date = new DateTime(2019, 5, 28);
+            int counter = 0;
+            var dimitris = await Context.GetAllReservationsDimitri(r => r.Booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Skiathos && r.CustomersList.Any(c => c.CheckIn >= date));
+
+            foreach (var r in dimitris)
+            {
+                counter += r.CustomersList.Count;
+            }
+
             Mouse.OverrideCursor = Cursors.Wait;
             if (!EnableCheckInFilter || !EnableCheckOutFilter)
             {
@@ -756,12 +810,42 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 await listmanager.PrintAllRoomingLists();
             }
             Mouse.OverrideCursor = Cursors.Arrow;
+            //List<Payment> payments = new List<Payment>();
+            //foreach (ReservationWrapper item in ReservationsCollectionView)
+            //{
+            //    if (item.Booking != null)
+            //    {
 
+            //        foreach (var p in item.Booking.Payments)
+            //        {
+            //            if (!payments.Contains(p))
+            //            {
+            //                payments.Add(p);
+            //            }
+            //        }
+            //    }
+            //}
+
+            //List<decimal> paymentsums = new List<decimal>
+            //{
+            //    0,
+            //    0,
+            //    0,
+            //    0,
+            //    0,
+            //    0,
+            //    0
+            //};
+
+            //foreach (var p in payments)
+            //{
+            //    paymentsums[p.PaymentMethod] += p.Amount;
+            //}
         }
 
         private void ReservationChanged(ReservationChanged_Message obj)
         {
-            List<ReservationWrapper> toremove = FilteredReservations.Where(r => r.ExcursionType != ExcursionTypeEnum.Personal && r.Booking.Id == obj.Booking.Id).ToList();
+            List<ReservationWrapper> toremove = FilteredReservations.Where(r => r.ExcursionType != ExcursionTypeEnum.Personal && r.Booking != null && r.Booking.Id == obj.Booking.Id).ToList();
 
             foreach (var r in toremove)
             {
@@ -788,12 +872,10 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
                 List<ReservationWrapper> list = (await Context.GetAllReservationsFiltered(ExcursionIndexBookingFilter > 0 ? (ExcursionsCollectionView.CurrentItem as Excursion).Id : 0, UserIndexBookingFilter > 0 ? Users[UserIndexBookingFilter - 1].Id : 0, Completed, ExcursionCategoryIndexBookingFilter > 0 ? ExcursionCategoryIndexBookingFilter - 1 : -1, dateLimit)).Select(r => new ReservationWrapper(r)).ToList();
 
-
                 foreach (var item in list)
                 {
-                    if(item.ReservationType==ReservationTypeEnum.Overbooked)
+                    if (item.ReservationType == ReservationTypeEnum.Overbooked)
                     {
-
                     }
                 }
                 foreach (var res in list)

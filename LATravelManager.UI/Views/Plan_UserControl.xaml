@@ -21,8 +21,8 @@
         <converters:MulticonverterForDate x:Key="MulticonverterForDate" />
         <converters:BoolToBorderColorConverter x:Key="BoolToBorderColorConverter" />
         <helpers:BindingProxy x:Key="Proxy"
-                            Data="{Binding}" />
-        <Style x:Key="SimpleListBoxItem"
+                              Data="{Binding}" />
+        <!--<Style x:Key="SimpleListBoxItem"
                TargetType="ListBoxItem">
             <Setter Property="FocusVisualStyle"
                     Value="{x:Null}" />
@@ -59,11 +59,11 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-        </Style>
+        </Style>--><!--
         <Style TargetType="{x:Type TabPanel}">
             <Setter Property="Background"
                     Value="Red" />
-        </Style>
+        </Style>-->
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -88,10 +88,11 @@
                             Width="115"
                             Margin="0,5,0,0"
                             VerticalAlignment="Center" />
-                <Label Content="-"
+                <!--<Label Content="-"
                        Margin="5,0,0,0"
                        VerticalAlignment="Center" />
-                <Slider Name="scaler"
+                -->
+                <!--<Slider Name="scaler"
                         VerticalAlignment="Center"
                         Width="100"
                         Value="1"
@@ -101,10 +102,11 @@
                         Foreground="Blue"
                         TickFrequency="0.1"
                         AutoToolTipPlacement="TopLeft"
-                        AutoToolTipPrecision="1" />
+                        AutoToolTipPrecision="1" />-->
+                <!--
                 <Label Content="+"
                        Margin="0,0,5,0"
-                       VerticalAlignment="Center" />
+                       VerticalAlignment="Center" />-->
                 <StackPanel Orientation="Horizontal"
                             VerticalAlignment="Center"
                             Margin="5,0">
@@ -173,10 +175,10 @@
         </StackPanel>
         <Grid Grid.Row="1"
               VerticalAlignment="Top">
-            <Grid.LayoutTransform>
+            <!--<Grid.LayoutTransform>
                 <ScaleTransform ScaleX="{Binding Value,ElementName=scaler}"
                                 ScaleY="{Binding Value,ElementName=scaler}" />
-            </Grid.LayoutTransform>
+            </Grid.LayoutTransform>-->
             <ScrollViewer HorizontalScrollBarVisibility="Auto"
                           VerticalScrollBarVisibility="Disabled">
                 <Border BorderBrush="Black"
@@ -373,7 +375,8 @@
                                                                 <ItemsControl.ItemTemplate>
                                                                     <DataTemplate>
                                                                         <DataTemplate.Resources>
-                                                                            <ContextMenu x:Key="PlanContextMenu"
+                                                                            <ContextMenu x:Key="PlanContextMenu" 
+                                                                                         VirtualizingPanel.VirtualizationMode="Recycling"
                                                                                          Visibility="{Binding Converter={StaticResource UserToVisibilityValueConverter},ConverterParameter=2,  Mode=OneWay}">
                                                                                 <MenuItem Header="Ακύρωση"
                                                                                           CommandParameter="{Binding }"
@@ -456,7 +459,7 @@
                                                                                                 BorderThickness="0,0,1,1">
                                                                                             <TextBlock Margin="5,0"
                                                                                                        HorizontalAlignment="Center"
-                                                                                                       Text="{Binding Room.RoomType}" />
+                                                                                                       Text="{Binding FirstHotel}" />
                                                                                         </Border>
                                                                                         <!--Row 2-->
                                                                                         <Border BorderBrush="Black"

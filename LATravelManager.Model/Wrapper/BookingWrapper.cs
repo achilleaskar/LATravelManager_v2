@@ -237,7 +237,7 @@ namespace LATravelManager.Model.Wrapper
             {
                 if (res.Room != null && !hotels.Any(x => x == res.Room.Hotel.Name))
                 {
-                    hotels.Add("\""+res.Room.Hotel.Name+ "\"");
+                    hotels.Add(res.Room.Hotel.Name);
                 }
                 if (res.ReservationType == ReservationTypeEnum.Noname && !hotels.Any(x => x == "NO NAME"))
                 {
@@ -266,7 +266,7 @@ namespace LATravelManager.Model.Wrapper
             }
             else if (hotels.Count > 1)
             {
-                return "ΜΕ ΔΙΑΜΟΝΗ ΣΤA ΚΑΤΑΛΥΜΑTA "+string.Join("/", hotels);
+                return "ΜΕ ΔΙΑΜΟΝΗ ΣΤA ΚΑΤΑΛΥΜΑTA "+string.Join(" / ", hotels);
             }
             else
             {

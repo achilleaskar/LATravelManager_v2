@@ -543,7 +543,7 @@
                                              Margin="0,5"
                                              HorizontalAlignment="Center"
                                              Grid.Column="1"
-                                             Text="{Binding Payment.AmountString,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                             Text="{Binding Payment.Amount,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                              Width="50" />
                                 </StackPanel>
                                 <StackPanel Grid.Column="1"

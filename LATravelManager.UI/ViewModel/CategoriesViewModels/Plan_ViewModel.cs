@@ -38,6 +38,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
             ViewReservationCommand = new RelayCommand<ReservationWrapper>(async (obj) => { await ViewReservation(obj); });
             ToggleDateCommand = new RelayCommand<DateTime>(ToggleDate);
             SelectedDatesAtPlan = new List<DateTime>();
+
             CancelRoomThisDayCommand = new RelayCommand<PlanDailyInfo>(async (obj) => { await CancelThisDay(obj); }, CanCancelThisDay);
             AddRoomThisDayCommand = new RelayCommand<PlanDailyInfo>(async (obj) => { await AddThisDay(obj); }, CanAddThisDay);
             AddAllotmentRoomThisDayCommand = new RelayCommand<PlanDailyInfo>(async (obj) => { await AddAllotmentThisDay(obj); }, CanAddAllotmentRoomThisDay);
@@ -329,11 +330,11 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
 
         public bool CanAddBookingRoomThisDay(PlanDailyInfo obj)
         {
-            if (obj == null || obj.RoomState == RoomStateEnum.Booked || obj.RoomState == RoomStateEnum.NotMovableNoName || obj.RoomState == RoomStateEnum.Booking)
+            if (obj != null && obj.RoomState == RoomStateEnum.NotAvailable)
             {
-                return false;
+                return true;
             }
-            return true;
+            return false;
         }
 
         public bool CanAddThisDay(PlanDailyInfo obj)
@@ -464,8 +465,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
             {
                 throw new ArgumentNullException(nameof(obj));
             }
-
-            obj.Room.DailyBookingInfo.Add(new BookingInfoPerDay { Date = obj.Date, RoomTypeEnm = RoomTypeEnum.Allotment });
+              (await Context.GetRoomById(obj.Room.Id)).DailyBookingInfo.Add(new BookingInfoPerDay { Date = obj.Date, RoomTypeEnm = RoomTypeEnum.Allotment });
             await Context.SaveAsync();
 
             obj.RoomState = RoomStateEnum.Allotment;
@@ -477,8 +477,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
             {
                 throw new ArgumentNullException(nameof(obj));
             }
-
-            obj.Room.DailyBookingInfo.Add(new BookingInfoPerDay { Date = obj.Date, RoomTypeEnm = RoomTypeEnum.Booking }); ;
+              (await Context.GetRoomById(obj.Room.Id)).DailyBookingInfo.Add(new BookingInfoPerDay { Date = obj.Date, RoomTypeEnm = RoomTypeEnum.Booking });
             await Context.SaveAsync();
 
             obj.RoomState = RoomStateEnum.Booking;
@@ -491,7 +490,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
                 throw new ArgumentNullException(nameof(obj));
             }
             (await Context.GetRoomById(obj.Room.Id)).DailyBookingInfo.Add(new BookingInfoPerDay { Date = obj.Date, RoomTypeEnm = RoomTypeEnum.Available });
-         //   obj.Room.DailyBookingInfo.Add(new BookingInfoPerDay { Date = obj.Date, RoomTypeEnm = RoomTypeEnum.Available });
+            //   obj.Room.DailyBookingInfo.Add(new BookingInfoPerDay { Date = obj.Date, RoomTypeEnm = RoomTypeEnum.Available });
             await Context.SaveAsync();
 
             obj.RoomState = RoomStateEnum.Available;
