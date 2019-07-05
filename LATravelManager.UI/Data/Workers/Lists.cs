@@ -676,7 +676,7 @@ namespace LATravelManager.UI.Data.Workers
             List<RoomingList> rl = new List<RoomingList>();
             IEnumerable<Booking> tmplist = null;
             List<Reservation> tmpress = new List<Reservation>();
-            tmplist = (await GenericRepository.GetAllBookingInPeriodNoTracking(From, To, Excursion.Id));
+            tmplist = (await GenericRepository.GetAllBookingInPeriod(From, To, Excursion.Id));
             RoomingList rmList;
             RoomingList nonameroominglist = new RoomingList { Hotel = new HotelWrapper { Name = "NO NAME" } };
 

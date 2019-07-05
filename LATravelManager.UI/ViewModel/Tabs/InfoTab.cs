@@ -6,7 +6,7 @@ namespace LATravelManager.UI.ViewModel.Tabs
     {
         public InfoTab()
         {
-            Level = 1;
+            Level = 2;
             IconName = "InformationVariant";
             Content = "Πληροφορίες";
         }

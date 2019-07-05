@@ -176,7 +176,7 @@ namespace LATravelManager.UI.Helpers
             int customersCount;
             using (GenericRepository Context = new GenericRepository())
             {
-                List<Booking> AllBookings = (await Context.GetAllBookingInPeriodNoTracking(new DateTime(2018, 09, 01), new DateTime(2019, 09, 01), 2)).ToList();
+                List<Booking> AllBookings = (await Context.GetAllBookingInPeriod(new DateTime(2018, 09, 01), new DateTime(2019, 09, 01), 2)).ToList();
 
                 if (AllBookings.Count > 0)
                 {
@@ -258,6 +258,10 @@ namespace LATravelManager.UI.Helpers
                                         else if (reservation.ReservationType == ReservationTypeEnum.Transfer)
                                         {
                                             myWorksheet.Cells["F" + lineNum].Value = "TRANSFER";
+                                        }
+                                        else if (reservation.ReservationType == ReservationTypeEnum.OneDay)
+                                        {
+                                            myWorksheet.Cells["F" + lineNum].Value = "ONEDAY";
                                         }
                                         if (booking.IsPartners)
                                         {
@@ -359,6 +363,7 @@ namespace LATravelManager.UI.Helpers
 
         public void PrintLetter(BookingWrapper booking)
         {
+
             string outputpath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
 
             ReservationWrapper resWrapper;
@@ -373,6 +378,10 @@ namespace LATravelManager.UI.Helpers
                 {
                     MessageBox.Show("Error");
                 }
+                else if (resWrapper.ReservationType == ReservationTypeEnum.Transfer)
+                {
+                    continue;
+                }
                 //else if (res.ReservationType == Reservation.ReservationTypeEnum.Overbooked)
                 //{
                 //    MessageBox.Show("Παρακαλώ τοποθετήστε τα OVER");
@@ -380,7 +389,7 @@ namespace LATravelManager.UI.Helpers
 
                 try
                 {
-                    string VoucherFilename = string.Format(@"\{0}_{1}_{2}_{3}_Letter.docx", resWrapper.CustomersList[0].Surename, resWrapper.HotelName, resWrapper.RoomTypeName, resWrapper.Id);
+                    string VoucherFilename = string.Format(@"\{0}_{1}_{2}_{3}_Letter.docx", (resWrapper.CustomersList.OrderBy(cc => cc.Id)).ToList()[0].Surename, resWrapper.HotelName, resWrapper.RoomTypeName, resWrapper.Id);
                     Directory.CreateDirectory(outputpath + @"\Letters");
                     folderNameVouchers = CreateFolder(resWrapper.CheckIn, @"\Letters\", booking.Excursion.Name);
 
@@ -485,11 +494,11 @@ namespace LATravelManager.UI.Helpers
                     string VoucherFilename;
                     if (booking.IsPartners)
                     {
-                        VoucherFilename = string.Format(@"\{0}_{1}_{2}_{3}_{4}_Voucher.docx", resWrapper.CustomersList[0].Surename, resWrapper.HotelName, resWrapper.RoomTypeName, booking.Partner.Name, resWrapper.Id);
+                        VoucherFilename = string.Format(@"\{0}_{1}_{2}_{3}_{4}_Voucher.docx", (resWrapper.CustomersList.OrderBy(cc => cc.Id)).ToList()[0].Surename, resWrapper.HotelName, resWrapper.RoomTypeName, booking.Partner.Name, resWrapper.Id);
                     }
                     else
                     {
-                        VoucherFilename = string.Format(@"\{0}_{1}_{2}_{3}_Voucher.docx", resWrapper.CustomersList[0].Surename, resWrapper.HotelName, resWrapper.RoomTypeName, resWrapper.Id);
+                        VoucherFilename = string.Format(@"\{0}_{1}_{2}_{3}_Voucher.docx", (resWrapper.CustomersList.OrderBy(cc => cc.Id)).ToList()[0].Surename, resWrapper.HotelName, resWrapper.RoomTypeName, resWrapper.Id);
                     }
                     Directory.CreateDirectory(outputpath + @"\Vouchers");
                     folderNameVouchers = CreateFolder(resWrapper.CheckIn, @"\Vouchers\", booking.Excursion.Name);
@@ -763,6 +772,8 @@ namespace LATravelManager.UI.Helpers
                 {
                     MessageBox.Show("Παρακαλώ τοποθετήστε τα NO NAME");
                     nonamemess = true;
+                    return;
+
                 }
                 else if (res.ReservationType == ReservationTypeEnum.NoRoom)
                 {
@@ -776,6 +787,7 @@ namespace LATravelManager.UI.Helpers
                 {
                     MessageBox.Show("Η κράτηση είναι TRANSFER");
                     tranmess = true;
+                    return;
                 }
             }
             PrintLetter(booking);
@@ -838,7 +850,7 @@ namespace LATravelManager.UI.Helpers
             string fileName = @"Sources\letter.docx";
 
             File.Copy(fileName, saveAs, true);
-            Customer c = reservationWr.CustomersList[0];
+            Customer c = (reservationWr.CustomersList.OrderBy(cc=>cc.Id)).ToList()[0];
 
             using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(saveAs, true))
             {
@@ -855,7 +867,7 @@ namespace LATravelManager.UI.Helpers
                 regexText = new Regex("destination");
                 docText = regexText.Replace(docText, booking.Excursion.Destinations[0].Name);
                 regexText = new Regex("hotelnroomtype");
-                docText = regexText.Replace(docText, reservationWr.HotelName + "-" + reservationWr.RoomTypeName);
+                docText = regexText.Replace(docText, reservationWr.HotelName + "-" + reservationWr.RoomTypeName + "(" + reservationWr.Room.Hotel.Tel+")");
 
                 using (StreamWriter sw = new StreamWriter(wordDoc.MainDocumentPart.GetStream(FileMode.Create)))
                 {

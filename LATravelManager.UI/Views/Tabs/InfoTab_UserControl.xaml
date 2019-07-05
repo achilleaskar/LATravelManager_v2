@@ -110,7 +110,7 @@
                                                                     Width="80">
                                                         <GridViewColumn.CellTemplate>
                                                             <DataTemplate>
-                                                                <TextBlock Text="{Binding Going}"
+                                                                <TextBlock Text="{Binding GoingText}"
                                                                            HorizontalAlignment="Center" />
                                                             </DataTemplate>
                                                         </GridViewColumn.CellTemplate>
@@ -119,7 +119,7 @@
                                                                     Width="80">
                                                         <GridViewColumn.CellTemplate>
                                                             <DataTemplate>
-                                                                <TextBlock Text="{Binding Returning}"
+                                                                <TextBlock Text="{Binding ReturningText}"
                                                                            HorizontalAlignment="Center" />
                                                             </DataTemplate>
                                                         </GridViewColumn.CellTemplate>
@@ -127,7 +127,13 @@
                                                 </GridView>
                                             </ListView.View>
                                         </ListView>
-                                        <StackPanel Orientation="Horizontal"
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="6 0">
+                                            <TextBlock Width="80"
+                                                       Text="{Binding GoTotals}" />
+                                            <TextBlock Width="80"
+                                                       Text="{Binding ReturnTotals}" />
+                                        </StackPanel>
+                                        <!--<StackPanel Orientation="Horizontal"
                                                     HorizontalAlignment="Right">
                                             <StackPanel Orientation="Vertical"
                                                         Margin="0,0,10,0">
@@ -140,10 +146,10 @@
                                                         Command="{Binding PrintListCommand}"
                                                         CommandParameter="1"
                                                         Margin="0,5,5,0" />
-                                                <!--<Button Content="Συνολική"
+                                                --><!--<Button Content="Συνολική"
                                                         Command="{Binding PrintListCommand}"
                                                         CommandParameter="2"
-                                                        Margin="0,5,5,5" />-->
+                                                        Margin="0,5,5,5" />--><!--
                                             </StackPanel>
                                             <StackPanel Orientation="Vertical">
                                                 <Button Content="Εισιτήρια"
@@ -155,10 +161,10 @@
                                                         Command="{Binding PrintListCommand}"
                                                         CommandParameter="4"
                                                         Margin="0,5,5,0" />
-                                                <!--<Button Content="Συνολική"
+                                                --><!--<Button Content="Συνολική"
                                                         Command="{Binding PrintListCommand}"
                                                         CommandParameter="5"
-                                                        Margin="0,5,5,5" />-->
+                                                        Margin="0,5,5,5" />--><!--
                                             </StackPanel>
                                         </StackPanel>
                                         <Button Content="Όλες"
@@ -184,7 +190,7 @@
                                                  Height="130"
                                                  Margin="5"
                                                  Width="320"
-                                                 TextWrapping="Wrap" />
+                                                 TextWrapping="Wrap" />-->
                                     </StackPanel>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>

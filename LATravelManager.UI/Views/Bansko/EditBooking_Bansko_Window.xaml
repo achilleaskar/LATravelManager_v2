@@ -13,8 +13,8 @@
         Closing="Window_Closing"
         Background="White"
         WindowStartupLocation="CenterScreen"
-        SizeToContent="WidthAndHeight"
-        d:DesignHeight="800"
+        Height="700"
+        d:DesignHeight="700"
         d:DesignWidth="1200">
     <Window.Resources>
         <converters:UserToVisibility x:Key="UserToVisibilityConverter" />

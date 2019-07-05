@@ -458,6 +458,10 @@ namespace LATravelManager.Model.Wrapper
             {
                 return "TRANSFER";
             }
+            else if (ReservationType == ReservationTypeEnum.OneDay)
+            {
+                return "ONEDAY";
+            }
             if (!handled)
             {
                 switch (CustomersList.Count)
@@ -558,6 +562,8 @@ namespace LATravelManager.Model.Wrapper
 
                 case ReservationTypeEnum.Transfer:
                     return "TRANSFER";
+                case ReservationTypeEnum.OneDay:
+                    return "ONEDAY";
             }
             return "Error";
         }
@@ -600,6 +606,10 @@ namespace LATravelManager.Model.Wrapper
             else if (ReservationType == ReservationTypeEnum.Transfer)
             {
                 return "TRANSFER";
+            }
+            else if (ReservationType == ReservationTypeEnum.OneDay)
+            {
+                return "ONEDAY";
             }
             else
             {

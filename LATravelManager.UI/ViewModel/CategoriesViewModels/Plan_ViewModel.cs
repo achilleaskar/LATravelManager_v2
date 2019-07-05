@@ -31,10 +31,11 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
             MainViewModel = mainViewModel;
             MonthsColors = new List<SolidColorBrush>();
             FilteredPlanList = new ObservableCollection<HotelWrapper>();
-            ShowPlanCommand = new RelayCommand(async () => { await ShowPlan(); });
             Months = new ObservableCollection<Month>();
-            From = new DateTime(2019, 06, 13); //DateTime.Today;
-            To = new DateTime(2019, 06, 18); //DateTime.Today;
+            From = DateTime.Today;
+            To = DateTime.Today.AddDays(10);
+
+            ShowPlanCommand = new RelayCommand(async () => { await ShowPlan(); });
             ViewReservationCommand = new RelayCommand<ReservationWrapper>(async (obj) => { await ViewReservation(obj); });
             ToggleDateCommand = new RelayCommand<DateTime>(ToggleDate);
             SelectedDatesAtPlan = new List<DateTime>();
@@ -432,25 +433,25 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
             foreach (HotelWrapper hotel in filteredPlanList)
             {
                 tmpHotel = new HotelWrapper { Name = hotel.Name };
-                foreach (RoomWrapper changingRoom in hotel.RoomWrappers)
-                    foreach (RoomWrapper room in hotel.RoomWrappers)
-                        if (room.Id != changingRoom.Id && !changingRoom.Handled && changingRoom.RoomType == room.RoomType && room.Note == changingRoom.Note && room.CanMerge(changingRoom.PlanDailyInfo))
-                        {
-                            room.Merged = true;
-                            for (var i = 0; i < changingRoom.PlanDailyInfo.Count; i++)
-                                if (changingRoom.PlanDailyInfo[i].RoomState != RoomStateEnum.NotAvailable)
-                                {
-                                    room.PlanDailyInfo[i].RoomState = changingRoom.PlanDailyInfo[i].RoomState;
-                                    room.PlanDailyInfo[i].DayState = changingRoom.PlanDailyInfo[i].DayState;
-                                    room.PlanDailyInfo[i].CellColor = changingRoom.PlanDailyInfo[i].CellColor;
-                                    room.PlanDailyInfo[i].Text = changingRoom.PlanDailyInfo[i].Text;
-                                    room.PlanDailyInfo[i].Reservation = changingRoom.PlanDailyInfo[i].Reservation;
-                                    room.PlanDailyInfo[i].Room = changingRoom.PlanDailyInfo[i].Room;
-                                    room.PlanDailyInfo[i].Id = changingRoom.PlanDailyInfo[i].Id;
-                                }
-                            changingRoom.Handled = true;
-                            break;
-                        }
+                foreach (RoomWrapper room in hotel.RoomWrappers)
+                    if (!room.Handled)
+                        foreach (RoomWrapper currentRoom in hotel.RoomWrappers)
+                            if (room.Id != currentRoom.Id && !currentRoom.Handled && currentRoom.RoomType == room.RoomType && room.Note == currentRoom.Note && room.CanMerge(currentRoom.PlanDailyInfo))
+                            {
+                                for (var i = 0; i < currentRoom.PlanDailyInfo.Count; i++)
+                                    if (currentRoom.PlanDailyInfo[i].RoomState != RoomStateEnum.NotAvailable)
+                                    {
+                                        room.PlanDailyInfo[i].RoomState = currentRoom.PlanDailyInfo[i].RoomState;
+                                        room.PlanDailyInfo[i].DayState = currentRoom.PlanDailyInfo[i].DayState;
+                                        room.PlanDailyInfo[i].CellColor = currentRoom.PlanDailyInfo[i].CellColor;
+                                        room.PlanDailyInfo[i].Text = currentRoom.PlanDailyInfo[i].Text;
+                                        room.PlanDailyInfo[i].Reservation = currentRoom.PlanDailyInfo[i].Reservation;
+                                        room.PlanDailyInfo[i].Room = currentRoom.PlanDailyInfo[i].Room;
+                                        room.PlanDailyInfo[i].Id = currentRoom.PlanDailyInfo[i].Id;
+                                    }
+                                currentRoom.Handled = true;
+                                // break;
+                            }
                 foreach (RoomWrapper room in hotel.RoomWrappers)
                     if (!room.Handled)
                         tmpHotel.RoomWrappers.Add(room);

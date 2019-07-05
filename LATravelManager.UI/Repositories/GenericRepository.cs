@@ -112,9 +112,9 @@ namespace LATravelManager.UI.Repositories
         //    return await RunTask(Context.Users.Where(u => u.UserName.Equals(userName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefaultAsync);
         //}
 
-        public async Task<IEnumerable<Booking>> GetAllBookingInPeriodNoTracking(DateTime minDay, DateTime maxDay, int excursionId)
+        public async Task<IEnumerable<Booking>> GetAllBookingInPeriod(DateTime minDay, DateTime maxDay, int excursionId)
         {
-            return await RunTask(Context.Bookings.Where(c => c.Excursion.Id == excursionId && c.CheckIn <= maxDay && c.CheckOut > minDay)
+            return await RunTask(Context.Bookings.Where(c => c.Excursion.Id == excursionId && ((c.CheckIn <= maxDay && c.CheckIn >= minDay )|| (c.CheckOut <= maxDay && c.CheckOut >= minDay)))
                 .Include(f => f.Partner)
                 .Include(f => f.ExcursionDate)
                 .Include(f => f.User)
@@ -548,11 +548,11 @@ namespace LATravelManager.UI.Repositories
         {
             return await RunTask(Context.Reservations
                   .Where(c =>
-                  c.Booking.CreatedDate >= dateLimit &&
+                  c.Booking.ReservationsInBooking.Any(r => r.CreatedDate >= dateLimit) &&
                   (category >= 0 ? (int)c.Booking.Excursion.ExcursionType.Category == category : true) &&
                   (excursionId == 0 || c.Booking.Excursion.Id == excursionId) &&
                   (userId == 0 || c.Booking.User.Id == userId) &&
-                  (completed || c.Booking.CheckIn >= DateTime.Today))
+                  (completed || c.Booking.CheckOut >= DateTime.Today))
                   .Include(f => f.Booking.User)
                   .Include(f => f.Booking.ExcursionDate)
                   .Include(f => f.Booking.Partner)

@@ -1,4 +1,6 @@
-﻿using LATravelManager.Model.BookingData;
+﻿using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.LocalModels;
 using LATravelManager.Model.Wrapper;
@@ -166,7 +168,6 @@ namespace LATravelManager.UI.Data.Workers
         {
             try
             {
-
                 Plan.Clear();
                 NonamesList.Clear();
                 Hotels = new List<Hotel>();
@@ -174,21 +175,8 @@ namespace LATravelManager.UI.Data.Workers
                 MinDay = MinDay.AddDays(-10);
                 MaxDay = MaxDay.AddDays(10);
                 //mhpws edw na epairna dwmatia?
-                List<Room> rooms = (await GenericRepository.GetAllRoomsInCityAsync(MinDay, MaxDay, excursionfilter.Destinations[0].Id));
 
-                foreach (var r in rooms)
-                {
-                    if (r.RoomType.freeRooms > 0)
-                    {
-                        r.RoomType.freeRooms = 0;
-                    }
-                    if (!Hotels.Contains(r.Hotel))
-                    {
-                        Hotels.Add(r.Hotel);
-                    }
-                }
-                Hotels = Hotels.OrderBy(h => h.Name).ToList(); 
-                Bookings = (await GenericRepository.GetAllBookingInPeriodNoTracking(MinDay, MaxDay, excursionfilter.Id)).ToList();
+                Bookings = (await GenericRepository.GetAllBookingInPeriod(MinDay, MaxDay, excursionfilter.Id)).ToList();
 
                 if (unSavedBooking != null)
                 {
@@ -203,10 +191,7 @@ namespace LATravelManager.UI.Data.Workers
                 {
                     foreach (Reservation reservation in booking.ReservationsInBooking)
                     {
-                        if (reservation.ReservationType == ReservationTypeEnum.Noname)
-                        {
-
-                        }
+                        
                         if (reservation.ReservationType == ReservationTypeEnum.Noname)
                         {
                             NonamesList.Add(new NoName { Reservation = new ReservationWrapper(reservation) });
@@ -222,6 +207,20 @@ namespace LATravelManager.UI.Data.Workers
                         }
                     }
                 }
+
+                List<Room> rooms = (await GenericRepository.GetAllRoomsInCityAsync(MinDay, MaxDay, excursionfilter.Destinations[0].Id));
+                foreach (var r in rooms)
+                {
+                    if (r.RoomType.freeRooms > 0)
+                    {
+                        r.RoomType.freeRooms = 0;
+                    }
+                    if (!Hotels.Contains(r.Hotel))
+                    {
+                        Hotels.Add(r.Hotel);
+                    }
+                }
+                Hotels = Hotels.OrderBy(h => h.Name).ToList();
 
 
                 HotelWrapper tmpHotelWr;//-------------
@@ -259,7 +258,6 @@ namespace LATravelManager.UI.Data.Workers
                         {
                             if (counter < tmpRoomWr.DailyBookingInfo.Count && tmpRoomWr.DailyBookingInfo[counter].Date == tmpDate)
                             {
-
                                 tmpRoomWr.PlanDailyInfo.Add(new PlanDailyInfo
                                 {
                                     Date = tmpRoomWr.DailyBookingInfo[counter].Date,
@@ -277,7 +275,7 @@ namespace LATravelManager.UI.Data.Workers
                                     Date = tmpDate,
                                     Room = tmpRoomWr,
                                     RoomState = RoomStateEnum.NotAvailable,
-                                    CellColor = new SolidColorBrush(Colors.DarkGray)
+                                    CellColor = new SolidColorBrush(System.Windows.Media.Colors.DarkGray)
                                 });
                             }
                             tmpDate = tmpDate.AddDays(1);
@@ -551,7 +549,7 @@ namespace LATravelManager.UI.Data.Workers
 
                 foreach (NoName noName in NonamesList)
                 {
-                    if (!noName.Handled)
+                    if (!noName.Handled && noName.Reservation.CheckIn > planStart && noName.Reservation.CheckIn < planEnd)
                     {
                         MessageBox.Show("Η κράτηση " + noName.Reservation.CustomersList[0] + " " + ((noName.Reservation.Room != null) ? noName.Reservation.Room.RoomType.ToString() : "") + " " + noName.Reservation.Dates + " δεν έχει δωμάτιο.", "Λάθος");
                     }
@@ -563,61 +561,66 @@ namespace LATravelManager.UI.Data.Workers
 
                 List<HotelWrapper> PlanCroped = new List<HotelWrapper>();
 
+                // await GetFreeRooms(Plan);
+
                 foreach (HotelWrapper hotel in Plan)
                 {
-                    bool addThis = false;
-                    tmpHotelWr = new HotelWrapper { Name = hotel.Name, Id = hotel.Id };
-                    foreach (RoomWrapper roomWr in hotel.RoomWrappers)
+                    if (selectedHotel == null || selectedHotel.Id == hotel.Id)
                     {
-                        if (selectedRoomType == null || roomWr.RoomType.Id == selectedRoomType.Id)
+                        bool addThis = false;
+                        tmpHotelWr = new HotelWrapper { Name = hotel.Name, Id = hotel.Id };
+                        foreach (RoomWrapper roomWr in hotel.RoomWrappers)
                         {
-
-                            addThis = false;
-                            tmpDate = planStart;
-                            tmpRoomWr = roomWr;// new Room { Id = room.Id, RoomType = room.RoomType, Hotel = room.Hotel, Note = room.Note };
-                            List<PlanDailyInfo> newList = new List<PlanDailyInfo>();
-                            while (roomWr.PlanDailyInfo[counter].Date < planStart)
+                            if ((selectedRoomType == null || roomWr.RoomType.Id == selectedRoomType.Id) && (PeopleCount == 0 || PeopleCount >= roomWr.RoomType.MinCapacity && PeopleCount <= roomWr.RoomType.MaxCapacity))
                             {
-                                counter++;
-                            }
-                            while (tmpDate < planEnd)
-                            {
-                                if (counter < roomWr.PlanDailyInfo.Count)
+                                addThis = false;
+                                tmpDate = planStart;
+                                tmpRoomWr = roomWr;// new Room { Id = room.Id, RoomType = room.RoomType, Hotel = room.Hotel, Note = room.Note };
+                                List<PlanDailyInfo> newList = new List<PlanDailyInfo>();
+                                while (roomWr.PlanDailyInfo[counter].Date < planStart)
                                 {
-                                    if (!addThis && roomWr.PlanDailyInfo[counter].RoomState != RoomStateEnum.NotAvailable)
+                                    counter++;
+                                }
+                                while (tmpDate < planEnd)
+                                {
+                                    if (counter < roomWr.PlanDailyInfo.Count)
                                     {
-                                        addThis = true;
-                                    }
-                                    if (roomWr.PlanDailyInfo[counter].Date == tmpDate)
-                                    {
-                                        newList.Add(roomWr.PlanDailyInfo[counter]);
-                                        counter++;
+                                        if (!addThis && roomWr.PlanDailyInfo[counter].RoomState != RoomStateEnum.NotAvailable)
+                                        {
+                                            addThis = true;
+                                        }
+                                        if (roomWr.PlanDailyInfo[counter].Date == tmpDate)
+                                        {
+                                            newList.Add(roomWr.PlanDailyInfo[counter]);
+                                            counter++;
+                                        }
+                                        else
+                                        {
+                                            newList.Add(new PlanDailyInfo { Date = tmpDate });
+                                        }
                                     }
                                     else
                                     {
                                         newList.Add(new PlanDailyInfo { Date = tmpDate });
                                     }
-                                }
-                                else
-                                {
-                                    newList.Add(new PlanDailyInfo { Date = tmpDate });
-                                }
 
-                                tmpDate = tmpDate.AddDays(1);
-                            }
-                            counter = 0;
-                            if (addThis)
-                            {
-                                tmpRoomWr.PlanDailyInfo = newList;
-                                tmpHotelWr.RoomWrappers.Add(tmpRoomWr);
+                                    tmpDate = tmpDate.AddDays(1);
+                                }
+                                counter = 0;
+                                if (addThis)
+                                {
+                                    tmpRoomWr.PlanDailyInfo = newList;
+                                    tmpHotelWr.RoomWrappers.Add(tmpRoomWr);
+                                }
                             }
                         }
-                    }
-                    if (tmpHotelWr.RoomWrappers.Count > 0)
-                    {
-                        PlanCroped.Add(tmpHotelWr);
+                        if (tmpHotelWr.RoomWrappers.Count > 0)
+                        {
+                            PlanCroped.Add(tmpHotelWr);
+                        }
                     }
                 }
+
                 Plan = PlanCroped;
             }
             catch (Exception ex)
@@ -627,11 +630,127 @@ namespace LATravelManager.UI.Data.Workers
             return Plan.OrderBy(h => h.Name).ToList(); ;
         }
 
+        private Cell AddCellWithText(string text)
+        {
+            Cell c1 = new Cell();
+            c1.DataType = CellValues.InlineString;
+
+            InlineString inlineString = new InlineString();
+            Text t = new Text();
+            t.Text = text;
+            inlineString.AppendChild(t);
+
+            c1.AppendChild(inlineString);
+
+            return c1;
+        }
+
+        private async Task GetFreeRooms(List<HotelWrapper> plan)
+        {
+            int counter = 0;
+            int size = plan[0].RoomWrappers[0].PlanDailyInfo.Count;
+            RoomTypeFrees selected;
+            List<RoomTypeFrees> RoomTypes = new List<RoomTypeFrees>();
+            foreach (RoomType roomtype in await GenericRepository.GetAllAsync<RoomType>())
+            {
+                RoomTypes.Add(new RoomTypeFrees { RoomType = roomtype, Quantity = new List<int>(new int[size]) });
+            }
+            foreach (HotelWrapper hotel in plan)
+            {
+                foreach (RoomWrapper room in hotel.RoomWrappers)
+                {
+                    counter = 0;
+                    selected = RoomTypes.Where(r => r.RoomType.Id == room.RoomType.Id).FirstOrDefault();
+                    foreach (PlanDailyInfo day in room.PlanDailyInfo)
+                    {
+                        if (day.RoomState == RoomStateEnum.Available)
+                        {
+                            selected.Quantity[counter]++;
+                        }
+                        counter++;
+                    }
+                }
+            }
+
+            using (SpreadsheetDocument spreedDoc = SpreadsheetDocument.Create(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Κενα.xlsx",
+                DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook))
+            {
+                WorkbookPart wbPart = spreedDoc.WorkbookPart;
+                if (wbPart == null)
+                {
+                    wbPart = spreedDoc.AddWorkbookPart();
+                    wbPart.Workbook = new Workbook();
+                }
+
+                string sheetName = "Kena";
+                WorksheetPart worksheetPart = null;
+                worksheetPart = wbPart.AddNewPart<WorksheetPart>();
+                var sheetData = new SheetData();
+
+                worksheetPart.Worksheet = new Worksheet(sheetData);
+
+                if (wbPart.Workbook.Sheets == null)
+                {
+                    wbPart.Workbook.AppendChild(new Sheets());
+                }
+
+                var sheet = new Sheet()
+                {
+                    Id = wbPart.GetIdOfPart(worksheetPart),
+                    SheetId = 1,
+                    Name = sheetName
+                };
+
+                var workingSheet = ((WorksheetPart)wbPart.GetPartById(sheet.Id)).Worksheet;
+
+                int rowindex = 1;
+                Row row = new Row
+                {
+                    RowIndex = (uint)rowindex
+                };
+                row.AppendChild(AddCellWithText("   "));
+                foreach (PlanDailyInfo day in plan[0].RoomWrappers[0].PlanDailyInfo)
+                {
+                    row.AppendChild(AddCellWithText(day.Date.ToString("dd/MM")));
+                }
+                sheetData.AppendChild(row);
+                rowindex++;
+                row.AppendChild(AddCellWithText("   "));
+                foreach (PlanDailyInfo day in plan[0].RoomWrappers[0].PlanDailyInfo)
+                {
+                    row.AppendChild(AddCellWithText(day.Date.ToString("ddd")));
+                }
+                sheetData.AppendChild(row);
+                sheetData.AppendChild(row);
+                rowindex++;
+
+                foreach (RoomTypeFrees roomtype in RoomTypes)
+                {
+                    row = new Row
+                    {
+                        RowIndex = (uint)rowindex
+                    };
+                    row.AppendChild(AddCellWithText(roomtype.RoomType.Name));
+                    foreach (int item in roomtype.Quantity)
+                    {
+                        row.AppendChild(AddCellWithText(item.ToString()));
+                    }
+                    sheetData.AppendChild(row);
+                    rowindex++;
+                }
+                wbPart.Workbook.Sheets.AppendChild(sheet);
+
+                //Set Border
+                //wbPark
+
+                wbPart.Workbook.Save();
+            }
+        }
+
         private static bool IsOtherFree(ReservationWrapper reservation, List<HotelWrapper> plan)
         {
             if (reservation.Id == 2898)
             {
-
             }
             foreach (HotelWrapper hotel in plan)
                 // if (hotel.Id != 21 && hotel.Id != 22 && hotel.Id != 23 && hotel.Id != 42)
@@ -654,7 +773,6 @@ namespace LATravelManager.UI.Data.Workers
                         PlanDailyInfo day = room.PlanDailyInfo[i];
                         if (day.Reservation != null && day.Reservation.Id == 2898)
                         {
-
                         }
                         if (day.DayState == DayStateEnum.FirstDay && day.RoomState == RoomStateEnum.MovableNoName)
                         {
@@ -667,8 +785,8 @@ namespace LATravelManager.UI.Data.Workers
                                     tmpdate = tmpdate.AddDays(1);
                                     i++;
                                 }
-                                if(tmpdate == day.Reservation.CheckOut&&i>0)
-                                i--;
+                                if (tmpdate == day.Reservation.CheckOut && i > 0)
+                                    i--;
                             }
                         }
                     }
@@ -755,7 +873,6 @@ namespace LATravelManager.UI.Data.Workers
             }
             catch (Exception)
             {
-
                 return false;
             }
         }
@@ -837,5 +954,11 @@ namespace LATravelManager.UI.Data.Workers
         }
 
         #endregion Methods
+    }
+
+    public class RoomTypeFrees
+    {
+        public RoomType RoomType { get; set; }
+        public List<int> Quantity { get; set; }
     }
 }

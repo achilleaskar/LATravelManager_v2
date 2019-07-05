@@ -1,14 +1,13 @@
 ﻿using LATravelManager.Model.Excursions;
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Globalization;
 
 namespace LATravelManager.Model.LocalModels
 {
     public class DailyDepartureInfo : INotifyPropertyChanged
     {
-
         #region Constructors
 
         public DailyDepartureInfo()
@@ -53,13 +52,31 @@ namespace LATravelManager.Model.LocalModels
         }
 
         //public bool CanPrintLists => ArePrintDataValid;
-        public string Dates => ExcursionDate != null ? ExcursionDate.CheckIn.ToString("dd") + "-" + ExcursionDate.CheckOut.ToString("dd/MM") : Date.ToString("dd/MM");
+        public string Dates => ExcursionDate != null ? ExcursionDate.CheckIn.ToString("dd") + "-" + ExcursionDate.CheckOut.ToString("dd/MM") : Date.ToString("dddd dd/MM");
 
+        public int SelectedGo, SelectedReturn, TotalGo, TotalReturn;
 
+        public void CalculateTotals()
+        {
+            SelectedGo = SelectedReturn = TotalGo = TotalReturn = 0;
+            foreach (var city in PerCityDepartureList)
+            {
+                if (city.IsChecked)
+                {
+                    SelectedGo += city.Going + city.OneDayGo + city.OnlyBusGo + city.OnlyShipGo + city.OnlyStayGo;
+                    SelectedReturn += city.Returning + city.OneDayReturn + city.OnlyBusReturn + city.OnlyShipReturn + city.OnlyStayReturn;
+                }
+                TotalGo += city.Going + city.OneDayGo + city.OnlyBusGo + city.OnlyShipGo + city.OnlyStayGo;
+                TotalReturn += city.Returning + city.OneDayReturn + city.OnlyBusReturn + city.OnlyShipReturn + city.OnlyStayReturn;
+            }
+            OnPropertyChanged(nameof(GoTotals));
+            OnPropertyChanged(nameof(ReturnTotals));
+        }
 
+        public string GoTotals => SelectedGo + "/" + TotalGo;
+        public string ReturnTotals => SelectedReturn + "/" + TotalReturn;
 
         private ExcursionDate _ExcursionDate;
-
 
         public ExcursionDate ExcursionDate
         {
@@ -78,6 +95,7 @@ namespace LATravelManager.Model.LocalModels
                 _ExcursionDate = value;
             }
         }
+
         //public bool ArePrintDataValid
         //{
         //    get
@@ -106,7 +124,36 @@ namespace LATravelManager.Model.LocalModels
                 {
                     _PerCityDepartureList = value;
                     OnPropertyChanged(nameof(PerCityDepartureList));
+                    PerCityDepartureList.CollectionChanged += PerCityDepartureList_CollectionChanged;
                 }
+            }
+        }
+
+        private void PerCityDepartureList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                foreach (CityDepartureInfo city in e.OldItems)
+                {
+                    //Removed items
+                    city.PropertyChanged -= EntityViewModelPropertyChanged;
+                }
+            }
+            else if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (CityDepartureInfo city in e.NewItems)
+                {
+
+                    city.PropertyChanged += EntityViewModelPropertyChanged;
+                }
+            }
+        }
+
+        private void EntityViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(CityDepartureInfo.IsChecked))
+            {
+                CalculateTotals();
             }
         }
 

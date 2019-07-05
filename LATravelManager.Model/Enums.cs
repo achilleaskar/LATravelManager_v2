@@ -17,7 +17,8 @@
             Noname,
             Overbooked,
             NoRoom,
-            Transfer
+            Transfer,
+            OneDay
         }
 
         public enum FlightMode

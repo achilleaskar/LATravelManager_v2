@@ -104,6 +104,57 @@ public class NewReservationHelper : ViewModelBase
         }
     }
 
+    internal void AddOneDay(BookingWrapper booking, bool all)
+    {
+
+        bool hasCustomers = false;
+        Reservation newRes = new Reservation
+        {
+            ReservationType = ReservationTypeEnum.OneDay,
+            Booking = booking.Model,
+            FirstHotel = "ONEDAY"
+        };
+        foreach (CustomerWrapper customer in booking.Customers)
+        {
+            if (customer.IsSelected || all)
+            {
+                if (customer.Handled)
+                {
+                    MessengerInstance.Send(new ShowExceptionMessage_Message($"Ο {customer.Surename} {customer.Name} έχει μπεί ήδη σε άλλη κράτηση"));
+                    continue;
+                }
+                hasCustomers = true;
+                customer.Handled = true;
+                customer.HotelName = "ONEDAY";
+                customer.RoomTypeName = "ONEDAY";
+                customer.RoomNumber = "OD" + (booking.ReservationsInBooking.Count + 1);
+                if (booking.ReservationsInBooking.Count() % 2 == 0)
+                    customer.RoomColor = new SolidColorBrush(Colors.LightPink);
+                else
+                    customer.RoomColor = new SolidColorBrush(Colors.LightBlue);
+                if (!booking.DifferentDates)
+                {
+                    customer.CheckIn = booking.CheckIn;
+                    customer.CheckOut = booking.CheckOut;
+                }
+                newRes.CustomersList.Add(customer.Model);
+            }
+        }
+        if (hasCustomers)
+        {
+            booking.ReservationsInBooking.Add(newRes);
+            RoomsManager.SortCustomers(booking);
+            foreach (CustomerWrapper customer in booking.Customers)
+            {
+                customer.IsSelected = false;
+            }
+        }
+        else
+        {
+            MessengerInstance.Send(new ShowExceptionMessage_Message("Παρακαλώ επιλέξτε πελάτες"));
+        }
+    }
+
     public void OverBookHotelAsync(BookingWrapper bookingWr, Hotel hotel, RoomType roomType, bool all, bool onlyStay, bool hb)
     {
         bool hasCustomers = false;
@@ -188,7 +239,7 @@ public class NewReservationHelper : ViewModelBase
                     customer.RoomColor = new SolidColorBrush(Colors.LightPink);
                 else
                     customer.RoomColor = new SolidColorBrush(Colors.LightBlue);
-                if (booking.DifferentDates)
+                if (!booking.DifferentDates)
                 {
                     if (booking.ExcursionDate != null)
                     {
@@ -283,7 +334,6 @@ public class NewReservationHelper : ViewModelBase
                 customer.HotelName = "TRANSFER";
                 customer.RoomTypeName = "TRANSFER";
                 customer.RoomNumber = "TRNS" + (booking.ReservationsInBooking.Count + 1);
-                customer.CustomerHasBusIndex = 0;
                 if (booking.ReservationsInBooking.Count() % 2 == 0)
                     customer.RoomColor = new SolidColorBrush(Colors.LightPink);
                 else

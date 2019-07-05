@@ -24,7 +24,7 @@ namespace LATravelManager.UI.Helpers
 
         public static async void CalculateSum(GenericRepository genericRepository)
         {
-            IEnumerable<Booking> bookings = await genericRepository.GetAllBookingInPeriodNoTracking(new DateTime(2018, 10, 1), new DateTime(2019, 04, 1), 2);
+            IEnumerable<Booking> bookings = await genericRepository.GetAllBookingInPeriod(new DateTime(2018, 10, 1), new DateTime(2019, 04, 1), 2);
             decimal sum = 0;
             foreach (Booking b in bookings)
             {

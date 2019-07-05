@@ -51,8 +51,8 @@ using System.Windows;
 
 [assembly: XmlConfigurator(ConfigFile = "log4net.config")]
 [assembly: NeutralResourcesLanguage("el-GR")]
-[assembly: AssemblyVersion("0.3.0")]
-[assembly: AssemblyFileVersion("0.3.0")]
+[assembly: AssemblyVersion("0.3.5")]
+[assembly: AssemblyFileVersion("0.3.5")]
 
 /*
     cd "LATravelManager.UI\bin\Release"

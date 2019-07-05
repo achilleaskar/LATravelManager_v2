@@ -2,7 +2,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Globalization;
 
 namespace LATravelManager.Model.BookingData
 {
@@ -11,7 +10,6 @@ namespace LATravelManager.Model.BookingData
         #region Fields + Constructors
 
         private decimal _Amount;
-        private string _AmountString;
 
         private string _Comment = string.Empty;
 

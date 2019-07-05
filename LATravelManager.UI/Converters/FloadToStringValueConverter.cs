@@ -37,7 +37,7 @@ namespace LATravelManager.UI.Converters
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             string strValue = (value as string).Replace(',', '.').Replace("€", "").Replace(" ", "");
-            if (!string.IsNullOrEmpty(strValue) && strValue[strValue.Length - 1] != '.' && decimal.TryParse(strValue, NumberStyles.Any, new CultureInfo("en-US"), out var tmpdecimal))
+            if (!string.IsNullOrEmpty(strValue) && !strValue.EndsWith(".0") && strValue[strValue.Length - 1] != '.' && decimal.TryParse(strValue, NumberStyles.Any, new CultureInfo("en-US"), out var tmpdecimal))
             {
                 return tmpdecimal;
             }

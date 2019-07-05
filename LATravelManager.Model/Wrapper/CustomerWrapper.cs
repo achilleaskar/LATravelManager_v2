@@ -339,6 +339,8 @@ namespace LATravelManager.UI.Helpers
 
                 case ReservationTypeEnum.Transfer:
                     return "TRANSFER";
+                case ReservationTypeEnum.OneDay:
+                    return "ONEDAY";
             }
             return "ERROR";
         }
@@ -359,6 +361,8 @@ namespace LATravelManager.UI.Helpers
                 case ReservationTypeEnum.Transfer:
                     return "TRANSFER";
 
+                case ReservationTypeEnum.OneDay:
+                    return "ONEDAY";
                 case ReservationTypeEnum.Overbooked:
                     return (Reservation.NoNameRoomType != null) ? Reservation.NoNameRoomType.Name : "ERROR";
             }

@@ -53,6 +53,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             OverBookHotelCommand = new RelayCommand(async () => { await OverBookHotelAsync(); }, CanOverBookHotel);
             PutCustomersInRoomCommand = new RelayCommand(async () => { await PutCustomersInRoomAsync(); }, CanPutCustomersInRoom);
             AddTransferCommand = new RelayCommand(AddTransfer, CanAddTransfer);
+            AddOneDayCommand = new RelayCommand(AddOneDay, CanAddOneDay);
 
             ManagePartnersCommand = new RelayCommand(ManagePartners);
 
@@ -67,13 +68,70 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             Emails = new ObservableCollection<Email>();
         }
 
+        private bool CanAddOneDay()
+        {
+            if (BookingWr == null || !AreContexesFree || BookingWr.CheckIn != BookingWr.CheckOut)
+            {
+                return false;
+            }
+
+            if (!BookingWr.AreDatesValid())
+            {
+                ErrorsInCanAddReservationToRoom = "Παρακαλώ επιλέξτε Ημερομηνίες";
+                return false;
+            }
+            if (AreCustomersLeft && !All)
+            {
+                ErrorsInCanAddReservationToRoom = "Παρακαλώ επιλέξτε Πελάτες";
+                return false;
+            }
+
+            if (ValidateBooking() != null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private void AddOneDay()
+        {
+            try
+            {
+                MessengerInstance.Send(new IsBusyChangedMessage(true));
+
+                NewReservationHelper.AddOneDay(BookingWr, All);
+                if (All)
+                {
+                    FilteredRoomList.Clear();
+                }
+                else
+                {
+                    ShowFilteredRoomsCommand.Execute(null);
+                }
+                SaveCommand.RaiseCanExecuteChanged();
+            }
+            catch (Exception ex)
+            {
+                MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
+            }
+            finally
+            {
+                MessengerInstance.Send(new IsBusyChangedMessage(false));
+            }
+        }
+
         private void PrintReciept()
         {
             if (DocumentsManagement == null)
             {
                 DocumentsManagement = new DocumentsManagement(StartingRepository);
             }
-            DocumentsManagement.PrintPaymentsReciept(SelectedPayment,SelectedCustomer.Model);
+            if (SelectedCustomer==null)
+            {
+                MessageBox.Show("Παρακαλώ επιλέξτε πελάτη");
+            }
+            DocumentsManagement.PrintPaymentsReciept(SelectedPayment, SelectedCustomer.Model);
         }
 
         #endregion Constructors
@@ -161,6 +219,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         public RelayCommand AddFromFileCommand { get; set; }
 
         public RelayCommand AddTransferCommand { get; set; }
+        public RelayCommand AddOneDayCommand { get; set; }
 
         public bool All
         {
@@ -800,8 +859,8 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                                     break;
                                 }
                                 addThis &= pi.RoomState == RoomStateEnum.Available
-                                    || pi.RoomState == RoomStateEnum.MovableNoName
-                                    || pi.RoomState == RoomStateEnum.Allotment;
+                                    || pi.RoomState == RoomStateEnum.MovableNoName;
+                                    //|| pi.RoomState == RoomStateEnum.Allotment;
                                 isfree &= pi.RoomState == RoomStateEnum.Available;
 
                                 //if (room.PlanDailyInfo[i].IsAllotment)

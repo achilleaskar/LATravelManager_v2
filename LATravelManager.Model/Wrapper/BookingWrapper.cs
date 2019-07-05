@@ -49,11 +49,7 @@ namespace LATravelManager.Model.Wrapper
 
         #region Properties
 
-
-
-
         private ICollectionView _CustomersCV;
-
 
         public ICollectionView CustomersCV
         {
@@ -84,10 +80,10 @@ namespace LATravelManager.Model.Wrapper
             {
                 return "Η επιλεγμένη ημερομηνία επιστροφής είναι νωρίτερα απο την ημερομηνία έναρξης.";
             }
-            if (CheckOut == CheckIn)
-            {
-                return "Η ημερομηνία επιστροφής δεν΄μπορεί να είναι η ίδια με την ημερομηνία έναρξης.";
-            }
+            //if (CheckOut == CheckIn)
+            //{
+            //    return "Η ημερομηνία επιστροφής δεν΄μπορεί να είναι η ίδια με την ημερομηνία έναρξης.";
+            //}
             if ((CheckOut.DayOfWeek == DayOfWeek.Monday || CheckOut.DayOfWeek == DayOfWeek.Tuesday || CheckOut.DayOfWeek == DayOfWeek.Friday) && !FreeDatesBool)
             {
                 return "Επιτρεπόμενες μέρες επιστροφής μόνο Τετάρτη, Πέμπτη, Σάββατο και Κυριακή!";
@@ -247,6 +243,10 @@ namespace LATravelManager.Model.Wrapper
                 {
                     hotels.Add("TRANSFER");
                 }
+                if (res.ReservationType == ReservationTypeEnum.OneDay && !hotels.Any(x => x == "ONEDAY"))
+                {
+                    hotels.Add("ONEDAY");
+                }
             }
             if (hotels.Count == 1)
             {
@@ -258,15 +258,18 @@ namespace LATravelManager.Model.Wrapper
                 {
                     return "ΧΩΡΙΣ ΕΠΙΛΟΓΗ ΣΥΓΚΕΚΡΙΜΕΝΟΥ ΚΑΤΑΛΥΜΑΤΟΣ";
                 }
+                else if (hotels[0] == "ONEDAY")
+                {
+                    return "ΗΜΕΡΗΣΙΑ ΕΚΔΡΟΜΗ";
+                }
                 else
                 {
                     return "ΜΕ ΔΙΑΜΟΝΗ ΣΤΟ ΚΑΤΑΛΥΜΑ " + hotels[0];
-
                 }
             }
             else if (hotels.Count > 1)
             {
-                return "ΜΕ ΔΙΑΜΟΝΗ ΣΤA ΚΑΤΑΛΥΜΑTA "+string.Join(" / ", hotels);
+                return "ΜΕ ΔΙΑΜΟΝΗ ΣΤA ΚΑΤΑΛΥΜΑTA " + string.Join(" / ", hotels);
             }
             else
             {
@@ -367,7 +370,7 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
-        public bool IsGroup => Excursion.ExcursionType.Category == ExcursionTypeEnum.Group;
+        public bool IsGroup => Excursion!=null && Excursion.ExcursionType.Category == ExcursionTypeEnum.Group;
         public bool IsNotGroup => !IsGroup;
 
         public bool IsNotPartners => !IsPartners;
@@ -506,7 +509,6 @@ namespace LATravelManager.Model.Wrapper
             get { return _DatesError; }
             set
             {
-
                 if (_DatesError == value)
                 {
                     return;
@@ -515,7 +517,6 @@ namespace LATravelManager.Model.Wrapper
                 RaisePropertyChanged();
             }
         }
-
 
         #region Methods
 
@@ -731,6 +732,10 @@ namespace LATravelManager.Model.Wrapper
                     {
                         c.RoomNumber = "TRNS-" + counter;
                     }
+                    else if (res.ReservationType == ReservationTypeEnum.OneDay)
+                    {
+                        c.RoomNumber = "OD-" + counter;
+                    }
                     if (counter % 2 == 0)
                     {
                         c.RoomColor = new SolidColorBrush(Colors.LightPink);
@@ -771,6 +776,7 @@ namespace LATravelManager.Model.Wrapper
                 {
                     for (int i = 1; i < ReservationsInBooking.Count; i++)
                     {
+                        res0 = new ReservationWrapper(ReservationsInBooking[i]);
                         if (res0.CheckIn < min)
                         {
                             min = res0.CheckIn;
@@ -784,8 +790,11 @@ namespace LATravelManager.Model.Wrapper
 
                 if (min.Year > 2000 && max.Year > 2000)
                 {
-                    CheckIn = min;
-                    CheckOut = max;
+                    if (CheckIn != min || CheckOut != max)
+                    {
+                        CheckIn = min;
+                        CheckOut = max;
+                    }
                 }
             }
         }

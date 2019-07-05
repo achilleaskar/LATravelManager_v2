@@ -616,10 +616,14 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         private bool CustomerFilter(object item)
         {
             ReservationWrapper reservation = item as ReservationWrapper;
+            if (reservation.Id==3987)
+            {
+
+            }
             return reservation.Contains(FilterString) &&
                 (BookingIdFilter == 0 || reservation.Booking.Id == BookingIdFilter) &&
-                (!EnableCheckInFilter || reservation.CheckIn == CheckIn) &&
-                (!EnableCheckOutFilter || reservation.CheckOut == CheckOut) &&
+                (!EnableCheckInFilter || reservation.CustomersList.Any(c=>c.CheckIn == CheckIn)) &&
+                (!EnableCheckOutFilter || reservation.CustomersList.Any(c => c.CheckOut == CheckOut)) &&
                 (UserIndexBookingFilter == 0 || reservation.UserWr.Id == Users[UserIndexBookingFilter - 1].Id) &&
                 (DepartmentIndexBookingFilter == 0 || reservation.UserWr.BaseLocation == DepartmentIndexBookingFilter) &&
                 (!Bank || (reservation.ExcursionType != ExcursionTypeEnum.Personal && reservation.ExcursionType != ExcursionTypeEnum.ThirdParty && reservation.Booking.Payments.Any(p => p.PaymentMethod > 0)) || ((reservation.ExcursionType == ExcursionTypeEnum.Personal) && reservation.PersonalModel.Payments.Any(p => p.PaymentMethod > 0)));
@@ -871,6 +875,9 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 DateTime dateLimit = SearchBookingsHelper.GetDateLimit(parameter);
 
                 List<ReservationWrapper> list = (await Context.GetAllReservationsFiltered(ExcursionIndexBookingFilter > 0 ? (ExcursionsCollectionView.CurrentItem as Excursion).Id : 0, UserIndexBookingFilter > 0 ? Users[UserIndexBookingFilter - 1].Id : 0, Completed, ExcursionCategoryIndexBookingFilter > 0 ? ExcursionCategoryIndexBookingFilter - 1 : -1, dateLimit)).Select(r => new ReservationWrapper(r)).ToList();
+
+
+
 
                 foreach (var item in list)
                 {
