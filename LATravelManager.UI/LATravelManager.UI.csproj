@@ -660,7 +660,10 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Sources\group\Voucher_afirmo.docx">
+    <None Include="Sources\group\Voucher_afirmo_larissa.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\group\Voucher_afirmo_thess.docx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Sources\group\Voucher_enfirmo_larissas.docx">
