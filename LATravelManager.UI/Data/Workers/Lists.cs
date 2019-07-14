@@ -677,7 +677,7 @@ namespace LATravelManager.UI.Data.Workers
             IEnumerable<Booking> tmplist = null;
             List<Reservation> tmpress = new List<Reservation>();
             tmplist = (await GenericRepository.GetAllBookingInPeriod(From, To, Excursion.Id));
-            RoomingList rmList;
+            RoomingList rmList = null;
             RoomingList nonameroominglist = new RoomingList { Hotel = new HotelWrapper { Name = "NO NAME" } };
 
             foreach (Booking b in tmplist)
@@ -708,10 +708,15 @@ namespace LATravelManager.UI.Data.Workers
 
             foreach (IGrouping<(Hotel Hotel, DateTime CheckIn, DateTime CheckOut), ReservationWrapper> group in wrers)
             {
-                rmList = new RoomingList { Hotel = new HotelWrapper(group.Key.Hotel) };
+                if (rmList == null || rmList.Hotel.Id != group.Key.Hotel.Id)
+                {
+
+                    rmList = new RoomingList { Hotel = new HotelWrapper(group.Key.Hotel) };
+                }
                 foreach (ReservationWrapper res in group.OrderBy(r => r.Booking.Id))
                     rmList.Reservations.Add(res);
-                rl.Add(rmList);
+                if (!rl.Contains(rmList))
+                    rl.Add(rmList);
             }
             if (nonameroominglist.Reservations.Count > 0)
             {

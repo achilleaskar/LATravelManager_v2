@@ -616,13 +616,13 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         private bool CustomerFilter(object item)
         {
             ReservationWrapper reservation = item as ReservationWrapper;
-            if (reservation.Id==3987)
+            if (reservation.Id == 3987)
             {
 
             }
             return reservation.Contains(FilterString) &&
                 (BookingIdFilter == 0 || reservation.Booking.Id == BookingIdFilter) &&
-                (!EnableCheckInFilter || reservation.CustomersList.Any(c=>c.CheckIn == CheckIn)) &&
+                (!EnableCheckInFilter || reservation.CustomersList.Any(c => c.CheckIn == CheckIn)) &&
                 (!EnableCheckOutFilter || reservation.CustomersList.Any(c => c.CheckOut == CheckOut)) &&
                 (UserIndexBookingFilter == 0 || reservation.UserWr.Id == Users[UserIndexBookingFilter - 1].Id) &&
                 (DepartmentIndexBookingFilter == 0 || reservation.UserWr.BaseLocation == DepartmentIndexBookingFilter) &&
@@ -681,7 +681,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
                 foreach (ReservationWrapper r in CollectionViewSource.GetDefaultView(FilteredReservations))
                 {
-                    if (r.ExcursionType != ExcursionTypeEnum.Personal && !bookings.Contains(r.Booking))
+                    if (r.ExcursionType != ExcursionTypeEnum.Personal && r.ReservationType != ReservationTypeEnum.OneDay && !bookings.Contains(r.Booking))
                     {
                         bookings.Add((r as ReservationWrapper).Booking);
                     }
@@ -794,13 +794,13 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         private async Task PrintRoomingLists()
         {
             var date = new DateTime(2019, 5, 28);
-            int counter = 0;
-            var dimitris = await Context.GetAllReservationsDimitri(r => r.Booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Skiathos && r.CustomersList.Any(c => c.CheckIn >= date));
+           // int counter = 0;
+           // var dimitris = await Context.GetAllReservationsDimitri(r => r.Booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Skiathos && r.CustomersList.Any(c => c.CheckIn >= date));
 
-            foreach (var r in dimitris)
-            {
-                counter += r.CustomersList.Count;
-            }
+            //foreach (var r in dimitris)
+            //{
+            //    counter += r.CustomersList.Count;
+            //}
 
             Mouse.OverrideCursor = Cursors.Wait;
             if (!EnableCheckInFilter || !EnableCheckOutFilter)
@@ -873,18 +873,24 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
                 SearchBookingsHelper = new SearchBookingsHelper(Context);
                 DateTime dateLimit = SearchBookingsHelper.GetDateLimit(parameter);
-
                 List<ReservationWrapper> list = (await Context.GetAllReservationsFiltered(ExcursionIndexBookingFilter > 0 ? (ExcursionsCollectionView.CurrentItem as Excursion).Id : 0, UserIndexBookingFilter > 0 ? Users[UserIndexBookingFilter - 1].Id : 0, Completed, ExcursionCategoryIndexBookingFilter > 0 ? ExcursionCategoryIndexBookingFilter - 1 : -1, dateLimit)).Select(r => new ReservationWrapper(r)).ToList();
+                //int counter = 0;
+                //foreach (var reservation in list)
+                //{
+
+                //    if (reservation.CheckIn > new DateTime(2019, 7, 3))
+                //    {
+                //        counter += reservation.CustomersList.Count;
+                //    }
+                //}
 
 
-
-
-                foreach (var item in list)
-                {
-                    if (item.ReservationType == ReservationTypeEnum.Overbooked)
-                    {
-                    }
-                }
+                //foreach (var item in list)
+                //{
+                //    if (item.ReservationType == ReservationTypeEnum.Overbooked)
+                //    {
+                //    }
+                //}
                 foreach (var res in list)
                 {
                     foreach (var c in res.CustomersList)

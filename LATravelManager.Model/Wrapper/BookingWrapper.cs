@@ -522,7 +522,7 @@ namespace LATravelManager.Model.Wrapper
 
         public bool AreDatesValid()
         {
-            return CheckIn.Year > 2010 && CheckOut.Year > 2010 && (ExcursionDate != null || Excursion.ExcursionType.Category != ExcursionTypeEnum.Group);
+            return CheckIn.Year > 2010 && CheckOut.Year > 2010 && (ExcursionDate != null || (Excursion!=null&& Excursion.ExcursionType.Category != ExcursionTypeEnum.Group));
         }
 
         public void CalculateRemainingAmount()

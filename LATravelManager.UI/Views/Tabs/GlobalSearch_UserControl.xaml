@@ -258,7 +258,7 @@
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Header="Διαγραφή Παρέας"
-                              Command="{Binding DataContext.DeleteReservationCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}">
+                              Command="{Binding DataContext.DeleteBookingCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}">
                         <MenuItem.Icon>
                             <iconPacks:PackIconFontAwesome Kind="TrashAltRegular" />
                         </MenuItem.Icon>

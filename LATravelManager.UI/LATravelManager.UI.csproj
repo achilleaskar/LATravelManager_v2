@@ -260,6 +260,7 @@
     <Compile Include="ViewModel\BaseViewModels\IViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModels\MyViewModelBase.cs" />
     <Compile Include="ViewModel\BaseViewModels\NewReservationGroup_Base.cs" />
+    <Compile Include="ViewModel\CategoriesViewModels\Availabilities_ViewModel.cs" />
     <Compile Include="ViewModel\CategoriesViewModels\Group\NewReservation_Group_ViewModel.cs" />
     <Compile Include="ViewModel\CategoriesViewModels\Personal\NewReservation_Personal_ViewModel.cs" />
     <Compile Include="ViewModel\CategoriesViewModels\Plan_ViewModel.cs" />
@@ -463,6 +464,9 @@
     <Compile Include="Views\Tabs\UserPaymentsInfo_UserControl.xaml.cs">
       <DependentUpon>UserPaymentsInfo_UserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Universal\Availabilities_Window.xaml.cs">
+      <DependentUpon>Availabilities_Window.xaml</DependentUpon>
+    </Compile>
     <Page Include="Views\Personal\EditPersonalBooking_Window.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -624,6 +628,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Tabs\UserPaymentsInfo_UserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Universal\Availabilities_Window.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

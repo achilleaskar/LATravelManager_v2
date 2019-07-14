@@ -164,11 +164,19 @@
                                     <DatePicker SelectedDate="{Binding BookingWr.CheckIn}"
                                                 Margin="0,0,5,0" />
                                 </StackPanel>
-                                <StackPanel>
+                                <StackPanel Margin="0,0,5,0">
                                     <Label Content="Check Out:"
                                            Padding="0" />
                                     <DatePicker SelectedDate="{Binding BookingWr.CheckOut}" />
                                 </StackPanel>
+                                <Button Cursor="Hand"
+                                        VerticalAlignment="Bottom"
+                                        Command="{Binding UpdateAllCommand}"
+                                        HorizontalAlignment="Left">
+                                    <iconPacks:PackIconFontAwesome Kind="SearchSolid"
+                                                                   VerticalAlignment="Center"
+                                                                   Margin="2" />
+                                </Button>
                                 <!--<CheckBox IsChecked="{Binding BookingWr.DateChanged}"
                                           VerticalAlignment="Center" />-->
                                 <StackPanel Margin="5,0,5,0">
@@ -216,21 +224,21 @@
                                     <CheckBox Content="Όλοι"
                                               IsChecked="{Binding All}"
                                               VerticalAlignment="Center"
-                                              Margin="5 0" />
+                                              Margin="5 0 0 0" />
                                     <CheckBox Content="Ημερ."
                                               IsChecked="{Binding BookingWr.FreeDatesBool}"
                                               Visibility="{Binding ConverterParameter=3, Converter={StaticResource UserToVisibilityConverter}}"
                                               VerticalAlignment="Center"
-                                              Margin="5 0" />
+                                              Margin="5 0 0 0" />
                                 </StackPanel>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal"
                                         Margin="0"
-                                        HorizontalAlignment="Right">
+                                        HorizontalAlignment="Left">
                                 <TextBlock Text="{Binding BookingWr.DatesError}"
                                            TextWrapping="Wrap"
                                            Foreground="Red"
-                                           Width="130" />
+                                           Width="138" />
                                
                                 <Button Content="Προβολή"
                                         IsDefault="True"

@@ -488,6 +488,13 @@ namespace LATravelManager.UI.Helpers
                     // MessageBox.Show("Η κράτηση είναι TRANSFER");
                     continue;
                 }
+                else if (res.ReservationType == ReservationTypeEnum.OneDay)
+                {
+                    // MessageBox.Show("Η κράτηση είναι TRANSFER");
+                    continue;
+                }
+
+
 
                 try
                 {
@@ -833,7 +840,7 @@ namespace LATravelManager.UI.Helpers
                 regexText = new Regex("minno");
                 docText = regexText.Replace(docText, " X ");
                 regexText = new Regex("location");
-                docText = regexText.Replace(docText, "Θεσσαλονίκη");
+                docText = regexText.Replace(docText, booking.User.BaseLocation == 2 ? "Λάρισα" : "Θεσσαλονίκη");
 
                 using (StreamWriter sw = new StreamWriter(wordDoc.MainDocumentPart.GetStream(FileMode.Create)))
                 {
@@ -850,7 +857,7 @@ namespace LATravelManager.UI.Helpers
             string fileName = @"Sources\letter.docx";
 
             File.Copy(fileName, saveAs, true);
-            Customer c = (reservationWr.CustomersList.OrderBy(cc=>cc.Id)).ToList()[0];
+            Customer c = (reservationWr.CustomersList.OrderBy(cc => cc.Id)).ToList()[0];
 
             using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(saveAs, true))
             {
@@ -867,7 +874,7 @@ namespace LATravelManager.UI.Helpers
                 regexText = new Regex("destination");
                 docText = regexText.Replace(docText, booking.Excursion.Destinations[0].Name);
                 regexText = new Regex("hotelnroomtype");
-                docText = regexText.Replace(docText, reservationWr.HotelName + "-" + reservationWr.RoomTypeName + "(" + reservationWr.Room.Hotel.Tel+")");
+                docText = regexText.Replace(docText, reservationWr.HotelName + "-" + reservationWr.RoomTypeName + "(" + reservationWr.Room.Hotel.Tel + ")");
 
                 using (StreamWriter sw = new StreamWriter(wordDoc.MainDocumentPart.GetStream(FileMode.Create)))
                 {
@@ -881,12 +888,17 @@ namespace LATravelManager.UI.Helpers
 
         private async Task CreateWordVoucher(string saveAs, ReservationWrapper reservationWr, BookingWrapper booking)
         {
-            string fileName;
+            string fileName = "";
 
             if (booking.Excursion.ExcursionType.Category != ExcursionTypeEnum.Bansko)
             {
                 if (booking.IsPartners)
-                    fileName = @"Sources\group\Voucher_afirmo.docx";
+                {
+                    if (booking.User.BaseLocation == 2)
+                        fileName = @"Sources\group\Voucher_afirmo_larissa.docx";
+                    else if (booking.User.BaseLocation == 1)
+                        fileName = @"Sources\group\Voucher_afirmo_thess.docx";
+                }
                 else if (booking.User.BaseLocation == 2)
                     fileName = @"Sources\group\Voucher_enfirmo_larissas.docx";
                 else if (booking.User.BaseLocation == 1)
@@ -1015,7 +1027,7 @@ namespace LATravelManager.UI.Helpers
                     regexText = new Regex("minno");
                     docText = regexText.Replace(docText, " X ");
                     regexText = new Regex("location");
-                    docText = regexText.Replace(docText, "Θεσσαλονίκη");
+                    docText = regexText.Replace(docText, booking.User.BaseLocation == 2 ? "Λάρισα" : "Θεσσαλονίκη");
                     regexText = new Regex("regextax");
                     docText = regexText.Replace(docText, reservationWr.ExcursionType == ExcursionTypeEnum.Skiathos ?
                         "- Ο φόρος διαμονής καταβάλλεται επι τόπου στο κατάλυμα: Pension έως ξενοδοχεία 2* 0,5€ το δωμάτιο / βραδιά, ξενοδοχεία 3* 1,5€ το δωμάτιο ανά διανυκτέρευση." : "");
