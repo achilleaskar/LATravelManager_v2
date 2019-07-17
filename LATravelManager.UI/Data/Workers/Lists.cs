@@ -682,7 +682,11 @@ namespace LATravelManager.UI.Data.Workers
 
             foreach (Booking b in tmplist)
             {
-                tmpress.AddRange(b.ReservationsInBooking);
+                if (!b.IsPartners || b.Partner.Id != 219)
+                {
+
+                    tmpress.AddRange(b.ReservationsInBooking);
+                }
             }
 
             foreach (var r in tmpress)
@@ -694,10 +698,6 @@ namespace LATravelManager.UI.Data.Workers
                 else if (r.ReservationType == ReservationTypeEnum.Noname)
                 {
                     nonameroominglist.Reservations.Add(new ReservationWrapper(r));
-                }
-                else
-                {
-
                 }
             }
             List<IGrouping<(Hotel Hotel, DateTime CheckIn, DateTime CheckOut), ReservationWrapper>> wrers =

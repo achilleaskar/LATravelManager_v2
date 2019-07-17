@@ -164,7 +164,7 @@ namespace LATravelManager.UI.Data.Workers
         }
 
         public async Task<List<HotelWrapper>> GetAllAvailableRooms(DateTime planStart, DateTime planEnd,
-            ExcursionWrapper excursionfilter, RoomType selectedRoomType = null, Hotel selectedHotel = null, int PeopleCount = 0, Booking unSavedBooking = null)
+            ExcursionWrapper excursionfilter, bool cropped, RoomType selectedRoomType = null, Hotel selectedHotel = null, int PeopleCount = 0, Booking unSavedBooking = null)
         {
             try
             {
@@ -191,7 +191,7 @@ namespace LATravelManager.UI.Data.Workers
                 {
                     foreach (Reservation reservation in booking.ReservationsInBooking)
                     {
-                        
+
                         if (reservation.ReservationType == ReservationTypeEnum.Noname)
                         {
                             NonamesList.Add(new NoName { Reservation = new ReservationWrapper(reservation) });
@@ -342,7 +342,7 @@ namespace LATravelManager.UI.Data.Workers
                             goto end;
                         }
                     }
-                    end:
+                end:
                     if (changed)
                     {
                         UpdateNoNames();
@@ -380,7 +380,7 @@ namespace LATravelManager.UI.Data.Workers
                         }
                     }
 
-                    end:
+                end:
                     if (changed)
                     {
                         UpdateNoNames();
@@ -453,7 +453,7 @@ namespace LATravelManager.UI.Data.Workers
                         }
                     }
 
-                    end:
+                end:
                     if (changed)
                     {
                         UpdateNoNames();
@@ -540,7 +540,7 @@ namespace LATravelManager.UI.Data.Workers
                         }
                     }
 
-                    end:
+                end:
                     if (changed)
                     {
                         UpdateNoNames();
@@ -559,69 +559,75 @@ namespace LATravelManager.UI.Data.Workers
 
                 SetNoNameColors(Plan);
 
-                List<HotelWrapper> PlanCroped = new List<HotelWrapper>();
-
-                // await GetFreeRooms(Plan);
-
-                foreach (HotelWrapper hotel in Plan)
+                if (cropped)
                 {
-                    if (selectedHotel == null || selectedHotel.Id == hotel.Id)
+
+
+                    List<HotelWrapper> PlanCroped = new List<HotelWrapper>();
+
+                    // await GetFreeRooms(Plan);
+
+                    foreach (HotelWrapper hotel in Plan)
                     {
-                        bool addThis = false;
-                        tmpHotelWr = new HotelWrapper { Name = hotel.Name, Id = hotel.Id };
-                        foreach (RoomWrapper roomWr in hotel.RoomWrappers)
+                        if (selectedHotel == null || selectedHotel.Id == hotel.Id)
                         {
-                            if ((selectedRoomType == null || roomWr.RoomType.Id == selectedRoomType.Id) && (PeopleCount == 0 || PeopleCount >= roomWr.RoomType.MinCapacity && PeopleCount <= roomWr.RoomType.MaxCapacity))
+                            bool addThis = false;
+                            tmpHotelWr = new HotelWrapper { Name = hotel.Name, Id = hotel.Id };
+                            foreach (RoomWrapper roomWr in hotel.RoomWrappers)
                             {
-                                addThis = false;
-                                tmpDate = planStart;
-                                tmpRoomWr = roomWr;// new Room { Id = room.Id, RoomType = room.RoomType, Hotel = room.Hotel, Note = room.Note };
-                                List<PlanDailyInfo> newList = new List<PlanDailyInfo>();
-                                while (roomWr.PlanDailyInfo[counter].Date < planStart)
+                                if ((selectedRoomType == null || roomWr.RoomType.Id == selectedRoomType.Id) && (PeopleCount == 0 || PeopleCount >= roomWr.RoomType.MinCapacity && PeopleCount <= roomWr.RoomType.MaxCapacity))
                                 {
-                                    counter++;
-                                }
-                                while (tmpDate < planEnd)
-                                {
-                                    if (counter < roomWr.PlanDailyInfo.Count)
+                                    addThis = false;
+                                    tmpDate = planStart;
+                                    tmpRoomWr = roomWr;// new Room { Id = room.Id, RoomType = room.RoomType, Hotel = room.Hotel, Note = room.Note };
+                                    List<PlanDailyInfo> newList = new List<PlanDailyInfo>();
+                                    while (roomWr.PlanDailyInfo[counter].Date < planStart)
                                     {
-                                        if (!addThis && roomWr.PlanDailyInfo[counter].RoomState != RoomStateEnum.NotAvailable)
+                                        counter++;
+                                    }
+                                    while (tmpDate < planEnd)
+                                    {
+                                        if (counter < roomWr.PlanDailyInfo.Count)
                                         {
-                                            addThis = true;
-                                        }
-                                        if (roomWr.PlanDailyInfo[counter].Date == tmpDate)
-                                        {
-                                            newList.Add(roomWr.PlanDailyInfo[counter]);
-                                            counter++;
+                                            if (!addThis && roomWr.PlanDailyInfo[counter].RoomState != RoomStateEnum.NotAvailable)
+                                            {
+                                                addThis = true;
+                                            }
+                                            if (roomWr.PlanDailyInfo[counter].Date == tmpDate)
+                                            {
+                                                newList.Add(roomWr.PlanDailyInfo[counter]);
+                                                counter++;
+                                            }
+                                            else
+                                            {
+                                                newList.Add(new PlanDailyInfo { Date = tmpDate });
+                                            }
                                         }
                                         else
                                         {
                                             newList.Add(new PlanDailyInfo { Date = tmpDate });
                                         }
-                                    }
-                                    else
-                                    {
-                                        newList.Add(new PlanDailyInfo { Date = tmpDate });
-                                    }
 
-                                    tmpDate = tmpDate.AddDays(1);
-                                }
-                                counter = 0;
-                                if (addThis)
-                                {
-                                    tmpRoomWr.PlanDailyInfo = newList;
-                                    tmpHotelWr.RoomWrappers.Add(tmpRoomWr);
+                                        tmpDate = tmpDate.AddDays(1);
+                                    }
+                                    counter = 0;
+                                    if (addThis)
+                                    {
+                                        tmpRoomWr.PlanDailyInfo = newList;
+                                        tmpHotelWr.RoomWrappers.Add(tmpRoomWr);
+                                    }
                                 }
                             }
-                        }
-                        if (tmpHotelWr.RoomWrappers.Count > 0)
-                        {
-                            PlanCroped.Add(tmpHotelWr);
+                            if (tmpHotelWr.RoomWrappers.Count > 0)
+                            {
+                                PlanCroped.Add(tmpHotelWr);
+                            }
                         }
                     }
+
+                    Plan = PlanCroped;
                 }
 
-                Plan = PlanCroped;
             }
             catch (Exception ex)
             {

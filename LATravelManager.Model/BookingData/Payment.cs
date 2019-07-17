@@ -15,6 +15,31 @@ namespace LATravelManager.Model.BookingData
 
         private DateTime _Date;
 
+
+
+
+        private bool _Checked;
+
+
+        public bool Checked
+        {
+            get
+            {
+                return _Checked;
+            }
+
+            set
+            {
+                if (_Checked == value)
+                {
+                    return;
+                }
+
+                _Checked = value;
+                RaisePropertyChanged();
+            }
+        }
+
         private int _PaymentMethod;
 
         private User _User;

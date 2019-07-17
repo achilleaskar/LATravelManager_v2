@@ -39,28 +39,73 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         #region Fields
 
+        private decimal _AlphaBank;
+        private decimal _Cash;
         private bool _EnableDatesFilter;
+        private decimal _Ethniki;
+        private decimal _Eurobank;
         private int _ExcursionIndexBookingFilter;
         private ObservableCollection<Excursion> _Excursions;
         private DateTime _From;
         private bool _IsOk = true;
+        private decimal _Peiraios;
         private ExcursionWrapper _SelectedExcursion;
         private Excursion _SelectedExcursionFilter;
         private PaymentInfo _SelectedUserList;
 
         private DateTime _To;
 
+        private decimal _Total;
         private int _UserIndexBookingFilter;
 
         private ObservableCollection<User> _Users;
 
         private ObservableCollection<PaymentInfo> _UsersList;
 
+        private decimal _VISA;
         private SearchBookingsHelper SearchBookingsHelper;
 
         #endregion Fields
 
         #region Properties
+
+        public decimal AlphaBank
+        {
+            get
+            {
+                return _AlphaBank;
+            }
+
+            set
+            {
+                if (_AlphaBank == value)
+                {
+                    return;
+                }
+
+                _AlphaBank = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal Cash
+        {
+            get
+            {
+                return _Cash;
+            }
+
+            set
+            {
+                if (_Cash == value)
+                {
+                    return;
+                }
+
+                _Cash = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public GenericRepository Context { get; set; }
 
@@ -79,6 +124,44 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 }
 
                 _EnableDatesFilter = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal Ethniki
+        {
+            get
+            {
+                return _Ethniki;
+            }
+
+            set
+            {
+                if (_Ethniki == value)
+                {
+                    return;
+                }
+
+                _Ethniki = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal Eurobank
+        {
+            get
+            {
+                return _Eurobank;
+            }
+
+            set
+            {
+                if (_Eurobank == value)
+                {
+                    return;
+                }
+
+                _Eurobank = value;
                 RaisePropertyChanged();
             }
         }
@@ -157,6 +240,27 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 }
 
                 _IsOk = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public MainViewModel MainViewModel { get; }
+
+        public decimal Peiraios
+        {
+            get
+            {
+                return _Peiraios;
+            }
+
+            set
+            {
+                if (_Peiraios == value)
+                {
+                    return;
+                }
+
+                _Peiraios = value;
                 RaisePropertyChanged();
             }
         }
@@ -241,6 +345,25 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
+        public decimal Total
+        {
+            get
+            {
+                return _Total;
+            }
+
+            set
+            {
+                if (_Total == value)
+                {
+                    return;
+                }
+
+                _Total = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public int UserIndexBookingFilter
         {
             get
@@ -298,6 +421,25 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
+        public decimal VISA
+        {
+            get
+            {
+                return _VISA;
+            }
+
+            set
+            {
+                if (_VISA == value)
+                {
+                    return;
+                }
+
+                _VISA = value;
+                RaisePropertyChanged();
+            }
+        }
+
         #endregion Properties
 
         #region Methods
@@ -307,7 +449,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             try
             {
                 await ReloadAsync();
-
             }
             catch (Exception ex)
             {
@@ -357,172 +498,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             await Task.Delay(0);
         }
 
-        private decimal _Total;
-
-        public decimal Total
-        {
-            get
-            {
-                return _Total;
-            }
-
-            set
-            {
-                if (_Total == value)
-                {
-                    return;
-                }
-
-                _Total = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private decimal _Cash;
-
-        public decimal Cash
-        {
-            get
-            {
-                return _Cash;
-            }
-
-            set
-            {
-                if (_Cash == value)
-                {
-                    return;
-                }
-
-                _Cash = value;
-                RaisePropertyChanged();
-            }
-        }
-
-
-
-
-
-
-        private decimal _Peiraios;
-
-
-        public decimal Peiraios
-        {
-            get
-            {
-                return _Peiraios;
-            }
-
-            set
-            {
-                if (_Peiraios == value)
-                {
-                    return;
-                }
-
-                _Peiraios = value;
-                RaisePropertyChanged();
-            }
-        }
-
-
-
-
-        private decimal _Ethniki;
-
-
-        public decimal Ethniki
-        {
-            get
-            {
-                return _Ethniki;
-            }
-
-            set
-            {
-                if (_Ethniki == value)
-                {
-                    return;
-                }
-
-                _Ethniki = value;
-                RaisePropertyChanged();
-            }
-        }
-
-
-
-
-        private decimal _Eurobank;
-
-
-        public decimal Eurobank
-        {
-            get
-            {
-                return _Eurobank;
-            }
-
-            set
-            {
-                if (_Eurobank == value)
-                {
-                    return;
-                }
-
-                _Eurobank = value;
-                RaisePropertyChanged();
-            }
-        }
-
-
-
-        private decimal _AlphaBank;
-
-
-        public decimal AlphaBank
-        {
-            get
-            {
-                return _AlphaBank;
-            }
-
-            set
-            {
-                if (_AlphaBank == value)
-                {
-                    return;
-                }
-
-                _AlphaBank = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private decimal _VISA;
-
-        public decimal VISA
-        {
-            get
-            {
-                return _VISA;
-            }
-
-            set
-            {
-                if (_VISA == value)
-                {
-                    return;
-                }
-
-                _VISA = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public MainViewModel MainViewModel { get; }
-
         private async Task ShowEconomicData(string parameter)
         {
             try
@@ -568,12 +543,10 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                     }
                     if (!UsersList.Any(u => u.User.Id == payment.User.Id))
                     {
-                        UsersList.Add(new PaymentInfo(MainViewModel) { User = Users.Where(u => u.Id == payment.User.Id).FirstOrDefault() });
+                        UsersList.Add(new PaymentInfo(MainViewModel,this) { User = Users.Where(u => u.Id == payment.User.Id).FirstOrDefault() });
                     }
                     UsersList.Where(u => u.User.Id == payment.User.Id).FirstOrDefault().Payments.Add(payment);
                 }
-
-
 
                 Parallel.ForEach(UsersList, wr => wr.LoadAmounts());
             }

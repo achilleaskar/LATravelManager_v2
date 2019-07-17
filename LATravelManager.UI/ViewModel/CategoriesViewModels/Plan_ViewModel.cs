@@ -562,7 +562,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
                 date = date.AddDays(1);
             }
 
-            FilteredPlanList = new ObservableCollection<HotelWrapper>(await RoomsManager.GetAllAvailableRooms(From, To.AddDays(1), ParentExcursionCategory.SelectedExcursion,
+            FilteredPlanList = new ObservableCollection<HotelWrapper>(await RoomsManager.GetAllAvailableRooms(From, To.AddDays(1), ParentExcursionCategory.SelectedExcursion,true,
                 selectedRoomType: ((SelectedRoomTypeIndex > 0) ? RoomTypes[SelectedRoomTypeIndex - 1] : null),
                 selectedHotel: (SelectedHotelIndex > 0) ? Hotels[SelectedHotelIndex - 1] : null,
                 PeopleCount));

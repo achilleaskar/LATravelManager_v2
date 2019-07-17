@@ -98,6 +98,10 @@
     <Compile Include="Migrations\201906031532405_afterskiath.Designer.cs">
       <DependentUpon>201906031532405_afterskiath.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201907171857013_717.cs" />
+    <Compile Include="Migrations\201907171857013_717.Designer.cs">
+      <DependentUpon>201907171857013_717.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\ContextConfiguration.cs" />
     <Compile Include="MainDataBase.cs" />
     <Compile Include="Migrations\201902040958584_44.cs" />
@@ -284,6 +288,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201906031532405_afterskiath.resx">
       <DependentUpon>201906031532405_afterskiath.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907171857013_717.resx">
+      <DependentUpon>201907171857013_717.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

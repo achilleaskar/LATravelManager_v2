@@ -10,7 +10,9 @@ using LATravelManager.UI.Data.Workers;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
+using LATravelManager.UI.ViewModel.CategoriesViewModels;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
+using LATravelManager.UI.Views.Universal;
 using LATravelManager.UI.Wrapper;
 using System;
 using System.Collections.Generic;
@@ -21,6 +23,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media;
 using static LATravelManager.Model.Enums;
 
@@ -48,6 +51,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             PrintRecieptCommand = new RelayCommand(PrintReciept);
 
             UpdateAllCommand = new RelayCommand(async () => { await UpdateAll(); }, CanUpdateAll);
+            ShowAltairnativesCommand = new RelayCommand( ShowAlernatives, CanShowAltairnatives);
 
             BookRoomNoNameCommand = new RelayCommand<RoomType>(async (obj) => { await MakeNonameReservation(obj); }, CanMakeNoNameReservation);
             OverBookHotelCommand = new RelayCommand(async () => { await OverBookHotelAsync(); }, CanOverBookHotel);
@@ -66,6 +70,19 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             FilteredRoomList = new ObservableCollection<RoomWrapper>();
             SelectedUserIndex = -1;
             Emails = new ObservableCollection<Email>();
+        }
+
+        private void ShowAlernatives()
+        {
+            var vm = new Availabilities_ViewModel(AvailableHotels, BookingWr.CheckIn, BookingWr.CheckOut,(SelectedRoomTypeIndex==0?null:RoomTypes[SelectedRoomTypeIndex-1]),(SelectedHotelIndex == 0 ? null : Hotels[SelectedHotelIndex - 1]));
+            Availabilities_Window window = new Availabilities_Window();
+            window.DataContext = vm;
+            window.ShowDialog();
+        }
+
+        private bool CanShowAltairnatives()
+        {
+            return AvailableHotels != null && FilteredRoomList!=null;
         }
 
         private bool CanAddOneDay()
@@ -127,7 +144,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             {
                 DocumentsManagement = new DocumentsManagement(StartingRepository);
             }
-            if (SelectedCustomer==null)
+            if (SelectedCustomer == null)
             {
                 MessageBox.Show("Παρακαλώ επιλέξτε πελάτη");
             }
@@ -643,6 +660,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
                 _SelectedHotelIndex = value;
                 RaisePropertyChanged();
+                AvailableHotels = null;
             }
         }
 
@@ -738,6 +756,8 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
                 _SelectedRoomTypeIndex = value;
                 RaisePropertyChanged();
+                AvailableHotels = null;
+
             }
         }
 
@@ -765,6 +785,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         public RelayCommand ShowFilteredRoomsCommand { get; set; }
         public GenericRepository StartingRepository { get; set; }
         public RelayCommand UpdateAllCommand { get; set; }
+        public RelayCommand ShowAltairnativesCommand { get; set; }
 
         public ObservableCollection<User> Users
         {
@@ -827,6 +848,11 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         {
             try
             {
+                Mouse.OverrideCursor = Cursors.Wait;
+                if (BookingWr.CheckIn==BookingWr.CheckOut)
+                {
+                    return;
+                }
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
                 //if (reset)
                 //{
@@ -837,7 +863,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 //    BasicDataManager = new GenericRepository();
                 //}
                 RoomsManager = new RoomsManager();
-                AvailableHotels = new ObservableCollection<HotelWrapper>((await RoomsManager.GetAllAvailableRooms(BookingWr.CheckIn, BookingWr.CheckOut, SelectedExcursion, unSavedBooking: BookingWr.Model)));
+                AvailableHotels = new ObservableCollection<HotelWrapper>((await RoomsManager.GetAllAvailableRooms(BookingWr.CheckIn, BookingWr.CheckOut, SelectedExcursion,false, unSavedBooking: BookingWr.Model)));
                 FilteredRoomList = new ObservableCollection<RoomWrapper>();
                 List<RoomWrapper> tmplist = new List<RoomWrapper>();
 
@@ -846,56 +872,59 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
                 foreach (HotelWrapper hotel in AvailableHotels)
                 {
+                    foreach (RoomWrapper room in hotel.RoomWrappers)
                     {
-                        foreach (RoomWrapper room in hotel.RoomWrappers)
+
+                        allotmentDays = 0;
+                        isfree = addThis = true;
+
+                        foreach (PlanDailyInfo pi in room.PlanDailyInfo)
                         {
-                            allotmentDays = 0;
-                            isfree = addThis = true;
-
-                            foreach (PlanDailyInfo pi in room.PlanDailyInfo)
+                            if (pi.Date < BookingWr.CheckIn)
                             {
-                                if (!addThis)
-                                {
-                                    break;
-                                }
-                                addThis &= pi.RoomState == RoomStateEnum.Available
-                                    || pi.RoomState == RoomStateEnum.MovableNoName;
-                                    //|| pi.RoomState == RoomStateEnum.Allotment;
-                                isfree &= pi.RoomState == RoomStateEnum.Available;
-
-                                //if (room.PlanDailyInfo[i].IsAllotment)
-                                //{
-                                //    allotmentDays++;
-                                //}
+                                continue;
                             }
-                            if (isfree)
-                                room.RoomType.freeRooms++;
-                            addThis &= SelectedHotelIndex == 0 || hotel.Id == Hotels[SelectedHotelIndex - 1].Id;
-
-                            //todelete
-                            if (addThis)
+                            if (!addThis || pi.Date >= BookingWr.CheckOut)
                             {
-                                if (allotmentDays > 0)
+                                break;
+                            }
+                            addThis &= pi.RoomState == RoomStateEnum.Available
+                                || pi.RoomState == RoomStateEnum.MovableNoName;
+                            //|| pi.RoomState == RoomStateEnum.Allotment;
+                            isfree &= pi.RoomState == RoomStateEnum.Available;
+
+                            //if (room.PlanDailyInfo[i].IsAllotment)
+                            //{
+                            //    allotmentDays++;
+                            //}
+                        }
+                        if (isfree)
+                            room.RoomType.freeRooms++;
+                        addThis &= SelectedHotelIndex == 0 || hotel.Id == Hotels[SelectedHotelIndex - 1].Id;
+
+                        //todelete
+                        if (addThis)
+                        {
+                            if (allotmentDays > 0)
+                            {
+                                if (room.PlanDailyInfo.Count != allotmentDays)
                                 {
-                                    if (room.PlanDailyInfo.Count != allotmentDays)
-                                    {
-                                        //room.IsAllotment = true;
-                                        room.LocalNote = "Allotment" + ((allotmentDays == 1) ? " η 1 μέρα" : (" οι " + allotmentDays + " ημέρες."));
-                                    }
-                                    else
-                                    {
-                                        // room.IsAllotment = true;
-                                        room.LocalNote = "Allotment";
-                                    }
+                                    //room.IsAllotment = true;
+                                    room.LocalNote = "Allotment" + ((allotmentDays == 1) ? " η 1 μέρα" : (" οι " + allotmentDays + " ημέρες."));
                                 }
                                 else
                                 {
-                                    // room.IsAllotment = false;
-                                    room.LocalNote = "";
+                                    // room.IsAllotment = true;
+                                    room.LocalNote = "Allotment";
                                 }
-
-                                tmplist.Add(room);
                             }
+                            else
+                            {
+                                // room.IsAllotment = false;
+                                room.LocalNote = "";
+                            }
+
+                            tmplist.Add(room);
                         }
                     }
                 }
@@ -1002,12 +1031,14 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 MessengerInstance.Send(new IsBusyChangedMessage(false));
 
                 ShowFilteredRoomsCommand.RaiseCanExecuteChanged();
+                Mouse.OverrideCursor = Cursors.Arrow;
+
             }
         }
 
         protected async Task<Booking> CreateNewBooking()
         {
-            var b = new Booking { CheckIn = BookingWr != null ? BookingWr.CheckIn : new DateTime(2019, 06, 14), CheckOut = BookingWr != null ? BookingWr.CheckOut : new DateTime(2019, 06, 17) };
+            var b = new Booking { CheckIn = BookingWr != null ? BookingWr.CheckIn : DateTime.Today, CheckOut = BookingWr != null ? BookingWr.CheckOut : DateTime.Today.AddDays(3) };
             var e = await StartingRepository.GetExcursionByIdAsync(SelectedExcursion.Id, true);
             var u = await StartingRepository.GetByIdAsync<User>(StaticResources.User.Id, true);
             b.User = u;
@@ -1284,6 +1315,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             if (e.PropertyName == nameof(BookingWr.CheckIn) || e.PropertyName == nameof(BookingWr.CheckOut))
             {
                 FilteredRoomList.Clear();
+                AvailableHotels = null;
             }
         }
 
@@ -1484,6 +1516,8 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             {
                 InitializeBooking(await CreateNewBooking());
                 FilteredRoomList.Clear();
+                AvailableHotels = null;
+
                 Payment = new Payment();
                 BookedMessage = string.Empty;
                 HB = false;

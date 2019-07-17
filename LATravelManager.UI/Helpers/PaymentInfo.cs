@@ -5,6 +5,7 @@ using LATravelManager.Model.BookingData;
 using LATravelManager.Model.People;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Group;
+using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Views.Bansko;
 using System;
@@ -18,11 +19,18 @@ namespace LATravelManager.UI.Helpers
 
         #region Constructors
 
-        public PaymentInfo(MainViewModel mainViewModel)
+        public PaymentInfo(MainViewModel mainViewModel, EconomicData_ViewModel parent)
         {
             Payments = new ObservableCollection<Payment>();
             OpenBookingCommand = new RelayCommand(async () => { await OpenBooking(); }, CanOpenBooking);
+            ConfirmPaymentCommand = new RelayCommand(async () => { await ConfirmPayment(); }, CanConfirmPayment);
             MainViewModel = mainViewModel;
+            Parent = parent;
+        }
+
+        private bool CanConfirmPayment()
+        {
+            return SelectedPayment != null;
         }
 
         #endregion Constructors
@@ -123,6 +131,7 @@ namespace LATravelManager.UI.Helpers
         }
 
         public RelayCommand OpenBookingCommand { get; set; }
+        public RelayCommand ConfirmPaymentCommand { get; set; }
 
         public ObservableCollection<Payment> Payments
         {
@@ -161,7 +170,6 @@ namespace LATravelManager.UI.Helpers
                 RaisePropertyChanged();
             }
         }
-
         public Payment SelectedPayment
         {
             get
@@ -238,6 +246,7 @@ namespace LATravelManager.UI.Helpers
         }
 
         public MainViewModel MainViewModel { get; }
+        public EconomicData_ViewModel Parent { get; }
 
         #endregion Properties
 
@@ -287,6 +296,19 @@ namespace LATravelManager.UI.Helpers
                 NewReservation_Group_ViewModel viewModel = new NewReservation_Group_ViewModel(MainViewModel);
                 await viewModel.LoadAsync(SelectedPayment.Booking.Id);
                 MessengerInstance.Send(new OpenChildWindowCommand(new EditBooking_Bansko_Window(), viewModel));
+            }
+            catch (Exception ex)
+            {
+                MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
+            }
+        }
+
+        private async Task ConfirmPayment()
+        {
+            try
+            {
+                SelectedPayment.Checked = !SelectedPayment.Checked;
+                await Parent.Context.SaveAsync();
             }
             catch (Exception ex)
             {

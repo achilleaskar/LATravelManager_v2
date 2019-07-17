@@ -36,6 +36,12 @@
                             <iconPacks:PackIconFontAwesome Kind="EditRegular" />
                         </MenuItem.Icon>
                     </MenuItem>
+                    <MenuItem Header="Επιβεβαιώθηκε"
+                              Command="{Binding DataContext.ConfirmPaymentCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}">
+                        <MenuItem.Icon>
+                            <iconPacks:PackIconFontAwesome Kind="CheckSquareRegular" />
+                        </MenuItem.Icon>
+                    </MenuItem>
                 </ContextMenu>
             </DataGrid.Resources>
             <DataGrid.RowStyle>
@@ -48,6 +54,8 @@
                 </Style>
             </DataGrid.RowStyle>
             <DataGrid.Columns>
+                <DataGridCheckBoxColumn Binding="{Binding Checked}"
+                                        IsReadOnly="True" />
                 <DataGridTextColumn Header="Ημερομηνίες"
                                     Binding="{Binding Booking.Dates }" />
                 <DataGridTextColumn Header="Εκδρομή"
@@ -115,7 +123,6 @@
                        Grid.Row="0"
                        Grid.Column="3" />
             <Label Content="Alpha Bank:"
-                   
                    Grid.Row="1"
                    Grid.Column="2" />
             <TextBlock Text="{Binding AlphaBank,StringFormat=c2}"
