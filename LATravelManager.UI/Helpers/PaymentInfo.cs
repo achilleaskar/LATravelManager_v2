@@ -1,13 +1,16 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
-using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.People;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Group;
+using LATravelManager.UI.ViewModel.CategoriesViewModels.Personal;
+using LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty;
 using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Views.Bansko;
+using LATravelManager.UI.Views.Personal;
+using LATravelManager.UI.Views.ThirdParty;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -16,8 +19,11 @@ namespace LATravelManager.UI.Helpers
 {
     public class PaymentInfo : ViewModelBase
     {
-
         #region Constructors
+
+        public PaymentInfo()
+        {
+        }
 
         public PaymentInfo(MainViewModel mainViewModel, EconomicData_ViewModel parent)
         {
@@ -170,6 +176,7 @@ namespace LATravelManager.UI.Helpers
                 RaisePropertyChanged();
             }
         }
+
         public Payment SelectedPayment
         {
             get
@@ -207,6 +214,7 @@ namespace LATravelManager.UI.Helpers
                 RaisePropertyChanged();
             }
         }
+
         public User User
         {
             get
@@ -267,12 +275,15 @@ namespace LATravelManager.UI.Helpers
                     case 1:
                         Peiraios += payment.Amount;
                         break;
+
                     case 2:
                         Ethniki += payment.Amount;
                         break;
+
                     case 3:
                         Eurobank += payment.Amount;
                         break;
+
                     case 4:
                         AlphaBank += payment.Amount;
                         break;
@@ -281,9 +292,9 @@ namespace LATravelManager.UI.Helpers
                         VISA += payment.Amount;
                         break;
                 }
-
             }
         }
+
         private bool CanOpenBooking()
         {
             return SelectedPayment != null;
@@ -293,9 +304,24 @@ namespace LATravelManager.UI.Helpers
         {
             try
             {
-                NewReservation_Group_ViewModel viewModel = new NewReservation_Group_ViewModel(MainViewModel);
-                await viewModel.LoadAsync(SelectedPayment.Booking.Id);
-                MessengerInstance.Send(new OpenChildWindowCommand(new EditBooking_Bansko_Window(), viewModel));
+                if (SelectedPayment.Personal_Booking!=null)
+                {
+                    NewReservation_Personal_ViewModel viewModel = new NewReservation_Personal_ViewModel(MainViewModel);
+                    await viewModel.LoadAsync(SelectedPayment.Personal_Booking.Id);
+                    MessengerInstance.Send(new OpenChildWindowCommand(new EditPersonalBooking_Window(), viewModel));
+                }
+                else if (SelectedPayment.ThirdParty_Booking != null)
+                { 
+                    NewReservation_ThirdParty_VIewModel viewModel = new NewReservation_ThirdParty_VIewModel(MainViewModel);
+                    await viewModel.LoadAsync(SelectedPayment.ThirdParty_Booking.Id);
+                    MessengerInstance.Send(new OpenChildWindowCommand(new Edit_ThirdParty_Booking_Window(), viewModel));
+                }
+                else
+                {
+                    NewReservation_Group_ViewModel viewModel = new NewReservation_Group_ViewModel(MainViewModel);
+                    await viewModel.LoadAsync(SelectedPayment.Booking.Id);
+                    MessengerInstance.Send(new OpenChildWindowCommand(new EditBooking_Bansko_Window(), viewModel));
+                }
             }
             catch (Exception ex)
             {
@@ -307,7 +333,14 @@ namespace LATravelManager.UI.Helpers
         {
             try
             {
-                SelectedPayment.Checked = !SelectedPayment.Checked;
+                if (SelectedPayment.Checked != true)
+                    SelectedPayment.Checked = true;
+                else
+                    if (SelectedPayment.PaymentMethod != 0 && SelectedPayment.PaymentMethod != 5)
+                    SelectedPayment.Checked = null;
+                else
+                    SelectedPayment.Checked = false;
+
                 await Parent.Context.SaveAsync();
             }
             catch (Exception ex)
@@ -317,6 +350,5 @@ namespace LATravelManager.UI.Helpers
         }
 
         #endregion Methods
-
     }
 }

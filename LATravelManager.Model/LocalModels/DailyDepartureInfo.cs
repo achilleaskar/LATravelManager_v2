@@ -377,7 +377,7 @@ namespace LATravelManager.Model.LocalModels
         //                Process.Start(wbPath);
         //            }
         //            else
-        //                MessageBox.Show("Δέν υπάρχουν άτομα που να πηγαίνουν τις συγκεκριμένες ημέρες απο τις επιλεγμένες πόλεις", "Σφάλμα");
+        //                MessageBox.Show("Δέν υπάρχουν άτομα που να πηγαίνουν τις συγκεκριμένες ημέρες από τις επιλεγμένες πόλεις", "Σφάλμα");
         //            break;
 
         //        case 3:
@@ -425,7 +425,7 @@ namespace LATravelManager.Model.LocalModels
         //                Process.Start(wbPath);
         //            }
         //            else
-        //                MessageBox.Show("Δέν υπάρχουν άτομα που να επιστρέφουν τις συγκεκριμένες ημέρες απο Σκιάθο", "Σφάλμα");
+        //                MessageBox.Show("Δέν υπάρχουν άτομα που να επιστρέφουν τις συγκεκριμένες ημέρες από Σκιάθο", "Σφάλμα");
         //            break;
 
         //        case 4:
@@ -440,7 +440,7 @@ namespace LATravelManager.Model.LocalModels
         //                                    break;
         //                                }
 
-        //            wbPath = GetPath("\\Λίστα Λεωφορείου επιστροφής απο Σκιάθο " + Date.ToString("dd_MM_yy"));
+        //            wbPath = GetPath("\\Λίστα Λεωφορείου επιστροφής από Σκιάθο " + Date.ToString("dd_MM_yy"));
 
         //            myWorksheet.Cells["A2"].Value = "Επιστροφή - " + Date.ToString("dd/MM/yyyy");
         //            lineNum = 5;
@@ -499,7 +499,7 @@ namespace LATravelManager.Model.LocalModels
         //                Process.Start(wbPath);
         //            }
         //            else
-        //                MessageBox.Show("Δέν υπάρχουν άτομα που να επιστρέφουν τις συγκεκριμένες ημέρες απο Σκιάθο", "Σφάλμα");
+        //                MessageBox.Show("Δέν υπάρχουν άτομα που να επιστρέφουν τις συγκεκριμένες ημέρες από Σκιάθο", "Σφάλμα");
         //            break;
         //    }
         //}

@@ -33,7 +33,8 @@ namespace LATravelManager.UI.Helpers
         {
             if (selectedReservation.ExcursionType == Model.Enums.ExcursionTypeEnum.ThirdParty)
             {
-                throw new Exception("Mphkse sta tritwn");
+                Context.DeletePayments(selectedReservation.ThirdPartyModel.Id);
+                Context.Delete(selectedReservation.ThirdPartyModel.Model);
             }
             else if (selectedReservation.ExcursionType == Model.Enums.ExcursionTypeEnum.Personal)
             {

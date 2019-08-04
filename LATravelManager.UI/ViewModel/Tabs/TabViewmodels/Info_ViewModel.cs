@@ -746,7 +746,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         {
             try
             {
-                Thread.Sleep(0);
+                await Task.Delay(0);
                 Context = new GenericRepository();
 
                 Excursions = new ObservableCollection<Excursion>(MainViewModel.BasicDataManager.Excursions.OrderBy(e => e.ExcursionDates.OrderBy(ed => ed.CheckIn).FirstOrDefault().CheckIn));
@@ -858,7 +858,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                         if (b.DifferentDates)
                         {
                         }
-                        if (b.ExcursionDate == datePair)
+                        if (b.ExcursionDate.Id == datePair.Id)
                         {
                             foreach (var r in b.ReservationsInBooking)
                                 foreach (Customer customer in r.CustomersList)

@@ -2,6 +2,7 @@
 using LATravelManager.Model.People;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using static LATravelManager.Model.Enums;
 
 namespace LATravelManager.Model.BookingData
@@ -9,6 +10,14 @@ namespace LATravelManager.Model.BookingData
     public class Reservation : EditTracker
     {
         #region Constructors
+
+        [NotMapped]
+        public string LastHotel { get; set; }
+        [NotMapped]
+        public string LastCustomers { get; set; }
+
+        [NotMapped]
+        public string LastRoomtype { get; set; }
 
         public Reservation()
         {

@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using LATravelManager.Model.BookingData;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace LATravelManager.Model.People
 {
@@ -12,6 +14,8 @@ namespace LATravelManager.Model.People
         [StringLength(20, MinimumLength = 3)]
         public string Name { get; set; }
 
+
+        public List<Booking> Bookings { get; set; }
         public string Note { get; set; }
 
         [Required]

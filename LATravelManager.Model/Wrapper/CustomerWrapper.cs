@@ -62,11 +62,11 @@ namespace LATravelManager.UI.Helpers
         {
             get
             {
-                if (Reservation==null )
+                if (Reservation == null)
                 {
                     return DateTime.Today;
                 }
-                if ( Reservation.Booking.DifferentDates)
+                if (Reservation.Booking.DifferentDates)
                 {
                     return GetValue<DateTime>();
                 }
@@ -314,7 +314,7 @@ namespace LATravelManager.UI.Helpers
 
         {
             get { return GetValue<string>(); }
-            set { SetValue(value); }
+            set { SetValue(string.IsNullOrEmpty(value)?null:value); }
         }
 
         #endregion Properties

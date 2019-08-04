@@ -46,6 +46,7 @@ namespace LATravelManager.DataAccess
         public DbSet<Partner> Partners { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Personal_Booking> Personal_Bookings { get; set; }
+        public DbSet<ThirdParty_Booking> ThirdParty_Bookings { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<Room> Rooms { get; set; }
         public DbSet<RoomType> RoomTypes { get; set; }

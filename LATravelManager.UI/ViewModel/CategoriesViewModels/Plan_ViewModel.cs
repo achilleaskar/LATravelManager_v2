@@ -14,6 +14,7 @@ using LATravelManager.UI.Wrapper;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -358,7 +359,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
 
         public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
-            Hotels = MainViewModel.BasicDataManager.Hotels;
+            Hotels = new ObservableCollection<Hotel>(MainViewModel.BasicDataManager.Hotels.Where(h => h.City.Id == 15));
             RoomTypes = MainViewModel.BasicDataManager.RoomTypes;
             SetColorsList();
             await Task.Delay(0);
@@ -562,14 +563,60 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
                 date = date.AddDays(1);
             }
 
-            FilteredPlanList = new ObservableCollection<HotelWrapper>(await RoomsManager.GetAllAvailableRooms(From, To.AddDays(1), ParentExcursionCategory.SelectedExcursion,true,
+            FilteredPlanList = new ObservableCollection<HotelWrapper>(await RoomsManager.GetAllAvailableRooms(From, To.AddDays(1), ParentExcursionCategory.SelectedExcursion, true,
                 selectedRoomType: ((SelectedRoomTypeIndex > 0) ? RoomTypes[SelectedRoomTypeIndex - 1] : null),
                 selectedHotel: (SelectedHotelIndex > 0) ? Hotels[SelectedHotelIndex - 1] : null,
                 PeopleCount));
 
+            decimal total = 0, free = 0;
             FilteredPlanList = MergeRooms(FilteredPlanList);
+            foreach (HotelWrapper h in FilteredPlanList)
+            {
+                foreach (var r in h.RoomWrappers)
+                {
+                    foreach (var day in r.PlanDailyInfo)
+                    {
+                        if (day.RoomState != RoomStateEnum.Allotment && day.RoomState != RoomStateEnum.NotAvailable && day.RoomState != RoomStateEnum.OverBookedByMistake)
+                        {
+                            total++;
+                            if (day.RoomState != RoomStateEnum.Available)
+                            {
+                                free++;
+                            }
+                        }
+                    }
+                }
+            }
+
+            Fullness = free / total;
+
             RaisePropertyChanged(nameof(IsPlanVisible));
             Mouse.OverrideCursor = Cursors.Arrow;
+        }
+
+
+
+
+        private decimal _Fullness;
+
+
+        public decimal Fullness
+        {
+            get
+            {
+                return _Fullness;
+            }
+
+            set
+            {
+                if (_Fullness == value)
+                {
+                    return;
+                }
+
+                _Fullness = value;
+                RaisePropertyChanged();
+            }
         }
 
         private async Task ViewReservation(ReservationWrapper obj)

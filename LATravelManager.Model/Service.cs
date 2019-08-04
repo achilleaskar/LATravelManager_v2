@@ -7,55 +7,77 @@ namespace LATravelManager.Model.Services
 {
     public abstract class Service : EditTracker
     {
+        #region Constructors
+
         public Service()
         {
             TimeGo = DateTime.Now;
         }
+
+        #endregion Constructors
+
+        #region Fields
+
+        private bool _Allerretour;
+        private string _CompanyInfo;
         private string _From;
 
 
 
 
+        private decimal _NetPrice;
         private decimal _Profit;
 
 
-        public decimal Profit
+        private DateTime _TimeGo;
+
+        private DateTime _TimeReturn;
+
+        private string _To;
+
+        #endregion Fields
+
+        #region Properties
+
+        public bool Allerretour
         {
             get
             {
-                return _Profit;
+                return _Allerretour;
             }
 
             set
             {
-                if (_Profit == value)
+                if (_Allerretour == value)
                 {
                     return;
                 }
 
-                _Profit = value;
+                _Allerretour = value;
                 RaisePropertyChanged();
             }
         }
 
-        public string To
+        public string CompanyInfo
         {
             get
             {
-                return _To;
+                return _CompanyInfo;
             }
 
             set
             {
-                if (_To == value)
+                if (_CompanyInfo == value)
                 {
                     return;
                 }
 
-                _To = value;
+                _CompanyInfo = value;
                 RaisePropertyChanged();
             }
         }
+
+        public List<Customer> Customers { get; set; }
 
         public string From
         {
@@ -76,31 +98,45 @@ namespace LATravelManager.Model.Services
             }
         }
 
-        private bool _Allerretour;
-
-        public bool Allerretour
+        public decimal NetPrice
         {
             get
             {
-                return _Allerretour;
+                return _NetPrice;
             }
 
             set
             {
-                if (_Allerretour == value)
+                if (_NetPrice == value)
                 {
                     return;
                 }
 
-                _Allerretour = value;
+                _NetPrice = value;
                 RaisePropertyChanged();
             }
         }
-        [NotMapped]
-        public string Tittle { get; set; }
 
-        private DateTime _TimeReturn;
-        private DateTime _TimeGo;
+        public decimal PricePerPerson => Customers == null || Customers.Count == 0 || NetPrice == 0 ? 0 : NetPrice / Customers.Count;
+
+        public decimal Profit
+        {
+            get
+            {
+                return _Profit;
+            }
+
+            set
+            {
+                if (_Profit == value)
+                {
+                    return;
+                }
+
+                _Profit = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public DateTime TimeGo
         {
@@ -121,27 +157,6 @@ namespace LATravelManager.Model.Services
                 {
                     TimeReturn = _TimeGo.AddDays(3);
                 }
-                RaisePropertyChanged();
-            }
-        }
-
-        private string _CompanyInfo;
-
-        public string CompanyInfo
-        {
-            get
-            {
-                return _CompanyInfo;
-            }
-
-            set
-            {
-                if (_CompanyInfo == value)
-                {
-                    return;
-                }
-
-                _CompanyInfo = value;
                 RaisePropertyChanged();
             }
         }
@@ -169,40 +184,38 @@ namespace LATravelManager.Model.Services
             }
         }
 
-        public decimal PricePerPerson => Customers == null || Customers.Count == 0 || NetPrice == 0 ? 0 : NetPrice / Customers.Count;
+        [NotMapped]
+        public string Tittle { get; set; }
 
-     
-
-
-
-        private decimal _NetPrice;
-        private string _To;
-
-        public decimal NetPrice
+        public string To
         {
             get
             {
-                return _NetPrice;
+                return _To;
             }
 
             set
             {
-                if (_NetPrice == value)
+                if (_To == value)
                 {
                     return;
                 }
 
-                _NetPrice = value;
+                _To = value;
                 RaisePropertyChanged();
             }
         }
 
-        public List<Customer> Customers { get; set; }
+        #endregion Properties
+
+        #region Methods
 
         public override string ToString()
         {
             return Tittle;
         }
+
+        #endregion Methods
     }
 
 }

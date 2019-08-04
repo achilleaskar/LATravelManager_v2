@@ -1,0 +1,34 @@
+﻿<UserControl x:Class="LATravelManager.UI.Views.ThirdPartyUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty"
+             xmlns:views="clr-namespace:LATravelManager.UI.Views.ThirdParty"
+             xmlns:categories="clr-namespace:LATravelManager.UI.ViewModel.CategoriesViewModels"
+             xmlns:view="clr-namespace:LATravelManager.UI.Views"
+             mc:Ignorable="d"
+             d:DesignHeight="450"
+             Background="AliceBlue"
+             d:DesignWidth="800">
+    <UserControl.Resources>
+        <DataTemplate DataType="{x:Type viewmodels:NewReservation_ThirdParty_VIewModel}">
+            <views:NewReservation_ThirdParty_UserControl />
+        </DataTemplate>
+        <!--<DataTemplate DataType="{x:Type categories:Plan_ViewModel}">
+            <view:Plan_UserControl />
+        </DataTemplate>-->
+        <!--<DataTemplate DataType="{x:Type viewmodels:MoveReservation_Bansko_ViewModel}">
+            <views:MoveReservation_Bansko_UserControl />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:Lists_Bansko_ViewModel}">
+            <views:Lists_Bankso_UserControl />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:OptionalActivities_Bansko_ViewModel}">
+            <views:OptionalActivities_Bansko_UserControl />
+        </DataTemplate>-->
+    </UserControl.Resources>
+    <Grid>
+        <ContentControl Content="{Binding SelectedChildViewModel}" />
+    </Grid>
+</UserControl>

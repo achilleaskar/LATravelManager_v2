@@ -14,7 +14,7 @@
              d:DesignHeight="700"
              d:DesignWidth="1200">
     <UserControl.Resources>
-        <converters:BrushColorConverter x:Key="BrushColorConverter" />
+        <converters:BoolToColorConverter x:Key="BrushColorConverter" />
         <converters:UserToVisibility x:Key="UserToVisibilityConverter" />
         <converters:FloadToStringValueConverter x:Key="FtoSConverter" />
         <converters:SelectedIndexToForegroundConverter x:Key="SelectedIndexToForegroundConverter" />
@@ -650,6 +650,16 @@
                               SelectedItem="{Binding SelectedCustomer}"
                               CanUserAddRows="True">
                         <DataGrid.Resources>
+                            <ContextMenu x:Key="ItemContextMenu">
+                                <MenuItem Header="Διαγραφη"
+                                          Command="{Binding DataContext.DeleteSelectedCustomersCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}">
+                                    <MenuItem.Icon>
+                                        <Image MaxHeight="20"
+                                               Stretch="Fill" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+
+                            </ContextMenu>
                             <Style TargetType="{x:Type ComboBox}">
                                 <Setter Property="Margin"
                                         Value="0" />
@@ -805,7 +815,7 @@
                             Margin="5,5,5,0"
                             Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}"
                             Command="{Binding AddCustomerCommand}" />
-                    <Button Content="Προσθήκη απο αρχείο"
+                    <Button Content="Προσθήκη από αρχείο"
                             Margin="5,5,5,0"
                             Command="{Binding AddFromFileCommand}" />
                     <Button Content="Read Next Line"

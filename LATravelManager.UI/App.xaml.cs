@@ -71,14 +71,14 @@ namespace LATravelManager.UI
             mainWindow.WindowState = WindowState.Maximized;
         }
 
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+       // private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private void Application_DispatcherUnhandledException(object sender,
           System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             MessageBox.Show("Unexpected error occured. Please inform the admin."
               + Environment.NewLine + e.Exception.Message, "Unexpected error");
-            log.Error("error", e.Exception);
+           // log.Error("error", e.Exception);
             e.Handled = true;
         }
     }

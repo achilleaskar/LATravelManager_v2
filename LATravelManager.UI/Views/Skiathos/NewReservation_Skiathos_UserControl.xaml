@@ -14,7 +14,7 @@
              d:DesignHeight="700"
              d:DesignWidth="1200">
     <UserControl.Resources>
-        <converters:BrushColorConverter x:Key="BrushColorConverter" />
+        <converters:BoolToColorConverter x:Key="BrushColorConverter" />
         <converters:UserToVisibility x:Key="UserToVisibilityConverter" />
         <converters:FloadToStringValueConverter x:Key="FtoSConverter" />
         <converters:RoomsLeftToVisibilityConverter x:Key="RoomsLeftToVisibilityConverter" />
@@ -77,8 +77,8 @@
                                 <Style TargetType="{x:Type ListViewItem}">
                                     <EventSetter Event="Control.MouseDoubleClick"
                                                  Handler="ListView_MouseDoubleClick" />
-                                    <Setter Property="Foreground"
-                                            Value="{Binding Converter={StaticResource BrushColorConverter}}" />
+                                    <!--<Setter Property="Foreground"
+                                            Value="{Binding Converter={StaticResource BrushColorConverter}}" />-->
                                 </Style>
                             </ListView.Resources>
                             <ListView.View>
@@ -557,7 +557,7 @@
                                              Margin="0,5"
                                              HorizontalAlignment="Center"
                                              Grid.Column="1"
-                                             Text="{Binding Payment.Amount,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                             Text="{Binding Payment.Amount,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                              Width="50" />
                                 </StackPanel>
                                 <StackPanel Grid.Column="1"
@@ -671,6 +671,7 @@
                               LoadingRow="DataGrid_LoadingRow"
                               PreparingCellForEdit="CustomersDataGrid_PreparingCellForEdit"
                               x:Name="CustomersDataGrid"
+                              CanUserDeleteRows="False"
                               KeyUp="DataGrid_KeyDown"
                               HorizontalAlignment="Left"
                               ItemsSource="{Binding BookingWr.CustomersCV, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -683,6 +684,17 @@
                                         Value="0" />
                             </Style>
                         </DataGrid.Resources>
+                        <DataGrid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Διαγραφη"
+                                          Command="{Binding DeleteSelectedCustomersCommand}">
+                                    <MenuItem.Icon>
+                                        <Image MaxHeight="20"
+                                               Stretch="Fill" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
                         <DataGrid.RowStyle>
                             <StaticResource ResourceKey="RowStyle" />
                         </DataGrid.RowStyle>
@@ -737,7 +749,7 @@
                                                 Width="35"
                                                 FontWeight="DemiBold"
                                                 FontSize="14"
-                                                Binding="{Binding Price, UpdateSourceTrigger=PropertyChanged}" />
+                                                Binding="{Binding Price,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"/>
                             <DataGridTemplateColumn Header="Γέννηση"
                                                     CellStyle="{StaticResource DataGridCellStyle}"
                                                     Visibility="{Binding DataContext.SelectedExcursion.DOBNeeded, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">
@@ -876,7 +888,7 @@
                             Margin="5,5,5,0"
                             Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}"
                             Command="{Binding AddCustomerCommand}" />
-                    <Button Content="Προσθήκη απο αρχείο"
+                    <Button Content="Προσθήκη από αρχείο"
                             Margin="5,5,5,0"
                             Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}"
                             Command="{Binding AddFromFileCommand}" />

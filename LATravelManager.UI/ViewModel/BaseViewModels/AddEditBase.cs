@@ -207,7 +207,7 @@ namespace LaTravelManager.BaseTypes
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
                 await BasicDataManager.SaveAsync();
-                ResultMessage = "Όι αλλαγές αποθηκεύτηκαν επιτυχώς";
+                ResultMessage = "Όι αλλαγές απόθηκεύτηκαν επιτυχώς";
             }
             catch (Exception ex)
             {

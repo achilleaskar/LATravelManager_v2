@@ -51,7 +51,7 @@ namespace LATravelManager.Model.People
 
         [Required(ErrorMessage = "Το όνομα είναι υποχρεωτικό")]
         [RegularExpression(@"^[a-z A-Z]+$", ErrorMessage = "Παρακαλώ χρησιμοποιήστε μόνο λατινικούς χαρακτήρες")]
-        [StringLength(20, MinimumLength = 3, ErrorMessage = "Το Όνομα μπορεί να είναι απο 3 έως 20 χαρακτήρες")]
+        [StringLength(20, MinimumLength = 3, ErrorMessage = "Το Όνομα μπορεί να είναι από 3 έως 20 χαρακτήρες")]
         public string Name { get; set; }
 
         public OptionalExcursion OptionalExcursion { get; set; }
@@ -71,7 +71,7 @@ namespace LATravelManager.Model.People
 
         [Required(ErrorMessage = "Το επίθετο είναι υποχρεωτικό.")]
         [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Παρακαλώ χρησιμοπποιήστε μόνο λατινικούς χαρακτήρες")]
-        [StringLength(20, MinimumLength = 3, ErrorMessage = "Το Επίθετο μπορεί να είναι απο 3 έως 20 χαρακτήρες")]
+        [StringLength(20, MinimumLength = 3, ErrorMessage = "Το Επίθετο μπορεί να είναι από 3 έως 20 χαρακτήρες")]
         public string Surename { get; set; }
 
         [StringLength(18, MinimumLength = 10, ErrorMessage = "Το τηλέφωνο πρέπει να είναι τουλάχιστον 10 χαρακτήρες")]

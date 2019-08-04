@@ -14,6 +14,7 @@ using LATravelManager.UI.ViewModel.CategoriesViewModels;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Views.Universal;
 using LATravelManager.UI.Wrapper;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -50,8 +51,10 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             DeletePaymentCommand = new RelayCommand(DeletePayment, CanDeletePayment);
             PrintRecieptCommand = new RelayCommand(PrintReciept);
 
+            DeleteSelectedCustomersCommand = new RelayCommand(DeleteSelectedCustomers, CanDeleteCustomers);
+
             UpdateAllCommand = new RelayCommand(async () => { await UpdateAll(); }, CanUpdateAll);
-            ShowAltairnativesCommand = new RelayCommand( ShowAlernatives, CanShowAltairnatives);
+            ShowAltairnativesCommand = new RelayCommand(ShowAlernatives, CanShowAltairnatives);
 
             BookRoomNoNameCommand = new RelayCommand<RoomType>(async (obj) => { await MakeNonameReservation(obj); }, CanMakeNoNameReservation);
             OverBookHotelCommand = new RelayCommand(async () => { await OverBookHotelAsync(); }, CanOverBookHotel);
@@ -67,14 +70,40 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             PrintContractCommand = new RelayCommand(PrintContract, CanPrintDoc);
             Payment = new Payment();
 
+            ToggleDisabilityCommand = new RelayCommand(ToggleDisability, CanToggleDisability);
+
             FilteredRoomList = new ObservableCollection<RoomWrapper>();
             SelectedUserIndex = -1;
             Emails = new ObservableCollection<Email>();
         }
 
+        private bool CanDeleteCustomers()
+        {
+            return BookingWr.Customers.Any(c => c.IsSelected);
+        }
+
+        private bool CanToggleDisability()
+        {
+            return BookingWr!=null && !string.IsNullOrEmpty(BookingWr.CancelReason);
+        }
+
+        private void ToggleDisability()
+        {
+            if (BookingWr.Disabled)
+            {
+                BookingWr.Disabled = false;
+            }
+            else
+            {
+                BookingWr.DisableDate = DateTime.Now;
+                BookingWr.DisabledBy = StartingRepository.GetById<User>(StaticResources.User.Id);
+                BookingWr.Disabled = true;
+            }
+        }
+
         private void ShowAlernatives()
         {
-            var vm = new Availabilities_ViewModel(AvailableHotels, BookingWr.CheckIn, BookingWr.CheckOut,(SelectedRoomTypeIndex==0?null:RoomTypes[SelectedRoomTypeIndex-1]),(SelectedHotelIndex == 0 ? null : Hotels[SelectedHotelIndex - 1]));
+            var vm = new Availabilities_ViewModel(AvailableHotels, BookingWr.CheckIn, BookingWr.CheckOut, (SelectedRoomTypeIndex == 0 ? null : RoomTypes[SelectedRoomTypeIndex - 1]), (SelectedHotelIndex == 0 ? null : Hotels[SelectedHotelIndex - 1]));
             Availabilities_Window window = new Availabilities_Window();
             window.DataContext = vm;
             window.ShowDialog();
@@ -82,7 +111,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         private bool CanShowAltairnatives()
         {
-            return AvailableHotels != null && FilteredRoomList!=null;
+            return AvailableHotels != null && FilteredRoomList != null;
         }
 
         private bool CanAddOneDay()
@@ -587,6 +616,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         }
 
         public RelayCommand SaveCommand { get; set; }
+        public RelayCommand ToggleDisabilityCommand { get; set; }
 
         public CustomerWrapper SelectedCustomer
         {
@@ -757,7 +787,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 _SelectedRoomTypeIndex = value;
                 RaisePropertyChanged();
                 AvailableHotels = null;
-
             }
         }
 
@@ -785,6 +814,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         public RelayCommand ShowFilteredRoomsCommand { get; set; }
         public GenericRepository StartingRepository { get; set; }
         public RelayCommand UpdateAllCommand { get; set; }
+        public RelayCommand DeleteSelectedCustomersCommand { get; set; }
         public RelayCommand ShowAltairnativesCommand { get; set; }
 
         public ObservableCollection<User> Users
@@ -833,7 +863,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
             if (showMessage)
             {
-                MessengerInstance.Send(new ShowExceptionMessage_Message("Καποιοι πελάτες δεν διαγράφηκαν επειδή συμμετέχουν σε κράτηση. Παλακαλώ κάντε τους CheckOut και δοκιμάστε ξανά!"));
+                MessengerInstance.Send(new ShowExceptionMessage_Message("Καπόιοι πελάτες δεν διαγράφηκαν επειδή συμμετέχουν σε κράτηση. Παλακαλώ κάντε τους CheckOut και δοκιμάστε ξανά!"));
             }
         }
 
@@ -849,7 +879,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             try
             {
                 Mouse.OverrideCursor = Cursors.Wait;
-                if (BookingWr.CheckIn==BookingWr.CheckOut)
+                if (BookingWr.CheckIn == BookingWr.CheckOut)
                 {
                     return;
                 }
@@ -863,7 +893,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 //    BasicDataManager = new GenericRepository();
                 //}
                 RoomsManager = new RoomsManager();
-                AvailableHotels = new ObservableCollection<HotelWrapper>((await RoomsManager.GetAllAvailableRooms(BookingWr.CheckIn, BookingWr.CheckOut, SelectedExcursion,false, unSavedBooking: BookingWr.Model)));
+                AvailableHotels = new ObservableCollection<HotelWrapper>((await RoomsManager.GetAllAvailableRooms(BookingWr.CheckIn, BookingWr.CheckOut, SelectedExcursion, false, unSavedBooking: BookingWr.Model)));
                 FilteredRoomList = new ObservableCollection<RoomWrapper>();
                 List<RoomWrapper> tmplist = new List<RoomWrapper>();
 
@@ -874,7 +904,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 {
                     foreach (RoomWrapper room in hotel.RoomWrappers)
                     {
-
                         allotmentDays = 0;
                         isfree = addThis = true;
 
@@ -1032,7 +1061,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
                 ShowFilteredRoomsCommand.RaiseCanExecuteChanged();
                 Mouse.OverrideCursor = Cursors.Arrow;
-
             }
         }
 
@@ -1116,12 +1144,12 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                     {
                         SelectedUserIndex = Users.IndexOf(Users.Where(x => x.Id == userId).FirstOrDefault());
                     }
-#if DEBUG
-                    if (SelectedRoomTypeIndex == 0)
-                    {
-                        SelectedRoomTypeIndex = 1;
-                    }
-#endif
+                    //#if DEBUG
+                    //                    if (SelectedRoomTypeIndex == 0)
+                    //                    {
+                    //                        SelectedRoomTypeIndex = 1;
+                    //                    }
+                    //#endif
                     if (BookingWr.Id > 0 && BookingWr.IsPartners)
                     {
                         SelectedPartnerIndex = Partners.IndexOf(Partners.Where(p => p.Id == BookingWr.Partner.Id).FirstOrDefault());
@@ -1145,12 +1173,13 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         private void AddFromFile()
         {
-            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog
+           OpenFileDialog dlg = new OpenFileDialog
             {
                 FileName = "Document", // Default file name
                 DefaultExt = ".txt", // Default file extension
-                Filter = "Excel Documents (.xlsx)|*.xlsx" // Filter files by extension
-            };
+                Filter = "Excel Documents (.xlsx)|*.xlsx", // Filter files by extension
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
+        };
             string localError = string.Empty;
             // Show open file dialog box
             bool? result = dlg.ShowDialog();
@@ -1461,6 +1490,27 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         {
             try
             {
+                bool delete;
+                foreach (Reservation r in BookingWr.ReservationsInBooking)
+                {
+                    delete = true;
+                    foreach (var c in r.CustomersList)
+                    {
+                        if (!BookingWr.Customers.Where(c1 => c1.Id == c.Id).FirstOrDefault().IsSelected)
+                        {
+                            delete = false;
+                        }
+                    }
+
+                    if (delete)
+                    {
+                        var rw = new ReservationWrapper(r);
+                        r.LastHotel = rw.HotelName;
+                        r.LastRoomtype = rw.RoomTypeName;
+                        r.LastCustomers = rw.Names;
+                    }
+                }
+
                 List<Reservation> toRemove = new List<Reservation>();
                 foreach (CustomerWrapper c in BookingWr.Customers)
                 {
@@ -1510,7 +1560,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             MessageBoxResult result = MessageBoxResult.Yes;
             if (HasChanges)
             {
-                result = MessageBox.Show("Υπάρχουν μη αποθηκευμένες αλλαγές, θέλετε σίγουρα να κλείσετε?", "Προσοχή", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                result = MessageBox.Show("Υπάρχουν μη απόθηκευμένες αλλαγές, θέλετε σίγουρα να κλείσετε?", "Προσοχή", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             }
             if (result == MessageBoxResult.Yes)
             {
@@ -1528,8 +1578,8 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 IsPartners = false;
                 SelectedHotelIndex = 0;
                 RaisePropertyChanged(nameof(IsPartners));
+                StartingRepository.RejectChanges();
             }
-            StartingRepository.RejectChanges();
         }
 
         private void DeletePayment()
@@ -1840,7 +1890,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 BookingWr = await NewReservationHelper.SaveAsync(StartingRepository, Payment, BookingWr);
                 FilteredRoomList.Clear();
                 Payment = new Payment();
-                BookedMessage = "H κράτηση αποθηκέυτηκε επιτυχώς";
+                BookedMessage = "H κράτηση απόθηκέυτηκε επιτυχώς";
                 HasChanges = false;
                 MessengerInstance.Send(new ReservationChanged_Message(BookingWr.Model));
             }

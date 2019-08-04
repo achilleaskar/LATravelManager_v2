@@ -14,6 +14,27 @@ namespace LATravelManager.UI.Wrapper
 {
     public class Personal_BookingWrapper : ModelWrapper<Personal_Booking>
     {
+
+        public string CancelReason
+        {
+            get { return GetValue<string>(); }
+            set { SetValue(value); }
+        }
+        public bool Disabled
+        {
+            get { return GetValue<bool>(); }
+            set { SetValue(value); }
+        }
+        public DateTime? DisableDate
+        {
+            get { return GetValue<DateTime?>(); }
+            set { SetValue(value); }
+        }
+        public User DisabledBy
+        {
+            get { return GetValue<User>(); }
+            set { SetValue(value); }
+        }
         #region Constructors
 
         public Personal_BookingWrapper() : this(new Personal_Booking())
@@ -363,7 +384,7 @@ namespace LATravelManager.UI.Wrapper
 
         private string GetNames()
         {
-            throw new NotImplementedException();
+            return "";
         }
 
         private void Payments_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

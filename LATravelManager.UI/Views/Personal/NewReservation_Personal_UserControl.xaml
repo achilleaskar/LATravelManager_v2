@@ -18,7 +18,7 @@
              d:DesignHeight="700"
              d:DesignWidth="1210">
     <UserControl.Resources>
-        <converters:BrushColorConverter x:Key="BrushColorConverter" />
+        <converters:BoolToColorConverter x:Key="BrushColorConverter" />
         <converters:UserToVisibility x:Key="UserToVisibilityConverter" />
         <converters:FloadToStringValueConverter x:Key="floatToStringConverter" />
         <converters:SelectedIndexToForegroundConverter x:Key="SelectedIndexToForegroundConverter" />

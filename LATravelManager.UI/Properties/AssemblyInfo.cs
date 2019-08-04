@@ -1,5 +1,4 @@
-﻿using log4net.Config;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Resources;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -49,10 +48,9 @@ using System.Windows;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: XmlConfigurator(ConfigFile = "log4net.config")]
 [assembly: NeutralResourcesLanguage("el-GR")]
-[assembly: AssemblyVersion("0.3.6")]
-[assembly: AssemblyFileVersion("0.3.6")]
+[assembly: AssemblyVersion("0.5.1")]
+[assembly: AssemblyFileVersion("0.5.1")]
 
 /*
     cd "LATravelManager.UI\bin\Release"

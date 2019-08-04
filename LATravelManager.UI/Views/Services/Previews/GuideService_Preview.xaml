@@ -10,6 +10,9 @@
              Padding="0 0 0 5"
              Width="455"
              Background="AliceBlue">
+    <UserControl.Resources>
+        <converters:DateTimeToString x:Key="dateTimeToString" />
+    </UserControl.Resources>
     <GroupBox Header="{Binding Tittle}">
         <Grid>
             <Grid.Resources>
@@ -54,7 +57,7 @@
             <Label Grid.Row="1"
                    Grid.Column="1"
                    Width="100"
-                   Content="{Binding TimeGo,StringFormat='{}{0:dd/MM/yyyy-HH:mm}'}" />
+                   Content="{Binding TimeGo ,ConverterParameter='dd/MM/yyyy-HH:mm', Converter={StaticResource dateTimeToString}}" />
             <Label Content="Κέρδος:"
                    Grid.Row="2"
                    Grid.Column="0" />

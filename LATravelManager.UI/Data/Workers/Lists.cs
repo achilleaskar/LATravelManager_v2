@@ -638,7 +638,7 @@ namespace LATravelManager.UI.Data.Workers
         //        Process.Start(wbPath);
         //    }
         //    else
-        //        MessageBox.Show("Δέν υπάρχουν άτομα που να πηγαίνουν τις συγκεκριμένες ημέρες απο τις επιλεγμένες πόλεις", "Σφάλμα");
+        //        MessageBox.Show("Δέν υπάρχουν άτομα που να πηγαίνουν τις συγκεκριμένες ημέρες από τις επιλεγμένες πόλεις", "Σφάλμα");
         //}
 
         //private bool CanShowCustomers()

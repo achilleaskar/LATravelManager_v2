@@ -15,7 +15,7 @@
              d:DesignWidth="1200">
 
     <UserControl.Resources>
-        <converters:BrushColorConverter x:Key="BrushColorConverter" />
+        <converters:BoolToColorConverter x:Key="BrushColorConverter" />
         <converters:UserToVisibility x:Key="UserToVisibilityConverter" />
         <converters:FloadToStringValueConverter x:Key="FtoSConverter" />
 
@@ -161,7 +161,21 @@
                         </ListView>
                         <StackPanel>
                             <StackPanel Orientation="Horizontal">
-                                <StackPanel>
+                                <StackPanel Orientation="Horizontal"
+                                            Visibility="{Binding BookingWr.IsNotGroup,Converter={StaticResource booleanToVisibilityConverter}}">
+                                    <StackPanel>
+                                        <Label Content="Check In:"
+                                               Padding="0" />
+                                        <DatePicker SelectedDate="{Binding BookingWr.CheckIn}"
+                                                    Margin="0,0,5,0" />
+                                    </StackPanel>
+                                    <StackPanel>
+                                        <Label Content="Check Out:"
+                                               Padding="0" />
+                                        <DatePicker SelectedDate="{Binding BookingWr.CheckOut}" />
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel Visibility="{Binding BookingWr.IsGroup,Converter={StaticResource booleanToVisibilityConverter}}">
                                     <Label Content="Ημερομηνίες:"
                                            Padding="0" />
                                     <ComboBox ItemsSource="{Binding BookingWr.Excursion.ExcursionDates}"
@@ -169,6 +183,14 @@
                                               VerticalAlignment="Center"
                                               SelectedItem="{Binding BookingWr.ExcursionDate}" />
                                 </StackPanel>
+                                <!--<StackPanel>
+                                    <Label Content="Ημερομηνίες:"
+                                           Padding="0" />
+                                    <ComboBox ItemsSource="{Binding BookingWr.Excursion.ExcursionDates}"
+                                              Width="130"
+                                              VerticalAlignment="Center"
+                                              SelectedItem="{Binding BookingWr.ExcursionDate}" />
+                                </StackPanel>-->
                                 <!--<CheckBox IsChecked="{Binding BookingWr.DateChanged}"
                                           VerticalAlignment="Center" />-->
                                 <StackPanel Margin="5,0,5,0">
@@ -535,7 +557,7 @@
                                              Margin="0,5"
                                              HorizontalAlignment="Center"
                                              Grid.Column="1"
-                                             Text="{Binding Payment.Amount,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                             Text="{Binding Payment.Amount,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                              Width="50" />
                                 </StackPanel>
                                 <StackPanel Grid.Column="1"
@@ -643,16 +665,29 @@
                               PreparingCellForEdit="CustomersDataGrid_PreparingCellForEdit"
                               x:Name="CustomersDataGrid"
                               KeyUp="DataGrid_KeyDown"
+                              CanUserDeleteRows="False"
                               HorizontalAlignment="Left"
                               ItemsSource="{Binding BookingWr.Customers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                               AutoGenerateColumns="False"
                               SelectedItem="{Binding SelectedCustomer}"
                               CanUserAddRows="True">
+                        <DataGrid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Διαγραφη"
+                                          Command="{Binding DeleteSelectedCustomersCommand}">
+                                    <MenuItem.Icon>
+                                        <Image MaxHeight="20"
+                                               Stretch="Fill" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
                         <DataGrid.Resources>
                             <Style TargetType="{x:Type ComboBox}">
                                 <Setter Property="Margin"
                                         Value="0" />
                             </Style>
+                          
                         </DataGrid.Resources>
                         <DataGrid.RowStyle>
                             <StaticResource ResourceKey="RowStyle" />
@@ -708,7 +743,7 @@
                                                 Width="35"
                                                 FontWeight="DemiBold"
                                                 FontSize="14"
-                                                Binding="{Binding Price, UpdateSourceTrigger=PropertyChanged,Converter={StaticResource FtoSConverter } }" />
+                                                Binding="{Binding Price,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"/>
                             <DataGridTemplateColumn Header="Γέννηση"
                                                     CellStyle="{StaticResource DataGridCellStyle}"
                                                     Visibility="{Binding DataContext.SelectedExcursion.DOBNeeded, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">
@@ -849,7 +884,7 @@
                             Margin="5,5,5,0"
                             Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}"
                             Command="{Binding AddCustomerCommand}" />
-                    <Button Content="Προσθήκη απο αρχείο"
+                    <Button Content="Προσθήκη από αρχείο"
                             Margin="5,5,5,0"
                             Command="{Binding AddFromFileCommand}" />
                     <Button Content="Read Next Line"

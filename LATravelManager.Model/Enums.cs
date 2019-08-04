@@ -11,6 +11,10 @@
             ThirdParty = 4
         }
 
+        public enum FileType
+        {
+            Avatar = 1, Photo
+        }
         public enum ReservationTypeEnum
         {
             Normal,

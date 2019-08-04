@@ -16,6 +16,31 @@ namespace LATravelManager.Model.Excursions
             Destinations = new ObservableCollection<City>();
         }
 
+
+
+
+        private bool _FixedDates;
+
+
+        public bool FixedDates
+        {
+            get
+            {
+                return _FixedDates;
+            }
+
+            set
+            {
+                if (_FixedDates == value)
+                {
+                    return;
+                }
+
+                _FixedDates = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public DateTime FirstDate => ExcursionDates!=null && ExcursionDates.Count>0 ? ExcursionDates.OrderBy(e => e.CheckIn).FirstOrDefault().CheckIn : new DateTime(1,1,1,1,1,1);
 
         #endregion Constructors

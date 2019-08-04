@@ -12,6 +12,9 @@
              Width="455"
              Grid.Column="1"
              Background="AliceBlue">
+    <UserControl.Resources>
+        <converters:DateTimeToString x:Key="dateTimeToString" />
+    </UserControl.Resources>
     <GroupBox Header="{Binding Tittle}">
         <Grid>
             <Grid.Resources>
@@ -63,7 +66,7 @@
             <Label Grid.Row="2"
                    Width="100"
                    Grid.Column="1"
-                   Content="{Binding TimeGo,StringFormat='{}{0:dd/MM/yyyy-HH:mm}'}" />
+                   Content="{Binding TimeGo ,ConverterParameter='dd/MM/yyyy-HH:mm', Converter={StaticResource dateTimeToString}}" />
             <Label Content="Επιστροφή:"
                    Grid.Row="2"
                    Grid.Column="2" />
@@ -71,12 +74,12 @@
                    Grid.Column="3"
                    HorizontalAlignment="Left"
                    Width="100"
-                   Content="{Binding TimeReturn,StringFormat='{}{0:dd/MM/yyyy-HH:mm}'}" />
+                   Content="{Binding TimeReturn ,ConverterParameter='dd/MM/yyyy-HH:mm', Converter={StaticResource dateTimeToString}}" />
             <Label Content="Με Επιστροφή:"
                    Grid.Row="1"
                    Grid.Column="0" />
             <CheckBox IsChecked="{Binding Allerretour}"
-                      Grid.Row="1"
+                      Grid.Row="1" Margin="5,0"
                       Grid.Column="1" />
             <Label Content="Στοιχεία Οδηγού:"
                    Grid.Row="1"
@@ -89,12 +92,12 @@
                    Grid.Row="3"
                    Grid.Column="0" />
             <Label Content="{Binding Profit,Converter={StaticResource floatToStringConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                     Grid.Row="3"
-                     Grid.Column="1" />
-            <Label Content="Κόστος(ΝΕΤ):"
                    Grid.Row="3"
                    HorizontalAlignment="Left"
-                   
+                   Grid.Column="1" />
+            <Label Content="Κόστος(ΝΕΤ):"
+                   Grid.Row="3"
+                   HorizontalAlignment="Right"
                    Grid.Column="2" />
             <Label Content="{Binding NetPrice,Converter={StaticResource floatToStringConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                    Grid.Row="3"

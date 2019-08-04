@@ -37,10 +37,9 @@ namespace LATravelManager.Model.Wrapper
 
         public void CalculateAmounts()
         {
+            decimal total = 0;
             if (ExcursionType != ExcursionTypeEnum.Personal && ExcursionType != ExcursionTypeEnum.ThirdParty)
             {
-                decimal total = 0;
-
                 Recieved = 0;
                 foreach (Payment payment in Booking.Payments)
                 {
@@ -63,6 +62,19 @@ namespace LATravelManager.Model.Wrapper
                 {
                     Remaining = Booking.NetPrice - Recieved;
                 }
+            }
+            else if (ExcursionType == ExcursionTypeEnum.Personal)
+            {
+                PersonalModel.CalculateRemainingAmount();
+                Recieved = PersonalModel.Recieved;
+                Remaining = PersonalModel.Remaining;
+            }
+            else if (ExcursionType == ExcursionTypeEnum.ThirdParty)
+            {
+                ThirdPartyModel.FullPrice = ThirdPartyModel.NetPrice + ThirdPartyModel.Commision;
+                ThirdPartyModel.CalculateRemainingAmount();
+                Recieved = ThirdPartyModel.Recieved;
+                Remaining = ThirdPartyModel.Remaining;
             }
             //else if (ExcursionType==ExcursionTypeEnum.Personal)
             //{
@@ -91,6 +103,10 @@ namespace LATravelManager.Model.Wrapper
                 {
                     return ExcursionTypeEnum.Personal;
                 }
+                else if (ThirdPartyModel != null)
+                {
+                    return ExcursionTypeEnum.ThirdParty;
+                }
                 else
                 {
                     return ExcursionTypeEnum.Group;
@@ -102,6 +118,27 @@ namespace LATravelManager.Model.Wrapper
         {
             get { return GetValue<Booking>(); }
             set { SetValue(value); }
+        }
+
+        private ThirdParty_Booking_Wrapper _ThirdPartyModel;
+
+        public ThirdParty_Booking_Wrapper ThirdPartyModel
+        {
+            get
+            {
+                return _ThirdPartyModel;
+            }
+
+            set
+            {
+                if (_ThirdPartyModel == value)
+                {
+                    return;
+                }
+
+                _ThirdPartyModel = value;
+                RaisePropertyChanged();
+            }
         }
 
         private Personal_BookingWrapper _PersonalModel;
@@ -140,7 +177,7 @@ namespace LATravelManager.Model.Wrapper
                         return PersonalModel.User != null ? PersonalModel.User.ToString() : "";
 
                     case ExcursionTypeEnum.ThirdParty:
-                        return "";
+                        return ThirdPartyModel.User != null ? ThirdPartyModel.User.ToString() : "";
 
                     default:
                         return "";
@@ -160,8 +197,10 @@ namespace LATravelManager.Model.Wrapper
                         return Booking.IsPartners ? Booking.Partner.Name : "";
 
                     case ExcursionTypeEnum.Personal:
-                    case ExcursionTypeEnum.ThirdParty:
                         return "";
+
+                    case ExcursionTypeEnum.ThirdParty:
+                        return ThirdPartyModel.Partner.Name;
 
                     default:
                         return "";
@@ -184,7 +223,7 @@ namespace LATravelManager.Model.Wrapper
                     return PersonalModel.GetDestinations();
 
                 case ExcursionTypeEnum.ThirdParty:
-                    return "";
+                    return ThirdPartyModel.City;
 
                 default:
                     return "";
@@ -220,6 +259,11 @@ namespace LATravelManager.Model.Wrapper
                             maxValue = s.TimeReturn;
                         }
                     }
+                }
+                else if (ExcursionType == ExcursionTypeEnum.ThirdParty && ThirdPartyModel != null)
+                {
+                    CheckOut = ThirdPartyModel.CheckOut;
+                    return ThirdPartyModel.CheckIn;
                 }
                 else
                 {
@@ -278,6 +322,10 @@ namespace LATravelManager.Model.Wrapper
                         }
                         _CheckOut = maxValue;
                     }
+                    else if (ExcursionType == ExcursionTypeEnum.ThirdParty && ThirdPartyModel != null)
+                    {
+                        _CheckOut = ThirdPartyModel.CheckOut;
+                    }
                     else
                     {
                         if (Booking != null && !Booking.DifferentDates)
@@ -310,7 +358,16 @@ namespace LATravelManager.Model.Wrapper
         }
 
         public string Dates => CheckIn.ToString("dd/MM") + "-" + CheckOut.ToString("dd/MM");
-        public string HotelDates => (Booking.Excursion.NightStart ? CheckIn.AddDays(1).ToString("dd.MM") : CheckIn.ToString("dd.MM")) + "-" + CheckOut.ToString("dd.MM");
+
+        public string HotelDates
+        {
+            get
+            {
+                if (Booking != null && Booking.Excursion != null)
+                    return (Booking.Excursion.NightStart ? CheckIn.AddDays(1).ToString("dd.MM") : CheckIn.ToString("dd.MM")) + "-" + CheckOut.ToString("dd.MM");
+                return "";
+            }
+        }
 
         public int DaysCount
         {
@@ -423,13 +480,56 @@ namespace LATravelManager.Model.Wrapper
                     case ExcursionTypeEnum.Skiathos:
                     case ExcursionTypeEnum.Group:
                         return Booking.User;
+
                     case ExcursionTypeEnum.Personal:
                         return PersonalModel.User;
+
                     case ExcursionTypeEnum.ThirdParty:
+                        return ThirdPartyModel.User;
 
                     default:
                         return null;
                 }
+            }
+        }
+
+        public DateTime DisableDate
+        {
+            get
+            {
+                if (PersonalModel != null && PersonalModel.DisableDate != null)
+                {
+                    return PersonalModel.DisableDate.Value;
+                }
+                else if (ThirdPartyModel != null && ThirdPartyModel.DisableDate != null)
+                {
+                    return ThirdPartyModel.DisableDate.Value;
+                }
+                else if (Booking != null && Booking.DisableDate != null)
+                {
+                    return Booking.DisableDate.Value;
+                }
+                return new DateTime();
+            }
+        }
+
+        public string DisableReason
+        {
+            get
+            {
+                if (PersonalModel != null && PersonalModel.CancelReason != null)
+                {
+                    return PersonalModel.CancelReason;
+                }
+                else if (ThirdPartyModel != null && ThirdPartyModel.CancelReason != null)
+                {
+                    return ThirdPartyModel.CancelReason;
+                }
+                else if (Booking != null && Booking.DisableDate != null)
+                {
+                    return Booking.CancelReason;
+                }
+                return "";
             }
         }
 
@@ -451,7 +551,6 @@ namespace LATravelManager.Model.Wrapper
                 {
                     roomname = NoNameRoomType.Name;
                     handled = true;
-
                 }
             }
             else if (ReservationType == ReservationTypeEnum.Transfer)
@@ -469,6 +568,7 @@ namespace LATravelManager.Model.Wrapper
                     case 1:
                         roomname = "SINGLE";
                         break;
+
                     case 2:
                         roomname = "TWIN";
                         break;
@@ -497,7 +597,6 @@ namespace LATravelManager.Model.Wrapper
             }
 
             return roomname;
-
         }
 
         #endregion Properties
@@ -522,13 +621,25 @@ namespace LATravelManager.Model.Wrapper
                     return true;
                 }
             }
-            else
+            else if (ExcursionType == ExcursionTypeEnum.Personal)
             {
                 if (PersonalModel == null)
                 {
                     return false;
                 }
                 if ((!string.IsNullOrEmpty(PersonalModel.Comment) && PersonalModel.Comment.ToUpper().Contains(key)) || (PersonalModel.IsPartners && PersonalModel.Partner.Name.ToUpper().Contains(key)))
+                {
+                    return true;
+                }
+            }
+            else if (ExcursionType == ExcursionTypeEnum.ThirdParty)
+            {
+                if (ThirdPartyModel == null)
+                {
+                    return false;
+                }
+                if ((!string.IsNullOrEmpty(ThirdPartyModel.Comment) && ThirdPartyModel.Comment.ToUpper().Contains(key)) || ThirdPartyModel.Partner.Name.ToUpper().Contains(key)
+                    || ThirdPartyModel.Stay.ToUpper().Contains(key) || ThirdPartyModel.Description.ToUpper().Contains(key))
                 {
                     return true;
                 }
@@ -546,24 +657,36 @@ namespace LATravelManager.Model.Wrapper
 
         private string GetHotelName()
         {
-            switch (ReservationType)
+            if (PersonalModel != null)
             {
-                case ReservationTypeEnum.Normal:
-                    return Room != null ? Room.Hotel.Name : "";
+                return "";
+            }
+            else if (ThirdPartyModel != null)
+            {
+                return ThirdPartyModel.Stay;
+            }
+            else
+            {
+                switch (ReservationType)
+                {
+                    case ReservationTypeEnum.Normal:
+                        return Room != null ? Room.Hotel.Name : "";
 
-                case ReservationTypeEnum.Noname:
-                    return "NO NAME";
+                    case ReservationTypeEnum.Noname:
+                        return "NO NAME";
 
-                case ReservationTypeEnum.Overbooked:
-                    return Hotel != null ? Hotel.Name : "";
+                    case ReservationTypeEnum.Overbooked:
+                        return Hotel != null ? Hotel.Name : "";
 
-                case ReservationTypeEnum.NoRoom:
-                    return "NO ROOM";
+                    case ReservationTypeEnum.NoRoom:
+                        return "NO ROOM";
 
-                case ReservationTypeEnum.Transfer:
-                    return "TRANSFER";
-                case ReservationTypeEnum.OneDay:
-                    return "ONEDAY";
+                    case ReservationTypeEnum.Transfer:
+                        return "TRANSFER";
+
+                    case ReservationTypeEnum.OneDay:
+                        return "ONEDAY";
+                }
             }
             return "Error";
         }

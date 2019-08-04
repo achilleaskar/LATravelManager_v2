@@ -26,11 +26,11 @@ namespace LATravelManager.Model.People
         public int Level { get; set; }
 
         [Required(ErrorMessage = "Το όνομα απαιτείται!")]
-        [StringLength(20, MinimumLength = 3, ErrorMessage = "Το όνομα μπορεί να είναι απο 3 έως 20 χαρακτήρες.")]
+        [StringLength(20, MinimumLength = 3, ErrorMessage = "Το όνομα μπορεί να είναι από 3 έως 20 χαρακτήρες.")]
         public string Name { get; set; }
 
         [Required(ErrorMessage = "Το επίθετο απαιτείται!")]
-        [StringLength(20, MinimumLength = 3, ErrorMessage = "Το Επίθετο μπορεί να είναι απο 3 έως 20 χαρακτήρες.")]
+        [StringLength(20, MinimumLength = 3, ErrorMessage = "Το Επίθετο μπορεί να είναι από 3 έως 20 χαρακτήρες.")]
         public string Surename { get; set; }
 
         [Required(ErrorMessage = "Το Τηλέφωνο απαιτείται!")]
@@ -39,7 +39,7 @@ namespace LATravelManager.Model.People
         public string Tel { get; set; }
 
         [Required(ErrorMessage = "Το username απαιτείται!")]
-        [StringLength(12, MinimumLength = 3, ErrorMessage = "Το username μπορεί να είναι απο 3 έως 12 χαρακτήρες.")]
+        [StringLength(12, MinimumLength = 3, ErrorMessage = "Το username μπορεί να είναι από 3 έως 12 χαρακτήρες.")]
         public string UserName { get; set; }
 
         #endregion Properties

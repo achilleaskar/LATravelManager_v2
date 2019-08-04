@@ -65,15 +65,18 @@
                             <StackPanel Orientation="Horizontal">
                                 <Button Content="Ημέρας"
                                         Margin="5"
+                                        Click="Button_Click_1"
                                         Command="{Binding ShowReservationsCommand}"
                                         CommandParameter="1"
                                         Padding="5,2" />
                                 <Button Content="Εβδομάδας"
+                                        Click="Button_Click_1"
                                         Margin="5"
                                         CommandParameter="7"
                                         Command="{Binding ShowReservationsCommand}"
                                         Padding="5,2" />
                                 <Button Content="Μήνα"
+                                        Click="Button_Click_1"
                                         Margin="5"
                                         CommandParameter="30"
                                         Command="{Binding ShowReservationsCommand}"
@@ -81,6 +84,7 @@
                                 <Border BorderBrush="Gray"
                                         BorderThickness="1,0,0,0" />
                                 <Button Content="Όλες"
+                                        Click="Button_Click_1"
                                         Margin="5"
                                         Command="{Binding ShowReservationsCommand}"
                                         Padding="5,2" />
@@ -109,10 +113,10 @@
                                         Value="Black" />
                             </Trigger>
                         </Style.Triggers>
-                            <Setter Property="Foreground"
-                                    Value="Blue" />
+                        <Setter Property="Foreground"
+                                Value="Blue" />
                     </Style>
-                   
+
                     <Style TargetType="ComboBoxItem">
                         <Setter Property="Foreground"
                                 Value="Black" />
@@ -228,6 +232,11 @@
                         VerticalAlignment="Bottom"
                         Margin="5,0"
                         Command="{Binding PrintListCommand}" />
+                <Button Content="Ακυρωμένες"
+                        VerticalAlignment="Bottom"
+                        Margin="5,0"
+                        Click="Button_Click"
+                        Command="{Binding ShowCanceled}" />
             </StackPanel>
         </StackPanel>
         <DataGrid Grid.Row="1"
@@ -251,7 +260,7 @@
                             <iconPacks:PackIconFontAwesome Kind="EditRegular" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="Διαγραφή Δωματίου"
+                    <!--<MenuItem Header="Διαγραφή Δωματίου"
                               Command="{Binding DataContext.DeleteReservationCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}">
                         <MenuItem.Icon>
                             <iconPacks:PackIconFontAwesome Kind="TrashAltRegular" />
@@ -262,7 +271,7 @@
                         <MenuItem.Icon>
                             <iconPacks:PackIconFontAwesome Kind="TrashAltRegular" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </MenuItem>-->
                 </ContextMenu>
             </DataGrid.Resources>
             <DataGrid.RowStyle>
@@ -317,8 +326,14 @@
                                     Width="190"
                                     Binding="{Binding Booking.Comment}" />
                 <DataGridTextColumn Header="Πωλητής"
-                                    Width="190"
+                                    Width="90"
                                     Binding="{Binding User}" />
+                <DataGridTextColumn Header="Ημ. Ακύρ."
+                                    Width="45"
+                                    Binding="{Binding DisableDate,StringFormat='{}{0:dd/MM}'}" />
+                <DataGridTextColumn Header="Λόγος"
+                                    Width="190"
+                                    Binding="{Binding DisableReason}" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

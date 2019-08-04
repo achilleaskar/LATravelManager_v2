@@ -30,7 +30,7 @@ namespace LATravelManager.Model.Hotels
         public  HotelCategory HotelCategory { get; set; }
 
         [Required(ErrorMessage = "Το Όνομα ξενοδοχείου απαιτείται!")]
-        [StringLength(25, MinimumLength = 3, ErrorMessage = "Το Όνομα ξενοδοχείου μπορεί να είναι απο 3 έως 25 χαρακτήρες.")]
+        [StringLength(25, MinimumLength = 3, ErrorMessage = "Το Όνομα ξενοδοχείου μπορεί να είναι από 3 έως 25 χαρακτήρες.")]
         public string Name { get; set; }
 
         public  List<Room> Rooms { get; set; }

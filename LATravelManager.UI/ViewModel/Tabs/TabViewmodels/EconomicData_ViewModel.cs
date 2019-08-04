@@ -22,6 +22,10 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
     {
         #region Constructors
 
+        public EconomicData_ViewModel()
+        {
+
+        }
         public EconomicData_ViewModel(MainViewModel mainViewModel)
         {
             Excursions = new ObservableCollection<Excursion>();
@@ -510,6 +514,9 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 DateTime dateLimit = SearchBookingsHelper.GetDateLimit(parameter);
                 UsersList.Clear();
                 Total = Cash = Peiraios = Ethniki = Eurobank = AlphaBank = VISA = 0;
+
+                var x = await Context.GetByIdAsync<Payment>(1734);
+
                 List<Payment> list = (await Context.GetAllPaymentsFiltered(ExcursionIndexBookingFilter > 0 ? Excursions[ExcursionIndexBookingFilter - 1].Id : 0, UserIndexBookingFilter > 0 ? Users[UserIndexBookingFilter - 1].Id : 0, dateLimit, EnableDatesFilter, From, To)).ToList();
                 foreach (Payment payment in list)
                 {

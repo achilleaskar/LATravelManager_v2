@@ -29,6 +29,9 @@
         <DataTemplate DataType="{x:Type viewmodels:SkiathosParent_ViewModel}">
             <views:Skiathos_UserControl />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:ThirdPartyParent_ViewModel}">
+            <views:ThirdPartyUserControl />
+        </DataTemplate>
         <DataTemplate DataType="{x:Type tabs:GlobalSearch_ViewModel}">
             <tabViews:GlobalSearch_UserControl />
         </DataTemplate>

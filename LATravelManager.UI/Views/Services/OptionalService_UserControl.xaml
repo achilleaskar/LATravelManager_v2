@@ -66,7 +66,7 @@
                Grid.Row="1" />
         <toolkit:DateTimePicker Grid.Row="1"
                                 Grid.Column="1"
-                                FormatString="dd/MM/yy hh:mm"
+                                FormatString="dd/MM/yy HH:mm"
                                 Kind="Local"
                                 Margin="5" Width="130"
                                 ShowButtonSpinner="True"

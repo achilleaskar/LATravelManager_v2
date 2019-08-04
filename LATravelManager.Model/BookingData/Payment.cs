@@ -17,11 +17,103 @@ namespace LATravelManager.Model.BookingData
 
 
 
+        public string Dates
+        {
+            get
+            {
+                if (Personal_Booking != null)
+                {
+                    return Personal_Booking.Dates;
+                }
+                else if (ThirdParty_Booking != null)
+                {
+                    return ThirdParty_Booking.Dates;
+                }
+                else if (Booking != null && Booking.Excursion != null)
+                {
+                    return Booking.Dates;
+                }
+                return "Error";
+            }
+        }
 
-        private bool _Checked;
+        public string Names
+        {
+            get
+            {
+                if (Personal_Booking != null)
+                {
+                    return Personal_Booking.Names;
+                }
+                else if (ThirdParty_Booking != null)
+                {
+                    return ThirdParty_Booking.Names;
+                }
+                else if (Booking != null && Booking.Excursion != null)
+                {
+                    return Booking.Names;
+                }
+                return "Error";
+            }
 
 
-        public bool Checked
+        }
+
+
+
+        public string ExcursionName
+        {
+            get
+            {
+                if (Personal_Booking!=null)
+                {
+                    return Personal_Booking.Destination;
+                }
+                else if (ThirdParty_Booking!=null)
+                {
+                    return ThirdParty_Booking.City;
+                }
+                else if (Booking!=null && Booking.Excursion!=null)
+                {
+                    return Booking.Excursion.Name;
+                }
+                return "Error";
+            }
+
+          
+        }
+
+        public Personal_Booking Personal_Booking { get; set; }
+        public ThirdParty_Booking ThirdParty_Booking { get; set; }
+
+        private bool _Outgoing;
+
+
+        public bool Outgoing
+        {
+            get
+            {
+                return _Outgoing;
+            }
+
+            set
+            {
+                if (_Outgoing == value)
+                {
+                    return;
+                }
+
+                _Outgoing = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
+
+        private bool? _Checked;
+
+
+        public bool? Checked
         {
             get
             {

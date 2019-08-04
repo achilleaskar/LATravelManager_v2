@@ -1,38 +1,51 @@
 ﻿using LATravelManager.Model.People;
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace LATravelManager.Model.BookingData
 {
     public class ChangeInBooking : BaseModel
     {
-        #region Fields + Constructors
 
-        private string _Description = string.Empty;
-
-        private int _ItemId;
-
-        private Type _Type;
-
-        private User _User;
 
         public ChangeInBooking()
         {
         }
 
-        public const string DescriptionPropertyName = nameof(Description);
-        public const string ItemIdPropertyName = nameof(ItemId);
-        public const string TypePropertyName = nameof(Type);
+        public Booking Booking { get; set; }
+        public User User { get; set; }
 
-        public const string UserPropertyName = nameof(User);
 
-        #endregion Fields + Constructors
 
-        #region Properties
 
-        /// <summary>
-        /// Sets and gets the Description property.
-        /// Changes to that property's value raise the PropertyChanged event.
-        /// </summary>
+        private DateTime _Date;
+
+
+        public DateTime Date
+        {
+            get
+            {
+                return _Date;
+            }
+
+            set
+            {
+                if (_Date == value)
+                {
+                    return;
+                }
+
+                _Date = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
+
+
+        private string _Description;
+
+        [StringLength(500)]
         public string Description
         {
             get
@@ -46,80 +59,11 @@ namespace LATravelManager.Model.BookingData
                 {
                     return;
                 }
+
                 _Description = value;
                 RaisePropertyChanged();
             }
         }
 
-        /// <summary>
-        /// Sets and gets the ItemId property.
-        /// Changes to that property's value raise the PropertyChanged event.
-        /// </summary>
-        public int ItemId
-        {
-            get
-            {
-                return _ItemId;
-            }
-
-            set
-            {
-                if (_ItemId == value)
-                {
-                    return;
-                }
-
-                _ItemId = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        /// <summary>
-        /// Sets and gets the Type property.
-        /// Changes to that property's value raise the PropertyChanged event.
-        /// </summary>
-        public Type Type
-        {
-            get
-            {
-                return _Type;
-            }
-
-            set
-            {
-                if (_Type == value)
-                {
-                    return;
-                }
-
-                _Type = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        /// <summary>
-        /// Sets and gets the User property.
-        /// Changes to that property's value raise the PropertyChanged event.
-        /// </summary>
-        public User User
-        {
-            get
-            {
-                return _User;
-            }
-
-            set
-            {
-                if (_User == value)
-                {
-                    return;
-                }
-
-                _User = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        #endregion Properties
     }
 }

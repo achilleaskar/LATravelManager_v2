@@ -10,6 +10,9 @@
              Padding="0 0 5 5"
              Width="455"
              Background="AliceBlue">
+    <UserControl.Resources>
+        <converters:DateTimeToString x:Key="dateTimeToString" />
+    </UserControl.Resources>
     <GroupBox Header="{Binding Tittle}">
         <Grid HorizontalAlignment="Stretch">
             <Grid.Resources>
@@ -79,14 +82,14 @@
                    Grid.Row="3" />
             <Label Grid.Row="3"
                    Grid.Column="1"
-                   Content="{Binding TimeGo,StringFormat='{}{0:dd/MM/yyyy-HH:mm}'}" />
+                   Content="{Binding TimeGo ,ConverterParameter='dd/MM/yyyy-HH:mm', Converter={StaticResource dateTimeToString}}" />
             <Label Content="Επιστροφή:"
                    Grid.Row="3"
                    Grid.Column="2" />
             <Label Grid.Row="3"
                    HorizontalAlignment="Left"
                    Grid.Column="3"
-                   Content="{Binding TimeReturn,StringFormat='{}{0:dd/MM/yyyy-HH:mm}'}" />
+                   Content="{Binding TimeReturn ,ConverterParameter='dd/MM/yyyy-HH:mm', Converter={StaticResource dateTimeToString}}" />
             <Label Content=" Στάση:"
                    Grid.Row="4" />
             <StackPanel Orientation="Horizontal"

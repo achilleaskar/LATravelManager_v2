@@ -17,7 +17,7 @@ namespace LATravelManager.UI.Views.Bansko
         public EditBooking_Bansko_Window()
         {
             InitializeComponent();
-            
+
         }
 
         public static T GetVisualChild<T>(Visual parent) where T : Visual
@@ -73,19 +73,26 @@ namespace LATravelManager.UI.Views.Bansko
                   CustomersDataGrid.Columns[1]);
                 }
             }
-            else if (e.Key == Key.Delete && e.OriginalSource.GetType() != typeof(TextBox))
-            {
-                e.Handled = true;
-                (DataContext as NewReservation_Group_ViewModel).DeleteSelectedCustomers();
-            }
+            //else if (e.Key == Key.Delete && e.OriginalSource.GetType() != typeof(TextBox))
+            //{
+            //    e.Handled = true;
+            //    (DataContext as NewReservation_Group_ViewModel).DeleteSelectedCustomers();
+            //    e.Handled = true;
+            //}
         }
 
         private void UserControl_KeyUp(object sender, KeyEventArgs e)
         {
-            if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.Z)
-            {
-                ((NewReservation_Group_ViewModel)DataContext).ReadNextLineCommand.Execute(null);
-            }
+            //if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.Z)
+            //{
+            //    ((NewReservation_Group_ViewModel)DataContext).ReadNextLineCommand.Execute(null);
+            //}
+            //else if (e.Key == Key.Delete && e.OriginalSource.GetType() != typeof(TextBox))
+            //{
+            //    e.Handled = true;
+            //    (DataContext as NewReservation_Group_ViewModel).DeleteSelectedCustomers();
+            //    e.Handled = true;
+            //}
         }
 
         private void DataGrid_LoadingRow(object sender, DataGridRowEventArgs e)
@@ -122,7 +129,7 @@ namespace LATravelManager.UI.Views.Bansko
         {
             if (DataContext is NewReservation_Bansko_ViewModel a && a.HasChanges)
             {
-                MessageBoxResult result = MessageBox.Show("Υπάρχουν μη αποθηκευμένες αλλαγές, θέλετε σίγουρα να κλείσετε?", "Προσοχή", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                MessageBoxResult result = MessageBox.Show("Υπάρχουν μη απόθηκευμένες αλλαγές, θέλετε σίγουρα να κλείσετε?", "Προσοχή", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if (result == MessageBoxResult.No)
                 {
                     e.Cancel = true;
@@ -130,7 +137,7 @@ namespace LATravelManager.UI.Views.Bansko
             }
             else if (DataContext is NewReservation_Group_ViewModel b && b.HasChanges)
             {
-                MessageBoxResult result = MessageBox.Show("Υπάρχουν μη αποθηκευμένες αλλαγές, θέλετε σίγουρα να κλείσετε?", "Προσοχή", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                MessageBoxResult result = MessageBox.Show("Υπάρχουν μη απόθηκευμένες αλλαγές, θέλετε σίγουρα να κλείσετε?", "Προσοχή", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if (result == MessageBoxResult.No)
                 {
                     e.Cancel = true;

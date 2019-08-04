@@ -10,61 +10,25 @@ namespace LATravelManager.Model.BookingData
 {
     public class Booking : EditTracker
     {
-        public bool Reciept { get; set; }
+        #region Constructors
 
         public Booking()
         {
             Payments = new ObservableCollection<Payment>();
             ReservationsInBooking = new ObservableCollection<Reservation>();
+            ChangesInBooking = new ObservableCollection<ChangeInBooking>();
             CheckIn = DateTime.Today;
             CheckOut = DateTime.Today.AddDays(3);
         }
 
-        public string Names => GetNames();
+        #endregion Constructors
 
-        private string GetNames()
-        {
-            StringBuilder sb = new StringBuilder();
-            if (ReservationsInBooking.Count > 0)
-            {
-                foreach (Customer customer in ReservationsInBooking[0].CustomersList)
-                {
-                    sb.Append(customer.Surename + " " + customer.Name + ", ");
-                }
-            }
-            return sb.ToString().TrimEnd(',', ' ');
-        }
+        #region Properties
 
-        public string Dates => CheckIn.ToString("dd/MM") + "-" + CheckOut.ToString("dd/MM");
-
-        //public Booking()
-        //{
-        //    ReservationsInBooking = new ObservableCollection<Reservation>();
-        //    Payments.CollectionChanged += PaymentCollectionChanged;
-        //    Customers.CollectionChanged += Customers_CollectionChanged;
-        //    ReservationsInBooking.CollectionChanged += ReservationsCollectionChanged;
-        //    CheckIn = DateTime.Today;
-        //}
-
-        //public Booking(Booking booking, object uOW)
-        //{
-        //    //this.booking = booking;
-        //    //this.uOW = uOW;
-        //}
-
-        //public Booking(Booking tmpBooking, UnitOfWork uOW)
-        //{
-        //    Id = tmpBooking.Id;
-        //    CheckIn = tmpBooking.CheckIn;
-        //    CheckOut = tmpBooking.CheckOut;
-        //    Comment = tmpBooking.Comment;
-        //    IsPartners = tmpBooking.IsPartners;
-        //    FullPrice = tmpBooking.FullPrice;
-        //    Commision = tmpBooking.Commision;
-        //    SecondDepart = tmpBooking.SecondDepart;
-        //    DifferentDates = tmpBooking.DifferentDates;
-        //    Partner = (tmpBooking.Partner != null) ? uOW.GenericRepository.GetById<Partner>(tmpBooking.Partner.Id) : null;
-        //    User = uOW.GenericRepository.GetById<User>(tmpBooking.User.Id);
+        public string CancelReason { get; set; }
+        public ObservableCollection<ChangeInBooking> ChangesInBooking { get; }
+        public DateTime CheckIn { get; set; }
+        public DateTime CheckOut { get; set; }
 
         //    Customers.CollectionChanged += Customers_CollectionChanged;
         //    foreach (Customer customer in tmpBooking.Customers)
@@ -87,32 +51,55 @@ namespace LATravelManager.Model.BookingData
         //    CalculateRemainingAmount();
         //}
 
-        #region Properties
-
-        public DateTime CheckIn { get; set; }
-
-        public DateTime CheckOut { get; set; }
-
-        public ExcursionDate ExcursionDate { get; set; }
-
         public string Comment { get; set; }
-
         public decimal Commision { get; set; }
-
+        public string Dates => CheckIn.ToString("dd/MM") + "-" + CheckOut.ToString("dd/MM");
         public bool DifferentDates { get; set; }
+        public bool Disabled { get; set; }
+        public DateTime? DisableDate { get; set; }
+        public User DisabledBy { get; set; }
 
         [Required]
         public Excursion Excursion { get; set; }
 
-        public string PartnerEmail { get; set; }
+        //public Booking(Booking tmpBooking, UnitOfWork uOW)
+        //{
+        //    Id = tmpBooking.Id;
+        //    CheckIn = tmpBooking.CheckIn;
+        //    CheckOut = tmpBooking.CheckOut;
+        //    Comment = tmpBooking.Comment;
+        //    IsPartners = tmpBooking.IsPartners;
+        //    FullPrice = tmpBooking.FullPrice;
+        //    Commision = tmpBooking.Commision;
+        //    SecondDepart = tmpBooking.SecondDepart;
+        //    DifferentDates = tmpBooking.DifferentDates;
+        //    Partner = (tmpBooking.Partner != null) ? uOW.GenericRepository.GetById<Partner>(tmpBooking.Partner.Id) : null;
+        //    User = uOW.GenericRepository.GetById<User>(tmpBooking.User.Id);
+        public ExcursionDate ExcursionDate { get; set; }
+
         public bool IsPartners { get; set; }
-
+        public string Names => GetNames();
         public decimal NetPrice { get; set; }
-
         public Partner Partner { get; set; }
 
+        //public Booking(Booking booking, object uOW)
+        //{
+        //    //this.booking = booking;
+        //    //this.uOW = uOW;
+        //}
+        public string PartnerEmail { get; set; }
+
+        //public Booking()
+        //{
+        //    ReservationsInBooking = new ObservableCollection<Reservation>();
+        //    Payments.CollectionChanged += PaymentCollectionChanged;
+        //    Customers.CollectionChanged += Customers_CollectionChanged;
+        //    ReservationsInBooking.CollectionChanged += ReservationsCollectionChanged;
+        //    CheckIn = DateTime.Today;
+        //}
         public ICollection<Payment> Payments { get; }
 
+        public bool Reciept { get; set; }
         public ObservableCollection<Reservation> ReservationsInBooking { get; }
 
         public bool SecondDepart { get; set; }
@@ -121,5 +108,22 @@ namespace LATravelManager.Model.BookingData
         public User User { get; set; }
 
         #endregion Properties
+
+        #region Methods
+
+        private string GetNames()
+        {
+            StringBuilder sb = new StringBuilder();
+            if (ReservationsInBooking.Count > 0)
+            {
+                foreach (Customer customer in ReservationsInBooking[0].CustomersList)
+                {
+                    sb.Append(customer.Surename + " " + customer.Name + ", ");
+                }
+            }
+            return sb.ToString().TrimEnd(',', ' ');
+        }
+
+        #endregion Methods
     }
 }

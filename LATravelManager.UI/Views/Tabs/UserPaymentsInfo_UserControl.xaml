@@ -6,11 +6,15 @@
              xmlns:model="clr-namespace:LATravelManager.Model.BookingData;assembly=LATravelManager.Model"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:viewmodels="clr-namespace:LATravelManager.UI.Helpers"
+             xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
              d:DataContext="{d:DesignInstance viewmodels:PaymentInfo}"
              mc:Ignorable="d"
              Background="White"
              d:DesignHeight="450"
              d:DesignWidth="800">
+    <UserControl.Resources>
+        <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -37,6 +41,7 @@
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Header="Επιβεβαιώθηκε"
+                              Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}"
                               Command="{Binding DataContext.ConfirmPaymentCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}">
                         <MenuItem.Icon>
                             <iconPacks:PackIconFontAwesome Kind="CheckSquareRegular" />
@@ -54,16 +59,21 @@
                 </Style>
             </DataGrid.RowStyle>
             <DataGrid.Columns>
-                <DataGridCheckBoxColumn Binding="{Binding Checked}"
-                                        IsReadOnly="True" />
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Rectangle Width="20" VerticalAlignment="Stretch" Fill="{Binding Checked,Converter={StaticResource BoolToColorConverter}}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Ημερομηνίες"
-                                    Binding="{Binding Booking.Dates }" />
+                                    Binding="{Binding Dates }" />
                 <DataGridTextColumn Header="Εκδρομή"
-                                    Binding="{Binding Booking.Excursion.Name}" />
+                                    Binding="{Binding ExcursionName}" />
                 <DataGridTextColumn Header="Ονόματα"
                                     Width="250"
                                     CanUserResize="True"
-                                    Binding="{Binding Booking.Names}" />
+                                    Binding="{Binding Names}" />
                 <DataGridTextColumn Header="Ποσό"
                                     Binding="{Binding Amount}" />
                 <DataGridTextColumn Header="Μέθοδος"

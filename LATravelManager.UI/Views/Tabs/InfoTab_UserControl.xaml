@@ -30,7 +30,7 @@
                     <StackPanel Grid.Row="0"
                                 Orientation="Horizontal"
                                 Grid.ColumnSpan="2">
-                        <Label Content="Απο:" />
+                        <Label Content="από:" />
                         <DatePicker Name="FromDepartureInfo_DatePicker"
                                     Width="115"
                                     CalendarStyle="{StaticResource styleCalendar}"
@@ -180,7 +180,7 @@
                                                 Margin="5,5,5,0"
                                                 Command="{Binding SendEmailsCommand}">
                                             <StackPanel>
-                                                <TextBlock Text="Αποστολή email" />
+                                                <TextBlock Text="απόστολή email" />
                                                 <TextBlock Text="σε γραφεία"
                                                            HorizontalAlignment="Center" />
                                             </StackPanel>
@@ -508,7 +508,7 @@
                                 Margin="5,5,0,0"
                                 Orientation="Horizontal"
                                 Grid.ColumnSpan="2">
-                        <Label Content="Απο:" />
+                        <Label Content="από:" />
                         <DatePicker Name="FromReservationsInfo_DatePicker"
                                     Width="115"
                                     CalendarStyle="{StaticResource styleCalendar}"

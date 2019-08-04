@@ -15,9 +15,9 @@
         d:DesignHeight="700"
         d:DesignWidth="1200">
     <Window.Resources>
-        <converters:BrushColorConverter x:Key="BrushColorConverter" />
-        <converters:RoomsLeftToVisibilityConverter x:Key="RoomsLeftToVisibilityConverter" />
-        <converters:RoomTypeToRoomsLeftConverter x:Key="RoomTypeToRoomsLeftConverter" />
+        <converters:BoolToColorConverter x:Key="BrushColorConverter" />
+        <converters:RoomsLeftMultiBindingConverter x:Key="RoomsLeftToVisibilityConverter" />
+        <converters:RoomsLeftMultiBindingConverter x:Key="RoomTypeToRoomsLeftConverter" />
     </Window.Resources>
 
     <Grid>
@@ -61,8 +61,8 @@
                                 <Style TargetType="{x:Type ListViewItem}">
                                     <!--<EventSetter Event="Control.MouseDoubleClick"
                                              Handler="ListView_MouseDoubleClick" />-->
-                                    <Setter Property="Foreground"
-                                            Value="{Binding Converter={StaticResource BrushColorConverter}}" />
+                                    <!--<Setter Property="Foreground"
+                                            Value="{Binding Converter={StaticResource BrushColorConverter}}" />-->
                                 </Style>
                             </ListView.Resources>
                             <ListView.View>
@@ -92,8 +92,18 @@
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate>
-                                                        <Expander IsExpanded="False"
-                                                                  IsEnabled="{Binding Converter={StaticResource RoomsLeftToVisibilityConverter}}">
+                                                        <Expander IsExpanded="False">
+                                                            <Expander.IsEnabled>
+                                                                <MultiBinding Converter="{StaticResource RoomTypeToRoomsLeftConverter}">
+                                                                    <Binding />
+                                                                    <Binding Path="DataContext">
+                                                                        <Binding.RelativeSource>
+                                                                            <RelativeSource Mode="FindAncestor"
+                                                                                            AncestorType="ListView" />
+                                                                        </Binding.RelativeSource>
+                                                                    </Binding>
+                                                                </MultiBinding>
+                                                            </Expander.IsEnabled>
                                                             <Expander.Header>
                                                                 <StackPanel Orientation="Horizontal">
                                                                     <TextBlock Text="{Binding ItemCount}"
@@ -111,9 +121,158 @@
                                                                     <TextBlock FontWeight="Bold"
                                                                                Foreground="Black"
                                                                                FontSize="14"
-                                                                               Text="{Binding Converter={StaticResource RoomTypeToRoomsLeftConverter}}"
-                                                                               VerticalAlignment="Center" />
+                                                                               VerticalAlignment="Center">
+                                                                        <TextBlock.Text>
+                                                                            <MultiBinding Converter="{StaticResource RoomTypeToRoomsLeftConverter}">
+                                                                                <Binding />
+                                                                                <Binding Path="DataContext">
+                                                                                    <Binding.RelativeSource>
+                                                                                        <RelativeSource Mode="FindAncestor"
+                                                                                                        AncestorType="ListView" />
+                                                                                    </Binding.RelativeSource>
+                                                                                </Binding>
+                                                                            </MultiBinding>
+                                                                        </TextBlock.Text>
+                                                                    </TextBlock>
                                                                     <!--Visibility="{Binding Converter={StaticResource RoomsHotelsToVisibilityConverter}}"-->
+
+                                                                </StackPanel>
+                                                            </Expander.Header>
+                                                            <ItemsPresenter />
+                                                        </Expander>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </GroupStyle.ContainerStyle>
+                                </GroupStyle>
+                            </ListView.GroupStyle>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="2">
+                                        <Grid.InputBindings>
+                                            <MouseBinding Gesture="LeftDoubleClick" />
+                                            <!--Command="{Binding RoomDoubleClickedCommand}" />-->
+                                        </Grid.InputBindings>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackPanel>
+
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <ItemsControl ItemsSource="{Binding SecondaryLists}" Grid.Row="2"
+                      Margin="5">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <Label Content="{Binding Dates}"
+                               MaxWidth="200"
+                               HorizontalAlignment="Center">
+                            <Label.Style>
+                                <Style TargetType="Label">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsMain}"
+                                                     Value="True">
+                                            <Setter Property="Foreground"
+                                                    Value="Blue" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Label.Style>
+
+                        </Label>
+                        <ListView ItemsSource="{Binding Rooms}"
+                                  Grid.Row="1"
+                                  HorizontalAlignment="Left"
+                                  Height="230"
+                                  SelectedItem="{Binding SelectedRoom, UpdateSourceTrigger=PropertyChanged}"
+                                  Grid.ColumnSpan="2">
+                            <ListView.Resources>
+                                <Style TargetType="{x:Type ListViewItem}">
+                                    <!--<EventSetter Event="Control.MouseDoubleClick"
+                                             Handler="ListView_MouseDoubleClick" />-->
+                                    <!--<Setter Property="Foreground"
+                                            Value="{Binding Converter={StaticResource BrushColorConverter}}" />-->
+                                </Style>
+                            </ListView.Resources>
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Ξενοδοχείο"
+                                                    Width="100"
+                                                    DisplayMemberBinding="{Binding Hotel.Name}" />
+                                    <GridViewColumn Header="Χωρητικ."
+                                                    Width="40"
+                                                    DisplayMemberBinding="{Binding RoomType.Capacity}" />
+                                    <GridViewColumn Header="Σημείωση"
+                                                    Width="100"
+                                                    DisplayMemberBinding="{Binding Note}">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Note}"
+                                                           Foreground="{Binding Converter={StaticResource BrushColorConverter}}" />
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                            <ListView.GroupStyle>
+                                <GroupStyle>
+                                    <GroupStyle.ContainerStyle>
+                                        <Style TargetType="{x:Type GroupItem}">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate>
+                                                        <Expander IsExpanded="False">
+                                                            <Expander.IsEnabled>
+                                                                <MultiBinding Converter="{StaticResource RoomTypeToRoomsLeftConverter}">
+                                                                    <Binding />
+                                                                    <Binding Path="DataContext">
+                                                                        <Binding.RelativeSource>
+                                                                            <RelativeSource Mode="FindAncestor"
+                                                                                            AncestorType="ListView" />
+                                                                        </Binding.RelativeSource>
+                                                                    </Binding>
+                                                                </MultiBinding>
+                                                            </Expander.IsEnabled>
+                                                            <Expander.Header>
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <TextBlock Text="{Binding ItemCount}"
+                                                                               FontSize="14"
+                                                                               Foreground="Green"
+                                                                               FontWeight="Bold"
+                                                                               FontStyle="Italic"
+                                                                               Margin="0,0,10,0"
+                                                                               VerticalAlignment="Center" />
+                                                                    <TextBlock Text="{Binding Name}"
+                                                                               FontWeight="Bold"
+                                                                               Foreground="Black"
+                                                                               FontSize="14"
+                                                                               VerticalAlignment="Center" />
+                                                                    <TextBlock FontWeight="Bold"
+                                                                               Foreground="Black"
+                                                                               FontSize="14"
+                                                                               VerticalAlignment="Center">
+                                                                        <TextBlock.Text>
+                                                                            <MultiBinding Converter="{StaticResource RoomTypeToRoomsLeftConverter}">
+                                                                                <Binding />
+                                                                                <Binding Path="DataContext">
+                                                                                    <Binding.RelativeSource>
+                                                                                        <RelativeSource Mode="FindAncestor"
+                                                                                                        
+                                                                                                        AncestorType="ListView" />
+                                                                                    </Binding.RelativeSource>
+                                                                                </Binding>
+                                                                            </MultiBinding>
+                                                                        </TextBlock.Text>
+                                                                    </TextBlock>
 
                                                                 </StackPanel>
                                                             </Expander.Header>

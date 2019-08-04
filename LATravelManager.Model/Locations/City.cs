@@ -26,7 +26,7 @@ namespace LATravelManager.Model.Locations
         public  Country Country { get; set; }
 
         [Required(ErrorMessage = "Το Όνομα Πόλης απαιτείται!")]
-        [StringLength(20, MinimumLength = 3, ErrorMessage = "Το Όνομα Πόλης μπορεί να είναι απο 3 έως 20 χαρακτήρες.")]
+        [StringLength(20, MinimumLength = 3, ErrorMessage = "Το Όνομα Πόλης μπορεί να είναι από 3 έως 20 χαρακτήρες.")]
         public string Name { get; set; }
 
         #endregion Properties

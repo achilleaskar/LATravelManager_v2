@@ -20,7 +20,7 @@ namespace LATravelManager.Model.Locations
         public int Continentindex { get; set; }
 
         [Required(ErrorMessage = "Το Όνομα Χώρας απαιτείται!")]
-        [StringLength(20, MinimumLength = 3, ErrorMessage = "Το Όνομα Χώρας μπορεί να είναι απο 3 έως 20 χαρακτήρες.")]
+        [StringLength(20, MinimumLength = 3, ErrorMessage = "Το Όνομα Χώρας μπορεί να είναι από 3 έως 20 χαρακτήρες.")]
         public string Name { get; set; }
 
         #endregion Properties

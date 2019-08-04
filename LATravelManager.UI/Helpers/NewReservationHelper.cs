@@ -9,6 +9,8 @@ using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.Wrapper;
 using System;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Media;
@@ -58,7 +60,7 @@ public class NewReservationHelper : ViewModelBase
             ReservationType = ReservationTypeEnum.Noname,
             FirstHotel = "ΝΟ ΝΑΜΕ",
             HB = hb,
-            Booking=booking.Model,
+            Booking = booking.Model,
             NoNameRoomType = roomType,
             OnlyStay = onlystay
         };
@@ -163,7 +165,7 @@ public class NewReservationHelper : ViewModelBase
             ReservationType = ReservationTypeEnum.Overbooked,
             FirstHotel = hotel.Name,
             Hotel = hotel,
-            Booking=bookingWr.Model,
+            Booking = bookingWr.Model,
             NoNameRoomType = roomType,
             OnlyStay = onlyStay,
             HB = hb
@@ -219,7 +221,7 @@ public class NewReservationHelper : ViewModelBase
             Room = SelectedRoom.Model,
             FirstHotel = SelectedRoom.Hotel.Name,
             HB = hb,
-            Booking=booking.Model
+            Booking = booking.Model
         };
         foreach (CustomerWrapper customer in booking.Customers)
         {
@@ -278,37 +280,26 @@ public class NewReservationHelper : ViewModelBase
 
     public async Task<BookingWrapper> SaveAsync(GenericRepository context, Payment Payment, BookingWrapper BookingWr)
     {
-        //TODO oti na nai exw kanei edw
-        //UOW.Reload();
-        //BookingWrapper tmpBooking;
-        //if (startingBooking == null)
-        //{
-        //    Booking.User = await Context.GetByIdAsync<User>(Booking.User.Id);
-        //}
-
         if (Payment.Amount > 0)
         {
-            BookingWr.Payments.Add(new Payment { Amount = Payment.Amount, Comment = Payment.Comment, Date = DateTime.Now, PaymentMethod = Payment.PaymentMethod, User = await context.GetByIdAsync<User>(StaticResources.User.Id) });
+            BookingWr.Payments.Add(new Payment { Amount = Payment.Amount, Comment = Payment.Comment, Date = DateTime.Now, PaymentMethod = Payment.PaymentMethod, User = await context.GetByIdAsync<User>(StaticResources.User.Id) ,Checked= (Payment.PaymentMethod == 0 || Payment.PaymentMethod == 5)?(bool?)false:null });
         }
-
         if (BookingWr.Id == 0)
         {
             context.Add(BookingWr.Model);
-            //tmpBooking = Booking;
         }
-        else
-        {
-            // CalculateDiferences(startingBooking, Booking);
-            // tmpBooking = new BookingWrapper(Booking.Model);
 
-            // Context.Add(tmpBooking.Model);
-            // await Context.SaveAsync();
-            // Context.RemoveById<Booking>(Booking.Id);
-            //Booking = tmpBooking;
-        }
+        await CaptureChanges(context, BookingWr);
+
         await context.SaveAsync();
 
         return BookingWr;
+    }
+
+    private async Task CaptureChanges(GenericRepository context, BookingWrapper bookingWr)
+    {
+        await context.CaptureChanges(bookingWr);
+
     }
 
     internal void AddTransfer(BookingWrapper booking, bool all)
@@ -317,7 +308,7 @@ public class NewReservationHelper : ViewModelBase
         Reservation newRes = new Reservation
         {
             ReservationType = ReservationTypeEnum.Transfer,
-            Booking=booking.Model,
+            Booking = booking.Model,
             FirstHotel = "TRANSFER"
         };
         foreach (CustomerWrapper customer in booking.Customers)

@@ -70,11 +70,11 @@ namespace LATravelManager.UI.Views.Group
                   CustomersDataGrid.Columns[1]);
                 }
             }
-            else if (e.Key == Key.Delete && e.OriginalSource.GetType() != typeof(TextBox))
-            {
-                e.Handled = true;
-                (DataContext as NewReservation_Group_ViewModel).DeleteSelectedCustomers();
-            }
+            //else if (e.Key == Key.Delete && e.OriginalSource.GetType() != typeof(TextBox))
+            //{
+            //    e.Handled = true;
+            //    (DataContext as NewReservation_Group_ViewModel).DeleteSelectedCustomers();
+            //}
         }
 
         private void UserControl_KeyUp(object sender, KeyEventArgs e)

@@ -427,7 +427,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 
         private bool CanAddService()
         {
-            return true;
+            return SelectedService != null && SelectedService.Id == 0; ;
         }
 
         private bool CanClearService()
@@ -666,7 +666,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 
                 if (Payment.Amount > 0)
                 {
-                    PersonalWr.Payments.Add(new Payment { Amount = Payment.Amount, Comment = Payment.Comment, Date = DateTime.Now, PaymentMethod = Payment.PaymentMethod, User = await StartingRepository.GetByIdAsync<User>(StaticResources.User.Id) });
+                    PersonalWr.Payments.Add(new Payment { Amount = Payment.Amount, Comment = Payment.Comment, Date = DateTime.Now, PaymentMethod = Payment.PaymentMethod, User = await StartingRepository.GetByIdAsync<User>(StaticResources.User.Id), Checked = (Payment.PaymentMethod == 0 || Payment.PaymentMethod == 5) ? (bool?)false : null });
                 }
 
                 if (PersonalWr.Id == 0)
@@ -677,7 +677,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
                 await StartingRepository.SaveAsync();
 
                 Payment = new Payment();
-                BookedMessage = "H κράτηση αποθηκέυτηκε επιτυχώς";
+                BookedMessage = "H κράτηση απόθηκέυτηκε επιτυχώς";
                 HasChanges = false;
             }
             catch (Exception ex)

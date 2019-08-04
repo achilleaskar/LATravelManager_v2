@@ -3,16 +3,16 @@ namespace LATravelManager.DataAccess.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class _717 : DbMigration
+    public partial class _7181 : DbMigration
     {
         public override void Up()
         {
-            AddColumn("dbo.Payments", "Checked", c => c.Boolean(nullable: false));
+            AlterColumn("dbo.Payments", "Checked", c => c.Boolean());
         }
         
         public override void Down()
         {
-            DropColumn("dbo.Payments", "Checked");
+            AlterColumn("dbo.Payments", "Checked", c => c.Boolean(nullable: false));
         }
     }
 }

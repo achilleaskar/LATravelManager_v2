@@ -78,7 +78,7 @@ namespace LATravelManager.Model.Wrapper
             }
             if (CheckOut < CheckIn)
             {
-                return "Η επιλεγμένη ημερομηνία επιστροφής είναι νωρίτερα απο την ημερομηνία έναρξης.";
+                return "Η επιλεγμένη ημερομηνία επιστροφής είναι νωρίτερα από την ημερομηνία έναρξης.";
             }
             //if (CheckOut == CheckIn)
             //{
@@ -170,6 +170,27 @@ namespace LATravelManager.Model.Wrapper
         }
 
         public string Comment
+        {
+            get { return GetValue<string>(); }
+            set { SetValue(value); }
+        }
+        public bool Disabled
+        {
+            get { return GetValue<bool>(); }
+            set { SetValue(value); }
+        }
+        public DateTime? DisableDate
+        {
+            get { return GetValue<DateTime?>(); }
+            set { SetValue(value); }
+        }
+        public User DisabledBy
+        {
+            get { return GetValue<User>(); }
+            set { SetValue(value); }
+        }
+
+        public string CancelReason
         {
             get { return GetValue<string>(); }
             set { SetValue(value); }
@@ -370,7 +391,7 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
-        public bool IsGroup => Excursion!=null && Excursion.ExcursionType.Category == ExcursionTypeEnum.Group;
+        public bool IsGroup => Excursion != null && Excursion.ExcursionType.Category == ExcursionTypeEnum.Group && Excursion.FixedDates;
         public bool IsNotGroup => !IsGroup;
 
         public bool IsNotPartners => !IsPartners;
@@ -481,6 +502,10 @@ namespace LATravelManager.Model.Wrapper
         {
             get { return GetValue<ObservableCollection<Reservation>>(); }
         }
+        public ObservableCollection<ChangeInBooking> ChangesInBooking
+        {
+            get { return GetValue<ObservableCollection<ChangeInBooking>>(); }
+        }
 
         public bool SecondDepart
         {
@@ -522,7 +547,7 @@ namespace LATravelManager.Model.Wrapper
 
         public bool AreDatesValid()
         {
-            return CheckIn.Year > 2010 && CheckOut.Year > 2010 && (ExcursionDate != null || (Excursion!=null&& Excursion.ExcursionType.Category != ExcursionTypeEnum.Group));
+            return CheckIn.Year > 2010 && CheckOut.Year > 2010 && (ExcursionDate != null || (Excursion != null && (Excursion.ExcursionType.Category != ExcursionTypeEnum.Group||!Excursion.FixedDates)));
         }
 
         public void CalculateRemainingAmount()
