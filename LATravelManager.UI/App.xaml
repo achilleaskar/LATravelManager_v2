@@ -10,7 +10,7 @@
              xmlns:d1p1="http://schemas.openxmlformats.org/markup-compatibility/2006">
     <Application.Resources>
         <ResourceDictionary>
-            
+
             <converters:UserToVisibility x:Key="UserToVisibilityConverter" />
             <vm:ViewModelLocator x:Key="Locator"
                                  d:IsDataSource="True"
@@ -18,7 +18,7 @@
             <BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" />
             <local:MessageListener x:Key="MessageListener" />
             <Style x:Key="styleCalendar"
-                   TargetType="{x:Type Calendar}" >
+                   TargetType="{x:Type Calendar}">
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type Calendar}">
@@ -34,7 +34,15 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-           
+            <!--<Style TargetType="ListViewItem">
+                <Style.Resources>
+                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                                     Color="Red" />
+                    <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}"
+                                     Color="Red" />
+                </Style.Resources>
+            </Style>-->
+
             <Style TargetType="TextBox"
                    BasedOn="{StaticResource {x:Type TextBox}}">
                 <!--<Setter Property="Validation.ErrorTemplate">
@@ -50,7 +58,7 @@
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>-->
-             
+
                 <Style.Triggers>
                     <Trigger Property="Validation.HasError"
                              Value="True">
@@ -69,6 +77,115 @@
                     </Trigger>
                 </Style.Triggers>
             </Style>
+            <!--<Style TargetType="DataGridRow">
+                <Style.Resources>
+                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                                     Color="#FFFF008B" />
+                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}"
+                                     Color="White" />
+                    <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}"
+                                     Color="#FFFF008B" />
+                    <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}"
+                                     Color="White" />
+                </Style.Resources>
+            </Style>-->
+            <Style TargetType="DataGridCell">
+                <Style.Resources>
+
+                    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
+                                     Color="#FF0078D7" />
+                    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}"
+                                     Color="White" />
+                </Style.Resources>
+            </Style>
+            <!--<ControlTemplate x:Key="DatagridItemSelected"
+                             TargetType='{x:Type ListViewItem}'>
+                <StackPanel Background="LightBlue">
+                    <GridViewRowPresenter Content="{TemplateBinding Content}"
+                                          Columns="{TemplateBinding GridView.ColumnCollection}" />
+                </StackPanel>
+            </ControlTemplate>
+            <ControlTemplate x:Key="DatagridItemDeSelected"
+                             TargetType='{x:Type ListViewItem}'>
+                <StackPanel Background="Transparent">
+                    <GridViewRowPresenter Content="{TemplateBinding Content}"
+                                          Columns="{TemplateBinding GridView.ColumnCollection}" />
+                </StackPanel>
+            </ControlTemplate>-->
+            <!--<Style TargetType="{x:Type DataGridCell}">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding Path=Selected}"
+                                 Value="True">
+                        <Setter Property="Template"
+                                Value="{StaticResource DatagridItemSelected}" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Path=Selected}"
+                                 Value="False">
+                        <Setter Property="Template"
+                                Value="{StaticResource DatagridItemDeSelected}" />
+                    </DataTrigger>
+                </Style.Triggers>
+                <Setter Property="IsSelected"
+                        Value="{Binding Selected, Mode=OneWay}" />
+            </Style>-->
+            <!--<Style x:Key="SelectedDataGridCellStyle"
+                   TargetType="{x:Type DataGridCell}">
+                <Setter Property="Background"
+                        Value="Transparent" />
+                <Setter Property="BorderBrush"
+                        Value="Transparent" />
+                <Setter Property="BorderThickness"
+                        Value="1" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type DataGridCell}">
+                            <Border BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    Background="{TemplateBinding Background}"
+                                    SnapsToDevicePixels="True">
+                                <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsSelected"
+                             Value="True">
+                        <Setter Property="Background"
+                                Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                        <Setter Property="Foreground"
+                                Value="White" />
+                        <Setter Property="BorderBrush"
+                                Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                    </Trigger>
+                    <Trigger Property="IsKeyboardFocusWithin"
+                             Value="True">
+                        <Setter Property="BorderBrush"
+                                Value="{DynamicResource {x:Static DataGrid.FocusBorderBrushKey}}" />
+                    </Trigger>
+                    <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                            <Condition Property="IsSelected"
+                                       Value="true" />
+                            <Condition Property="Selector.IsSelectionActive"
+                                       Value="false" />
+                        </MultiTrigger.Conditions>
+                        <Setter Property="Background"
+                                Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                        <Setter Property="Foreground"
+                                Value="White" />
+                        -->
+            <!--<Setter Property="BorderBrush"
+                                Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightBrushKey}}" />-->
+            <!--
+                    </MultiTrigger>
+                    <Trigger Property="IsEnabled"
+                             Value="false">
+                        <Setter Property="Foreground"
+                                Value="White" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>-->
             <Style TargetType="ListView">
                 <Style.Triggers>
                     <Trigger Property="Validation.HasError"

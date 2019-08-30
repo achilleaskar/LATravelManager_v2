@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Windows.Media;
 
 namespace LATravelManager.Model.BookingData
 {
@@ -15,7 +16,49 @@ namespace LATravelManager.Model.BookingData
 
         private DateTime _Date;
 
+        private SolidColorBrush _PColor;
 
+        [NotMapped]
+        public SolidColorBrush PColor
+        {
+            get
+            {
+                if (_PColor == null)
+                {
+                    SetPColor();
+                }
+                return _PColor;
+            }
+
+            set
+            {
+                if (_PColor == value)
+                {
+                    return;
+                }
+
+                _PColor = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public void SetPColor()
+        {
+            if (Checked == true)
+            {
+                PColor = new SolidColorBrush(Colors.Green);
+            }
+            else if (Outgoing)
+            {
+                PColor = new SolidColorBrush(Colors.Blue);
+            }
+            else if (Checked == null)
+            {
+                PColor = new SolidColorBrush(Colors.Transparent);
+            }
+            else
+                PColor = new SolidColorBrush(Colors.Red);
+        }
 
         public string Dates
         {
@@ -55,39 +98,32 @@ namespace LATravelManager.Model.BookingData
                 }
                 return "Error";
             }
-
-
         }
-
-
 
         public string ExcursionName
         {
             get
             {
-                if (Personal_Booking!=null)
+                if (Personal_Booking != null)
                 {
                     return Personal_Booking.Destination;
                 }
-                else if (ThirdParty_Booking!=null)
+                else if (ThirdParty_Booking != null)
                 {
                     return ThirdParty_Booking.City;
                 }
-                else if (Booking!=null && Booking.Excursion!=null)
+                else if (Booking != null && Booking.Excursion != null)
                 {
                     return Booking.Excursion.Name;
                 }
                 return "Error";
             }
-
-          
         }
 
         public Personal_Booking Personal_Booking { get; set; }
         public ThirdParty_Booking ThirdParty_Booking { get; set; }
 
         private bool _Outgoing;
-
 
         public bool Outgoing
         {
@@ -108,10 +144,7 @@ namespace LATravelManager.Model.BookingData
             }
         }
 
-
-
         private bool? _Checked;
-
 
         public bool? Checked
         {
@@ -138,7 +171,6 @@ namespace LATravelManager.Model.BookingData
 
         public Payment()
         {
-
         }
 
         public Payment(Payment p)
@@ -171,9 +203,7 @@ namespace LATravelManager.Model.BookingData
             }
         }
 
-       // public const string AmountStringPropertyName = nameof(AmountString);
-
-
+        // public const string AmountStringPropertyName = nameof(AmountString);
 
         #endregion Fields + Constructors
 
@@ -207,7 +237,7 @@ namespace LATravelManager.Model.BookingData
                 if (Math.Abs(value - _Amount) > EPSILON)
                 {
                     _Amount = Math.Round(value, 2);
-                  //  AmountString = value.ToString();
+                    //  AmountString = value.ToString();
                 }
                 RaisePropertyChanged();
             }
@@ -315,16 +345,22 @@ namespace LATravelManager.Model.BookingData
             {
                 case 0:
                     return "ΜΕΤΡΗΤΑ";
+
                 case 1:
                     return "ΤΡ. ΚΑΤΑΘΕΣΗ(ΠΕΙΡΑΩΣ)";
+
                 case 2:
                     return "ΤΡ. ΚΑΤΑΘΕΣΗ(ΕΘΝΙΚΗ)";
+
                 case 3:
                     return "ΤΡ. ΚΑΤΑΘΕΣΗ(EUROBANK)";
+
                 case 4:
                     return "ΤΡ. ΚΑΤΑΘΕΣΗ(ALPHABANK)";
+
                 case 5:
                     return "ΠΙΣΤΩΤΙΚΗ ΚΑΡΤΑ(POS)";
+
                 default:
                     return "ERROR";
             }

@@ -13,11 +13,6 @@
     <UserControl.Resources>
         <converters:UserToVisibility x:Key="UserToVisibilityConverter" />
         <converters:FloadToStringValueConverter x:Key="FtoSConverter" />
-        <Style x:Key="DataGridCellStyle"
-               TargetType="{x:Type DataGridCell}">
-            <Setter Property="IsTabStop"
-                    Value="False" />
-        </Style>
     </UserControl.Resources>
     <Grid>
         <TabControl>
@@ -127,47 +122,58 @@
                                                 </GridView>
                                             </ListView.View>
                                         </ListView>
-                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="6 0">
+                                        <StackPanel Orientation="Horizontal"
+                                                    HorizontalAlignment="Right"
+                                                    Margin="6 0">
                                             <TextBlock Width="80"
                                                        Text="{Binding GoTotals}" />
                                             <TextBlock Width="80"
                                                        Text="{Binding ReturnTotals}" />
                                         </StackPanel>
-                                        <!--<StackPanel Orientation="Horizontal"
+                                        <StackPanel Orientation="Horizontal"
                                                     HorizontalAlignment="Right">
-                                            <StackPanel Orientation="Vertical"
-                                                        Margin="0,0,10,0">
-                                                <Button Content="Εισιτήρια"
+                                            <Grid HorizontalAlignment="Stretch">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="115" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel Orientation="Vertical"
+                                                            Grid.Column="1"
+                                                            Margin="0,0,25,0">
+                                                    <!--<Button Content="Εισιτήρια"
                                                         Margin="0,5,5,0"
                                                         Command="{Binding PrintListCommand}"
                                                         CommandParameter="0"
-                                                        Width="70" />
-                                                <Button Content="Λέωφορ."
-                                                        Command="{Binding PrintListCommand}"
-                                                        CommandParameter="1"
-                                                        Margin="0,5,5,0" />
-                                                --><!--<Button Content="Συνολική"
+                                                        Width="70" />-->
+                                                    <Button Content="Λέωφορ."
+                                                            Command="{Binding PrintListCommand}"
+                                                            CommandParameter="1"
+                                                            Margin="0,5,5,0" />
+                                                    <!--<Button Content="Συνολική"
                                                         Command="{Binding PrintListCommand}"
                                                         CommandParameter="2"
-                                                        Margin="0,5,5,5" />--><!--
-                                            </StackPanel>
-                                            <StackPanel Orientation="Vertical">
-                                                <Button Content="Εισιτήρια"
+                                                        Margin="0,5,5,5" />-->
+                                                </StackPanel>
+                                                <StackPanel Orientation="Vertical"
+                                                            Grid.Column="2">
+                                                    <!--<Button Content="Εισιτήρια"
                                                         Command="{Binding PrintListCommand}"
                                                         CommandParameter="3"
                                                         Margin="0,5,5,0"
-                                                        Width="70" />
-                                                <Button Content="Λέωφορ."
-                                                        Command="{Binding PrintListCommand}"
-                                                        CommandParameter="4"
-                                                        Margin="0,5,5,0" />
-                                                --><!--<Button Content="Συνολική"
+                                                        Width="70" />-->
+                                                    <Button Content="Λέωφορ."
+                                                            Command="{Binding PrintListCommand}"
+                                                            CommandParameter="4"
+                                                            Margin="0,5,25,0" />
+                                                    <!--<Button Content="Συνολική"
                                                         Command="{Binding PrintListCommand}"
                                                         CommandParameter="5"
-                                                        Margin="0,5,5,5" />--><!--
-                                            </StackPanel>
+                                                        Margin="0,5,5,5" />-->
+                                                </StackPanel>
+                                            </Grid>
                                         </StackPanel>
-                                        <Button Content="Όλες"
+                                        <!--<Button Content="Όλες"
                                                 Command="{Binding PrintListCommand}"
                                                 CommandParameter="6"
                                                 HorizontalAlignment="Right"
@@ -180,17 +186,17 @@
                                                 Margin="5,5,5,0"
                                                 Command="{Binding SendEmailsCommand}">
                                             <StackPanel>
-                                                <TextBlock Text="απόστολή email" />
+                                                <TextBlock Text="Αποστολή email" />
                                                 <TextBlock Text="σε γραφεία"
                                                            HorizontalAlignment="Center" />
                                             </StackPanel>
-                                        </Button>
+                                        </Button>-->
                                         <TextBox Text="{Binding PhoneNumbers}"
                                                  HorizontalAlignment="Stretch"
                                                  Height="130"
                                                  Margin="5"
                                                  Width="320"
-                                                 TextWrapping="Wrap" />-->
+                                                 TextWrapping="Wrap" />
                                     </StackPanel>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -198,246 +204,7 @@
                     </ScrollViewer>
                 </Grid>
             </TabItem>
-            <TabItem Header="Έσοδα Εκδρομών">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <StackPanel Grid.Row="0"
-                                Orientation="Horizontal">
-                        <Border BorderBrush="Gray"
-                                Padding="3"
-                                Background="LightYellow"
-                                CornerRadius="3"
-                                BorderThickness="1"
-                                Margin="0,2,0,2">
-                            <StackPanel VerticalAlignment="Stretch"
-                                        Orientation="Vertical">
-                                <StackPanel Orientation="Horizontal"
-                                            HorizontalAlignment="Center">
-                                    <StackPanel Margin="0,0,5,0">
-                                        <StackPanel Orientation="Horizontal">
-                                            <Label Content="Aπό:"
-                                                   Padding="0"
-                                                   HorizontalAlignment="Center" />
-                                            <CheckBox Margin="5,0"
-                                                      IsChecked="{Binding EnableFromFilter}" />
-                                        </StackPanel>
-                                        <DatePicker SelectedDate="{Binding From}"
-                                                    Width="118" />
-                                    </StackPanel>
-                                    <StackPanel>
-                                        <StackPanel Orientation="Horizontal">
-                                            <Label Content="Έως"
-                                                   Padding="0"
-                                                   HorizontalAlignment="Center" />
-                                            <CheckBox Margin="5,0"
-                                                      IsChecked="{Binding EnableToFilter}" />
-                                        </StackPanel>
-                                        <DatePicker SelectedDate="{Binding To}"
-                                                    Width="118" />
-                                    </StackPanel>
-                                </StackPanel>
-                            </StackPanel>
-                        </Border>
-                        <StackPanel Orientation="Horizontal"
-                                    VerticalAlignment="Bottom"
-                                    Margin="5,0 0 0">
-                            <StackPanel.Resources>
-                                <Style TargetType="Label">
-                                    <Setter Property="Padding"
-                                            Value="0" />
-                                </Style>
-                                <Style TargetType="Button">
-                                    <Setter Property="VerticalAlignment"
-                                            Value="Bottom" />
-                                </Style>
-                                <Style TargetType="ComboBox">
-                                    <Style.Triggers>
-                                        <Trigger Property="SelectedIndex"
-                                                 Value="0">
-                                            <Setter Property="Foreground"
-                                                    Value="Black" />
-                                        </Trigger>
-                                    </Style.Triggers>
-                                    <Setter Property="Foreground"
-                                            Value="Blue" />
-                                </Style>
-                                <Style TargetType="ComboBoxItem">
-                                    <Setter Property="Foreground"
-                                            Value="Black" />
-                                </Style>
-                            </StackPanel.Resources>
-                            <StackPanel Orientation="Vertical">
-                                <StackPanel Orientation="Horizontal"
-                                            VerticalAlignment="Bottom"
-                                            Margin="0 0 5 5">
-                                    <StackPanel Margin="0 0 5 0">
-                                        <Label Content="Κατηγορία:"
-                                               VerticalAlignment="Bottom" />
-                                        <ComboBox  Width="105"
-                                                   VerticalAlignment="Center"
-                                                   SelectedIndex="{Binding ExcursionCategoryIndexBookingFilter}">
-                                            <ComboBoxItem Content="Όλες" />
-                                            <ComboBoxItem Content="Μπάνσκο" />
-                                            <ComboBoxItem Content="Σκιάθος" />
-                                            <ComboBoxItem Content="Ατομικά" />
-                                            <ComboBoxItem Content="Οργανωμένες" />
-                                            <ComboBoxItem Content="Εκδρομές Τρίτων" />
-                                        </ComboBox>
-                                    </StackPanel>
-                                    <StackPanel>
-                                        <Label Content="Εκδρομή:"
-                                               VerticalAlignment="Center" />
-                                        <ComboBox  Width="105"
-                                                   IsSynchronizedWithCurrentItem="True"
-                                                   VerticalAlignment="Center"
-                                                   ItemsSource="{Binding ExcursionsIncomeCollectionView}"
-                                                   SelectedIndex="{Binding ExcursionIndexBookingFilter}" />
-                                    </StackPanel>
-                                    <StackPanel Orientation="Vertical"
-                                                VerticalAlignment="Bottom"
-                                                Margin="5 0">
-                                        <TextBlock Text="Ολοκ." />
-                                        <CheckBox IsChecked="{Binding CompletedIncomeFilter}"
-                                                  HorizontalAlignment="Center" />
-                                    </StackPanel>
-                                    <StackPanel>
-                                        <Label Content="Γραφείο:"
-                                               VerticalAlignment="Center" />
-                                        <ComboBox  Width="105"
-                                                   VerticalAlignment="Center"
-                                                   SelectedIndex="{Binding DepartmentIndexBookingFilter}">
-                                            <ComboBoxItem Content="Όλα" />
-                                            <ComboBoxItem Content="Θεσσαλονίκης" />
-                                            <ComboBoxItem Content="Λάρισας" />
-                                            <ComboBoxItem Content="Συνεργάτών" />
-                                        </ComboBox>
-                                    </StackPanel>
-                                    <StackPanel Margin="5,0">
-                                        <Label Content="Πωλητής:"
-                                               VerticalAlignment="Center" />
-                                        <ComboBox  Width="85"
-                                                   VerticalAlignment="Center"
-                                                   SelectedIndex="{Binding UserIndexBookingFilter}">
-                                            <ComboBox.Resources>
-                                                <CollectionViewSource x:Key="UsersList"
-                                                                      Source="{Binding Users}" />
-                                            </ComboBox.Resources>
-                                            <ComboBox.ItemsSource>
-                                                <CompositeCollection>
-                                                    <ComboBoxItem Content="Όλοι" />
-                                                    <CollectionContainer Collection="{Binding Source={StaticResource UsersList}}" />
-                                                </CompositeCollection>
-                                            </ComboBox.ItemsSource>
-                                        </ComboBox>
-                                    </StackPanel>
-                                    <StackPanel Margin="0 0 5 0">
-                                        <Label Content="Συνεργάτης:"
-                                               VerticalAlignment="Center" />
-                                        <ComboBox  Width="85"
-                                                   VerticalAlignment="Center"
-                                                   SelectedIndex="{Binding PartnerIndexBookingFilter}"
-                                                   DisplayMemberPath="Name">
-                                            <ComboBox.Resources>
-                                                <CollectionViewSource x:Key="PartnersList"
-                                                                      Source="{Binding Partners}" />
-                                            </ComboBox.Resources>
-                                            <ComboBox.ItemsSource>
-                                                <CompositeCollection>
-                                                    <ComboBoxItem Content="Όλοι" />
-                                                    <CollectionContainer Collection="{Binding Source={StaticResource PartnersList}}" />
-                                                </CompositeCollection>
-                                            </ComboBox.ItemsSource>
-                                        </ComboBox>
-                                    </StackPanel>
-                                    <Button Content="Προβολή"
-                                            VerticalAlignment="Bottom"
-                                            Padding="10 2"
-                                            Command="{Binding ShowIncomesCommand}" />
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal"
-                                            VerticalAlignment="Bottom"
-                                            Margin="5,0"></StackPanel>
-                            </StackPanel>
-                        </StackPanel>
-                    </StackPanel>
-                    <ScrollViewer VerticalScrollBarVisibility="Auto"
-                                  Grid.Row="1"
-                                  HorizontalScrollBarVisibility="Auto">
-                        <ScrollViewer.Resources>
-                            <DataTemplate x:Key="GroupTemplate"
-                                          DataType="{x:Type viewmodels:Info_ViewModel}">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <GroupBox Header="Έσοδα">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="Auto" />
-                                            </Grid.RowDefinitions>
-                                            <Label Content="Τζίρος"
-                                                   Grid.Row="0"
-                                                   Grid.Column="0" />
-                                            <Label Content="{Binding Total, Converter={StaticResource FtoSConverter}}"
-                                                   Grid.Row="0"
-                                                   Grid.Column="1" />
-                                            <Label Content="Net"
-                                                   Grid.Row="1"
-                                                   Grid.Column="0" />
-                                            <Label Content="{Binding Net, Converter={StaticResource FtoSConverter}}"
-                                                   Grid.Row="1"
-                                                   Grid.Column="1" />
-                                            <Label Content="Προμήθειες"
-                                                   Grid.Row="2"
-                                                   Grid.Column="0" />
-                                            <Label Content="{Binding Commission, Converter={StaticResource FtoSConverter}}"
-                                                   Grid.Row="2"
-                                                   Grid.Column="1" />
-                                            <Label Content="Άτομα"
-                                                   Grid.Row="3"
-                                                   Grid.Column="0" />
-                                            <Label Content="{Binding Customers, StringFormat=c2}"
-                                                   Grid.Row="3"
-                                                   Grid.Column="1" />
-                                        </Grid>
-                                    </GroupBox>
-                                </Grid>
-                            </DataTemplate>
-                            <DataTemplate x:Key="PersonalTemplate">
-                                <TextBlock Text="I'm a Business" />
-                            </DataTemplate>
-                        </ScrollViewer.Resources>
-                        <ContentControl Content="{Binding }">
-                            <ContentControl.Style>
-                                <Style TargetType="{x:Type ContentControl}">
-                                    <Setter Property="ContentTemplate"
-                                            Value="{StaticResource GroupTemplate}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding DataTypeString}"
-                                                     Value="Personal">
-                                            <Setter Property="ContentTemplate"
-                                                    Value="{StaticResource PersonalTemplate}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </ContentControl.Style>
-                        </ContentControl>
-                    </ScrollViewer>
-                </Grid>
-            </TabItem>
+
             <!--<TabItem Header="Ιστορικό Ενεργειών">
                 -->
             <!--Visibility="{Binding Converter={StaticResource UserToVisibilityValueConverter},ConverterParameter=3,  Mode=OneWay}">-->

@@ -1,5 +1,8 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
+using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Hotels;
+using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Services;
 using LATravelManager.UI.Helpers;
@@ -39,96 +42,34 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             EditServiceCommand = new RelayCommand(EditService);
         }
 
-
-
-
-        private Service _SelectedService;
-
-
-        public Service SelectedService
-        {
-            get
-            {
-                return _SelectedService;
-            }
-
-            set
-            {
-                if (_SelectedService == value)
-                {
-                    return;
-                }
-
-                _SelectedService = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private void EditService()
-        {
-            SelectedServiceViewModel = Templates.Where(t => t.Service.Tittle == SelectedService.Tittle).FirstOrDefault();
-            SelectedServiceViewModel.Service = SelectedService;
-        }
-
-        public int SelectedUserIndex
-        {
-            get
-            {
-                return _SelectedUserIndex;
-            }
-            set
-            {
-                if (_SelectedUserIndex == value)
-                {
-                    return;
-                }
-                _SelectedUserIndex = value;
-                if (SelectedUserIndex >= 0 && (PersonalWr.User == null || (PersonalWr.User != null && PersonalWr.User.Id != Users[SelectedUserIndex].Id)))
-                {
-                    PersonalWr.User = StartingRepository.GetById<User>(Users[SelectedUserIndex].Id);
-                }
-                RaisePropertyChanged();
-            }
-        }
-
-        public ObservableCollection<User> Users
-        {
-            get => _Users;
-
-            set
-            {
-                if (_Users == value)
-                {
-                    return;
-                }
-
-                _Users = value;
-                RaisePropertyChanged();
-            }
-        }
         #endregion Constructors
 
         #region Fields
 
+        private readonly string[] ValidateRoomsProperties =
+               {
+            nameof(PersonalWr),nameof(Payment)
+        };
+
         private bool _All;
-
+        private string _BookedMessage;
         private string _ErrorsInDatagrid;
-
         private ObservableCollection<Partner> _Partners;
-
         private Personal_BookingWrapper _PersonalWr;
-
         private CustomerWrapper _SelectedCustomer;
-
         private int _SelectedPartnerIndex;
-
         private Payment _SelectedPayment;
+        private Service _SelectedService;
 
         private ServiceViewModel _SelectedServiceViewModel;
+
+        private int _SelectedUserIndex;
 
         private ObservableCollection<Service> _Services;
 
         private List<ServiceViewModel> _Templates;
+
+        private ObservableCollection<User> _Users;
 
         #endregion Fields
 
@@ -157,13 +98,50 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             }
         }
 
+        public bool AreBookingDataValid
+        {
+            get
+            {
+                foreach (string property in ValidateRoomsProperties)
+                {
+                    ErrorsInDatagrid = GetBookingDataValidationError(property);
+                    if (ErrorsInDatagrid != null)
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+
         public BasicDataManager BasicDataManager { get; private set; }
+
+        public string BookedMessage
+        {
+            get
+            {
+                return _BookedMessage;
+            }
+
+            set
+            {
+                if (_BookedMessage == value)
+                {
+                    return;
+                }
+
+                _BookedMessage = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public RelayCommand ClearBookingCommand { get; }
 
         public RelayCommand ClearServiceCommand { get; set; }
 
         public RelayCommand DeletePaymentCommand { get; }
+
+        public RelayCommand EditServiceCommand { get; set; }
 
         public string ErrorsInDatagrid
         {
@@ -284,6 +262,25 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             }
         }
 
+        public Service SelectedService
+        {
+            get
+            {
+                return _SelectedService;
+            }
+
+            set
+            {
+                if (_SelectedService == value)
+                {
+                    return;
+                }
+
+                _SelectedService = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public ServiceViewModel SelectedServiceViewModel
         {
             get
@@ -299,6 +296,27 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
                 }
 
                 _SelectedServiceViewModel = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public int SelectedUserIndex
+        {
+            get
+            {
+                return _SelectedUserIndex;
+            }
+            set
+            {
+                if (_SelectedUserIndex == value)
+                {
+                    return;
+                }
+                _SelectedUserIndex = value;
+                if (SelectedUserIndex >= 0 && (PersonalWr.User == null || (PersonalWr.User != null && PersonalWr.User.Id != Users[SelectedUserIndex].Id)))
+                {
+                    PersonalWr.User = StartingRepository.GetById<User>(Users[SelectedUserIndex].Id);
+                }
                 RaisePropertyChanged();
             }
         }
@@ -343,6 +361,22 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             }
         }
 
+        public ObservableCollection<User> Users
+        {
+            get => _Users;
+
+            set
+            {
+                if (_Users == value)
+                {
+                    return;
+                }
+
+                _Users = value;
+                RaisePropertyChanged();
+            }
+        }
+
         private bool AreContexesFree => (BasicDataManager != null && BasicDataManager.IsContextAvailable) && (StartingRepository != null && StartingRepository.IsContextAvailable);
 
         #endregion Properties
@@ -356,7 +390,10 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
                 if (id > 0)
                 {
                     StartingRepository = new GenericRepository();
+                    BasicDataManager = new BasicDataManager(StartingRepository);
+                    await BasicDataManager.LoadPersonal();
                 }
+
                 Personal_Booking booking = id > 0
                       ? await StartingRepository.GetFullPersonalBookingByIdAsync(id)
                       : await CreateNewBooking();
@@ -379,8 +416,6 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
                 IsLoaded = true;
             }
         }
-
-        public RelayCommand EditServiceCommand { get; set; }
 
         public override Task ReloadAsync()
         {
@@ -427,7 +462,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 
         private bool CanAddService()
         {
-            return SelectedService != null && SelectedService.Id == 0; ;
+            return SelectedServiceViewModel != null && SelectedServiceViewModel.Service.Id == 0; ;
         }
 
         private bool CanClearService()
@@ -443,11 +478,6 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
         private bool CanSave()
         {
             return AreBookingDataValid && ValidateServices() == null;
-        }
-
-        private string ValidateServices()
-        {
-            return null;
         }
 
         private async Task ClearBooking()
@@ -473,6 +503,30 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             StartingRepository.Delete(SelectedPayment);
         }
 
+        private void EditService()
+        {
+            SelectedServiceViewModel = Templates.Where(t => t.Service.Tittle == SelectedService.Tittle).FirstOrDefault();
+            SelectedServiceViewModel.Service = SelectedService;
+        }
+
+        private string GetBookingDataValidationError(string propertyName)
+        {
+            string error = null;
+
+            //Reservation.OnPropertyChanged("CanAddRows");
+            switch (propertyName)
+            {
+                case nameof(PersonalWr):
+                    error = ValidatePersonalWr();
+                    break;
+
+                case nameof(Payment):
+                    error = ValidatePayment();
+                    break;
+            }
+            return error;
+        }
+
         private void GetServices()
         {
             Services.Clear();
@@ -491,6 +545,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             }
             else
             {
+                Services.Clear();
                 foreach (var s in SelectedCustomer.Services)
                 {
                     Services.Add(s);
@@ -573,69 +628,55 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             }
         }
 
-
-
-
-        private string _BookedMessage;
-        private ObservableCollection<User> _Users;
-        private int _SelectedUserIndex;
-
-        public string BookedMessage
+        private async Task SaveAsync()
         {
-            get
+            try
             {
-                return _BookedMessage;
-            }
+                MessengerInstance.Send(new IsBusyChangedMessage(true));
 
-            set
-            {
-                if (_BookedMessage == value)
+                if (Payment.Amount > 0)
                 {
-                    return;
+                    PersonalWr.Payments.Add(new Payment { Amount = Payment.Amount, Comment = Payment.Comment, Date = DateTime.Now, PaymentMethod = Payment.PaymentMethod, User = await StartingRepository.GetByIdAsync<User>(StaticResources.User.Id), Checked = (Payment.PaymentMethod == 0 || Payment.PaymentMethod == 5) ? (bool?)false : null });
                 }
 
-                _BookedMessage = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public bool AreBookingDataValid
-        {
-            get
-            {
-                foreach (string property in ValidateRoomsProperties)
+                if (PersonalWr.Id == 0)
                 {
-                    ErrorsInDatagrid = GetBookingDataValidationError(property);
-                    if (ErrorsInDatagrid != null)
+                    StartingRepository.Add(PersonalWr.Model);
+                }
+                foreach (var s in Services)
+                {
+                    if (s is PlaneService ps)
                     {
-                        return false;
+                        if (ps.Airline != null)
+                            ps.Airline = StartingRepository.GetById<Airline>(ps.Airline.Id);
+                    }
+                    else if (s is HotelService hs)
+                    {
+                        if (hs.Hotel != null)
+                            hs.Hotel = StartingRepository.GetById<Hotel>(hs.Hotel.Id);
+                        if (hs.City != null)
+                            hs.City = StartingRepository.GetById<City>(hs.City.Id);
+                        if (hs.RoomType != null)
+                            hs.RoomType = StartingRepository.GetById<RoomType>(hs.RoomType.Id);
                     }
                 }
-                return true;
+
+                await StartingRepository.SaveAsync();
+
+                Payment = new Payment();
+                BookedMessage = "H κράτηση απόθηκέυτηκε επιτυχώς";
+                HasChanges = false;
             }
-        }
-        private readonly string[] ValidateRoomsProperties =
-               {
-            nameof(PersonalWr),nameof(Payment)
-        };
-
-        private string GetBookingDataValidationError(string propertyName)
-        {
-            string error = null;
-
-            //Reservation.OnPropertyChanged("CanAddRows");
-            switch (propertyName)
+            catch (Exception ex)
             {
-                case nameof(PersonalWr):
-                    error = ValidatePersonalWr();
-                    break;
-
-                case nameof(Payment):
-                    error = ValidatePayment();
-                    break;
+                MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
             }
-            return error;
+            finally
+            {
+                MessengerInstance.Send(new IsBusyChangedMessage(false));
+            }
         }
+
         private string ValidatePayment()
         {
             if (Payment.Amount > PersonalWr.Remaining)
@@ -653,46 +694,15 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             }
             return null;
         }
+
         private string ValidatePersonalWr()
         {
             return PersonalWr.ValidatePersonalBooking();
         }
 
-        private async Task SaveAsync()
+        private string ValidateServices()
         {
-            try
-            {
-                MessengerInstance.Send(new IsBusyChangedMessage(true));
-
-                if (Payment.Amount > 0)
-                {
-                    PersonalWr.Payments.Add(new Payment { Amount = Payment.Amount, Comment = Payment.Comment, Date = DateTime.Now, PaymentMethod = Payment.PaymentMethod, User = await StartingRepository.GetByIdAsync<User>(StaticResources.User.Id), Checked = (Payment.PaymentMethod == 0 || Payment.PaymentMethod == 5) ? (bool?)false : null });
-                }
-
-                if (PersonalWr.Id == 0)
-                {
-                    StartingRepository.Add(PersonalWr.Model);
-                }
-
-                await StartingRepository.SaveAsync();
-
-                Payment = new Payment();
-                BookedMessage = "H κράτηση απόθηκέυτηκε επιτυχώς";
-                HasChanges = false;
-            }
-            catch (Exception ex)
-            {
-                MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
-            }
-            finally
-            {
-                MessengerInstance.Send(new IsBusyChangedMessage(false));
-            }
-
-
-
-
-
+            return null;
         }
 
         #endregion Methods

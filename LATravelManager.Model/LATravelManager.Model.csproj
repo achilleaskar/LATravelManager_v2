@@ -38,6 +38,9 @@
     <Reference Include="CommonServiceLocator, Version=2.0.2.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.2.0.2\lib\net45\CommonServiceLocator.dll</HintPath>
     </Reference>
+    <Reference Include="EPPlus, Version=4.5.3.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.4.5.3\lib\net40\EPPlus.dll</HintPath>
+    </Reference>
     <Reference Include="GalaSoft.MvvmLight, Version=5.4.1.0, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
     </Reference>
@@ -51,8 +54,10 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -72,7 +77,6 @@
     <Compile Include="BookingData\ThirdParty_Booking.cs" />
     <Compile Include="CustomFile.cs" />
     <Compile Include="LocalModels\CityDepartureInfo.cs" />
-    <Compile Include="LocalModels\DailyDepartureInfo.cs" />
     <Compile Include="LocalModels\Email.cs" />
     <Compile Include="LocalModels\NoName.cs" />
     <Compile Include="LocalModels\PlanDailyInfo.cs" />
@@ -118,6 +122,7 @@
     <Compile Include="Services\OptionalService.cs" />
     <Compile Include="Services\PlaneService.cs" />
     <Compile Include="Services\TransferService.cs" />
+    <Compile Include="Transaction.cs" />
     <Compile Include="Wrapper\BookingWrapper.cs" />
     <Compile Include="Wrapper\CityWrapper.cs" />
     <Compile Include="Wrapper\CountryWrapper.cs" />
@@ -131,6 +136,7 @@
     <Compile Include="Wrapper\ReservationWrapper.cs" />
     <Compile Include="Wrapper\RoomWrapper.cs" />
     <Compile Include="Wrapper\ThirdParty_Booking_Wrapper.cs" />
+    <Compile Include="Wrapper\TransactionWrapper.cs" />
     <Compile Include="Wrapper\UserWrapper.cs" />
   </ItemGroup>
   <ItemGroup>

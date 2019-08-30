@@ -205,7 +205,7 @@ namespace LATravelManager.UI.Wrapper
                 if (tmpDate == PlanDailyInfo[i].Date)
                 {
                     bool positive;
-                    if ((PlanDailyInfo[i].RoomState == RoomStateEnum.Available && (PlanDailyInfo[i].RoomTypeEnm==RoomTypeEnum.Available || (includeAllotment&& PlanDailyInfo[i].RoomTypeEnm == RoomTypeEnum.Booking))) ||
+                    if ((PlanDailyInfo[i].RoomState == RoomStateEnum.Available && (PlanDailyInfo[i].RoomTypeEnm == RoomTypeEnum.Available || (includeAllotment && PlanDailyInfo[i].RoomTypeEnm == RoomTypeEnum.Booking))) ||
                        (PlanDailyInfo[i].RoomState == RoomStateEnum.MovableNoName && includeSelf))
                     {
                         positive = true;
@@ -298,11 +298,11 @@ namespace LATravelManager.UI.Wrapper
         {
             try
             {
-                if (Id==1800)
-                {
-
-                }
-                DateTime tmpDate = reservationWr.CheckIn;
+                DateTime tmpDate;
+                if (reservationWr.Booking.Excursion.NightStart)
+                    tmpDate = reservationWr.CheckIn.AddDays(1);
+                else
+                    tmpDate = reservationWr.CheckIn;
                 int dayNum = 0;
                 PlanDailyInfo tmpPlanInfo = null;
                 while (tmpDate < reservationWr.CheckOut)

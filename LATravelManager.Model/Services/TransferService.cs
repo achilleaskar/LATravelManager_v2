@@ -1,6 +1,4 @@
-﻿using LATravelManager.Model.Services;
-
-namespace LATravelManager.Model.Services
+﻿namespace LATravelManager.Model.Services
 {
     public class TransferService : Service
     {

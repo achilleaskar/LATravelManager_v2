@@ -36,7 +36,8 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
-                        <Label Content="{Binding Dates}" MaxWidth="200"
+                        <Label Content="{Binding Dates}"
+                               MaxWidth="200"
                                HorizontalAlignment="Center">
                             <Label.Style>
                                 <Style TargetType="Label">
@@ -49,7 +50,6 @@
                                     </Style.Triggers>
                                 </Style>
                             </Label.Style>
-
                         </Label>
                         <ListView ItemsSource="{Binding Rooms}"
                                   Grid.Row="1"
@@ -135,7 +135,6 @@
                                                                         </TextBlock.Text>
                                                                     </TextBlock>
                                                                     <!--Visibility="{Binding Converter={StaticResource RoomsHotelsToVisibilityConverter}}"-->
-
                                                                 </StackPanel>
                                                             </Expander.Header>
                                                             <ItemsPresenter />
@@ -159,11 +158,11 @@
                             </ListView.ItemTemplate>
                         </ListView>
                     </StackPanel>
-
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <ItemsControl ItemsSource="{Binding SecondaryLists}" Grid.Row="2"
+        <ItemsControl ItemsSource="{Binding SecondaryLists}"
+                      Grid.Row="2"
                       Margin="5">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -187,7 +186,6 @@
                                     </Style.Triggers>
                                 </Style>
                             </Label.Style>
-
                         </Label>
                         <ListView ItemsSource="{Binding Rooms}"
                                   Grid.Row="1"
@@ -266,14 +264,12 @@
                                                                                 <Binding Path="DataContext">
                                                                                     <Binding.RelativeSource>
                                                                                         <RelativeSource Mode="FindAncestor"
-                                                                                                        
                                                                                                         AncestorType="ListView" />
                                                                                     </Binding.RelativeSource>
                                                                                 </Binding>
                                                                             </MultiBinding>
                                                                         </TextBlock.Text>
                                                                     </TextBlock>
-
                                                                 </StackPanel>
                                                             </Expander.Header>
                                                             <ItemsPresenter />
@@ -297,7 +293,6 @@
                             </ListView.ItemTemplate>
                         </ListView>
                     </StackPanel>
-
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>

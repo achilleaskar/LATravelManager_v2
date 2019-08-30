@@ -1,11 +1,7 @@
 ﻿using LATravelManager.Model.Hotels;
 using LATravelManager.UI.ViewModel.CategoriesViewModels;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
 
 namespace LATravelManager.UI.Converters
@@ -26,7 +22,6 @@ namespace LATravelManager.UI.Converters
             }
             return (freeRooms > 0);
         }
-
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {

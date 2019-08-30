@@ -3,14 +3,11 @@ using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Helpers;
-using LATravelManager.UI.Repositories;
 using LATravelManager.UI.Security;
 using LATravelManager.UI.ViewModel.BaseViewModels;
-using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Security;
-using System.Threading.Tasks;
 
 namespace LaTravelManager.ViewModel.Management
 {
@@ -172,8 +169,6 @@ namespace LaTravelManager.ViewModel.Management
             MainCollection = new ObservableCollection<UserWrapper>((BasicDataManager.Users).Select(u => new UserWrapper(u)));
             BaseLocations = new ObservableCollection<StartingPlace>(BasicDataManager.StartingPlaces);
         }
-
-
 
         #endregion Methods
     }

@@ -237,7 +237,7 @@
                               FontSize="12"
                               ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                               ScrollViewer.CanContentScroll="False">
-                      
+
                         <ListView.Resources>
                             <ContextMenu x:Key="ItemContextMenu">
                                 <MenuItem Header="Επεξεργασία"

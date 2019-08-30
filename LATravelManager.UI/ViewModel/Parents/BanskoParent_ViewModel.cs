@@ -1,19 +1,15 @@
-﻿using LATravelManager.Model.Excursions;
-using LATravelManager.UI.Repositories;
-using LATravelManager.UI.ViewModel.BaseViewModels;
+﻿using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.CategoriesViewModels;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko;
 using LATravelManager.UI.ViewModel.Tabs;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Wrapper;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace LATravelManager.UI.ViewModel.Parents
 {
     public class BanskoParent_ViewModel : ExcursionCategory_ViewModelBase
     {
-    
         public BanskoParent_ViewModel(MainViewModel mainViewModel) : base(mainViewModel)
         {
             Tabs.Add(new MakeReservationTab { Index = Tabs.Count });
@@ -27,7 +23,7 @@ namespace LATravelManager.UI.ViewModel.Parents
 
         public override void Load(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
-            SelectedExcursion = BasicDataManager.Excursions.Where(e => e.Id == 2).Select(e=>new ExcursionWrapper(e) ).FirstOrDefault();
+            SelectedExcursion = BasicDataManager.Excursions.Where(e => e.Id == 2).Select(e => new ExcursionWrapper(e)).FirstOrDefault();
         }
 
         public void LoadChildViewModels()

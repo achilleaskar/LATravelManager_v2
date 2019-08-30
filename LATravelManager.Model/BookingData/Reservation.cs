@@ -13,6 +13,7 @@ namespace LATravelManager.Model.BookingData
 
         [NotMapped]
         public string LastHotel { get; set; }
+
         [NotMapped]
         public string LastCustomers { get; set; }
 
@@ -28,7 +29,6 @@ namespace LATravelManager.Model.BookingData
 
         #region Properties
 
-        [Required]
         public Booking Booking { get; set; }
 
         public List<Customer> CustomersList { get; set; }

@@ -14,7 +14,6 @@ namespace LATravelManager.Model.People
         [StringLength(20, MinimumLength = 3)]
         public string Name { get; set; }
 
-
         public List<Booking> Bookings { get; set; }
         public string Note { get; set; }
 

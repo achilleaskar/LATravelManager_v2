@@ -1,6 +1,4 @@
-﻿using LATravelManager.Model;
-using LATravelManager.Model.Services;
-using System;
+﻿using System;
 
 namespace LATravelManager.Model.Services
 {
@@ -35,7 +33,7 @@ namespace LATravelManager.Model.Services
 
         #region Properties
 
-        public  Airline Airline
+        public Airline Airline
         {
             get
             {

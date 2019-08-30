@@ -684,7 +684,6 @@ namespace LATravelManager.UI.Data.Workers
             {
                 if (!b.IsPartners || b.Partner.Id != 219)
                 {
-
                     tmpress.AddRange(b.ReservationsInBooking);
                 }
             }
@@ -704,13 +703,10 @@ namespace LATravelManager.UI.Data.Workers
                 tmpress.Where(r => r.ReservationType == ReservationTypeEnum.Normal || r.ReservationType == ReservationTypeEnum.Overbooked).Select(x => new ReservationWrapper(x)).GroupBy(r => (r.Hotel, r.CheckIn, r.CheckOut)).ToList()
              .OrderBy(t => t.Key.Hotel.Name).ThenBy(ti => ti.Key.CheckIn).ThenBy(to => to.Key.CheckOut).ToList();
 
-
-
             foreach (IGrouping<(Hotel Hotel, DateTime CheckIn, DateTime CheckOut), ReservationWrapper> group in wrers)
             {
                 if (rmList == null || rmList.Hotel.Id != group.Key.Hotel.Id)
                 {
-
                     rmList = new RoomingList { Hotel = new HotelWrapper(group.Key.Hotel) };
                 }
                 foreach (ReservationWrapper res in group.OrderBy(r => r.Booking.Id))

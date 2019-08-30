@@ -51,7 +51,8 @@
         <DataTemplate x:Key="SidePaneListViewTemplate">
             <StackPanel Orientation="Horizontal"
                         Visibility="{Binding Level, Converter={StaticResource UserToVisibilityConverter},  Mode=OneWay}">
-                <iconPacks:PackIconMaterial Kind="{Binding IconName}" Foreground="DarkBlue"
+                <iconPacks:PackIconMaterial Kind="{Binding IconName}"
+                                            Foreground="DarkBlue"
                                             Height="30"
                                             Width="30" />
                 <Label Content="{Binding Content}" />

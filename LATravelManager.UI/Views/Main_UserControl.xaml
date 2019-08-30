@@ -16,7 +16,7 @@
              d:DesignHeight="450"
              d:DesignWidth="800">
     <UserControl.Resources>
-        
+
         <DataTemplate DataType="{x:Type viewmodels:BanskoParent_ViewModel}">
             <views:Bansko_UserControl />
         </DataTemplate>
@@ -38,8 +38,8 @@
         <DataTemplate DataType="{x:Type tabs:Info_ViewModel}">
             <tabViews:InfoTab_UserControl />
         </DataTemplate>
-        <DataTemplate DataType="{x:Type tabs:EconomicData_ViewModel}">
-            <tabViews:EconomicData_UserControl />
+        <DataTemplate DataType="{x:Type tabs:GlobalEconomics_ViewModel}">
+            <tabViews:GlobalEconomics_UserControl />
         </DataTemplate>
         <DataTemplate DataType="{x:Type tabs:AddRooms_ViewModel}">
             <tabViews:AddRooms_UserControl />

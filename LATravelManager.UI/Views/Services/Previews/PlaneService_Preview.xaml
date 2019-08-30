@@ -134,7 +134,7 @@
             <Label Content="{Binding Profit,Converter={StaticResource floatToStringConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                    Grid.Row="6"
                    HorizontalAlignment="Left"
-                   
+
                    Grid.Column="1" />
             <Label Content="Κόστος(ΝΕΤ):"
                    Grid.Row="6"

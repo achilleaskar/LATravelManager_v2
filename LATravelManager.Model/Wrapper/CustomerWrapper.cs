@@ -28,7 +28,6 @@ namespace LATravelManager.UI.Helpers
         {
             RaisePropertyChanged(nameof(NumOfServices));
             RaisePropertyChanged(nameof(Services));
-
         }
 
         #endregion Constructors
@@ -50,11 +49,6 @@ namespace LATravelManager.UI.Helpers
             get { return GetValue<int>(); }
             set { SetValue(value); }
         }
-
-
-
-
-
 
         public int NumOfServices => Services.Count;
 
@@ -120,6 +114,12 @@ namespace LATravelManager.UI.Helpers
         }
 
         public int CustomerHasBusIndex
+        {
+            get { return GetValue<int>(); }
+            set { SetValue(value); }
+        }
+
+        public int CustomerHasPlaneIndex
         {
             get { return GetValue<int>(); }
             set { SetValue(value); }
@@ -314,7 +314,7 @@ namespace LATravelManager.UI.Helpers
 
         {
             get { return GetValue<string>(); }
-            set { SetValue(string.IsNullOrEmpty(value)?null:value); }
+            set { SetValue(string.IsNullOrEmpty(value) ? null : value); }
         }
 
         #endregion Properties
@@ -339,6 +339,7 @@ namespace LATravelManager.UI.Helpers
 
                 case ReservationTypeEnum.Transfer:
                     return "TRANSFER";
+
                 case ReservationTypeEnum.OneDay:
                     return "ONEDAY";
             }
@@ -363,6 +364,7 @@ namespace LATravelManager.UI.Helpers
 
                 case ReservationTypeEnum.OneDay:
                     return "ONEDAY";
+
                 case ReservationTypeEnum.Overbooked:
                     return (Reservation.NoNameRoomType != null) ? Reservation.NoNameRoomType.Name : "ERROR";
             }

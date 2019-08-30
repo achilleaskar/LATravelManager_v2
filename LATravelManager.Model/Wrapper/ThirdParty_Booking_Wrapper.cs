@@ -106,8 +106,6 @@ namespace LATravelManager.Model.Wrapper
             set { SetValue(value); }
         }
 
-
-
         public CustomFile File
         {
             get { return GetValue<CustomFile>(); }
@@ -139,8 +137,6 @@ namespace LATravelManager.Model.Wrapper
             get { return GetValue<ObservableCollection<Customer>>(); }
             set { SetValue(value); }
         }
-
-
 
         public string DatesError
         {
@@ -232,8 +228,6 @@ namespace LATravelManager.Model.Wrapper
             set { SetValue(value); }
         }
 
-       
-
         public ObservableCollection<Payment> Payments
         {
             get { return GetValue<ObservableCollection<Payment>>(); }
@@ -284,11 +278,7 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
-
-
-
         private decimal _NetRemaining;
-
 
         public decimal NetRemaining
         {
@@ -303,7 +293,6 @@ namespace LATravelManager.Model.Wrapper
                 {
                     return;
                 }
-
 
                 if (Math.Abs(_NetRemaining - value) > 0.0001m)
                 {
@@ -468,7 +457,6 @@ namespace LATravelManager.Model.Wrapper
             }
             else if (e.Action == NotifyCollectionChangedAction.Add)
             {
-
                 foreach (CustomerWrapper customer in e.NewItems)
                 {
                     if (customer.Id == 0)
@@ -477,13 +465,13 @@ namespace LATravelManager.Model.Wrapper
                         customer.Id = --IdCounter;
                         Customers.Add(customer.Model);
                     }
-                if (Customers.Count > 1)
-                {
-                    if (string.IsNullOrEmpty(customer.StartingPlace))
+                    if (Customers.Count > 1)
                     {
+                        if (string.IsNullOrEmpty(customer.StartingPlace))
+                        {
                             customer.StartingPlace = Customers[0].StartingPlace;
+                        }
                     }
-                }
                     customer.PropertyChanged += EntityViewModelPropertyChanged;
                 }
             }

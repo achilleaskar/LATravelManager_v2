@@ -1,6 +1,4 @@
-﻿using LATravelManager.Model.Hotels;
-using LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;

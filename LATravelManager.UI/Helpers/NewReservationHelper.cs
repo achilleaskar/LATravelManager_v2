@@ -9,8 +9,6 @@ using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.Wrapper;
 using System;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Media;
@@ -32,10 +30,7 @@ public class NewReservationHelper : ViewModelBase
 
     #endregion Fields
 
-    #region Properties
 
-
-    #endregion Properties
 
     #region Methods
 
@@ -108,7 +103,6 @@ public class NewReservationHelper : ViewModelBase
 
     internal void AddOneDay(BookingWrapper booking, bool all)
     {
-
         bool hasCustomers = false;
         Reservation newRes = new Reservation
         {
@@ -282,7 +276,7 @@ public class NewReservationHelper : ViewModelBase
     {
         if (Payment.Amount > 0)
         {
-            BookingWr.Payments.Add(new Payment { Amount = Payment.Amount, Comment = Payment.Comment, Date = DateTime.Now, PaymentMethod = Payment.PaymentMethod, User = await context.GetByIdAsync<User>(StaticResources.User.Id) ,Checked= (Payment.PaymentMethod == 0 || Payment.PaymentMethod == 5)?(bool?)false:null });
+            BookingWr.Payments.Add(new Payment { Amount = Payment.Amount, Comment = Payment.Comment, Date = DateTime.Now, PaymentMethod = Payment.PaymentMethod, User = await context.GetByIdAsync<User>(StaticResources.User.Id), Checked = (Payment.PaymentMethod == 0 || Payment.PaymentMethod == 5) ? (bool?)false : null });
         }
         if (BookingWr.Id == 0)
         {
@@ -299,7 +293,6 @@ public class NewReservationHelper : ViewModelBase
     private async Task CaptureChanges(GenericRepository context, BookingWrapper bookingWr)
     {
         await context.CaptureChanges(bookingWr);
-
     }
 
     internal void AddTransfer(BookingWrapper booking, bool all)

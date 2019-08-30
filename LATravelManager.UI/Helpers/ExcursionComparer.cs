@@ -6,7 +6,7 @@ namespace LATravelManager.UI.Helpers
 {
     public class ExcursionComparer : IComparer<Excursion>
     {
-        public int Compare(Excursion y, Excursion x )
+        public int Compare(Excursion y, Excursion x)
         {
             DateTime xStart = x.ExcursionDates[0].CheckIn, yStart = y.ExcursionDates[0].CheckIn;
 

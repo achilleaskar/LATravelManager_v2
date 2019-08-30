@@ -21,20 +21,20 @@ namespace LATravelManager.Model.Hotels
 
         #region Properties
 
-        public  List<BookingInfoPerDay> DailyBookingInfo { get; set; }
+        public List<BookingInfoPerDay> DailyBookingInfo { get; set; }
 
         [NotMapped]
         public DateTime EndDate { get; set; }
 
         [Required]
-        public  Hotel Hotel { get; set; }
+        public Hotel Hotel { get; set; }
 
         public string Note { get; set; }
 
-        public  ObservableCollection<Option> Options { get; set; }
+        public ObservableCollection<Option> Options { get; set; }
 
         [Required(ErrorMessage = "Επιλέξτε τύπο δωματίου")]
-        public  RoomType RoomType { get; set; }
+        public RoomType RoomType { get; set; }
 
         [NotMapped]
         public DateTime StartDate { get; set; }

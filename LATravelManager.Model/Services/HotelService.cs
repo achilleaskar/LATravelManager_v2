@@ -1,6 +1,5 @@
 ﻿using LATravelManager.Model.Hotels;
 using LATravelManager.Model.Locations;
-using LATravelManager.Model.Services;
 using System;
 
 namespace LATravelManager.Model.Services
@@ -16,28 +15,23 @@ namespace LATravelManager.Model.Services
             PropertyChanged += HotelService_PropertyChanged;
         }
 
-        private void HotelService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName==nameof(TimeGo)&&TimeGo.Year>2000)
-            {
-                Option = TimeGo.AddDays(-10);
-            }
-        }
-
         #endregion Constructors
 
         #region Fields
 
         private City _City;
+
         private Hotel _Hotel;
+
         private DateTime _Option;
+
         private RoomType _RoomType;
 
         #endregion Fields
 
         #region Properties
 
-        public  City City
+        public City City
         {
             get
             {
@@ -56,7 +50,7 @@ namespace LATravelManager.Model.Services
             }
         }
 
-        public  Hotel Hotel
+        public Hotel Hotel
         {
             get
             {
@@ -94,7 +88,7 @@ namespace LATravelManager.Model.Services
             }
         }
 
-        public  RoomType RoomType
+        public RoomType RoomType
         {
             get
             {
@@ -114,5 +108,17 @@ namespace LATravelManager.Model.Services
         }
 
         #endregion Properties
+
+        #region Methods
+
+        private void HotelService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(TimeGo) && TimeGo.Year > 2000)
+            {
+                Option = TimeGo.AddDays(-10);
+            }
+        }
+
+        #endregion Methods
     }
 }

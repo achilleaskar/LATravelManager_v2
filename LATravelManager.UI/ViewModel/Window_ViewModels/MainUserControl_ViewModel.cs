@@ -1,12 +1,9 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
-using GalaSoft.MvvmLight.Messaging;
 using LaTravelManager.ViewModel.Management;
 using LATravelManager.Model.Excursions;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.ViewModel.BaseViewModels;
-using LATravelManager.UI.ViewModel.CategoriesViewModels.Skiathos;
-using LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty;
 using LATravelManager.UI.ViewModel.Management;
 using LATravelManager.UI.ViewModel.Parents;
 using LATravelManager.UI.Views;
@@ -14,7 +11,6 @@ using LATravelManager.UI.Views.Management;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -172,11 +168,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             }
         }
 
-
-
-
         private ObservableCollection<ExcursionCategory> _Templates;
-
 
         public ObservableCollection<ExcursionCategory> Templates
         {
@@ -200,7 +192,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
         public List<ExcursionCategory_ViewModelBase> TemplateViewmodels { get; set; }
 
         public string UserName => StaticResources.User != null ?
-            $"{StaticResources.User.Name} {((!string.IsNullOrEmpty(StaticResources.User.Surename)&& StaticResources.User.Surename.Length>4)? StaticResources.User.Surename.Substring(0,5):"")}" 
+            $"{StaticResources.User.Name} {((!string.IsNullOrEmpty(StaticResources.User.Surename) && StaticResources.User.Surename.Length > 4) ? StaticResources.User.Surename.Substring(0, 5) : "")}"
             : "Error";
 
         #endregion Properties
@@ -213,7 +205,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             Templates = MainViewModel.BasicDataManager.ExcursionCategories;
 
             await Task.Delay(0);
-           // await SetProperViewModel();
+            // await SetProperViewModel();
         }
 
         public void OpenCitiesWindow()

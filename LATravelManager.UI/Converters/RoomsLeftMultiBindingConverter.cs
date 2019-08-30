@@ -1,12 +1,7 @@
 ﻿using LATravelManager.Model.Hotels;
 using LATravelManager.UI.ViewModel.CategoriesViewModels;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace LATravelManager.UI.Converters
@@ -25,7 +20,7 @@ namespace LATravelManager.UI.Converters
             }
             if (values[1] is AvailabilitiesList al)
             {
-               al.RoomTYpesLeft.TryGetValue(roomTypeId, out freeRooms);
+                al.RoomTYpesLeft.TryGetValue(roomTypeId, out freeRooms);
             }
             return "( " + ((freeRooms < count) ? freeRooms : count) + " Προς κράτηση )";
         }

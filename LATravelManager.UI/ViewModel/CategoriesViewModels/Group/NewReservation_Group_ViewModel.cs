@@ -18,11 +18,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Group
             MessengerInstance.Register<SelectedExcursionChangedMessage>(this, async exc => { await SelectedExcursionChanged(exc.SelectedExcursion); });
         }
 
-        #region Constructors
 
-
-
-        #endregion Constructors
 
         #region Properties
 
@@ -53,15 +49,11 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Group
         {
             try
             {
-                if (id>0)
-                {
-                    StartingRepository = new GenericRepository();
-                }
                 if (SelectedExcursion != null || id > 0)
                 {
-                   Booking booking = id > 0
-                        ? await StartingRepository.GetFullBookingByIdAsync(id)
-                        : await CreateNewBooking();
+                    Booking booking = id > 0
+                         ? await GenericRepository.GetFullBookingByIdAsync(id)
+                         : await CreateNewBooking();
 
                     InitializeBooking(booking);
 

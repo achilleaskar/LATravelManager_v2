@@ -18,8 +18,10 @@
         <converters:BoolToColorConverter x:Key="BrushColorConverter" />
         <converters:UserToVisibility x:Key="UserToVisibilityConverter" />
         <converters:FloadToStringValueConverter x:Key="FtoSConverter" />
-
+        <converters:RoomsLeftToVisibilityConverter x:Key="RoomsLeftToVisibilityConverter" />
+        <converters:RoomTypeToRoomsLeftConverter x:Key="RoomTypeToRoomsLeftConverter" />
         <converters:SelectedIndexToForegroundConverter x:Key="SelectedIndexToForegroundConverter" />
+        <converters:RoomsLeftToHotelsConverter x:Key="RoomsLeftToHotelsConverter" />
         <Style TargetType="{x:Type Border}">
             <Setter Property="BorderBrush"
                     Value="Gray" />
@@ -77,16 +79,30 @@
                                   Grid.ColumnSpan="2">
                             <ListView.Resources>
                                 <Style TargetType="{x:Type ListViewItem}">
+                                    <Setter Property="IsSelected"
+                                            Value="{Binding IsSelected}" />
                                     <EventSetter Event="Control.MouseDoubleClick"
                                                  Handler="ListView_MouseDoubleClick" />
-                                    <Setter Property="Foreground"
-                                            Value="{Binding Converter={StaticResource BrushColorConverter}}" />
+                                    <!--<Setter Property="Foreground"
+                                            Value="{Binding Converter={StaticResource BrushColorConverter}}" />-->
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=IsSelected}"
+                                                     Value="True">
+                                            <Setter Property="Background"
+                                                    Value="LightSkyBlue" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Path=IsSelected}"
+                                                     Value="False">
+                                            <Setter Property="Background"
+                                                    Value="Transparent" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
                                 </Style>
                             </ListView.Resources>
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn Header="Ξενοδοχείο"
-                                                    Width="100"
+                                                    Width="120"
                                                     DisplayMemberBinding="{Binding Hotel.Name}" />
                                     <GridViewColumn Header="Τύπος Δωματίου"
                                                     Width="100"
@@ -113,30 +129,35 @@
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate>
-                                                        <Expander IsExpanded="False">
-                                                            <!--IsEnabled="{Binding Converter={StaticResource RoomsLeftToVisibilityConverter}}">-->
+                                                        <Expander IsExpanded="False"
+                                                                  IsEnabled="{Binding Converter={StaticResource RoomsLeftToVisibilityConverter}}">
                                                             <Expander.Header>
                                                                 <StackPanel Orientation="Horizontal">
                                                                     <TextBlock Text="{Binding ItemCount}"
                                                                                FontSize="16"
                                                                                Foreground="Green"
                                                                                FontWeight="Bold"
+                                                                               VerticalAlignment="Top"
                                                                                FontStyle="Italic"
-                                                                               Margin="0,0,10,0"
-                                                                               VerticalAlignment="Center" />
+                                                                               Margin="0,0,10,0" />
                                                                     <TextBlock Text="{Binding Name}"
                                                                                FontWeight="Bold"
+                                                                               VerticalAlignment="Top"
                                                                                Foreground="Black"
-                                                                               FontSize="16"
+                                                                               FontSize="16" />
+                                                                    <TextBlock Foreground="Black"
+                                                                               Margin="10 0"
+                                                                               FontSize="14"
+                                                                               TextWrapping="Wrap"
+                                                                               Width="310"
+                                                                               Text="{Binding Converter={StaticResource RoomsLeftToHotelsConverter}}"
                                                                                VerticalAlignment="Center" />
-                                                                    <TextBlock FontWeight="Bold"
-                                                                               Foreground="Black"
-                                                                               FontSize="16"
-                                                                               VerticalAlignment="Center" />
-                                                                    <!--Text="{Binding Converter={StaticResource RoomTypeToRoomsLeftConverter}}"-->
-                                                                  
-                                                                    <!--Visibility="{Binding Converter={StaticResource RoomsHotelsToVisibilityConverter}}"
-                                                                   -->
+                                                                    <!--Visibility="{Binding Converter={StaticResource RoomsHotelsToVisibilityConverter}}"-->
+                                                                    <!--
+                                                                    <Button Content="No Name"
+                                                                            Command="{Binding DataContext.BookRoomNoNameCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}, Mode=FindAncestor}}"
+                                                                            CommandParameter="{Binding Name}"
+                                                                            Margin="5,0" />-->
                                                                 </StackPanel>
                                                             </Expander.Header>
                                                             <ItemsPresenter />
@@ -364,7 +385,7 @@
                                 <TextBlock Text="Νet τιμή:"
                                            Grid.Row="2"
                                            HorizontalAlignment="Left" />
-                                <TextBlock Text="{Binding BookingWr.NetPrice,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True,Converter={StaticResource FtoSConverter } }" 
+                                <TextBlock Text="{Binding BookingWr.NetPrice,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True,Converter={StaticResource FtoSConverter } }"
                                            Margin="5,0,5,5"
                                            VerticalAlignment="Center"
                                            MinWidth="40"
@@ -448,7 +469,7 @@
                                         HorizontalAlignment="Center">
                                 <CheckBox Content="Onlystay"
                                           IsChecked="{Binding OnlyStay}" />
-                                <CheckBox Content="HB" 
+                                <CheckBox Content="HB"
                                           IsChecked="{Binding HB }" />
                                 <CheckBox Content="Διαφ. Ημ."
                                           IsChecked="{Binding BookingWr.DifferentDates }" />
@@ -687,7 +708,6 @@
                                 <Setter Property="Margin"
                                         Value="0" />
                             </Style>
-                          
                         </DataGrid.Resources>
                         <DataGrid.RowStyle>
                             <StaticResource ResourceKey="RowStyle" />
@@ -743,7 +763,7 @@
                                                 Width="35"
                                                 FontWeight="DemiBold"
                                                 FontSize="14"
-                                                Binding="{Binding Price,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"/>
+                                                Binding="{Binding Price,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" />
                             <DataGridTemplateColumn Header="Γέννηση"
                                                     CellStyle="{StaticResource DataGridCellStyle}"
                                                     Visibility="{Binding DataContext.SelectedExcursion.DOBNeeded, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">

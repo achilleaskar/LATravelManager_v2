@@ -3,13 +3,11 @@ using LATravelManager.Model.Hotels;
 using LATravelManager.Model.Locations;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
-using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.Wrapper;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace LaTravelManager.ViewModel.Management
 {
@@ -74,7 +72,6 @@ namespace LaTravelManager.ViewModel.Management
         {
             try
             {
-
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
 
                 Cities = new ObservableCollection<City>(BasicDataManager.Context.GetAllSortedByName<City>());
@@ -83,11 +80,9 @@ namespace LaTravelManager.ViewModel.Management
                 {
                     if (Cities.Contains(item.City))
                     {
-
                     }
                 }
                 MainCollection = new ObservableCollection<HotelWrapper>(BasicDataManager.Hotels.Select(c => new HotelWrapper(c)));
-
             }
             catch (Exception ex)
             {

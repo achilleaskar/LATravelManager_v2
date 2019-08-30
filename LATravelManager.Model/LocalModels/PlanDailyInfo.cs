@@ -1,5 +1,4 @@
-﻿using LATravelManager.Model.Hotels;
-using LATravelManager.Model.Wrapper;
+﻿using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Wrapper;
 using System;
 using System.Windows.Media;
@@ -7,10 +6,9 @@ using static LATravelManager.Model.Enums;
 
 namespace LATravelManager.Model.LocalModels
 {
-    public class 
+    public class
         PlanDailyInfo : BaseModel
     {
-
         #region Fields
 
         private SolidColorBrush _CellColor;
@@ -19,12 +17,7 @@ namespace LATravelManager.Model.LocalModels
         private ReservationWrapper _Reservation;
         private RoomWrapper _Room;
 
-
-
-
-
         private RoomTypeEnum _RoomTypeEnm;
-
 
         public RoomTypeEnum RoomTypeEnm
         {
@@ -66,7 +59,6 @@ namespace LATravelManager.Model.LocalModels
                 {
                     return;
                 }
-                
 
                 _CellColor = value;
                 RaisePropertyChanged();
@@ -102,7 +94,6 @@ namespace LATravelManager.Model.LocalModels
         /// Sets and gets the MyProperty property. Changes to that property's value raise the
         /// PropertyChanged event.
         /// </summary>
-      
 
         public bool IsDateSelected
         {
@@ -164,6 +155,7 @@ namespace LATravelManager.Model.LocalModels
                 RaisePropertyChanged();
             }
         }
+
         /// <summary>
         /// Sets and gets the RoomState property. Changes to that property's value raise the
         /// PropertyChanged event.
@@ -188,9 +180,9 @@ namespace LATravelManager.Model.LocalModels
                             break;
 
                         case RoomStateEnum.Available:
-                            if (RoomTypeEnm==RoomTypeEnum.Allotment)
+                            if (RoomTypeEnm == RoomTypeEnum.Allotment)
                                 CellColor = new SolidColorBrush(Colors.DeepSkyBlue);
-                            else if(RoomTypeEnm == RoomTypeEnum.Booking)
+                            else if (RoomTypeEnm == RoomTypeEnum.Booking)
                                 CellColor = new SolidColorBrush(Colors.Blue);
                             else
                                 CellColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#72e600"));
@@ -206,15 +198,20 @@ namespace LATravelManager.Model.LocalModels
                             break;
 
                         case RoomStateEnum.Booked:
-                            CellColor = new SolidColorBrush(Colors.Red);
+                            if (Reservation != null && Reservation.Booking != null && Reservation.Booking.IsPartners && Reservation.Booking.Partner.Id == 219)
+                                CellColor = new SolidColorBrush(Colors.Blue);
+                            else
+                                CellColor = new SolidColorBrush(Colors.Red);
                             break;
 
                         case RoomStateEnum.OverBookedByMistake:
                             CellColor = new SolidColorBrush(Colors.Pink);
                             break;
+
                         case RoomStateEnum.Allotment:
                             CellColor = new SolidColorBrush(Colors.DeepSkyBlue);
                             break;
+
                         case RoomStateEnum.Booking:
                             CellColor = new SolidColorBrush(Colors.Blue);
                             break;
@@ -250,5 +247,4 @@ namespace LATravelManager.Model.LocalModels
 
         #endregion Properties
     }
-
 }

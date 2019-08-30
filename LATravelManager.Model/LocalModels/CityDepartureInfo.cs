@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace LATravelManager.Model.LocalModels
 {
-
     public class CityDepartureInfo : INotifyPropertyChanged
     {
         #region Fields
-
 
         public string GoingText
         {
@@ -27,7 +20,7 @@ namespace LATravelManager.Model.LocalModels
             get
             {
                 string s = $"{(Returning > 0 ? Returning.ToString() : "")}{(OnlyBusReturn > 0 ? ("+" + OnlyBusReturn + " MΛ") : "")}{(OnlyShipReturn > 0 ? ("+" + OnlyShipReturn + " MΠ") : "")}{(OneDayReturn > 0 ? ("+" + OneDayReturn + " 1H") : "")}{(OnlyStayReturn > 0 ? ("+" + OnlyStayReturn + " OS") : "")}";
-                return s.Length>0?s.Trim('+'):"0";
+                return s.Length > 0 ? s.Trim('+') : "0";
             }
         }
 
@@ -106,7 +99,7 @@ namespace LATravelManager.Model.LocalModels
         public int OnlyStayReturn { get; set; }
         public int OnlyStayGo { get; set; }
         public int OneDayReturn { get; set; }
-        public int OneDayGo{ get; set; }
+        public int OneDayGo { get; set; }
 
         #endregion Properties
 

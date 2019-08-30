@@ -174,16 +174,19 @@ namespace LATravelManager.Model.Wrapper
             get { return GetValue<string>(); }
             set { SetValue(value); }
         }
+
         public bool Disabled
         {
             get { return GetValue<bool>(); }
             set { SetValue(value); }
         }
+
         public DateTime? DisableDate
         {
             get { return GetValue<DateTime?>(); }
             set { SetValue(value); }
         }
+
         public User DisabledBy
         {
             get { return GetValue<User>(); }
@@ -502,6 +505,7 @@ namespace LATravelManager.Model.Wrapper
         {
             get { return GetValue<ObservableCollection<Reservation>>(); }
         }
+
         public ObservableCollection<ChangeInBooking> ChangesInBooking
         {
             get { return GetValue<ObservableCollection<ChangeInBooking>>(); }
@@ -547,7 +551,7 @@ namespace LATravelManager.Model.Wrapper
 
         public bool AreDatesValid()
         {
-            return CheckIn.Year > 2010 && CheckOut.Year > 2010 && (ExcursionDate != null || (Excursion != null && (Excursion.ExcursionType.Category != ExcursionTypeEnum.Group||!Excursion.FixedDates)));
+            return CheckIn.Year > 2010 && CheckOut.Year > 2010 && (ExcursionDate != null || (Excursion != null && (Excursion.ExcursionType.Category != ExcursionTypeEnum.Group || !Excursion.FixedDates)));
         }
 
         public void CalculateRemainingAmount()

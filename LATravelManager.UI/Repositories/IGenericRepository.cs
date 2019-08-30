@@ -8,7 +8,7 @@ namespace LATravelManager.UI.Repositories
 {
     public interface IGenericRepository
     {
-        Task<T> GetByIdAsync<T>(int id,bool local) where T : BaseModel;
+        Task<T> GetByIdAsync<T>(int id, bool local) where T : BaseModel;
 
         Task<List<T>> GetAllAsync<T>(Expression<Func<T, bool>> filter = null) where T : BaseModel;
 

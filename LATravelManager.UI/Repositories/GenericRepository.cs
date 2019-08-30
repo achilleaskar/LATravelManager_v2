@@ -17,6 +17,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using Xceed.Wpf.Toolkit;
 
 namespace LATravelManager.UI.Repositories
 {
@@ -366,21 +367,14 @@ namespace LATravelManager.UI.Repositories
                 .Include(f => f.User)
                 .Include(f => f.Payments)
                 .Include(f => f.Customers.Select(s => s.Services))
-                .Include(f => f.Services)
                 .Include(f => f.Partner)
                 .Include(f => f.User)
-                .Include(f => f.Customers)
                 .FirstOrDefaultAsync);
         }
 
-        public bool HasChanges()
+        public void RollBack()
         {
-            return Context.ChangeTracker.HasChanges();
-        }
-
-        public void RejectChanges()
-        {
-            foreach (DbEntityEntry entry in Context.ChangeTracker.Entries())
+            foreach (var entry in Context.ChangeTracker.Entries())
             {
                 switch (entry.State)
                 {
@@ -395,6 +389,34 @@ namespace LATravelManager.UI.Repositories
                         break;
                 }
             }
+            RejectNavigationChanges();
+        }
+
+        private void RejectNavigationChanges()
+        {
+            var objectContext = ((IObjectContextAdapter)Context).ObjectContext;
+            var deletedRelationships = objectContext.ObjectStateManager.GetObjectStateEntries(EntityState.Deleted).Where(e => e.IsRelationship && !this.RelationshipContainsKeyEntry(e));
+            var addedRelationships = objectContext.ObjectStateManager.GetObjectStateEntries(EntityState.Added).Where(e => e.IsRelationship);
+
+            foreach (var relationship in addedRelationships)
+                relationship.Delete();
+
+            foreach (var relationship in deletedRelationships)
+                relationship.ChangeState(EntityState.Unchanged);
+        }
+
+        private bool RelationshipContainsKeyEntry(ObjectStateEntry stateEntry)
+        {
+            //prevent exception: "Cannot change state of a relationship if one of the ends of the relationship is a KeyEntry"
+            //I haven't been able to find the conditions under which this happens, but it sometimes does.
+            var objectContext = ((IObjectContextAdapter)Context).ObjectContext;
+            var keys = new[] { stateEntry.OriginalValues[0], stateEntry.OriginalValues[1] };
+            return keys.Any(key => objectContext.ObjectStateManager.GetObjectStateEntry(key).Entity == null);
+        }
+
+        public bool HasChanges()
+        {
+            return Context.ChangeTracker.HasChanges();
         }
 
         public void RemoveById<TEntity>(int id) where TEntity : BaseModel
@@ -405,6 +427,9 @@ namespace LATravelManager.UI.Repositories
 
         public async Task SaveAsync()
         {
+#if DEBUG
+            MessageBox.Show("Prosoxi, fake DB");
+#endif
             List<DbEntityEntry> AddedEntities = Context.ChangeTracker.Entries().Where(E => E.State == EntityState.Added).ToList();
 
             AddedEntities.ForEach(E =>
@@ -603,7 +628,7 @@ namespace LATravelManager.UI.Repositories
             (excursionCategory == -1 || (int)c.Excursion.ExcursionType.Category == excursionCategory) &&
             (excursionId == -1 || c.Excursion.Id == excursionId) &&
             (grafeio == 0 || c.User.BaseLocation == grafeio) &&
-            (partnerId == -1 || c.IsPartners && c.Partner.Id == partnerId) &&
+            ((partnerId == -1 && c.Partner.Id != 219) || ((c.Partner.Id == partnerId) && (StaticResources.User.BaseLocation == 1 || c.Partner.Id != 219))) &&
             (userId == -1 || c.User.Id == userId) &&
             c.CheckIn >= From && c.CheckIn <= To)
                 .Include(f => f.Partner)
@@ -611,6 +636,7 @@ namespace LATravelManager.UI.Repositories
                 .Include(f => f.User)
                 .Include(f => f.Excursion)
                 .Include(f => f.ReservationsInBooking.Select(i => i.CustomersList))
+                .Include(f => f.ReservationsInBooking.Select(i => i.Room.Hotel))
                 .Where(r => r.Disabled == canceled)
                 .ToListAsync);
         }
@@ -642,7 +668,7 @@ namespace LATravelManager.UI.Repositories
                .Include(f => f.Personal_Booking.Customers)
                .Include(f => f.ThirdParty_Booking)
                .Include(f => f.ThirdParty_Booking.Customers)
-               .Where(f => (!f.Outgoing&& (f.Booking != null && f.Booking.Disabled == canceled)) || (f.Personal_Booking != null && f.Personal_Booking.Disabled == canceled) || (f.ThirdParty_Booking != null && f.ThirdParty_Booking.Disabled == canceled))
+               .Where(f => (!f.Outgoing && (f.Booking != null && f.Booking.Disabled == canceled)) || (f.Personal_Booking != null && f.Personal_Booking.Disabled == canceled) || (f.ThirdParty_Booking != null && f.ThirdParty_Booking.Disabled == canceled))
                .ToListAsync);
         }
 
@@ -683,6 +709,7 @@ namespace LATravelManager.UI.Repositories
                   (category >= 0 ? (int)c.Booking.Excursion.ExcursionType.Category == category : true) &&
                   (excursionId == 0 || c.Booking.Excursion.Id == excursionId) &&
                   (userId == 0 || c.Booking.User.Id == userId) &&
+                  (StaticResources.User.BaseLocation == 1 || c.Booking.Partner.Id != 219) &&
                   (completed || c.Booking.CheckOut >= DateTime.Today))
                   .Include(f => f.Booking.User)
                   .Include(f => f.Booking.ExcursionDate)
@@ -737,6 +764,7 @@ namespace LATravelManager.UI.Repositories
             return await RunTask(Context.ThirdParty_Bookings.Where(b => b.Id == id)
                .Include(f => f.User)
                .Include(f => f.Payments)
+               .Include(f => f.Payments.Select(p => p.User))
                .Include(f => f.Customers)
                .Include(f => f.Partner)
                .Include(f => f.File)

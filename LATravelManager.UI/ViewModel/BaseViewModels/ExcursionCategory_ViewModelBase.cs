@@ -1,7 +1,5 @@
-﻿using GalaSoft.MvvmLight;
-using LATravelManager.UI.Helpers;
+﻿using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
-using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Wrapper;
 using System.Collections.Generic;
@@ -13,8 +11,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
     {
         #region Constructors
 
-       public BasicDataManager BasicDataManager => MainViewModel.BasicDataManager;
-
+        public BasicDataManager BasicDataManager => MainViewModel.BasicDataManager;
 
         public ExcursionCategory_ViewModelBase(MainViewModel mainViewModel)
         {
@@ -54,7 +51,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
-
         public MyViewModelBaseAsync SelectedChildViewModel
         {
             get
@@ -72,7 +68,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 _SelectedChildViewModel = value;
                 RaisePropertyChanged();
                 ChildChanged();
-
             }
         }
 
@@ -106,7 +101,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         internal async Task SetProperChildViewModel(int index)
         {
-
             if (index < Childs.Count)
             {
                 SelectedChildViewModel = Childs[index];

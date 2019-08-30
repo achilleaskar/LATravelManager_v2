@@ -20,9 +20,6 @@ namespace LATravelManager.Model.Plan
 
         private int _MinimunStay;
 
-
-
-       
         public int MinimunStay
         {
             get
@@ -61,11 +58,7 @@ namespace LATravelManager.Model.Plan
             }
         }
 
-
-
-
         private RoomTypeEnum _RoomTypeEnm;
-
 
         public RoomTypeEnum RoomTypeEnm
         {

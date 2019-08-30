@@ -75,10 +75,24 @@
                                   Grid.ColumnSpan="2">
                             <ListView.Resources>
                                 <Style TargetType="{x:Type ListViewItem}">
+                                    <Setter Property="IsSelected"
+                                            Value="{Binding IsSelected}" />
                                     <EventSetter Event="Control.MouseDoubleClick"
                                                  Handler="ListView_MouseDoubleClick" />
                                     <!--<Setter Property="Foreground"
                                             Value="{Binding Converter={StaticResource BrushColorConverter}}" />-->
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=IsSelected}"
+                                                     Value="True">
+                                            <Setter Property="Background"
+                                                    Value="LightSkyBlue" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Path=IsSelected}"
+                                                     Value="False">
+                                            <Setter Property="Background"
+                                                    Value="Transparent" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
                                 </Style>
                             </ListView.Resources>
                             <ListView.View>
@@ -218,7 +232,6 @@
                                             </CompositeCollection>
                                         </ComboBox.ItemsSource>
                                     </ComboBox>
-
                                 </StackPanel>
                                 <StackPanel VerticalAlignment="Bottom">
                                     <CheckBox Content="Όλοι"
@@ -239,7 +252,7 @@
                                            TextWrapping="Wrap"
                                            Foreground="Red"
                                            Width="138" />
-                               
+
                                 <Button Content="Προβολή"
                                         IsDefault="True"
                                         VerticalAlignment="Center"
@@ -749,7 +762,7 @@
                                                 Width="35"
                                                 FontWeight="DemiBold"
                                                 FontSize="14"
-                                                Binding="{Binding Price,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"/>
+                                                Binding="{Binding Price,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" />
                             <DataGridTemplateColumn Header="Γέννηση"
                                                     CellStyle="{StaticResource DataGridCellStyle}"
                                                     Visibility="{Binding DataContext.SelectedExcursion.DOBNeeded, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">

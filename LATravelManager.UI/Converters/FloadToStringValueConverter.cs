@@ -27,7 +27,6 @@ namespace LATravelManager.UI.Converters
                     s = s.Insert(firstDot, ".");
                     firstDot -= 3;
                 }
-
             }
 
             return s + " €";

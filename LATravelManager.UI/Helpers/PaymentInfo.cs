@@ -304,23 +304,26 @@ namespace LATravelManager.UI.Helpers
         {
             try
             {
-                if (SelectedPayment.Personal_Booking!=null)
+                if (SelectedPayment.Personal_Booking != null)
                 {
                     NewReservation_Personal_ViewModel viewModel = new NewReservation_Personal_ViewModel(MainViewModel);
                     await viewModel.LoadAsync(SelectedPayment.Personal_Booking.Id);
                     MessengerInstance.Send(new OpenChildWindowCommand(new EditPersonalBooking_Window(), viewModel));
                 }
                 else if (SelectedPayment.ThirdParty_Booking != null)
-                { 
+                {
                     NewReservation_ThirdParty_VIewModel viewModel = new NewReservation_ThirdParty_VIewModel(MainViewModel);
                     await viewModel.LoadAsync(SelectedPayment.ThirdParty_Booking.Id);
                     MessengerInstance.Send(new OpenChildWindowCommand(new Edit_ThirdParty_Booking_Window(), viewModel));
                 }
                 else
                 {
-                    NewReservation_Group_ViewModel viewModel = new NewReservation_Group_ViewModel(MainViewModel);
-                    await viewModel.LoadAsync(SelectedPayment.Booking.Id);
-                    MessengerInstance.Send(new OpenChildWindowCommand(new EditBooking_Bansko_Window(), viewModel));
+                    if (StaticResources.User.BaseLocation == 1 || (SelectedPayment.Booking.IsPartners && SelectedPayment.Booking.Partner.Id != 219))
+                    {
+                        NewReservation_Group_ViewModel viewModel = new NewReservation_Group_ViewModel(MainViewModel);
+                        await viewModel.LoadAsync(SelectedPayment.Booking.Id);
+                        MessengerInstance.Send(new OpenChildWindowCommand(new EditBooking_Bansko_Window(), viewModel));
+                    }
                 }
             }
             catch (Exception ex)
@@ -340,8 +343,8 @@ namespace LATravelManager.UI.Helpers
                     SelectedPayment.Checked = null;
                 else
                     SelectedPayment.Checked = false;
-
                 await Parent.Context.SaveAsync();
+                SelectedPayment.SetPColor();
             }
             catch (Exception ex)
             {

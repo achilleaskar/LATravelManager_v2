@@ -34,7 +34,7 @@ namespace LATravelManager.Model.Excursions
         /// Sets and gets the Customers property.
         /// Changes to that property's value raise the PropertyChanged event.
         /// </summary>
-        public  ObservableCollection<Customer> Customers
+        public ObservableCollection<Customer> Customers
         {
             get
             {

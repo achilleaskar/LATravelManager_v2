@@ -25,13 +25,10 @@ namespace LATravelManager.Model.Hotels
 
         #endregion Fields
 
-
         [NotMapped]
         public int freeRooms { get; set; }
 
-
         private int _Index;
-
 
         public int Index
         {

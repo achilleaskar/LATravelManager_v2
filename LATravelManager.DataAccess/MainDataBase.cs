@@ -18,12 +18,26 @@ namespace LATravelManager.DataAccess
     {
         #region Constructors
 
-        public MainDatabase() : base("LADatabase")
+        private const string normal = "Server=server19.cretaforce.gr;Database=readmore_achill2;pooling=true;Uid=readmore_achill2;Pwd=986239787346;Convert Zero Datetime=True; CharSet=utf8; default command timeout=3600;SslMode=none;";
+        private const string alt = "Server=127.0.0.1; Database=readmore_achill2;pooling=true;Uid=root;Convert Zero Datetime=True; CharSet=utf8; default command timeout=3600;SslMode=none;";
+
+#if DEBUG
+
+        public MainDatabase() : base(alt)
         {
             Configuration.ValidateOnSaveEnabled = false;
 
             DbConfiguration.SetConfiguration(new ContextConfiguration());
         }
+
+#else
+         public MainDatabase() : base(normal)
+        {
+            Configuration.ValidateOnSaveEnabled = false;
+
+            DbConfiguration.SetConfiguration(new ContextConfiguration());
+        }
+#endif
 
         #endregion Constructors
 
@@ -34,6 +48,7 @@ namespace LATravelManager.DataAccess
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<Bus> Bus { get; set; }
         public DbSet<City> Cities { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
         public DbSet<Country> Countries { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Option> Options { get; set; }

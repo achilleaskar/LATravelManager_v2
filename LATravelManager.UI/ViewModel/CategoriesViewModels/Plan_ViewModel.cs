@@ -4,6 +4,7 @@ using LATravelManager.Model.LocalModels;
 using LATravelManager.Model.Plan;
 using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Data.Workers;
+using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
@@ -35,7 +36,6 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
             Months = new ObservableCollection<Month>();
             From = DateTime.Today;
             To = DateTime.Today.AddDays(10);
-
             ShowPlanCommand = new RelayCommand(async () => { await ShowPlan(); });
             ViewReservationCommand = new RelayCommand<ReservationWrapper>(async (obj) => { await ViewReservation(obj); });
             ToggleDateCommand = new RelayCommand<DateTime>(ToggleDate);
@@ -45,6 +45,24 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
             AddRoomThisDayCommand = new RelayCommand<PlanDailyInfo>(async (obj) => { await AddThisDay(obj); }, CanAddThisDay);
             AddAllotmentRoomThisDayCommand = new RelayCommand<PlanDailyInfo>(async (obj) => { await AddAllotmentThisDay(obj); }, CanAddAllotmentRoomThisDay);
             AddBookingRoomThisDayCommand = new RelayCommand<PlanDailyInfo>(async (obj) => { await AddBookingThisDay(obj); }, CanAddBookingRoomThisDay);
+            MessengerInstance.Register<SelectedExcursionChangedMessage>(this, exc => { SelectedExcursionChanged(exc.SelectedExcursion); });
+        }
+
+        private void SelectedExcursionChanged(ExcursionWrapper selectedExcursion)
+        {
+            if (selectedExcursion.ExcursionType.Category == ExcursionTypeEnum.Group)
+            {
+                if (selectedExcursion != null && (selectedExcursion.Start > DateTime.Today || selectedExcursion.End < DateTime.Today))
+                {
+                    From = selectedExcursion.Start;
+                    To = selectedExcursion.End;
+                }
+                else
+                {
+                    From = DateTime.Today;
+                    To = DateTime.Today.AddDays(10);
+                }
+            }
         }
 
         #endregion Constructors
@@ -359,7 +377,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
 
         public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
-            Hotels = new ObservableCollection<Hotel>(MainViewModel.BasicDataManager.Hotels.Where(h => h.City.Id == 15));
+            Hotels = new ObservableCollection<Hotel>(MainViewModel.BasicDataManager.Hotels.Where(h => h.City.Id == ParentExcursionCategory.SelectedExcursion.Destinations[0].Id));
             RoomTypes = MainViewModel.BasicDataManager.RoomTypes;
             SetColorsList();
             await Task.Delay(0);
@@ -588,17 +606,13 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
                 }
             }
 
-            Fullness = free / total;
+            Fullness = total > 0 ? free / total : 0;
 
             RaisePropertyChanged(nameof(IsPlanVisible));
             Mouse.OverrideCursor = Cursors.Arrow;
         }
 
-
-
-
         private decimal _Fullness;
-
 
         public decimal Fullness
         {
@@ -625,9 +639,12 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
             {
                 try
                 {
-                    NewReservation_Group_ViewModel viewModel = new NewReservation_Group_ViewModel(MainViewModel);
-                    await viewModel.LoadAsync(obj.Booking.Id);
-                    MessengerInstance.Send(new OpenChildWindowCommand(new EditBooking_Bansko_Window(), viewModel));
+                    if (StaticResources.User.BaseLocation == 1 || (obj.Booking.IsPartners && obj.Booking.Partner.Id != 219))
+                    {
+                        NewReservation_Group_ViewModel viewModel = new NewReservation_Group_ViewModel(MainViewModel);
+                        await viewModel.LoadAsync(obj.Booking.Id);
+                        MessengerInstance.Send(new OpenChildWindowCommand(new EditBooking_Bansko_Window(), viewModel));
+                    }
                 }
                 catch (Exception ex)
                 {

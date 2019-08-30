@@ -1,8 +1,7 @@
 namespace LATravelManager.DataAccess.Migrations
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class _7191 : DbMigration
     {
         public override void Up()
@@ -19,7 +18,7 @@ namespace LATravelManager.DataAccess.Migrations
             AddForeignKey("dbo.Personal_Booking", "DisabledBy_Id", "dbo.Users", "Id");
             DropColumn("dbo.Reservations", "Disabled");
         }
-        
+
         public override void Down()
         {
             AddColumn("dbo.Reservations", "Disabled", c => c.Boolean(nullable: false));

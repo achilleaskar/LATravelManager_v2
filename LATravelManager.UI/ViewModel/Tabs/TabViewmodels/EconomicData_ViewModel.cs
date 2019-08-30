@@ -18,14 +18,14 @@ using System.Windows.Data;
 
 namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {
-    public class EconomicData_ViewModel : MyViewModelBaseAsync
+    public class EconomicData_ViewModel : MyViewModelBase
     {
         #region Constructors
 
         public EconomicData_ViewModel()
         {
-
         }
+
         public EconomicData_ViewModel(MainViewModel mainViewModel)
         {
             Excursions = new ObservableCollection<Excursion>();
@@ -37,6 +37,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             UsersList = new ObservableCollection<PaymentInfo>();
             From = To = DateTime.Today;
             MainViewModel = mainViewModel;
+            Load();
         }
 
         #endregion Constructors
@@ -448,42 +449,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         #region Methods
 
-        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
-        {
-            try
-            {
-                await ReloadAsync();
-            }
-            catch (Exception ex)
-            {
-                MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
-            }
-            finally
-            {
-                IsLoaded = true;
-            }
-        }
-
-        public override async Task ReloadAsync()
-        {
-            if (Context != null && !Context.IsTaskOk)
-            {
-                await Context.LastTask;
-            }
-            Context = new GenericRepository();
-            int userId = UserIndexBookingFilter > 0 ? Users[UserIndexBookingFilter - 1].Id : 0;
-            int excursionId = ExcursionIndexBookingFilter > 0 ? Excursions[ExcursionIndexBookingFilter - 1].Id : 0;
-
-            Users = MainViewModel.BasicDataManager.Users;// new ObservableCollection<User>(await Context.GetAllAsyncSortedByName<User>());
-            Excursions = MainViewModel.BasicDataManager.Excursions;//new ObservableCollection<Excursion>((await Context.GetAllAsync<Excursion>()).OrderBy(e => e.ExcursionDates.OrderBy(ed => ed.CheckIn).FirstOrDefault().CheckIn));
-            ShowEconomicDataCommand.RaiseCanExecuteChanged();
-            ExcursionsCollectionView = CollectionViewSource.GetDefaultView(Excursions);
-            ExcursionsCollectionView.Refresh();
-
-            UserIndexBookingFilter = userId > 0 ? Users.IndexOf(Users.Where(u => u.Id == userId).FirstOrDefault()) + 1 : 0;
-            ExcursionIndexBookingFilter = excursionId > 0 ? Excursions.IndexOf(Excursions.Where(e => e.Id == excursionId).FirstOrDefault()) + 1 : 0;
-        }
-
         private bool CanPrintEconomicData()
         {
             return UsersList != null && UsersList.Count > 0;
@@ -508,14 +473,17 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             {
                 IsOk = false;
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
-                await ReloadAsync();
+                Load();
+                if (Context != null)
+                {
+                    Context.Dispose();
+                }
+                Context = new GenericRepository();
                 if (SearchBookingsHelper == null)
                     SearchBookingsHelper = new SearchBookingsHelper(Context);
                 DateTime dateLimit = SearchBookingsHelper.GetDateLimit(parameter);
                 UsersList.Clear();
                 Total = Cash = Peiraios = Ethniki = Eurobank = AlphaBank = VISA = 0;
-
-                var x = await Context.GetByIdAsync<Payment>(1734);
 
                 List<Payment> list = (await Context.GetAllPaymentsFiltered(ExcursionIndexBookingFilter > 0 ? Excursions[ExcursionIndexBookingFilter - 1].Id : 0, UserIndexBookingFilter > 0 ? Users[UserIndexBookingFilter - 1].Id : 0, dateLimit, EnableDatesFilter, From, To)).ToList();
                 foreach (Payment payment in list)
@@ -550,7 +518,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                     }
                     if (!UsersList.Any(u => u.User.Id == payment.User.Id))
                     {
-                        UsersList.Add(new PaymentInfo(MainViewModel,this) { User = Users.Where(u => u.Id == payment.User.Id).FirstOrDefault() });
+                        UsersList.Add(new PaymentInfo(MainViewModel, this) { User = Users.Where(u => u.Id == payment.User.Id).FirstOrDefault() });
                     }
                     UsersList.Where(u => u.User.Id == payment.User.Id).FirstOrDefault().Payments.Add(payment);
                 }
@@ -566,6 +534,31 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 MessengerInstance.Send(new IsBusyChangedMessage(false));
                 IsOk = true;
             }
+        }
+
+        public override void Reload()
+        {
+            //if (Context != null && !Context.IsTaskOk)
+            //{
+            //    await Context.LastTask;
+            //}
+            //Context = new GenericRepository();
+            int userId = UserIndexBookingFilter > 0 ? Users[UserIndexBookingFilter - 1].Id : 0;
+            int excursionId = ExcursionIndexBookingFilter > 0 ? Excursions[ExcursionIndexBookingFilter - 1].Id : 0;
+
+            Users = MainViewModel.BasicDataManager.Users;// new ObservableCollection<User>(await Context.GetAllAsyncSortedByName<User>());
+            Excursions = MainViewModel.BasicDataManager.Excursions;//new ObservableCollection<Excursion>((await Context.GetAllAsync<Excursion>()).OrderBy(e => e.ExcursionDates.OrderBy(ed => ed.CheckIn).FirstOrDefault().CheckIn));
+            ShowEconomicDataCommand.RaiseCanExecuteChanged();
+            ExcursionsCollectionView = CollectionViewSource.GetDefaultView(Excursions);
+            ExcursionsCollectionView.Refresh();
+
+            UserIndexBookingFilter = userId > 0 ? Users.IndexOf(Users.Where(u => u.Id == userId).FirstOrDefault()) + 1 : 0;
+            ExcursionIndexBookingFilter = excursionId > 0 ? Excursions.IndexOf(Excursions.Where(e => e.Id == excursionId).FirstOrDefault()) + 1 : 0;
+        }
+
+        public override void Load(int id = 0, MyViewModelBaseAsync previousViewModel = null)
+        {
+            Reload();
         }
 
         #endregion Methods

@@ -40,9 +40,9 @@
                        Grid.Row="0"
                        Grid.Column="0" />
                 <TextBox Text="{Binding SelectedEntity.Name,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
-                         Margin="0,5,5,5"
+                         Margin="5 5 0 5"
                          Grid.Row="0"
-                         Width="185"
+                         Width="185" HorizontalAlignment="Left"
                          Grid.Column="1" />
                 <Label Content="Τύπος:"
                        Grid.Row="1"
@@ -51,8 +51,8 @@
                           DisplayMemberPath="Name"
                           MinWidth="150"
                           SelectedValue="{Binding SelectedEntity.ExcursionType, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
-                          Margin="0,5,5,5"
-                          HorizontalAlignment="Right"
+                          Margin="5"
+                          HorizontalAlignment="Left"
                           Grid.Row="1"
                           Grid.Column="1" />
                 <TextBlock Text="Επιλεγμένες Πόλεις:"
@@ -96,7 +96,7 @@
                           SelectedItem="{Binding SelectedDate}"
                           DisplayMemberPath="Name"
                           Height="150" />
-                <Grid Grid.Row="5"
+                <Grid Grid.Row="5" HorizontalAlignment="Left" Margin="0 0 5 0"
                       Grid.Column="1">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -107,7 +107,7 @@
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="120" />
                     </Grid.ColumnDefinitions>
                     <Label Content="Check In:"
                            Grid.Row="0" />
@@ -131,12 +131,12 @@
                              Grid.Row="2"
                              Grid.Column="1" />
                     <Button Content="Προσθήκη"
-                            Margin="5"
+                            Margin="5 5 0 5"
                             Grid.Row="3"
                             Grid.ColumnSpan="2"
                             Command="{Binding AddDateCommand}" />
                     <Button Content="Αφαίρεση"
-                            Margin="5"
+                            Margin="5 5 0 5"
                             Grid.Row="4"
                             Grid.ColumnSpan="2"
                             Command="{Binding RemoveDateCommand}" />
@@ -168,6 +168,9 @@
                               VerticalAlignment="Center" />
                     <Label Content="Πλοίο:" />
                     <CheckBox IsChecked="{Binding SelectedEntity.IncludesShip,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                              VerticalAlignment="Center" />
+                    <Label Content="Group:" />
+                    <CheckBox IsChecked="{Binding SelectedEntity.FixedDates,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                               VerticalAlignment="Center" />
                 </StackPanel>
                 <StackPanel Orientation="Vertical"

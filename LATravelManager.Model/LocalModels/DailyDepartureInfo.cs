@@ -1,18 +1,124 @@
-﻿using LATravelManager.Model.Excursions;
+﻿using GalaSoft.MvvmLight.CommandWpf;
+using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Excursions;
+using LATravelManager.Model.Wrapper;
+using OfficeOpenXml;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Threading;
 
-namespace LATravelManager.Model.LocalModels
+namespace LATravelManager.UI.Helpers
 {
     public class DailyDepartureInfo : INotifyPropertyChanged
     {
         #region Constructors
 
-        public DailyDepartureInfo()
+        public DailyDepartureInfo(GenericRepository context)
         {
-            //  PrintListCommand = new PrintListCommand(this);
+            PrintListCommand = new RelayCommand<int>(PrintList, CanPrintList);
+        }
+
+
+        private bool CanPrintList(int arg)
+        {
+            switch (arg)
+            {
+                case 1:
+                    return SelectedGo > 0;
+                case 4:
+                    return SelectedReturn > 0;
+                default:
+                    return false;
+            }
+        }
+
+
+        private void PrintList(int parameter)
+        {
+
+
+            string PhoneNumbers = "";
+            string wbPath = null;
+            List<string> selectedCities = new List<string>();
+            var sampleFile = AppDomain.CurrentDomain.BaseDirectory;
+            ExcelRange modelTable;
+            int lineNum;
+
+            FileInfo fileInfo = new FileInfo(sampleFile);
+            ExcelPackage p = new ExcelPackage(fileInfo);
+            ExcelWorksheet myWorksheet = p.Workbook.Worksheets[1];
+            int counter = 0;
+            int customersCount, secondline;
+            List<ReservationWrapper> reservationsThisDay = new List<ReservationWrapper>();
+            List<ReservationWrapper> RestReservations = new List<ReservationWrapper>();
+
+            switch (parameter)
+            {
+                case 0:
+                    sampleFile += @"Sources\protypo_aktoploikon.xlsx";
+                    break;
+
+                case 1:
+                    sampleFile += @"Sources\protypo_leoforeia.xlsx";
+                    break;
+
+                case 3:
+                    sampleFile += @"Sources\protypo_aktoploikon.xlsx";
+                    break;
+
+                case 4:
+                    sampleFile += @"Sources\protypo_leoforeia.xlsx";
+                    break;
+
+                default:
+                    sampleFile += @"Sources\protypo_leoforeia.xlsx";
+                    break;
+            }
+
+
+            switch (parameter)
+            {
+                case 1:
+                    IEnumerable<Booking> more = await Contex
+                    foreach (CityDepartureInfo city in PerCityDepartureList)
+                        if (city.IsChecked)
+                        {
+                            selectedCities.Add(city.City);
+                            foreach (Reservation rese in CollectionsManager.ReservationsCollection)
+                                if (rese.From == Date)
+                                    foreach (Customer cust in rese.Customers)
+                                        if (cust.Location == city.City && cust.CustomerHasBusIndex < 2)
+                                        {
+                                            if (!reservationsThisDay.Contains(rese))
+                                                reservationsThisDay.Add(rese);
+                                            break;
+                                        }
+                        }
+
+                    foreach (Reservation res in CollectionsManager.ReservationsCollection)
+                        if (res.From == Date)
+                            if (!reservationsThisDay.Contains(res))
+                                RestReservations.Add(res);
+
+                    folderNameVouchers = CreateFolder(Date, @"\Vouchers\");
+                    folderNameInfo = CreateFolder(Date, @"\Ενημερωτικά\");
+                    di = new DirectoryInfo(folderNameVouchers);
+                    foreach (FileInfo file in di.GetFiles())
+                        file.Delete();
+                    di = new DirectoryInfo(folderNameInfo);
+                    foreach (FileInfo file in di.GetFiles())
+                        file.Delete();
+                    break;
+                case 4:
+                    break;
+                default:
+                    break;
+            }
         }
 
         #endregion Constructors
@@ -72,7 +178,7 @@ namespace LATravelManager.Model.LocalModels
             OnPropertyChanged(nameof(GoTotals));
             OnPropertyChanged(nameof(ReturnTotals));
         }
-
+        public RelayCommand<int> PrintListCommand { get; set; }
         public string GoTotals => SelectedGo + "/" + TotalGo;
         public string ReturnTotals => SelectedReturn + "/" + TotalReturn;
 

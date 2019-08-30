@@ -15,10 +15,7 @@ namespace LATravelManager.UI.Helpers
     {
         #region Constructors
 
-
-
         private ObservableCollection<Airline> _Airlines;
-
 
         public ObservableCollection<Airline> Airlines
         {
@@ -38,6 +35,7 @@ namespace LATravelManager.UI.Helpers
                 RaisePropertyChanged();
             }
         }
+
         public BasicDataManager(GenericRepository genericRepository)
         {
             Context = genericRepository;
@@ -67,9 +65,11 @@ namespace LATravelManager.UI.Helpers
 
         private ObservableCollection<User> _Users;
 
-        public GenericRepository Context {
+        public GenericRepository Context
+        {
             get;
-            set; }
+            set;
+        }
 
         #endregion Fields
 
@@ -283,7 +283,7 @@ namespace LATravelManager.UI.Helpers
             Hotels = new ObservableCollection<Hotel>(await Context.GetAllHotelsAsync<Hotel>());
             Countries = new ObservableCollection<Country>(await Context.GetAllAsyncSortedByName<Country>());
             Cities = new ObservableCollection<City>(await Context.GetAllCitiesAsyncSortedByName());
-            RoomTypes = new ObservableCollection<RoomType>((await Context.GetAllAsync<RoomType>()).OrderBy(r=>r.Index));
+            RoomTypes = new ObservableCollection<RoomType>((await Context.GetAllAsync<RoomType>()).OrderBy(r => r.Index));
             StartingPlaces = new ObservableCollection<StartingPlace>(await Context.GetAllAsyncSortedByName<StartingPlace>());
             StaticResources.StartingPlaces = StartingPlaces;
             Users = new ObservableCollection<User>(await Context.GetAllUsersAsyncSortedByUserName());
@@ -293,7 +293,20 @@ namespace LATravelManager.UI.Helpers
             HotelCategories = new ObservableCollection<HotelCategory>(await Context.GetAllAsync<HotelCategory>());
             GroupExcursions = new ObservableCollection<Excursion>(Excursions.Where(e => e.ExcursionType.Category == Enums.ExcursionTypeEnum.Group));
             Airlines = new ObservableCollection<Airline>(await Context.GetAllAsync<Airline>());
+        }
 
+        public async Task LoadPersonal()
+        {
+            Hotels = new ObservableCollection<Hotel>(await Context.GetAllHotelsAsync<Hotel>());
+            Countries = new ObservableCollection<Country>(await Context.GetAllAsyncSortedByName<Country>());
+            Cities = new ObservableCollection<City>(await Context.GetAllCitiesAsyncSortedByName());
+            RoomTypes = new ObservableCollection<RoomType>((await Context.GetAllAsync<RoomType>()).OrderBy(r => r.Index));
+            StartingPlaces = new ObservableCollection<StartingPlace>(await Context.GetAllAsyncSortedByName<StartingPlace>());
+            StaticResources.StartingPlaces = StartingPlaces;
+            Users = new ObservableCollection<User>(await Context.GetAllUsersAsyncSortedByUserName());
+            Partners = new ObservableCollection<Partner>(await Context.GetAllAsyncSortedByName<Partner>());
+            HotelCategories = new ObservableCollection<HotelCategory>(await Context.GetAllAsync<HotelCategory>());
+            Airlines = new ObservableCollection<Airline>(await Context.GetAllAsync<Airline>());
         }
 
         internal void Add<TEntity>(TEntity model) where TEntity : BaseModel, new()
@@ -303,10 +316,11 @@ namespace LATravelManager.UI.Helpers
             {
                 Hotels.Add(h);
             }
-            else if(model is Partner p)
+            else if (model is Partner p)
             {
                 Partners.Add(p);
-            }else if (model is City c)
+            }
+            else if (model is City c)
             {
                 Cities.Add(c);
             }

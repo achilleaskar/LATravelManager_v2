@@ -3,17 +3,16 @@ using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.LocalModels;
 using LATravelManager.Model.People;
-using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
+using LATravelManager.UI.ViewModel.Window_ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -24,125 +23,12 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
     {
         #region Constructors
 
-        public Info_ViewModel(Window_ViewModels.MainViewModel mainViewModel)
+        public Info_ViewModel(MainViewModel mainViewModel)
         {
-            ToDepartureInfo = /*(Properties.Settings.Default.toDeparture >= DateTime.Today) ? Properties.Settings.Default.toDeparture :*/ DateTime.Today;
-            FromDepartureInfo = /*(Properties.Settings.Default.fromDepartures > DateTime.Today) ? Properties.Settings.Default.fromDepartures :*/ DateTime.Today;
+            ToDepartureInfo = DateTime.Today;
+            FromDepartureInfo = DateTime.Today;
             ShowDepartureInfoCommand = new RelayCommand(async () => { await ShowDepartureInfo(); }, CanShowDepartureInfoM);
-            //SaveTransfersCommand = new SaveTransfersCommand(this);
-            ShowIncomesCommand = new RelayCommand(async () => { await ShowIncomes(); }, CanShowIncomes);
             MainViewModel = mainViewModel;
-            From = To = DateTime.Today;
-        }
-
-        private bool CanShowDepartureInfoM()
-        {
-            return SelectedFilterExcursion != null;
-        }
-
-
-        private int _Customers;
-
-        public int Customers
-        {
-            get
-            {
-                return _Customers;
-            }
-
-            set
-            {
-                if (_Customers == value)
-                {
-                    return;
-                }
-
-                _Customers = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private ObservableCollection<Partner> _Partners;
-
-        public ObservableCollection<Partner> Partners
-        {
-            get
-            {
-                return _Partners;
-            }
-
-            set
-            {
-                if (_Partners == value)
-                {
-                    return;
-                }
-
-                _Partners = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private int _PartnerIndexBookingFilter;
-
-        public int PartnerIndexBookingFilter
-        {
-            get
-            {
-                return _PartnerIndexBookingFilter;
-            }
-
-            set
-            {
-                if (_PartnerIndexBookingFilter == value)
-                {
-                    return;
-                }
-
-                _PartnerIndexBookingFilter = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private bool CanShowIncomes()
-        {
-            return ExcursionCategoryIndexBookingFilter != 3 && ExcursionCategoryIndexBookingFilter != 5;
-        }
-
-        private async Task ShowIncomes()
-        {
-            Total = Net = Commission = Customers = 0;
-            IncomesContext = new GenericRepository();
-            List<BookingWrapper> bookings = (await IncomesContext.GetAllBookingsFiltered(
-                ExcursionIndexBookingFilter == 0 ? -1 : ((Excursion)ExcursionsIncomeCollectionView.CurrentItem).Id,
-                ExcursionCategoryIndexBookingFilter == 0 ? -1 : ExcursionCategoryIndexBookingFilter - 1,
-                DepartmentIndexBookingFilter,
-                UserIndexBookingFilter == 0 ? -1 : Users[UserIndexBookingFilter - 1].Id,
-                PartnerIndexBookingFilter == 0 ? -1 : Partners[PartnerIndexBookingFilter - 1].Id,
-                EnableFromFilter ? From : DateTime.MinValue,
-                EnableToFilter ? To : DateTime.MaxValue)).Select(b => new BookingWrapper(b)).ToList();
-
-            foreach (var b in bookings)
-            {
-                _Total += b.FullPrice;
-                foreach (var r in b.ReservationsInBooking)
-                {
-                    _Customers += r.CustomersList.Count;
-                }
-                if (b.IsPartners)
-                {
-                    _Net += b.NetPrice;
-                }
-                else
-                {
-                    _Net += b.FullPrice;
-                }
-            }
-            _Commission = Total - Net;
-            RaisePropertyChanged(nameof(Total));
-            RaisePropertyChanged(nameof(Customers));
-            RaisePropertyChanged(nameof(Net));
-            RaisePropertyChanged(nameof(Commission));
         }
 
         #endregion Constructors
@@ -150,25 +36,27 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         #region Fields
 
         private static readonly string[] ValidateDepartureInfoProperties =
-        {
+       {
             nameof(FromDepartureInfo),nameof(ToDepartureInfo)
         };
+
+        private ICollectionView _AllDaysDeparturesCollectionView;
 
         private ObservableCollection<DailyDepartureInfo> _AllDaysDeparturesList = new ObservableCollection<DailyDepartureInfo>();
 
         private string _CanShowDepartureInfoError;
 
-        private GenericRepository _Context;
+        private bool _Completed;
 
-        private ObservableCollection<Customer> _CustomersToAdd = new ObservableCollection<Customer>();
+        private GenericRepository _Context;
 
         private ObservableCollection<Excursion> _Excursions;
 
-        private DateTime _FromDateTime = DateTime.Today;
+        private ICollectionView _ExcursionsDepartureCollectionView;
 
         private DateTime _FromDepartureInfo;
 
-        private DateTime _ToDateTime = DateTime.Today;
+        private Excursion _SelectedFilterExcursion;
 
         private DateTime _ToDepartureInfo;
 
@@ -176,23 +64,21 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         #region Properties
 
-        private ICollectionView _ExcursionsDepartureCollectionView;
-
-        public ICollectionView ExcursionsDepartureCollectionView
+        public ICollectionView AllDaysDeparturesCollectionView
         {
             get
             {
-                return _ExcursionsDepartureCollectionView;
+                return _AllDaysDeparturesCollectionView;
             }
 
             set
             {
-                if (_ExcursionsDepartureCollectionView == value)
+                if (_AllDaysDeparturesCollectionView == value)
                 {
                     return;
                 }
 
-                _ExcursionsDepartureCollectionView = value;
+                _AllDaysDeparturesCollectionView = value;
                 RaisePropertyChanged();
             }
         }
@@ -228,25 +114,27 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
+        public List<Booking> Bookings { get; set; }
+
         public bool CanShowDepartureInfo => AreDepartureInfoDataValid;
 
-        private GenericRepository _IncomesContext;
-
-        public GenericRepository IncomesContext
+        public bool Completed
         {
             get
             {
-                return _IncomesContext;
+                return _Completed;
             }
 
             set
             {
-                if (_IncomesContext == value)
+                if (_Completed == value)
                 {
                     return;
                 }
 
-                _IncomesContext = value;
+                _Completed = value;
+                ExcursionsDepartureCollectionView.Refresh();
+
                 RaisePropertyChanged();
             }
         }
@@ -270,19 +158,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-        public ObservableCollection<Customer> CustomersToAdd
-        {
-            get => _CustomersToAdd;
-            set
-            {
-                if (_CustomersToAdd != value)
-                {
-                    _CustomersToAdd = value;
-                    RaisePropertyChanged(nameof(CustomersToAdd));
-                }
-            }
-        }
-
         public ObservableCollection<Excursion> Excursions
         {
             get
@@ -300,326 +175,31 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 _Excursions = value;
                 Excursions.Insert(0, new Excursion { ExcursionDates = new ObservableCollection<ExcursionDate> { new ExcursionDate { CheckIn = new DateTime() } }, Name = "Ολες" });
 
-                ExcursionsIncomeCollectionView = new CollectionViewSource { Source = Excursions }.View;
-                ExcursionsIncomeCollectionView.Filter = IncomeExcursionsFilter;
-                ExcursionsIncomeCollectionView.SortDescriptions.Add(new SortDescription("FirstDate", ListSortDirection.Ascending));
-
                 ExcursionsDepartureCollectionView = new CollectionViewSource { Source = Excursions }.View;
                 ExcursionsDepartureCollectionView.Filter = InfoExcursionsFilter;
                 ExcursionsDepartureCollectionView.SortDescriptions.Add(new SortDescription("FirstDate", ListSortDirection.Ascending));
 
                 RaisePropertyChanged();
-                RaisePropertyChanged(nameof(ExcursionsIncomeCollectionView));
                 RaisePropertyChanged(nameof(ExcursionsDepartureCollectionView));
             }
         }
 
-        private DateTime _To;
-
-        public DateTime To
+        public ICollectionView ExcursionsDepartureCollectionView
         {
             get
             {
-                return _To;
+                return _ExcursionsDepartureCollectionView;
             }
 
             set
             {
-                if (_To == value)
+                if (_ExcursionsDepartureCollectionView == value)
                 {
                     return;
                 }
 
-                _To = value;
-                if (value < From)
-                {
-                    From = value;
-                }
+                _ExcursionsDepartureCollectionView = value;
                 RaisePropertyChanged();
-            }
-        }
-
-        private DateTime _From;
-
-        public DateTime From
-        {
-            get
-            {
-                return _From;
-            }
-
-            set
-            {
-                if (_From == value)
-                {
-                    return;
-                }
-
-                _From = value;
-                if (value > To)
-                {
-                    To = value;
-                }
-                RaisePropertyChanged();
-            }
-        }
-
-        private bool _EnableToFilter;
-
-        public bool EnableToFilter
-        {
-            get
-            {
-                return _EnableToFilter;
-            }
-
-            set
-            {
-                if (_EnableToFilter == value)
-                {
-                    return;
-                }
-
-                _EnableToFilter = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private bool _EnableFromFilter;
-
-        public bool EnableFromFilter
-        {
-            get
-            {
-                return _EnableFromFilter;
-            }
-
-            set
-            {
-                if (_EnableFromFilter == value)
-                {
-                    return;
-                }
-
-                _EnableFromFilter = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private int _ExcursionCategoryIndexBookingFilter;
-
-        public int ExcursionCategoryIndexBookingFilter
-        {
-            get
-            {
-                return _ExcursionCategoryIndexBookingFilter;
-            }
-
-            set
-            {
-                if (_ExcursionCategoryIndexBookingFilter == value)
-                {
-                    return;
-                }
-
-                _ExcursionCategoryIndexBookingFilter = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public RelayCommand ShowIncomesCommand { get; set; }
-
-        private decimal _Commission;
-
-        public decimal Commission
-        {
-            get
-            {
-                return _Commission;
-            }
-
-            set
-            {
-                if (_Commission == value)
-                {
-                    return;
-                }
-
-                _Commission = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private decimal _Net;
-
-        public decimal Net
-        {
-            get
-            {
-                return _Net;
-            }
-
-            set
-            {
-                if (_Net == value)
-                {
-                    return;
-                }
-
-                _Net = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private decimal _Total;
-
-        public decimal Total
-        {
-            get
-            {
-                return _Total;
-            }
-
-            set
-            {
-                if (_Total == value)
-                {
-                    return;
-                }
-
-                _Total = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private int _UserIndexBookingFilter;
-
-        public int UserIndexBookingFilter
-        {
-            get
-            {
-                return _UserIndexBookingFilter;
-            }
-
-            set
-            {
-                if (_UserIndexBookingFilter == value)
-                {
-                    return;
-                }
-
-                _UserIndexBookingFilter = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private ObservableCollection<User> _Users;
-
-        public ObservableCollection<User> Users
-        {
-            get
-            {
-                return _Users;
-            }
-
-            set
-            {
-                if (_Users == value)
-                {
-                    return;
-                }
-
-                _Users = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private int _DepartmentIndexBookingFilter;
-
-        public int DepartmentIndexBookingFilter
-        {
-            get
-            {
-                return _DepartmentIndexBookingFilter;
-            }
-
-            set
-            {
-                if (_DepartmentIndexBookingFilter == value)
-                {
-                    return;
-                }
-
-                _DepartmentIndexBookingFilter = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private int _ExcursionIndexBookingFilter;
-
-        public int ExcursionIndexBookingFilter
-        {
-            get
-            {
-                return _ExcursionIndexBookingFilter;
-            }
-
-            set
-            {
-                if (_ExcursionIndexBookingFilter == value)
-                {
-                    return;
-                }
-
-                _ExcursionIndexBookingFilter = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private bool _CompletedIncomeFilter;
-
-        public bool CompletedIncomeFilter
-        {
-            get
-            {
-                return _CompletedIncomeFilter;
-            }
-
-            set
-            {
-                if (_CompletedIncomeFilter == value)
-                {
-                    return;
-                }
-
-                _CompletedIncomeFilter = value;
-                ExcursionsIncomeCollectionView.Refresh();
-                RaisePropertyChanged();
-            }
-        }
-
-        private bool IncomeExcursionsFilter(object item)
-        {
-            Excursion excursion = item as Excursion;
-            return CompletedIncomeFilter || excursion.ExcursionDates.Any(d => d.CheckOut >= DateTime.Today);
-        }
-
-        private bool InfoExcursionsFilter(object item)
-        {
-            Excursion excursion = item as Excursion;
-            return excursion.Id > 0 && (Completed || excursion.ExcursionDates.Any(d => d.CheckOut >= DateTime.Today));
-        }
-
-        public DateTime FromDateTime
-        {
-            get => _FromDateTime;
-            set
-            {
-                if (_FromDateTime != value)
-                {
-                    _FromDateTime = value;
-                    RaisePropertyChanged(nameof(FromDateTime));
-                }
             }
         }
 
@@ -643,10 +223,25 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-        public RelayCommand SaveTransfersCommand
+        public MainViewModel MainViewModel { get; }
+
+        public Excursion SelectedFilterExcursion
         {
-            get;
-            private set;
+            get
+            {
+                return _SelectedFilterExcursion;
+            }
+
+            set
+            {
+                if (_SelectedFilterExcursion == value)
+                {
+                    return;
+                }
+
+                _SelectedFilterExcursion = value;
+                RaisePropertyChanged();
+            }
         }
 
         public RelayCommand ShowDepartureInfoCommand { get; set; }
@@ -662,19 +257,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                     RaisePropertyChanged(nameof(ShowDepartureInfoError));
                 }
                 _CanShowDepartureInfoError = value;
-            }
-        }
-
-        public DateTime ToDateTime
-        {
-            get => _ToDateTime;
-            set
-            {
-                if (_ToDateTime != value)
-                {
-                    _ToDateTime = value;
-                    RaisePropertyChanged(nameof(ToDateTime));
-                }
             }
         }
 
@@ -700,48 +282,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         #region Methods
 
-        public ICollectionView ExcursionsIncomeCollectionView
-        {
-            get
-            {
-                return _ExcursionsCollectionView;
-            }
-
-            set
-            {
-                if (_ExcursionsCollectionView == value)
-                {
-                    return;
-                }
-
-                _ExcursionsCollectionView = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private bool _Completed;
-
-        public bool Completed
-        {
-            get
-            {
-                return _Completed;
-            }
-
-            set
-            {
-                if (_Completed == value)
-                {
-                    return;
-                }
-
-                _Completed = value;
-                ExcursionsDepartureCollectionView.Refresh();
-
-                RaisePropertyChanged();
-            }
-        }
-
         public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
             try
@@ -750,8 +290,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 Context = new GenericRepository();
 
                 Excursions = new ObservableCollection<Excursion>(MainViewModel.BasicDataManager.Excursions.OrderBy(e => e.ExcursionDates.OrderBy(ed => ed.CheckIn).FirstOrDefault().CheckIn));
-                Users = new ObservableCollection<User>(MainViewModel.BasicDataManager.Users);
-                Partners = new ObservableCollection<Partner>(MainViewModel.BasicDataManager.Partners);
             }
             catch (Exception ex)
             {
@@ -767,37 +305,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         {
             throw new NotImplementedException();
         }
-
-        private Excursion _SelectedFilterExcursion;
-
-        public Excursion SelectedFilterExcursion
-        {
-            get
-            {
-                return _SelectedFilterExcursion;
-            }
-
-            set
-            {
-                if (_SelectedFilterExcursion == value)
-                {
-                    return;
-                }
-
-                _SelectedFilterExcursion = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        //internal void AddTranferReservation()
-        //{
-        //    Window mw = Application.Current.MainWindow;
-        //    mw.Hide();
-        //    var brw = new BookRoomWindow(new Room { Id = -2, RoomType = new RoomType { Name = "Bus", Id = -2, MainCapacity = 64 }, Hotel = new Hotel { Name = "TANSFER", Id = -2 } }, FromDateTime, ToDateTime, mw);
-        //    brw.ShowDialog();
-        //}
-
-        public List<Booking> Bookings { get; set; }
 
         internal async Task ShowDepartureInfo()
         {
@@ -844,14 +351,14 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             //}
             DateTime tmpDate = FromDepartureInfo;
             AllDaysDeparturesList.Clear();
-            DailyDepartureInfo dayDeparture = new DailyDepartureInfo();
-            DailyDepartureInfo tmpDayDeparture = new DailyDepartureInfo();
+            DailyDepartureInfo dayDeparture = new DailyDepartureInfo(Context, SelectedFilterExcursion.Id);
+            DailyDepartureInfo tmpDayDeparture = new DailyDepartureInfo(Context, SelectedFilterExcursion.Id);
             CityDepartureInfo cityDepartureInfo;
             if (SelectedFilterExcursion.ExcursionType.Category == Model.Enums.ExcursionTypeEnum.Group)
             {
                 foreach (ExcursionDate datePair in SelectedFilterExcursion.ExcursionDates)
                 {
-                    dayDeparture = new DailyDepartureInfo { ExcursionDate = datePair, PerCityDepartureList = new ObservableCollection<CityDepartureInfo>() };
+                    dayDeparture = new DailyDepartureInfo(Context, SelectedFilterExcursion.Id) { ExcursionDate = datePair, PerCityDepartureList = new ObservableCollection<CityDepartureInfo>() };
 
                     foreach (Booking b in Bookings)
                     {
@@ -885,7 +392,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                                         }
                                         else
                                         {
-                                            tmpDayDeparture = new DailyDepartureInfo { Date = customer.CheckIn, PerCityDepartureList = new ObservableCollection<CityDepartureInfo>() };
+                                            tmpDayDeparture = new DailyDepartureInfo(Context, SelectedFilterExcursion.Id) { Date = customer.CheckIn, PerCityDepartureList = new ObservableCollection<CityDepartureInfo>() };
                                             AllDaysDeparturesList.Add(tmpDayDeparture);
                                         }
                                         cityDepartureInfo = tmpDayDeparture.PerCityDepartureList.FirstOrDefault(p => p.City == customer.StartingPlace);
@@ -905,7 +412,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                                         }
                                         else
                                         {
-                                            tmpDayDeparture = new DailyDepartureInfo { Date = customer.CheckOut, PerCityDepartureList = new ObservableCollection<CityDepartureInfo>() };
+                                            tmpDayDeparture = new DailyDepartureInfo(Context, SelectedFilterExcursion.Id) { Date = customer.CheckOut, PerCityDepartureList = new ObservableCollection<CityDepartureInfo>() };
                                             AllDaysDeparturesList.Add(tmpDayDeparture);
                                         }
                                         cityDepartureInfo = tmpDayDeparture.PerCityDepartureList.FirstOrDefault(p => p.City == customer.StartingPlace);
@@ -929,7 +436,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             {
                 while (tmpDate <= ToDepartureInfo)
                 {
-                    dayDeparture = new DailyDepartureInfo { Date = tmpDate, PerCityDepartureList = new ObservableCollection<CityDepartureInfo>() };
+                    dayDeparture = new DailyDepartureInfo(Context, SelectedFilterExcursion.Id) { Date = tmpDate, PerCityDepartureList = new ObservableCollection<CityDepartureInfo>() };
 
                     foreach (Booking b in Bookings)
                     {
@@ -946,7 +453,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                                     }
                                     if (!r.OnlyStay && ((SelectedFilterExcursion.IncludesShip && customer.CustomerHasShipIndex < 2) || (SelectedFilterExcursion.IncludesBus && customer.CustomerHasBusIndex < 2)))
                                     {
-
                                         if (SelectedFilterExcursion.IncludesShip && SelectedFilterExcursion.IncludesBus && customer.CustomerHasShipIndex > 1)
                                         {
                                             cityDepartureInfo.OnlyBusGo++;
@@ -1004,8 +510,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                                     {
                                         cityDepartureInfo.OnlyStayReturn++;
                                     }
-
-
                                 }
                         }
                     }
@@ -1019,36 +523,16 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             foreach (var day in AllDaysDeparturesList)
             {
                 day.CalculateTotals();
-
             }
             AllDaysDeparturesCollectionView = CollectionViewSource.GetDefaultView(AllDaysDeparturesList);
             AllDaysDeparturesCollectionView.SortDescriptions.Add(new SortDescription(nameof(DailyDepartureInfo.Date), ListSortDirection.Ascending));
             Mouse.OverrideCursor = Cursors.Arrow;
         }
 
-        private ICollectionView _AllDaysDeparturesCollectionView;
-        private ICollectionView _ExcursionsCollectionView;
-
-        public ICollectionView AllDaysDeparturesCollectionView
+        private bool CanShowDepartureInfoM()
         {
-            get
-            {
-                return _AllDaysDeparturesCollectionView;
-            }
-
-            set
-            {
-                if (_AllDaysDeparturesCollectionView == value)
-                {
-                    return;
-                }
-
-                _AllDaysDeparturesCollectionView = value;
-                RaisePropertyChanged();
-            }
+            return SelectedFilterExcursion != null;
         }
-
-        public Window_ViewModels.MainViewModel MainViewModel { get; }
 
         private string GetDepartureInfoError(string propertyName)
         {
@@ -1064,6 +548,12 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                     break;
             }
             return error;
+        }
+
+        private bool InfoExcursionsFilter(object item)
+        {
+            Excursion excursion = item as Excursion;
+            return excursion.Id > 0 && (Completed || excursion.ExcursionDates.Any(d => d.CheckOut >= DateTime.Today));
         }
 
         private string ValidateFromDepartureInfo()

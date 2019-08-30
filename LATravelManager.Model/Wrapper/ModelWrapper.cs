@@ -1,5 +1,4 @@
-﻿using LATravelManager.Model.BookingData;
-using LATravelManager.UI.Wrapper;
+﻿using LATravelManager.UI.Wrapper;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -22,8 +21,6 @@ namespace LATravelManager.Model.Wrapper
             }
             catch (Exception)
             {
-
-
             }
         }
 
@@ -91,7 +88,7 @@ namespace LATravelManager.Model.Wrapper
 
         protected virtual TValue GetValue<TValue>([CallerMemberName]string propertyName = null)
         {
-                return (TValue)typeof(T).GetProperty(propertyName).GetValue(Model);
+            return (TValue)typeof(T).GetProperty(propertyName).GetValue(Model);
         }
 
         public DateTime CreatedDate

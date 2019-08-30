@@ -363,7 +363,6 @@ namespace LATravelManager.UI.Helpers
 
         public void PrintLetter(BookingWrapper booking)
         {
-
             string outputpath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
 
             ReservationWrapper resWrapper;
@@ -404,7 +403,6 @@ namespace LATravelManager.UI.Helpers
 
         public void PrintSingleBookingContract(BookingWrapper booking)
         {
-
             foreach (Reservation res in booking.ReservationsInBooking)
             {
                 if (res.ReservationType == ReservationTypeEnum.Noname && !nonamemess)
@@ -436,7 +434,6 @@ namespace LATravelManager.UI.Helpers
 
         public async Task PrintSingleBookingVoucher(BookingWrapper booking)
         {
-
             foreach (Reservation res in booking.ReservationsInBooking)
             {
                 if (res.ReservationType == ReservationTypeEnum.Noname && !nonamemess)
@@ -493,8 +490,6 @@ namespace LATravelManager.UI.Helpers
                     // MessageBox.Show("Η κράτηση είναι TRANSFER");
                     continue;
                 }
-
-
 
                 try
                 {
@@ -780,7 +775,6 @@ namespace LATravelManager.UI.Helpers
                     MessageBox.Show("Παρακαλώ τοποθετήστε τα NO NAME");
                     nonamemess = true;
                     return;
-
                 }
                 else if (res.ReservationType == ReservationTypeEnum.NoRoom)
                 {
@@ -874,7 +868,8 @@ namespace LATravelManager.UI.Helpers
                 regexText = new Regex("destination");
                 docText = regexText.Replace(docText, booking.Excursion.Destinations[0].Name);
                 regexText = new Regex("hotelnroomtype");
-                docText = regexText.Replace(docText, reservationWr.HotelName + "-" + reservationWr.RoomTypeName + "(" + reservationWr.Room.Hotel.Tel + ")");
+                docText = regexText.Replace(docText, reservationWr.HotelName + "-" + reservationWr.RoomTypeName + "(" +
+                    (reservationWr.Room != null ? reservationWr.Room.Hotel.Tel : reservationWr.Hotel != null && reservationWr.Hotel.Tel != null && (reservationWr.Hotel != null && !reservationWr.Hotel.Tel.StartsWith("000")) ? reservationWr.Hotel.Tel : "") + ")");
 
                 using (StreamWriter sw = new StreamWriter(wordDoc.MainDocumentPart.GetStream(FileMode.Create)))
                 {
@@ -961,15 +956,16 @@ namespace LATravelManager.UI.Helpers
                     regexText = new Regex("regexdate");
                     docText = regexText.Replace(docText, DateTime.Today.ToString("dd/MM/yyyy"));
                     regexText = new Regex("regexhotel");
-                    docText = regexText.Replace(docText, reservationWr.HotelName);
+                    docText = regexText.Replace(docText, booking.Excursion.Destinations[0].Id == 19 ? "Tiara(Προύσα), Mustafa(Προκόπι), Lion(Κωνσταντινούπολη)" : reservationWr.HotelName);
                     regexText = new Regex("regexaddress");
-                    docText = regexText.Replace(docText, reservationWr.Room == null || string.IsNullOrEmpty(reservationWr.Room.Hotel.Address) ? "" : reservationWr.Room.Hotel.Address);
+                    docText = regexText.Replace(docText, reservationWr.Room == null || string.IsNullOrEmpty(reservationWr.Room.Hotel.Address) ? reservationWr.Hotel != null ? reservationWr.Hotel.Address ?? "" : "" : reservationWr.Room.Hotel.Address);
                     regexText = new Regex("regexagency");
                     docText = regexText.Replace(docText, !booking.IsPartners ? "LA TRAVEL" : booking.Partner.Name);
                     regexText = new Regex("regexcity");
                     docText = regexText.Replace(docText, booking.Excursion.Destinations[0].Name);
                     regexText = new Regex("regextel");
-                    docText = regexText.Replace(docText, (reservationWr.Room == null || reservationWr.Room.Hotel.Tel[0] == '0' || reservationWr.Room.Hotel.Tel == null) ? "" : reservationWr.Room.Hotel.Tel);
+                    docText = regexText.Replace(docText, (reservationWr.Room == null || reservationWr.Room.Hotel.Tel == null || (reservationWr.Hotel != null && !reservationWr.Hotel.Tel.StartsWith("000"))) ?
+                        reservationWr.Hotel != null && reservationWr.Hotel.Tel != null && !reservationWr.Hotel.Tel.StartsWith("000") ? reservationWr.Hotel.Tel : "" : reservationWr.Room.Hotel.Tel);
                     regexText = new Regex("regexnames");
                     docText = regexText.Replace(docText, reservationWr.Names);
                     regexText = new Regex("regexcheckin");
@@ -988,6 +984,8 @@ namespace LATravelManager.UI.Helpers
                     docText = regexText.Replace(docText, reservationWr.Dates);
                     regexText = new Regex("regexstart");
                     docText = regexText.Replace(docText, after12 ? reservationWr.CheckIn.AddDays(1).ToString("dd/MM/yyyy") : reservationWr.CheckIn.ToString("dd/MM/yyyy"));
+                    regexText = new Regex("zreturntime");
+                    docText = regexText.Replace(docText, reservationWr.ExcursionType == ExcursionTypeEnum.Skiathos ? "16:00" : booking.Excursion.Destinations[0].Id == 9 ? "09:00" : "11:00");
                     regexText = new Regex("zdate");
                     docText = regexText.Replace(docText, after12 ? reservationWr.CheckIn.AddDays(1).ToString("dd/MM") : reservationWr.CheckIn.ToString("dd/MM"));
                     regexText = new Regex("zlocation");
@@ -997,7 +995,7 @@ namespace LATravelManager.UI.Helpers
                     regexText = new Regex("zplace");
                     docText = regexText.Replace(docText, customerStartingPlace.Id == 14 && booking.Excursion.Destinations[0].Id == 5 ? "Εθνική Τράπεζα" : customerStartingPlace.Details);
                     regexText = new Regex("zsynodos");
-                    docText = regexText.Replace(docText, booking.Excursion.Id == 29 ? "Αθανασία 6981189869" : "");
+                    docText = regexText.Replace(docText, booking.Excursion.Id == 29 ? "Αθανασία 6981189869" : booking.Excursion.Destinations[0].Id == 9 ? "Δημήτρης 6948703686" : "");
                     regexText = new Regex("zcity");
                     docText = regexText.Replace(docText, booking.Excursion.Destinations[0].Name);
                     regexText = new Regex("zgostart");
@@ -1030,7 +1028,8 @@ namespace LATravelManager.UI.Helpers
                     docText = regexText.Replace(docText, booking.User.BaseLocation == 2 ? "Λάρισα" : "Θεσσαλονίκη");
                     regexText = new Regex("regextax");
                     docText = regexText.Replace(docText, reservationWr.ExcursionType == ExcursionTypeEnum.Skiathos ?
-                        "- Ο φόρος διαμονής καταβάλλεται επι τόπου στο κατάλυμα: Pension έως ξενοδοχεία 2* 0,5€ το δωμάτιο / βραδιά, ξενοδοχεία 3* 1,5€ το δωμάτιο ανά διανυκτέρευση." : "");
+                        "- Ο φόρος διαμονής καταβάλλεται επι τόπου στο κατάλυμα: Pension έως ξενοδοχεία 2* 0,5€ το δωμάτιο / βραδιά, ξενοδοχεία 3* 1,5€ το δωμάτιο ανά διανυκτέρευση." :
+                        booking.Excursion.Destinations[0].Id == 9 ? "- Ο φόρος διαμονής καταβάλλεται πάνω στο λεωφορείο στον συνοδό και ανέρχεται σε 1,5€ το άτομο ανά διανυκτέρευση" : "");
 
                     using (StreamWriter sw = new StreamWriter(wordDoc.MainDocumentPart.GetStream(FileMode.Create)))
                     {

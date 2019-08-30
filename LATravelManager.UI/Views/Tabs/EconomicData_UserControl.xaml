@@ -147,7 +147,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="8" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
@@ -166,10 +166,12 @@
                            Grid.Row="0"
                            VerticalAlignment="Center"
                            Grid.Column="1" />
-                <Border BorderBrush="Silver" BorderThickness="1"
-                           Grid.Column="2" Margin="1 0 0 0 "
-                           HorizontalAlignment="Left"
-                           Grid.RowSpan="4" />
+                <Border BorderBrush="Silver"
+                        BorderThickness="1"
+                        Grid.Column="2"
+                        Margin="1 0 0 0 "
+                        HorizontalAlignment="Right"
+                        Grid.RowSpan="4" />
                 <Label Content="Πειραιώς:"
                        Grid.Row="1"
                        Grid.Column="0" />
@@ -188,33 +190,33 @@
                 <Label Content="Eurobank:"
                        Padding="5 0"
                        Grid.Row="0"
-                       Grid.Column="2" />
+                       Grid.Column="3" />
                 <TextBlock Text="{Binding Eurobank,StringFormat=c2}"
                            VerticalAlignment="Center"
                            Grid.Row="0"
-                           Grid.Column="3" />
+                           Grid.Column="4" />
                 <Label Content="Alpha Bank:"
                        Grid.Row="1"
-                       Grid.Column="2" />
+                       Grid.Column="3" />
                 <TextBlock Text="{Binding AlphaBank,StringFormat=c2}"
                            VerticalAlignment="Center"
                            Grid.Row="1"
-                           Grid.Column="3" />
+                           Grid.Column="4" />
                 <Label Content="Visa:"
                        Padding="5 0"
                        Grid.Row="2"
-                       Grid.Column="2" />
+                       Grid.Column="3" />
                 <TextBlock Text="{Binding VISA,StringFormat=c2}"
                            VerticalAlignment="Center"
                            Grid.Row="2"
-                           Grid.Column="3" />
+                           Grid.Column="4" />
                 <Label Content="Σύνολο:"
                        Grid.Row="3"
-                       Grid.Column="2" />
+                       Grid.Column="3" />
                 <TextBlock Text="{Binding Total,StringFormat=c2}"
                            Grid.Row="3"
                            VerticalAlignment="Center"
-                           Grid.Column="3" />
+                           Grid.Column="4" />
             </Grid>
         </StackPanel>
         <TabControl Grid.Row="1"

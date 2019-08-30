@@ -62,7 +62,9 @@
                 <DataGridTemplateColumn>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Rectangle Width="20" VerticalAlignment="Stretch" Fill="{Binding Checked,Converter={StaticResource BoolToColorConverter}}" />
+                            <Rectangle Width="20"
+                                       VerticalAlignment="Stretch"
+                                       Fill="{Binding PColor,UpdateSourceTrigger=PropertyChanged}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -78,6 +80,8 @@
                                     Binding="{Binding Amount}" />
                 <DataGridTextColumn Header="Μέθοδος"
                                     Binding="{Binding}" />
+                <DataGridTextColumn Header="Συναλλαγή"
+                                    Binding="{Binding Date}" />
             </DataGrid.Columns>
         </DataGrid>
         <Grid Grid.Row="1"

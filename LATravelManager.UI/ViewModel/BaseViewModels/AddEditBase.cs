@@ -33,6 +33,7 @@ namespace LaTravelManager.BaseTypes
 
             SelectedEntity = new TWrapper();
         }
+
         public abstract void ReLoad(int id = 0, MyViewModelBaseAsync previousViewModel = null);
 
         private void MainCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -225,7 +226,7 @@ namespace LaTravelManager.BaseTypes
             {
                 BasicDataManager.Add(SelectedEntity.Model);
                 MainCollection.Add(SelectedEntity);
-               // ClearEntity();
+                // ClearEntity();
                 ResultMessage = SelectedEntity.Title + " προστέθηκε επιτυχώς";
                 RemoveEntityCommand.RaiseCanExecuteChanged();
             }

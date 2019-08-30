@@ -9,7 +9,6 @@ namespace LATravelManager.Model.BookingData
 {
     public class ThirdParty_Booking : EditTracker
     {
-
         #region Constructors
 
         public ThirdParty_Booking()
@@ -41,6 +40,7 @@ namespace LATravelManager.Model.BookingData
 
         [StringLength(250)]
         public string Description { get; set; }
+
         public bool Disabled { get; set; }
         public DateTime? DisableDate { get; set; }
         public User DisabledBy { get; set; }
@@ -51,6 +51,7 @@ namespace LATravelManager.Model.BookingData
         public bool Reciept { get; set; }
         public string Stay { get; set; }
         public string City { get; set; }
+
         [Required]
         public User User { get; set; }
 
@@ -72,6 +73,5 @@ namespace LATravelManager.Model.BookingData
         }
 
         #endregion Methods
-
     }
 }

@@ -76,10 +76,24 @@
                                   Grid.ColumnSpan="2">
                             <ListView.Resources>
                                 <Style TargetType="{x:Type ListViewItem}">
+                                    <Setter Property="IsSelected"
+                                            Value="{Binding IsSelected}" />
                                     <EventSetter Event="Control.MouseDoubleClick"
                                                  Handler="ListView_MouseDoubleClick" />
-                                    <Setter Property="Foreground"
-                                            Value="{Binding Converter={StaticResource BrushColorConverter}}" />
+                                    <!--<Setter Property="Foreground"
+                                            Value="{Binding Converter={StaticResource BrushColorConverter}}" />-->
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=IsSelected}"
+                                                     Value="True">
+                                            <Setter Property="Background"
+                                                    Value="LightSkyBlue" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Path=IsSelected}"
+                                                     Value="False">
+                                            <Setter Property="Background"
+                                                    Value="Transparent" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
                                 </Style>
                             </ListView.Resources>
                             <ListView.View>
@@ -133,7 +147,7 @@
                                                                                FontSize="16"
                                                                                VerticalAlignment="Center" />
                                                                     <!--Text="{Binding Converter={StaticResource RoomTypeToRoomsLeftConverter}}"-->
-                                                                  
+
                                                                     <!--Visibility="{Binding Converter={StaticResource RoomsHotelsToVisibilityConverter}}"
                                                                    -->
                                                                 </StackPanel>
@@ -658,7 +672,6 @@
                                                Stretch="Fill" />
                                     </MenuItem.Icon>
                                 </MenuItem>
-
                             </ContextMenu>
                             <Style TargetType="{x:Type ComboBox}">
                                 <Setter Property="Margin"

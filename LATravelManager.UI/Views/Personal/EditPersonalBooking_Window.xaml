@@ -15,6 +15,6 @@
         d:DesignHeight="800"
         d:DesignWidth="1200">
     <Grid>
-        <viewms:NewReservation_Personal_UserControl DataContext="{Binding}"  />
+        <viewms:NewReservation_Personal_UserControl DataContext="{Binding}" />
     </Grid>
 </Window>

@@ -16,11 +16,7 @@ namespace LATravelManager.Model.Excursions
             Destinations = new ObservableCollection<City>();
         }
 
-
-
-
         private bool _FixedDates;
-
 
         public bool FixedDates
         {
@@ -41,7 +37,7 @@ namespace LATravelManager.Model.Excursions
             }
         }
 
-        public DateTime FirstDate => ExcursionDates!=null && ExcursionDates.Count>0 ? ExcursionDates.OrderBy(e => e.CheckIn).FirstOrDefault().CheckIn : new DateTime(1,1,1,1,1,1);
+        public DateTime FirstDate => ExcursionDates != null && ExcursionDates.Count > 0 ? ExcursionDates.OrderBy(e => e.CheckIn).FirstOrDefault().CheckIn : new DateTime(1, 1, 1, 1, 1, 1);
 
         #endregion Constructors
 
@@ -53,10 +49,10 @@ namespace LATravelManager.Model.Excursions
         public bool NightStart { get; set; }
         public bool DOBNeeded { get; set; }
 
-        public  ObservableCollection<ExcursionDate> ExcursionDates { get; set; }
+        public ObservableCollection<ExcursionDate> ExcursionDates { get; set; }
 
         [Required]
-        public  ExcursionCategory ExcursionType { get; set; }
+        public ExcursionCategory ExcursionType { get; set; }
 
         public bool IncludesBus { get; set; }
 

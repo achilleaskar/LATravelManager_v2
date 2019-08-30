@@ -1,5 +1,6 @@
 ﻿using LATravelManager.Model.Excursions;
 using LATravelManager.UI.Message;
+using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Wrapper;
@@ -24,9 +25,15 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Skiathos
         {
             try
             {
-                SelectedExcursion = new ExcursionWrapper(await StartingRepository.GetByIdAsync<Excursion>(29));
+                if (id > 0)
+                {
+                    GenericRepository = new GenericRepository();
+                }
+
+                SelectedExcursion = new ExcursionWrapper(await GenericRepository.GetByIdAsync<Excursion>(29));
+
                 Model.BookingData.Booking booking = id > 0
-                    ? await StartingRepository.GetFullBookingByIdAsync(id)
+                    ? await GenericRepository.GetFullBookingByIdAsync(id)
                     : await CreateNewBooking();
 
                 InitializeBooking(booking);

@@ -78,7 +78,7 @@
                                 HorizontalAlignment="Left"
                                 ShowButtonSpinner="True"
                                 ShowDropDownButton="True"
-                                
+
                                 Value="{Binding Service.TimeGo,UpdateSourceTrigger=PropertyChanged}"
                                 Format="Custom" />
         <Label Content="Ημέρες Ξενάγησης:"

@@ -1,10 +1,7 @@
-﻿using LATravelManager.UI.Repositories;
-using LATravelManager.UI.ViewModel.BaseViewModels;
+﻿using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Personal;
 using LATravelManager.UI.ViewModel.Tabs;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
-using System;
-using System.Threading.Tasks;
 
 namespace LATravelManager.UI.ViewModel.Parents
 {

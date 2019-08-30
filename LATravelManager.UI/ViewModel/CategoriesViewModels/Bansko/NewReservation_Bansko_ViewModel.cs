@@ -14,16 +14,17 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
         public NewReservation_Bansko_ViewModel(MainViewModel mainViewModel) : base(mainViewModel)
         {
         }
+
         #region Methods
 
         public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
             try
             {
-                SelectedExcursion = new ExcursionWrapper(await StartingRepository.GetByIdAsync<Excursion>(2));
+                SelectedExcursion = new ExcursionWrapper(await GenericRepository.GetByIdAsync<Excursion>(2));
 
                 Model.BookingData.Booking booking = id > 0
-                    ? await StartingRepository.GetFullBookingByIdAsync(id)
+                    ? await GenericRepository.GetFullBookingByIdAsync(id)
                     : await CreateNewBooking();
 
                 //Id = id;

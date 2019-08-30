@@ -42,116 +42,28 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
             SaveCommand = new RelayCommand(async () => { await SaveAsync(); }, CanSave);
             Payment = new Payment();
             MainViewModel = mainViewModel;
+            ToggleDisabilityCommand = new RelayCommand(ToggleDisability, CanToggleDisability);
         }
 
-        public static string GetPath(string fileName, string folderpath)
+        public RelayCommand ToggleDisabilityCommand { get; set; }
+
+        private void ToggleDisability()
         {
-            int i = 1;
-            string resultPath;
-            string filenm = fileName.Substring(0, fileName.LastIndexOf('.'));
-            string fileExtension = fileName.Substring(fileName.LastIndexOf('.'));
-            resultPath = folderpath + filenm + fileExtension;
-            while (File.Exists(resultPath))
+            if (ThirdPartyWr.Disabled)
             {
-                i++;
-                resultPath = folderpath + filenm + "(" + i + ")" + fileExtension;
+                ThirdPartyWr.Disabled = false;
             }
-            return resultPath;
-        }
-
-        private void OpenFile()
-        {
-            Mouse.OverrideCursor = Cursors.Wait;
-
-            string outputpath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-
-            Directory.CreateDirectory(outputpath + @"\Προφόρμες");
-            string path = GetPath(ThirdPartyWr.File.FileName, outputpath + @"\Προφόρμες\");
-            File.WriteAllBytes(path, ThirdPartyWr.File.Content);
-
-            Mouse.OverrideCursor = Cursors.Arrow;
-
-            Process.Start(path);
-        }
-
-        private bool CanOpenFile()
-        {
-            return ThirdPartyWr != null && ThirdPartyWr.File != null && ThirdPartyWr.File.Content != null;
-        }
-
-        private void UploadFile()
-        {
-            OpenFileDialog dlg = new OpenFileDialog
+            else
             {
-                //FileName = "Document", // Default file name
-                //DefaultExt = ".pdf", // Default file extension
-                Filter = "All files (*.*)|*.*" // Filter files by extension
-            };
-            // Show open file dialog box
-            bool? result = dlg.ShowDialog();
-
-            // Process open file dialog box results
-            if (result == true)
-            {
-                Mouse.OverrideCursor = Cursors.Wait;
-                // Open document
-                string fileName = dlg.FileName;
-                using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                {
-                    FileInfo file = new FileInfo(fileName);
-                    if (file.Exists)
-                    {
-                        ThirdPartyWr.File = new CustomFile { Content = File.ReadAllBytes(fileName), FileName = file.Name };
-                    }
-                }
-                Mouse.OverrideCursor = Cursors.Arrow;
+                ThirdPartyWr.DisableDate = DateTime.Now;
+                ThirdPartyWr.DisabledBy = StartingRepository.GetById<User>(StaticResources.User.Id);
+                ThirdPartyWr.Disabled = true;
             }
         }
 
-        private bool CanUpdateAll()
+        private bool CanToggleDisability()
         {
-            return AreContexesFree;
-        }
-
-        private async Task UpdateAll()
-        {
-            await ResetAllRefreshableDataASync(true);
-            UpdateAllCommand.RaiseCanExecuteChanged();
-        }
-
-        public RelayCommand UpdateAllCommand { get; set; }
-
-        private bool CanDeleteCustomers()
-        {
-            return ThirdPartyWr.CustomerWrappers.Any(c => c.IsSelected);
-        }
-
-        public void DeleteSelectedCustomers()
-        {
-            List<CustomerWrapper> toRemove = new List<CustomerWrapper>();
-            bool showMessage = false;
-            foreach (CustomerWrapper customer in ThirdPartyWr.CustomerWrappers)
-            {
-                if (customer.IsSelected)
-                {
-                    if (!customer.Handled)
-                    {
-                        toRemove.Add(customer);
-                    }
-                    else
-                    {
-                        showMessage = true;
-                    }
-                }
-            }
-            foreach (CustomerWrapper c in toRemove)
-            {
-                ThirdPartyWr.CustomerWrappers.Remove(c);
-            }
-            if (showMessage)
-            {
-                MessengerInstance.Send(new ShowExceptionMessage_Message("Καπόιοι πελάτες δεν διαγράφηκαν επειδή συμμετέχουν σε κράτηση. Παλακαλώ κάντε τους CheckOut και δοκιμάστε ξανά!"));
-            }
+            return ThirdPartyWr != null && ThirdPartyWr.Id > 0 && !string.IsNullOrEmpty(ThirdPartyWr.CancelReason);
         }
 
         #endregion Constructors
@@ -168,6 +80,8 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
         private string _ErrorsInDatagrid;
 
         private ObservableCollection<Partner> _Partners;
+
+        private Payment _Payment;
 
         private CustomerWrapper _SelectedCustomer;
 
@@ -227,9 +141,8 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
         public RelayCommand ClearBookingCommand { get; }
 
         public RelayCommand DeletePaymentCommand { get; }
-        public RelayCommand OpenFileCommand { get; }
+
         public RelayCommand DeleteSelectedCustomersCommand { get; }
-        public RelayCommand UploadFileCommand { get; }
 
         public string ErrorsInDatagrid
         {
@@ -252,6 +165,8 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
 
         public MainViewModel MainViewModel { get; }
 
+        public RelayCommand OpenFileCommand { get; }
+
         public ObservableCollection<Partner> Partners
         {
             get
@@ -270,12 +185,6 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
                 RaisePropertyChanged();
             }
         }
-
-
-
-
-        private Payment _Payment;
-
 
         public Payment Payment
         {
@@ -397,6 +306,10 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
             }
         }
 
+        public RelayCommand UpdateAllCommand { get; set; }
+
+        public RelayCommand UploadFileCommand { get; }
+
         public ObservableCollection<User> Users
         {
             get => _Users;
@@ -418,6 +331,49 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
         #endregion Properties
 
         #region Methods
+
+        public static string GetPath(string fileName, string folderpath)
+        {
+            int i = 1;
+            string resultPath;
+            string filenm = fileName.Substring(0, fileName.LastIndexOf('.'));
+            string fileExtension = fileName.Substring(fileName.LastIndexOf('.'));
+            resultPath = folderpath + filenm + fileExtension;
+            while (File.Exists(resultPath))
+            {
+                i++;
+                resultPath = folderpath + filenm + "(" + i + ")" + fileExtension;
+            }
+            return resultPath;
+        }
+
+        public void DeleteSelectedCustomers()
+        {
+            List<CustomerWrapper> toRemove = new List<CustomerWrapper>();
+            bool showMessage = false;
+            foreach (CustomerWrapper customer in ThirdPartyWr.CustomerWrappers)
+            {
+                if (customer.IsSelected)
+                {
+                    if (!customer.Handled)
+                    {
+                        toRemove.Add(customer);
+                    }
+                    else
+                    {
+                        showMessage = true;
+                    }
+                }
+            }
+            foreach (CustomerWrapper c in toRemove)
+            {
+                ThirdPartyWr.CustomerWrappers.Remove(c);
+            }
+            if (showMessage)
+            {
+                MessengerInstance.Send(new ShowExceptionMessage_Message("Καπόιοι πελάτες δεν διαγράφηκαν επειδή συμμετέχουν σε κράτηση. Παλακαλώ κάντε τους CheckOut και δοκιμάστε ξανά!"));
+            }
+        }
 
         public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
@@ -463,9 +419,19 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
             ThirdPartyWr.CustomerWrappers.Add(new CustomerWrapper() { Age = 18, Name = name, Surename = surename, Price = 35, Tel = "6981001676", StartingPlace = "Αθήνα", PassportNum = passport, DOB = new DateTime(1991, 10, 4) });
         }
 
+        private bool CanDeleteCustomers()
+        {
+            return ThirdPartyWr.CustomerWrappers.Any(c => c.IsSelected);
+        }
+
         private bool CanDeletePayment()
         {
             return SelectedPayment != null && AreContexesFree;
+        }
+
+        private bool CanOpenFile()
+        {
+            return ThirdPartyWr != null && ThirdPartyWr.File != null && ThirdPartyWr.File.Content != null;
         }
 
         private bool CanSave()
@@ -475,6 +441,11 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
                 return false;
             }
             return AreBookingDataValid;
+        }
+
+        private bool CanUpdateAll()
+        {
+            return AreContexesFree;
         }
 
         private async Task ClearBooking()
@@ -492,7 +463,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
                 BookedMessage = string.Empty;
                 SelectedUserIndex = Users.IndexOf(Users.Where(x => x.Id == StaticResources.User.Id).FirstOrDefault());
                 SelectedPartnerIndex = -1;
-                StartingRepository.RejectChanges();
+                StartingRepository.RollBack();
             }
         }
 
@@ -526,8 +497,6 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
 
         private void InitializeBooking(ThirdParty_Booking booking)
         {
-          
-
             ThirdPartyWr = new ThirdParty_Booking_Wrapper(booking);
 
             ThirdPartyWr.PropertyChanged += (s, e) =>
@@ -551,6 +520,21 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
             {
                 ThirdPartyWr.FullPrice = ThirdPartyWr.NetPrice + ThirdPartyWr.Commision;
             }
+        }
+
+        private void OpenFile()
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            string outputpath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+            Directory.CreateDirectory(outputpath + @"\Προφόρμες");
+            string path = GetPath(ThirdPartyWr.File.FileName, outputpath + @"\Προφόρμες\");
+            File.WriteAllBytes(path, ThirdPartyWr.File.Content);
+
+            Mouse.OverrideCursor = Cursors.Arrow;
+
+            Process.Start(path);
         }
 
         private async Task ResetAllRefreshableDataASync(bool makeNew = false)
@@ -607,7 +591,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
 
                 if (Payment.Amount > 0)
                 {
-                    ThirdPartyWr.Payments.Add(new Payment { Amount = Payment.Amount, Comment = Payment.Comment, Date = DateTime.Now, PaymentMethod = Payment.PaymentMethod, User = await StartingRepository.GetByIdAsync<User>(StaticResources.User.Id), Checked = (Payment.PaymentMethod == 0 || Payment.PaymentMethod == 5) ? (bool?)false : null });
+                    ThirdPartyWr.Payments.Add(new Payment { Amount = Payment.Amount, Outgoing = Payment.Outgoing, Comment = Payment.Comment, Date = DateTime.Now, PaymentMethod = Payment.PaymentMethod, User = await StartingRepository.GetByIdAsync<User>(StaticResources.User.Id), Checked = (Payment.PaymentMethod == 0 || Payment.PaymentMethod == 5) ? (bool?)false : null });
                 }
 
                 if (ThirdPartyWr.Id == 0)
@@ -632,21 +616,52 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
             }
         }
 
+        private async Task UpdateAll()
+        {
+            await ResetAllRefreshableDataASync(true);
+            UpdateAllCommand.RaiseCanExecuteChanged();
+        }
+
+        private void UploadFile()
+        {
+            OpenFileDialog dlg = new OpenFileDialog
+            {
+                //FileName = "Document", // Default file name
+                //DefaultExt = ".pdf", // Default file extension
+                Filter = "All files (*.*)|*.*" // Filter files by extension
+            };
+            // Show open file dialog box
+            bool? result = dlg.ShowDialog();
+
+            // Process open file dialog box results
+            if (result == true)
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                // Open document
+                string fileName = dlg.FileName;
+                using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    FileInfo file = new FileInfo(fileName);
+                    if (file.Exists)
+                    {
+                        ThirdPartyWr.File = new CustomFile { Content = File.ReadAllBytes(fileName), FileName = file.Name };
+                    }
+                }
+                Mouse.OverrideCursor = Cursors.Arrow;
+            }
+        }
+
         private string ValidatePayment()
         {
-            if (Payment.Amount > ThirdPartyWr.Remaining)
+            if ((!Payment.Outgoing && Payment.Amount > ThirdPartyWr.Remaining) || (Payment.Outgoing && Payment.Amount > ThirdPartyWr.NetRemaining))
             {
-                return "Το ποσό υπερβαίνει το υπόλοιπο της κράτησης";
+                return "Το ποσό υπερβαίνει το υπολοιπόμενο ποσό";
             }
-
             if (Payment.Amount < 0)
             {
                 return "Το ποσό πληρωμής δεν μπορεί να είναι αρνητικό";
             }
-            if (Payment.Amount > ThirdPartyWr.Remaining)
-            {
-                return "Το ποσό πληρωμής υπερβαίνει το υπολειπόμενο ποσό";
-            }
+
             return null;
         }
 

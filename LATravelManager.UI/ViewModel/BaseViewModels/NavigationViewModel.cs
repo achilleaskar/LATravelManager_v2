@@ -30,24 +30,22 @@ namespace LATravelManager.UI.ViewModel
                 SecondaryTabs.Add(new InfoTab());
                 SecondaryTabs.Add(new EconomicData_Tab());
                 SecondaryTabs.Add(new AddRoomsTab());
-                SecondaryTabs.Add(new SettingsTab());
+                //  SecondaryTabs.Add(new SettingsTab());
 
                 SecondaryViewModels.Add(new GlobalSearch_ViewModel(mainViewModel));
                 SecondaryViewModels.Add(new Info_ViewModel(mainViewModel));
-                SecondaryViewModels.Add(new EconomicData_ViewModel(mainViewModel));
+                SecondaryViewModels.Add(new GlobalEconomics_ViewModel(mainViewModel));
                 SecondaryViewModels.Add(new AddRooms_ViewModel(mainViewModel));
-                SecondaryViewModels.Add(new Settings_Viewmodel(mainViewModel));
+                // SecondaryViewModels.Add(new Settings_Viewmodel(mainViewModel));
 
                 SelectedSecondaryTabIndex = -1;
                 SelectedTabChangedCommand = new RelayCommand(async () => { await SelectTab(SelectedPrimaryTabIndex); });
                 SelectedChildTabChangedCommand = new RelayCommand(async () => { await SelectTab(SelectedSecondaryTabIndex, true); });
-
             }
             catch (Exception ex)
             {
                 MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
             }
-
         }
 
         #endregion Constructors
@@ -230,43 +228,43 @@ namespace LATravelManager.UI.ViewModel
 
         internal async Task SelectTab(int index, bool secondary = false)
         {
-            for (int i = 0; i < Tabs.Count; i++)
+            if (index >= 0)
             {
-                if (!secondary && i == index)
+                for (int i = 0; i < Tabs.Count; i++)
                 {
-                    if (!Tabs[index].Selected)
+                    if (!secondary && i == index)
                     {
-
-                        Tabs[index].Selected = true;
-                        await parent.SetProperChildViewModel(index);
+                        if (!Tabs[index].Selected)
+                        {
+                            Tabs[index].Selected = true;
+                            await parent.SetProperChildViewModel(index);
+                        }
+                    }
+                    else
+                    {
+                        Tabs[i].Selected = false;
                     }
                 }
-                else
+                for (int i = 0; i < SecondaryTabs.Count; i++)
                 {
-
-                    Tabs[i].Selected = false;
-                }
-            }
-            for (int i = 0; i < SecondaryTabs.Count; i++)
-            {
-                if (secondary && i == index)
-                {
-                    if (!SecondaryTabs[index].Selected)
+                    if (secondary && i == index)
                     {
-                        SecondaryTabs[index].Selected = true;
-                        await SelectSecondaryTab(i);
+                        if (!SecondaryTabs[index].Selected)
+                        {
+                            SecondaryTabs[index].Selected = true;
+                            await SelectSecondaryTab(i);
+                        }
                     }
-                }
-                else
-                {
-                    SecondaryTabs[i].Selected = false;
+                    else
+                    {
+                        SecondaryTabs[i].Selected = false;
+                    }
                 }
             }
         }
 
         private async Task SelectSecondaryTab(int tabIndex)
         {
-
             parent.SelectedChildViewModel = SecondaryViewModels[tabIndex];
             if (!parent.SelectedChildViewModel.IsLoaded)
                 await parent.SelectedChildViewModel.LoadAsync();

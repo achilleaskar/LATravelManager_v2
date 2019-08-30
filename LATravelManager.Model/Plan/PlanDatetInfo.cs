@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LATravelManager.Model.Plan
 {
@@ -14,10 +10,7 @@ namespace LATravelManager.Model.Plan
 
         #endregion Fields
 
-        #region Events
 
-
-        #endregion Events
 
         #region Properties
 
@@ -41,7 +34,6 @@ namespace LATravelManager.Model.Plan
         #region Methods
 
         public override string ToString() => Date.ToString("ddd").Substring(0, 2);
-
 
         #endregion Methods
     }

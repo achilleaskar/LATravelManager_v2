@@ -78,7 +78,6 @@ namespace LATravelManager.Model.BookingData
                     {
                         max = s.TimeReturn;
                     }
-
                 }
             }
 

@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LATravelManager.Model.Locations
+﻿namespace LATravelManager.Model.Locations
 {
-   public class Airport
+    public class Airport
     {
         public Airport(string name)
         {
             Name = name;
         }
+
         public string Name { get; set; }
+
         public override string ToString()
         {
             return Name;

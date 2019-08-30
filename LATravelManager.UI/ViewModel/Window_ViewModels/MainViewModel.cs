@@ -108,11 +108,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
         public BasicDataManager BasicDataManager { get; set; }
 
-
-
-
         private GenericRepository _StartingRepository;
-
 
         public GenericRepository StartingRepository
         {
@@ -132,7 +128,6 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                 RaisePropertyChanged();
             }
         }
-
 
         public async Task LoadOptions()
         {
@@ -156,12 +151,11 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
             await BasicDataManager.LoadAsync();
 
-            
 #if DEBUG
             StaticResources.User = new User { BaseLocation = 1, Id = 1, Level = 0, UserName = "admin" };
             RaisePropertyChanged(nameof(MenuVisibility));
 #endif
-            await ChangeViewModel().ContinueWith(async (t1)=> { await LoadOptions(); });
+            await ChangeViewModel().ContinueWith(async (t1) => { await LoadOptions(); });
         }
 
         #endregion Methods

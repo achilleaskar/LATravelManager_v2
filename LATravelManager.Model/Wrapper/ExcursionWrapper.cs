@@ -24,6 +24,10 @@ namespace LATravelManager.UI.Wrapper
         {
             get
             {
+                if (ExcursionDates == null || ExcursionDates.Count == 0)
+                {
+                    return DateTime.Today;
+                }
                 DateTime tmpMinDate = ExcursionDates[0].CheckIn;
                 foreach (ExcursionDate date in ExcursionDates)
                 {
@@ -40,6 +44,10 @@ namespace LATravelManager.UI.Wrapper
         {
             get
             {
+                if (ExcursionDates == null || ExcursionDates.Count == 0)
+                {
+                    return DateTime.Today;
+                }
                 DateTime tmpMaxDate = ExcursionDates[0].CheckOut;
                 foreach (ExcursionDate date in ExcursionDates)
                 {
@@ -107,6 +115,12 @@ namespace LATravelManager.UI.Wrapper
         }
 
         public bool IncludesShip
+        {
+            get { return GetValue<bool>(); }
+            set { SetValue(value); }
+        }
+
+        public bool FixedDates
         {
             get { return GetValue<bool>(); }
             set { SetValue(value); }

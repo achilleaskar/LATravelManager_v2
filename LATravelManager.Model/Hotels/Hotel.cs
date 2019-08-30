@@ -24,16 +24,16 @@ namespace LATravelManager.Model.Hotels
         }
 
         [Required(ErrorMessage = "Η πόλη στην οποία βρίσκεται το ξενοδοχείο απαιτείται!")]
-        public  City City { get; set; }
+        public City City { get; set; }
 
         [Required(ErrorMessage = "Η κατηγορία του ξενοδοχείου απαιτείται!")]
-        public  HotelCategory HotelCategory { get; set; }
+        public HotelCategory HotelCategory { get; set; }
 
         [Required(ErrorMessage = "Το Όνομα ξενοδοχείου απαιτείται!")]
         [StringLength(25, MinimumLength = 3, ErrorMessage = "Το Όνομα ξενοδοχείου μπορεί να είναι από 3 έως 25 χαρακτήρες.")]
         public string Name { get; set; }
 
-        public  List<Room> Rooms { get; set; }
+        public List<Room> Rooms { get; set; }
 
         [Phone]
         [Required(ErrorMessage = "Το Τηλέφωνο απαιτείται!")]

@@ -23,10 +23,12 @@ namespace LATravelManager.UI.Views
             //of the PasswordBox.
             AttachedProperties.PasswordBoxMVVMAttachedProperties.SetEncryptedPassword(pBox, pBox.SecurePassword);
         }
+
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             username.Focus();
         }
+
         private void SelectAllPassword(object sender, RoutedEventArgs e)
         {
             var pb = (sender as PasswordBox);

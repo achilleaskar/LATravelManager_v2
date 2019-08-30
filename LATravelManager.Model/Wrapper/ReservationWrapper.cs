@@ -443,7 +443,17 @@ namespace LATravelManager.Model.Wrapper
         public bool OnlyStay
         {
             get { return GetValue<bool>(); }
-            set { SetValue(value); }
+            set
+            {
+                SetValue(value);
+                foreach (var c in CustomersList)
+                {
+                    c.StartingPlace = "ONLY STAY";
+                    c.CustomerHasBusIndex = 3;
+                    c.CustomerHasShipIndex = 3;
+                    c.CustomerHasPlaneIndex = 3;
+                }
+            }
         }
 
         public ReservationTypeEnum ReservationType
@@ -616,7 +626,7 @@ namespace LATravelManager.Model.Wrapper
                 {
                     return false;
                 }
-                if ((!string.IsNullOrEmpty(Booking.Comment) && Booking.Comment.ToUpper().Contains(key)) || (Booking.IsPartners && Booking.Partner.Name.ToUpper().Contains(key)))
+                if ((!string.IsNullOrEmpty(Booking.Comment) && Booking.Comment.ToUpper().Contains(key)) || (!string.IsNullOrEmpty(HotelName) && HotelName.ToUpper().Contains(key)) || (Booking.IsPartners && Booking.Partner.Name.ToUpper().Contains(key)))
                 {
                     return true;
                 }
@@ -694,10 +704,30 @@ namespace LATravelManager.Model.Wrapper
         private string GetLocations()
         {
             List<string> locations = new List<string>();
-            foreach (Customer customer in CustomersList)
+            StringBuilder sb = new StringBuilder();
+            if (PersonalModel != null)
             {
-                if (!locations.Contains(customer.StartingPlace))
-                    locations.Add(customer.StartingPlace);
+                foreach (Customer customer in PersonalModel.Customers)
+                {
+                    if (!locations.Contains(customer.StartingPlace))
+                        locations.Add(customer.StartingPlace);
+                }
+            }
+            else if (ThirdPartyModel != null)
+            {
+                foreach (Customer customer in ThirdPartyModel.Customers)
+                {
+                    if (!locations.Contains(customer.StartingPlace))
+                        locations.Add(customer.StartingPlace);
+                }
+            }
+            else
+            {
+                foreach (Customer customer in CustomersList)
+                {
+                    if (!locations.Contains(customer.StartingPlace))
+                        locations.Add(customer.StartingPlace);
+                }
             }
             return string.Join(", ", locations);
         }
@@ -705,9 +735,20 @@ namespace LATravelManager.Model.Wrapper
         private string GetNames()
         {
             StringBuilder sb = new StringBuilder();
-            foreach (Customer customer in CustomersList)
+            if (PersonalModel != null)
             {
-                sb.Append(customer.Surename + " " + customer.Name + ", ");
+                return PersonalModel.Names;
+            }
+            else if (ThirdPartyModel != null)
+            {
+                return ThirdPartyModel.Names;
+            }
+            else
+            {
+                foreach (Customer customer in CustomersList)
+                {
+                    sb.Append(customer.Surename + " " + customer.Name + ", ");
+                }
             }
             return sb.ToString().TrimEnd(',', ' ');
         }
@@ -715,60 +756,69 @@ namespace LATravelManager.Model.Wrapper
         private string GetRoomTypeName()
         {
             string roomname = "";
-            if (Room != null)
+
+            if (PersonalModel != null)
             {
-                if (Room.RoomType != null)
-                {
-                    roomname = Room.RoomType.Name;
-                }
             }
-            else if (NoNameRoomType != null)
+            else if (ThirdPartyModel != null)
             {
-                roomname = NoNameRoomType.Name;
-            }
-            else if (ReservationType == ReservationTypeEnum.Transfer)
-            {
-                return "TRANSFER";
-            }
-            else if (ReservationType == ReservationTypeEnum.OneDay)
-            {
-                return "ONEDAY";
             }
             else
             {
-                switch (CustomersList.Count)
+                if (Room != null)
                 {
-                    case 1:
-                        roomname = "SINGLE_";
-                        break;
+                    if (Room.RoomType != null)
+                    {
+                        roomname = Room.RoomType.Name;
+                    }
+                }
+                else if (NoNameRoomType != null)
+                {
+                    roomname = NoNameRoomType.Name;
+                }
+                else if (ReservationType == ReservationTypeEnum.Transfer)
+                {
+                    return "TRANSFER";
+                }
+                else if (ReservationType == ReservationTypeEnum.OneDay)
+                {
+                    return "ONEDAY";
+                }
+                else
+                {
+                    switch (CustomersList.Count)
+                    {
+                        case 1:
+                            roomname = "SINGLE_";
+                            break;
 
-                    case 2:
-                        roomname = "DOUBLE_";
-                        break;
+                        case 2:
+                            roomname = "DOUBLE_";
+                            break;
 
-                    case 3:
-                        roomname = "TRIPLE_";
-                        break;
+                        case 3:
+                            roomname = "TRIPLE_";
+                            break;
 
-                    case 4:
-                        roomname = "QUAD_";
-                        break;
+                        case 4:
+                            roomname = "QUAD_";
+                            break;
 
-                    case 5:
-                        roomname = "5BED_";
-                        break;
+                        case 5:
+                            roomname = "5BED_";
+                            break;
 
-                    case 6:
-                        roomname = "6BED_";
-                        break;
+                        case 6:
+                            roomname = "6BED_";
+                            break;
+                    }
+                }
+
+                if (HB)
+                {
+                    roomname += "-HB";
                 }
             }
-
-            if (HB)
-            {
-                roomname += "-HB";
-            }
-
             return roomname;
         }
 

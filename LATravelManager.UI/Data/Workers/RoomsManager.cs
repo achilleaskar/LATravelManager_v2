@@ -191,7 +191,6 @@ namespace LATravelManager.UI.Data.Workers
                 {
                     foreach (Reservation reservation in booking.ReservationsInBooking)
                     {
-
                         if (reservation.ReservationType == ReservationTypeEnum.Noname)
                         {
                             NonamesList.Add(new NoName { Reservation = new ReservationWrapper(reservation) });
@@ -221,7 +220,6 @@ namespace LATravelManager.UI.Data.Workers
                     }
                 }
                 Hotels = Hotels.OrderBy(h => h.Name).ToList();
-
 
                 HotelWrapper tmpHotelWr;//-------------
                 RoomWrapper tmpRoomWr;//-------------
@@ -561,8 +559,6 @@ namespace LATravelManager.UI.Data.Workers
 
                 if (cropped)
                 {
-
-
                     List<HotelWrapper> PlanCroped = new List<HotelWrapper>();
 
                     // await GetFreeRooms(Plan);
@@ -627,7 +623,6 @@ namespace LATravelManager.UI.Data.Workers
 
                     Plan = PlanCroped;
                 }
-
             }
             catch (Exception ex)
             {

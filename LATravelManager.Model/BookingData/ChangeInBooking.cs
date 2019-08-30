@@ -6,8 +6,6 @@ namespace LATravelManager.Model.BookingData
 {
     public class ChangeInBooking : BaseModel
     {
-
-
         public ChangeInBooking()
         {
         }
@@ -15,11 +13,7 @@ namespace LATravelManager.Model.BookingData
         public Booking Booking { get; set; }
         public User User { get; set; }
 
-
-
-
         private DateTime _Date;
-
 
         public DateTime Date
         {
@@ -39,9 +33,6 @@ namespace LATravelManager.Model.BookingData
                 RaisePropertyChanged();
             }
         }
-
-
-
 
         private string _Description;
 
@@ -64,6 +55,5 @@ namespace LATravelManager.Model.BookingData
                 RaisePropertyChanged();
             }
         }
-
     }
 }

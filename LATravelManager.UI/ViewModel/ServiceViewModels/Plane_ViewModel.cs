@@ -15,6 +15,12 @@ namespace LATravelManager.UI.ViewModel.ServiceViewModels
             string[] logFile = File.ReadAllLines(@"Sources\airports.txt");
             Airports = new List<string>(logFile);
             AirLines = Parent.BasicDataManager.Airlines;
+            Refresh();
+        }
+
+        public override void Refresh()
+        {
+            AirLines = Parent.BasicDataManager.Airlines;
         }
 
         private IEnumerable<string> _Airports;
@@ -38,6 +44,7 @@ namespace LATravelManager.UI.ViewModel.ServiceViewModels
                 RaisePropertyChanged();
             }
         }
+
         public ObservableCollection<Airline> AirLines
         {
             get
@@ -56,7 +63,5 @@ namespace LATravelManager.UI.ViewModel.ServiceViewModels
                 RaisePropertyChanged();
             }
         }
-
-       
     }
 }

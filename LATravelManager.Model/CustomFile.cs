@@ -5,9 +5,6 @@ namespace LATravelManager.Model
 {
     public class CustomFile : BaseModel
     {
-
-
-
         private string _FileName;
 
         [StringLength(255)]
@@ -37,8 +34,6 @@ namespace LATravelManager.Model
                 RaisePropertyChanged();
             }
         }
-
-
 
         public byte[] Content { get; set; }
         public FileType FileType { get; set; }

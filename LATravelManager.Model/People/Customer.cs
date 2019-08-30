@@ -13,14 +13,12 @@ namespace LATravelManager.Model.People
         public Customer()
         {
             Services = new ObservableCollection<Service>();
-         
+
             Age = 18;
             //DOB = DateTime.Now.AddYears(-20);
         }
 
-      
-
-        public  ICollection<Service> Services { get; }
+        public ICollection<Service> Services { get; }
 
         #region Properties
 

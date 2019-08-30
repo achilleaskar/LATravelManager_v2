@@ -9,5 +9,9 @@ namespace LATravelManager.UI.ViewModel.ServiceViewModels
         {
             Service = new FerryService();
         }
+
+        public override void Refresh()
+        {
+        }
     }
 }

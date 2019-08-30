@@ -2,7 +2,6 @@
 using Squirrel;
 using System;
 using System.Net;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace LATravelManager.UI.Views
@@ -21,15 +20,12 @@ namespace LATravelManager.UI.Views
             InitializeComponent();
         }
 
-
         private void Window_Closed(object sender, EventArgs e)
         {
             Application.Current.Shutdown();
 
             Environment.Exit(0);
         }
-
-
 
         private async void Window_Initialized(object sender, EventArgs e)
         {

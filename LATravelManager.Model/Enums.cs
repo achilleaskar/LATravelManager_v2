@@ -11,10 +11,61 @@
             ThirdParty = 4
         }
 
+        public enum TransactionType //1
+        {
+            Income,
+            Expense
+        }
+
+        public enum IncomeBaseCategories
+        {
+            OptionalActivities
+        }
+
+        public enum ExpenseBaseCategories //10
+        {
+            GroupExpense,
+            PersonalExpense,
+            PersonelExpense,
+            StandardExpense,
+            TaxExpense
+
+        }
+
+        public enum GroupExpenseCategories //100
+        {
+            Hotel,
+            Bus,
+            Escort,
+            Guide
+        }
+
+
+        public enum StandardExpenseCategories //100
+        {
+            Power,
+            Water,
+            Rent,
+            BuildingFees,
+            Telephone,
+            Mobile
+        }
+
+        public enum TaxExpenseCategories //100
+        {
+            Setting, //rythmisi ofeilhs
+            IncomeTax, //foros eisodhmatos
+            GeneralTaxes,//allo foroi
+            EFKA,
+            IKA
+
+        }
+
         public enum FileType
         {
             Avatar = 1, Photo
         }
+
         public enum ReservationTypeEnum
         {
             Normal,

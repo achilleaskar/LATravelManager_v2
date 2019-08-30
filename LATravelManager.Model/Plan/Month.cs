@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows.Media;
 
 namespace LATravelManager.Model.Plan
@@ -14,7 +10,6 @@ namespace LATravelManager.Model.Plan
         public Brush Background { get; set; }
 
         public List<PlanDatetInfo> Days { get; set; } = new List<PlanDatetInfo>();
-
 
         public string Name { get; set; }
 

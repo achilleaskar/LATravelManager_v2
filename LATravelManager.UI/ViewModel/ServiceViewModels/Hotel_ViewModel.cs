@@ -13,6 +13,11 @@ namespace LATravelManager.UI.ViewModel.ServiceViewModels
         public Hotel_ViewModel(NewReservation_Personal_ViewModel parent) : base(parent)
         {
             Service = new HotelService();
+            Refresh();
+        }
+
+        public override void Refresh()
+        {
             Cities = Parent.BasicDataManager.Cities;
             RoomTypes = Parent.BasicDataManager.RoomTypes;
             HotelsList = new ObservableCollection<Hotel>(Parent.BasicDataManager.Hotels);

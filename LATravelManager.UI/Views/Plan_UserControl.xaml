@@ -58,7 +58,8 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-        </Style>--><!--
+        </Style>-->
+        <!--
         <Style TargetType="{x:Type TabPanel}">
             <Setter Property="Background"
                     Value="Red" />
@@ -169,7 +170,8 @@
                             HorizontalAlignment="Left"
                             Command="{Binding ShowPlanCommand}"
                             Margin="5" />
-                    <TextBlock Text="{Binding Fullness,StringFormat=Πληρότητα: {0:P1}}" Padding="5" />
+                    <TextBlock Text="{Binding Fullness,StringFormat=Πληρότητα: {0:P1}}"
+                               Padding="5" />
                     <!--ContentStringFormat="Πληρότητα: {}{ 0}%" />-->
                 </StackPanel>
             </Border>
@@ -376,7 +378,7 @@
                                                                 <ItemsControl.ItemTemplate>
                                                                     <DataTemplate>
                                                                         <DataTemplate.Resources>
-                                                                            <ContextMenu x:Key="PlanContextMenu" 
+                                                                            <ContextMenu x:Key="PlanContextMenu"
                                                                                          VirtualizingPanel.VirtualizationMode="Recycling"
                                                                                          Visibility="{Binding Converter={StaticResource UserToVisibilityValueConverter},ConverterParameter=2,  Mode=OneWay}">
                                                                                 <MenuItem Header="Ακύρωση"

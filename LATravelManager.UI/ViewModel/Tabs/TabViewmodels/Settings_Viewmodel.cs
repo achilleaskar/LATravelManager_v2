@@ -16,7 +16,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             try
             {
                 throw new NotImplementedException();
-
             }
             catch (Exception ex)
             {
@@ -28,6 +27,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 throw new NotImplementedException();
             }
         }
+
         public override Task ReloadAsync()
         {
             throw new NotImplementedException();

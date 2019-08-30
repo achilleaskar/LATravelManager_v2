@@ -41,6 +41,72 @@
             <Setter Property="IsTabStop"
                     Value="False" />
         </Style>
+        <DataTemplate x:Key="EnabledTemplate"
+                      DataType="{x:Type viewmodels:NewReservation_ThirdParty_VIewModel}">
+            <StackPanel>
+
+                <Button Content="Ακύρωση Κράτησης"
+                        Padding="3 3"
+                        FontSize="11"
+                        VerticalAlignment="Top"
+                        Margin="0 5 0 1"
+                        Command="{Binding ToggleDisabilityCommand}"
+                        Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}"
+                        HorizontalAlignment="Center" />
+                <TextBlock Text="Λόγος:" />
+                <TextBox HorizontalAlignment="Center"
+                         Width="140"
+                         Text="{Binding ThirdPartyWr.CancelReason,UpdateSourceTrigger=PropertyChanged}"
+                         Height="43"
+                         TextWrapping="Wrap" />
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="DisabledTemplate"
+                      DataType="{x:Type viewmodels:NewReservation_ThirdParty_VIewModel}">
+            <Grid Background="Red">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Ακυρώθηκε"
+                           Margin=" 5 0 0 0"
+                           HorizontalAlignment="Center" />
+                <Button Content="Επαναφορά"
+                        Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}"
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        Command="{Binding ToggleDisabilityCommand}"
+                        Padding="3 0"
+                        HorizontalAlignment="Center" />
+                <StackPanel Orientation="Horizontal"
+                            Margin=" 5 0 0 0"
+                            Grid.Row="1"
+                            Grid.ColumnSpan="2"
+                            Grid.Column="0">
+                    <TextBlock Text="{Binding ThirdPartyWr.DisableDate,StringFormat='{}{0:dd/MM/yyyy HH:mm -}' }"
+                               FontSize="11"
+                               TextWrapping="Wrap" />
+                    <Label Content="{Binding ThirdPartyWr.DisabledBy.UserName}"
+                           Padding="5 0" />
+                </StackPanel>
+                <TextBox HorizontalAlignment="Center"
+                         Width="130"
+                         Grid.Row="2"
+                         Grid.ColumnSpan="2"
+                         Text="{Binding ThirdPartyWr.CancelReason,UpdateSourceTrigger=PropertyChanged}"
+                         Height="45"
+                         Background="AntiqueWhite"
+                         TextWrapping="Wrap" />
+            </Grid>
+        </DataTemplate>
     </UserControl.Resources>
     <ScrollViewer HorizontalScrollBarVisibility="Auto"
                   VerticalScrollBarVisibility="Auto">
@@ -198,64 +264,88 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <GroupBox HorizontalAlignment="Left"
-                                  VerticalAlignment="Top"
-                                  Header="Νέα Πληρωμή">
-                            <StackPanel Orientation="Horizontal">
-                                <StackPanel Margin="5,5,5,0"
-                                            VerticalAlignment="Center">
-                                    <TextBlock Text="Ποσό:"
-                                               HorizontalAlignment="Left"
-                                               VerticalAlignment="Center" />
-                                    <TextBox Grid.Row="0"
-                                             HorizontalAlignment="Center"
-                                             Grid.Column="1"
-                                             Text="{Binding Payment.Amount,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                             Width="50" />
-                                    <CheckBox Content="Out."
-                                              Margin=" 0 5 0 0"
-                                              Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}"
-                                              IsChecked="{Binding Payment.Outgoing}" />
+                        <StackPanel Orientation="Horizontal"
+                                    Background="AliceBlue">
+
+                            <GroupBox HorizontalAlignment="Left"
+                                      VerticalAlignment="Top"
+                                      Header="Νέα Πληρωμή">
+                                <StackPanel Orientation="Horizontal">
+                                    <StackPanel Margin="5,5,5,0"
+                                                VerticalAlignment="Center">
+                                        <TextBlock Text="Ποσό:"
+                                                   HorizontalAlignment="Left"
+                                                   VerticalAlignment="Center" />
+                                        <TextBox Grid.Row="0"
+                                                 HorizontalAlignment="Center"
+                                                 Grid.Column="1"
+                                                 Text="{Binding Payment.Amount,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                                 Width="50" />
+                                        <CheckBox Content="Out."
+                                                  Margin=" 0 5 0 0"
+                                                  Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}"
+                                                  IsChecked="{Binding Payment.Outgoing}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1"
+                                                Margin="5">
+                                        <TextBlock Text="Μέθοδος:"
+                                                   HorizontalAlignment="Left"
+                                                   VerticalAlignment="Center" />
+                                        <ComboBox Grid.Row="0"
+                                                  Margin="0,5"
+                                                  VerticalAlignment="Center"
+                                                  HorizontalAlignment="Center"
+                                                  SelectedIndex="{Binding Payment.PaymentMethod,NotifyOnValidationError=True}"
+                                                  Grid.Column="1"
+                                                  Width="80">
+                                            <ComboBoxItem>Μετρητά</ComboBoxItem>
+                                            <ComboBoxItem>Πειραιώς</ComboBoxItem>
+                                            <ComboBoxItem>Εθνική</ComboBoxItem>
+                                            <ComboBoxItem>Eurobank</ComboBoxItem>
+                                            <ComboBoxItem>Alpha Bank</ComboBoxItem>
+                                            <ComboBoxItem>VISA</ComboBoxItem>
+                                        </ComboBox>
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="1"
+                                                Margin="5,5,0,0"
+                                                Grid.Column="0"
+                                                HorizontalAlignment="Stretch"
+                                                Grid.ColumnSpan="2">
+                                        <TextBlock Text="Σημείωση Πληρωμής:"
+                                                   HorizontalAlignment="Left"
+                                                   VerticalAlignment="Center" />
+                                        <TextBox Grid.Row="0"
+                                                 Margin="0,0,5,-5"
+                                                 HorizontalAlignment="Stretch"
+                                                 Grid.Column="1"
+                                                 Width="120"
+                                                 TextWrapping="Wrap"
+                                                 Height="40"
+                                                 Text="{Binding Payment.Comment}" />
+                                    </StackPanel>
                                 </StackPanel>
-                                <StackPanel Grid.Column="1"
-                                            Margin="5">
-                                    <TextBlock Text="Μέθοδος:"
-                                               HorizontalAlignment="Left"
-                                               VerticalAlignment="Center" />
-                                    <ComboBox Grid.Row="0"
-                                              Margin="0,5"
-                                              VerticalAlignment="Center"
-                                              HorizontalAlignment="Center"
-                                              SelectedIndex="{Binding Payment.PaymentMethod,NotifyOnValidationError=True}"
-                                              Grid.Column="1"
-                                              Width="80">
-                                        <ComboBoxItem>Μετρητά</ComboBoxItem>
-                                        <ComboBoxItem>Πειραιώς</ComboBoxItem>
-                                        <ComboBoxItem>Εθνική</ComboBoxItem>
-                                        <ComboBoxItem>Eurobank</ComboBoxItem>
-                                        <ComboBoxItem>Alpha Bank</ComboBoxItem>
-                                        <ComboBoxItem>VISA</ComboBoxItem>
-                                    </ComboBox>
-                                </StackPanel>
-                                <StackPanel Grid.Row="1"
-                                            Margin="5,5,0,0"
-                                            Grid.Column="0"
-                                            HorizontalAlignment="Stretch"
-                                            Grid.ColumnSpan="2">
-                                    <TextBlock Text="Σημείωση Πληρωμής:"
-                                               HorizontalAlignment="Left"
-                                               VerticalAlignment="Center" />
-                                    <TextBox Grid.Row="0"
-                                             Margin="0,0,5,-5"
-                                             HorizontalAlignment="Stretch"
-                                             Grid.Column="1"
-                                             Width="140"
-                                             TextWrapping="Wrap"
-                                             Height="40"
-                                             Text="{Binding Payment.Comment}" />
-                                </StackPanel>
-                            </StackPanel>
-                        </GroupBox>
+                            </GroupBox>
+                            <Border VerticalAlignment="Stretch"
+                                    Width="140"
+                                    HorizontalAlignment="Center"
+                                    BorderThickness="0">
+                                <ContentControl Content="{Binding }">
+                                    <ContentControl.Style>
+                                        <Style TargetType="{x:Type ContentControl}">
+                                            <Setter Property="ContentTemplate"
+                                                    Value="{StaticResource  DisabledTemplate}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ThirdPartyWr.Disabled }"
+                                                             Value="false">
+                                                    <Setter Property="ContentTemplate"
+                                                            Value="{StaticResource EnabledTemplate}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ContentControl.Style>
+                                </ContentControl>
+                            </Border>
+                        </StackPanel>
                         <StackPanel Grid.Row="1"
                                     Orientation="Vertical">
                             <TextBlock Text=" Ιστορικό Πληρωμών"
@@ -297,7 +387,8 @@
                                                         Header="Out.">
                                             <GridViewColumn.CellTemplate>
                                                 <DataTemplate>
-                                                    <CheckBox IsChecked="{Binding Outgoing}" />
+                                                    <CheckBox IsChecked="{Binding Outgoing}"
+                                                              IsHitTestVisible="False" />
                                                 </DataTemplate>
                                             </GridViewColumn.CellTemplate>
                                         </GridViewColumn>

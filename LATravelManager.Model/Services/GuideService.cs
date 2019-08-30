@@ -1,6 +1,4 @@
-﻿using LATravelManager.Model.Services;
-
-namespace LATravelManager.Model.Services
+﻿namespace LATravelManager.Model.Services
 {
     public class GuideService : Service
     {
@@ -29,7 +27,5 @@ namespace LATravelManager.Model.Services
                 RaisePropertyChanged();
             }
         }
-
-      
     }
 }

@@ -223,7 +223,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
                             }
                         }
                     }
-                    lists.Add(new AvailabilitiesList { Dates = pair, IsMain = (pair.CheckIn == CheckIn && pair.CheckOut == CheckOut), Rooms = new ObservableCollection<RoomWrapper>(tmplist.OrderBy(f => f.RoomType.MinCapacity).ToList()),RoomTYpesLeft=RoomTYpesLeft });
+                    lists.Add(new AvailabilitiesList { Dates = pair, IsMain = (pair.CheckIn == CheckIn && pair.CheckOut == CheckOut), Rooms = new ObservableCollection<RoomWrapper>(tmplist.OrderBy(f => f.RoomType.MinCapacity).ToList()), RoomTYpesLeft = RoomTYpesLeft });
                 }
             }
         }
@@ -231,10 +231,8 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
         #endregion Methods
     }
 
-    public class AvailabilitiesList: ViewModelBase
+    public class AvailabilitiesList : ViewModelBase
     {
-
-
         #region Fields
 
         private ObservableCollection<RoomWrapper> _Rooms;
@@ -243,14 +241,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
 
         #region Properties
 
-
-
-
-
-
-
         private IDictionary<int, int> _RoomTYpesLeft;
-
 
         public IDictionary<int, int> RoomTYpesLeft
         {
@@ -271,7 +262,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
             }
         }
 
-        IDictionary<int, string> dict = new Dictionary<int, string>();
+        private IDictionary<int, string> dict = new Dictionary<int, string>();
         public Pair Dates { get; set; }
         public bool IsMain { get; set; }
 

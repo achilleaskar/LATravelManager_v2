@@ -1,5 +1,4 @@
-﻿using LATravelManager.Model.Hotels;
-using LATravelManager.UI.Wrapper;
+﻿using LATravelManager.Model.BookingData;
 using System;
 using System.Globalization;
 using System.Windows.Data;
@@ -13,15 +12,21 @@ namespace LATravelManager.UI.Converters
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var check = value as bool?;
-            if (check == true)
+            Payment paym = value as Payment;
+            if (paym != null)
             {
-                return new SolidColorBrush(Colors.Green);
-            }
-            if (check==null)
-            {
-                return new SolidColorBrush(Colors.Transparent);
-
+                if (paym.Checked == true)
+                {
+                    return new SolidColorBrush(Colors.Green);
+                }
+                if (paym.Outgoing)
+                {
+                    return new SolidColorBrush(Colors.Blue);
+                }
+                if (paym.Checked == null)
+                {
+                    return new SolidColorBrush(Colors.Transparent);
+                }
             }
             return new SolidColorBrush(Colors.Red);
         }

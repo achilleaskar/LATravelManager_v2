@@ -17,7 +17,6 @@ namespace LATravelManager.UI.Views.Bansko
         public EditBooking_Bansko_Window()
         {
             InitializeComponent();
-
         }
 
         public static T GetVisualChild<T>(Visual parent) where T : Visual
@@ -134,6 +133,8 @@ namespace LATravelManager.UI.Views.Bansko
                 {
                     e.Cancel = true;
                 }
+                else
+                    a.GenericRepository.RollBack();
             }
             else if (DataContext is NewReservation_Group_ViewModel b && b.HasChanges)
             {
@@ -142,6 +143,8 @@ namespace LATravelManager.UI.Views.Bansko
                 {
                     e.Cancel = true;
                 }
+                else
+                    b.GenericRepository.RollBack();
             }
         }
 

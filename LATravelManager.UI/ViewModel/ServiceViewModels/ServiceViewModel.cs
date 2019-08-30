@@ -14,7 +14,6 @@ namespace LATravelManager.UI.ViewModel.ServiceViewModels
 
         private Service _Service;
 
-
         public Service Service
         {
             get
@@ -34,8 +33,9 @@ namespace LATravelManager.UI.ViewModel.ServiceViewModels
             }
         }
 
+        public abstract void Refresh();
+
         [NotMapped]
-       
         public NewReservation_Personal_ViewModel Parent { get; }
     }
 }

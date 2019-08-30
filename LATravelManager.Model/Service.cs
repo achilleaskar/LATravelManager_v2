@@ -22,12 +22,8 @@ namespace LATravelManager.Model.Services
         private string _CompanyInfo;
         private string _From;
 
-
-
-
         private decimal _NetPrice;
         private decimal _Profit;
-
 
         private DateTime _TimeGo;
 
@@ -217,5 +213,4 @@ namespace LATravelManager.Model.Services
 
         #endregion Methods
     }
-
 }

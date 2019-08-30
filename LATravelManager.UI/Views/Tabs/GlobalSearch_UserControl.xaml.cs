@@ -22,15 +22,14 @@ namespace LATravelManager.UI.Views.Tabs
 
         private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            datagrid.Columns[13].Visibility = System.Windows.Visibility.Visible;
             datagrid.Columns[14].Visibility = System.Windows.Visibility.Visible;
+            datagrid.Columns[15].Visibility = System.Windows.Visibility.Visible;
         }
 
         private void Button_Click_1(object sender, System.Windows.RoutedEventArgs e)
         {
-            datagrid.Columns[13].Visibility = System.Windows.Visibility.Collapsed;
             datagrid.Columns[14].Visibility = System.Windows.Visibility.Collapsed;
-
+            datagrid.Columns[15].Visibility = System.Windows.Visibility.Collapsed;
         }
     }
 }
