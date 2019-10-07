@@ -1,4 +1,5 @@
-﻿using LATravelManager.Model.People;
+﻿using LATravelManager.Model.BookingData;
+using LATravelManager.Model.People;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -7,6 +8,7 @@ namespace LATravelManager.Model.Services
 {
     public abstract class Service : EditTracker
     {
+
         #region Constructors
 
         public Service()
@@ -74,7 +76,6 @@ namespace LATravelManager.Model.Services
         }
 
         public List<Customer> Customers { get; set; }
-
         public string From
         {
             get
@@ -113,6 +114,7 @@ namespace LATravelManager.Model.Services
             }
         }
 
+        public Personal_Booking Personal_Booking { get; set; }
         public decimal PricePerPerson => Customers == null || Customers.Count == 0 || NetPrice == 0 ? 0 : NetPrice / Customers.Count;
 
         public decimal Profit
@@ -212,5 +214,6 @@ namespace LATravelManager.Model.Services
         }
 
         #endregion Methods
+
     }
 }

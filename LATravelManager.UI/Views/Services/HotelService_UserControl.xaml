@@ -8,6 +8,7 @@
              xmlns:services="clr-namespace:LATravelManager.UI.ViewModel.ServiceViewModels"
              mc:Ignorable="d"
              xmlns:toolkit="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              d:DataContext="{d:DesignInstance services:Hotel_ViewModel}"
              Background="White"
              VerticalAlignment="Top"
@@ -61,6 +62,7 @@
         <ComboBox ItemsSource="{Binding Cities}"
                   SelectedItem="{Binding Service.City}"
                   VerticalAlignment="Center"
+                  HorizontalAlignment="Left"
                   Grid.Row="0"
                   Width="100"
                   Margin="5"
@@ -68,14 +70,23 @@
         <Label Content="Ξενοδοχείο:"
                Grid.Row="0"
                Grid.Column="2" />
-        <ComboBox ItemsSource="{Binding Hotels}"
-                  SelectedItem="{Binding Service.Hotel}"
-                  VerticalAlignment="Center"
-                  HorizontalAlignment="Left"
-                  Grid.Row="0"
-                  Width="100"
-                  Margin="5"
-                  Grid.Column="3" />
+        <StackPanel  Grid.Column="3" Orientation="Horizontal">
+            <ComboBox ItemsSource="{Binding Hotels}"
+                      SelectedItem="{Binding Service.Hotel}"
+                      VerticalAlignment="Center"
+                      HorizontalAlignment="Left"
+                      Width="100"
+                      Margin="5" />
+            <Button VerticalAlignment="Center"
+                    HorizontalAlignment="Right"
+                    Height="22"
+                    Width="22"
+                    Command="{Binding OpenHotelEditCommand}"
+                   >
+                <iconPacks:PackIconFontAwesome Kind="PlusSolid"
+                                               VerticalAlignment="Center" />
+            </Button>
+        </StackPanel>
         <Label Content="Check In:"
                Grid.Row="1" />
         <toolkit:DateTimePicker Grid.Row="1"
@@ -99,8 +110,10 @@
                                 Kind="Local"
                                 Margin="5"
                                 Width="100"
+                                TimePickerVisibility="Collapsed"
                                 HorizontalAlignment="Left"
                                 ShowButtonSpinner="True"
+                                VerticalAlignment="Center"
                                 ShowDropDownButton="True"
                                 Grid.ColumnSpan="2"
                                 Value="{Binding Service.TimeReturn,UpdateSourceTrigger=PropertyChanged}"
@@ -111,27 +124,31 @@
         <ComboBox ItemsSource="{Binding RoomTypes}"
                   SelectedItem="{Binding Service.RoomType}"
                   VerticalAlignment="Center"
+                  HorizontalAlignment="Left"
                   DisplayMemberPath="Name"
                   Grid.Row="2"
                   Width="100"
                   Margin="5"
                   Grid.Column="1" />
         <StackPanel Orientation="Horizontal"
-                    Grid.Row="2" HorizontalAlignment="Right"
+                    Grid.Row="2"
+                    HorizontalAlignment="Right"
                     Grid.Column="2">
-            <CheckBox Name="optioncb" />
+            <CheckBox Name="optioncb"
+                      IsChecked="{Binding Service.Allerretour}" />
             <Label Content="Option:" />
         </StackPanel>
         <toolkit:DateTimePicker Grid.Row="2"
                                 Grid.Column="3"
                                 FormatString="dd/MM/yy"
                                 Kind="Local"
+                                TimePickerVisibility="Collapsed"
                                 Margin="5"
+                                ShowButtonSpinner="False"
                                 IsEnabled="{Binding IsChecked, ElementName=optioncb}"
                                 Width="100"
+                                VerticalAlignment="Center"
                                 HorizontalAlignment="Left"
-                                ShowButtonSpinner="True"
-                                ShowDropDownButton="True"
                                 Grid.ColumnSpan="2"
                                 Value="{Binding Service.Option,UpdateSourceTrigger=PropertyChanged}"
                                 Format="Custom" />
@@ -141,15 +158,16 @@
                     Grid.ColumnSpan="4">
             <Label Content="Σύστημα/Αρ. Κράτ.:" />
             <TextBox Text="{Binding Service.CompanyInfo,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                     Width="270"
-                     Margin="5"
+                     Width="255"
                      HorizontalAlignment="Left" />
         </StackPanel>
         <Label Content="Κέρδος:"
                Grid.Row="4"
                Grid.Column="0" />
         <TextBox Text="{Binding Service.Profit,Converter={StaticResource floatToStringConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                 HorizontalAlignment="Left"
                  Grid.Row="4"
+                 Width="100" Margin="5 0"
                  Grid.Column="1" />
         <Label Content="Κόστος(ΝΕΤ):"
                Grid.Row="4"

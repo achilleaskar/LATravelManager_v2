@@ -16,6 +16,31 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             MainViewModel = mainViewModel;
         }
 
+
+
+
+        private Remaining_ViewModel _Remaining_ViewModel;
+
+
+        public Remaining_ViewModel Remaining_ViewModel
+        {
+            get
+            {
+                return _Remaining_ViewModel;
+            }
+
+            set
+            {
+                if (_Remaining_ViewModel == value)
+                {
+                    return;
+                }
+
+                _Remaining_ViewModel = value;
+                RaisePropertyChanged();
+            }
+        }
+
         private Incomes_ViewModel _Incomes_ViewModel;
 
         public Incomes_ViewModel Incomes_ViewModel
@@ -88,6 +113,8 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             EconomicData_ViewModel = new EconomicData_ViewModel(MainViewModel);
             Incomes_ViewModel = new Incomes_ViewModel(MainViewModel);
             TotalEarns_ViewModel = new TotalEarns_ViewModel(MainViewModel);
+            Remaining_ViewModel=new Remaining_ViewModel(MainViewModel);
+            Remaining_ViewModel.Load();
             await Task.Delay(0);
         }
 

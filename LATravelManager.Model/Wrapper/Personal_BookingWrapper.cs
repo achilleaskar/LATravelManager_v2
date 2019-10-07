@@ -1,19 +1,39 @@
 ﻿using LATravelManager.Model.BookingData;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Services;
-using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Helpers;
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 
-namespace LATravelManager.UI.Wrapper
+namespace LATravelManager.Model.Wrapper
 {
     public class Personal_BookingWrapper : ModelWrapper<Personal_Booking>
     {
+        [NotMapped]
+        public string PartnerEmail
+        {
+            get
+            {
+                return _PartnerEmail;
+            }
+
+            set
+            {
+                if (_PartnerEmail == value)
+                {
+                    return;
+                }
+
+                _PartnerEmail = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public string CancelReason
         {
             get { return GetValue<string>(); }
@@ -21,6 +41,12 @@ namespace LATravelManager.UI.Wrapper
         }
 
         public bool Disabled
+        {
+            get { return GetValue<bool>(); }
+            set { SetValue(value); }
+        }
+
+        public bool Reciept
         {
             get { return GetValue<bool>(); }
             set { SetValue(value); }
@@ -44,16 +70,7 @@ namespace LATravelManager.UI.Wrapper
         {
         }
 
-        internal string GetDestinations()
-        {
-            var sb = new StringBuilder();
-            foreach (var s in Services)
-            {
-                sb.Append(s.To);
-                sb.Append(", ");
-            }
-            return sb.ToString().TrimEnd(',', ' ');
-        }
+        
 
         public Personal_BookingWrapper(Personal_Booking model) : base(model)
         {
@@ -61,31 +78,32 @@ namespace LATravelManager.UI.Wrapper
             CustomerWrappers.CollectionChanged += Customers_CollectionChanged;
             Payments.CollectionChanged += Payments_CollectionChanged;
             Services.CollectionChanged += Services_CollectionChanged;
+
             CalculateRemainingAmount();
         }
 
         private void Services_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action == NotifyCollectionChangedAction.Remove)
-            {
-                foreach (Service service in e.OldItems)
-                {
-                    //Removed items
-                    service.PropertyChanged -= EntityViewModelPropertyChanged;
-                }
-            }
-            else if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-                foreach (Service service in e.NewItems)
-                {
-                    if (service.Id == 0)
-                    {
-                        IdCounter--;
-                        service.Id = --IdCounter;
-                    }
-                    service.PropertyChanged += EntityViewModelPropertyChanged;
-                }
-            }
+            //if (e.Action == NotifyCollectionChangedAction.Remove)
+            //{
+            //    foreach (Service service in e.OldItems)
+            //    {
+            //        //Removed items
+            //        service.PropertyChanged -= EntityViewModelPropertyChanged;
+            //    }
+            //}
+            //else if (e.Action == NotifyCollectionChangedAction.Add)
+            //{
+            //    foreach (Service service in e.NewItems)
+            //    {
+            //        if (service.Id == 0)
+            //        {
+            //            IdCounter--;
+            //            service.Id = --IdCounter;
+            //        }
+            //        service.PropertyChanged += EntityViewModelPropertyChanged;
+            //    }
+            //}
             CalculateRemainingAmount();
         }
 
@@ -190,6 +208,232 @@ namespace LATravelManager.UI.Wrapper
                 ExtraProfit = FullPrice - NetPrice - ServiceProfit;
                 RaisePropertyChanged();
             }
+        }
+
+        internal string GetDestinations()
+        {
+            StringBuilder sb = new StringBuilder();
+            string hotels = string.Empty, planes = string.Empty, ferrys = string.Empty, guides = string.Empty, transfers = string.Empty, tmp = string.Empty, optionals = string.Empty;
+            foreach (var s in Services)
+            {
+                if (s is HotelService hs)
+                {
+                    tmp = hs.City != null ? hs.City.Name : "";
+                    if (tmp.Length > 1 && !hotels.Contains(tmp))
+                        hotels += tmp + "-";
+                }
+            }
+            hotels = hotels.TrimEnd('-');
+            if (!string.IsNullOrEmpty(hotels))
+            {
+                sb.Append(hotels);
+                return sb.ToString().ToUpper();
+            }
+            foreach (var s in Services)
+            {
+                if (s is PlaneService ps)
+                {
+                    tmp = ps.From ?? "";
+                    if (tmp.Length > 1 && !planes.Contains(tmp))
+                        planes += tmp + "-";
+                }
+            }
+            planes = planes.TrimEnd('-');
+            if (!string.IsNullOrEmpty(planes))
+            {
+                sb.Append(planes);
+            }
+
+            foreach (var s in Services)
+            {
+                if (s is FerryService ps)
+                {
+                    tmp = ps.From ?? "";
+                    if (tmp.Length > 1 && !ferrys.Contains(tmp))
+                        ferrys += tmp + "-";
+                }
+            }
+            ferrys = ferrys.TrimEnd('-');
+            if (!string.IsNullOrEmpty(ferrys))
+            {
+                if (sb.Length > 1)
+                    sb.Append("-");
+                sb.Append(ferrys);
+            }
+            foreach (var s in Services)
+            {
+                if (s is GuideService ps)
+                {
+                    tmp = ps.From ?? "";
+                    if (tmp.Length > 1 && !guides.Contains(tmp))
+                        guides += tmp + "-";
+                }
+            }
+            guides = guides.TrimEnd('-');
+            if (!string.IsNullOrEmpty(guides))
+            {
+                if (sb.Length > 1)
+                    sb.Append("-");
+                sb.Append(guides);
+            }
+            foreach (var s in Services)
+            {
+                if (s is TransferService ps)
+                {
+                    tmp = ps.From ?? "";
+                    if (tmp.Length > 1 && !transfers.Contains(tmp))
+                        transfers += tmp + "-";
+                }
+            }
+            transfers = transfers.TrimEnd('-');
+            if (!string.IsNullOrEmpty(transfers))
+            {
+                if (sb.Length > 1)
+                    sb.Append("-");
+                sb.Append(transfers);
+            }
+            foreach (var s in Services)
+            {
+                if (s is OptionalService ps)
+                {
+                    tmp = ps.From ?? "";
+                    if (tmp.Length > 1 && !optionals.Contains(tmp))
+                        optionals += tmp + "-";
+                }
+            }
+            optionals = optionals.TrimEnd('-');
+            if (!string.IsNullOrEmpty(optionals))
+            {
+                if (sb.Length > 1)
+                    sb.Append("-");
+                sb.Append(optionals);
+            }
+            if (sb.Length > 1)
+            {
+                sb.Append(".");
+            }
+            else
+                return "";
+            return sb.ToString().ToUpper(); ;
+        }
+
+
+        public string GetPacketDescription()
+        {
+            StringBuilder sb = new StringBuilder();
+            string hotels = string.Empty, planes = string.Empty, ferrys = string.Empty, guides = string.Empty, transfers = string.Empty, tmp = string.Empty, optionals = string.Empty;
+            foreach (var s in Services)
+            {
+                if (s is HotelService hs)
+                {
+                    tmp = hs.City != null ? hs.City.Name : "";
+                    if (tmp.Length > 1 && !hotels.Contains(tmp))
+                        hotels += tmp + "-";
+                }
+            }
+            hotels = hotels.TrimEnd('-');
+            if (!string.IsNullOrEmpty(hotels))
+            {
+                sb.Append("Ατομικο πακετο για ");
+                sb.Append(hotels);
+                sb.Append(".");
+                return sb.ToString().ToUpper();
+            }
+            foreach (var s in Services)
+            {
+                if (s is PlaneService ps)
+                {
+                    tmp = ps.From ?? "" ;
+                    if (tmp.Length > 1 && !planes.Contains(tmp))
+                        planes += tmp + "-";
+                }
+            }
+            planes = planes.TrimEnd('-');
+            if (!string.IsNullOrEmpty(planes))
+            {
+                sb.Append("Αεροπορικο για ");
+                sb.Append(planes);
+            }
+
+            foreach (var s in Services)
+            {
+                if (s is FerryService ps)
+                {
+                    tmp = ps.From ?? "" ;
+                    if (tmp.Length > 1 && !ferrys.Contains(tmp))
+                        ferrys += tmp + "-";
+                }
+            }
+            ferrys = ferrys.TrimEnd('-');
+            if (!string.IsNullOrEmpty(ferrys))
+            {
+                if (sb.Length > 1)
+                    sb.Append(" & ακτοπλοικα για ");
+                else
+                    sb.Append("Aκτοπλοικά για ");
+                sb.Append(ferrys);
+            }
+            foreach (var s in Services)
+            {
+                if (s is GuideService ps)
+                {
+                    tmp = ps.From ?? "" ;
+                    if (tmp.Length > 1 && !guides.Contains(tmp))
+                        guides += tmp + "-";
+                }
+            }
+            guides = guides.TrimEnd('-');
+            if (!string.IsNullOrEmpty(guides))
+            {
+                if (sb.Length > 1)
+                    sb.Append(" & ξεναγηση για ");
+                else
+                    sb.Append("Ξεναγηση για ");
+                sb.Append(guides);
+            }
+            foreach (var s in Services)
+            {
+                if (s is TransferService ps)
+                {
+                    tmp = ps.From ?? "" ;
+                    if (tmp.Length > 1 && !transfers.Contains(tmp))
+                        transfers += tmp + "-";
+                }
+            }
+            transfers = transfers.TrimEnd('-');
+            if (!string.IsNullOrEmpty(transfers))
+            {
+                if (sb.Length > 1)
+                    sb.Append(" & transfer απο ");
+                else
+                    sb.Append("Transfer απο ");
+                sb.Append(transfers);
+            }
+            foreach (var s in Services)
+            {
+                if (s is OptionalService ps)
+                {
+                    tmp = ps.From ?? "" ;
+                    if (tmp.Length > 1 && !optionals.Contains(tmp))
+                        optionals += tmp + "-";
+                }
+            }
+            optionals = optionals.TrimEnd('-');
+            if (!string.IsNullOrEmpty(optionals))
+            {
+                if (sb.Length > 1)
+                    sb.Append(" & ");
+                else
+                    sb.Append("");
+                sb.Append(optionals);
+            }
+            if (sb.Length > 1)
+            {
+                sb.Append(".");
+            }
+            else
+                return "";
+            return sb.ToString().ToUpper(); ;
         }
 
         public int IdCounter { get; set; }
@@ -325,6 +569,7 @@ namespace LATravelManager.UI.Wrapper
         }
 
         private decimal _TotalProfit;
+        private string _PartnerEmail;
 
         public decimal TotalProfit
         {

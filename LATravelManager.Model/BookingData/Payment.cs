@@ -8,166 +8,8 @@ namespace LATravelManager.Model.BookingData
 {
     public class Payment : BaseModel
     {
-        #region Fields + Constructors
 
-        private decimal _Amount;
-
-        private string _Comment = string.Empty;
-
-        private DateTime _Date;
-
-        private SolidColorBrush _PColor;
-
-        [NotMapped]
-        public SolidColorBrush PColor
-        {
-            get
-            {
-                if (_PColor == null)
-                {
-                    SetPColor();
-                }
-                return _PColor;
-            }
-
-            set
-            {
-                if (_PColor == value)
-                {
-                    return;
-                }
-
-                _PColor = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public void SetPColor()
-        {
-            if (Checked == true)
-            {
-                PColor = new SolidColorBrush(Colors.Green);
-            }
-            else if (Outgoing)
-            {
-                PColor = new SolidColorBrush(Colors.Blue);
-            }
-            else if (Checked == null)
-            {
-                PColor = new SolidColorBrush(Colors.Transparent);
-            }
-            else
-                PColor = new SolidColorBrush(Colors.Red);
-        }
-
-        public string Dates
-        {
-            get
-            {
-                if (Personal_Booking != null)
-                {
-                    return Personal_Booking.Dates;
-                }
-                else if (ThirdParty_Booking != null)
-                {
-                    return ThirdParty_Booking.Dates;
-                }
-                else if (Booking != null && Booking.Excursion != null)
-                {
-                    return Booking.Dates;
-                }
-                return "Error";
-            }
-        }
-
-        public string Names
-        {
-            get
-            {
-                if (Personal_Booking != null)
-                {
-                    return Personal_Booking.Names;
-                }
-                else if (ThirdParty_Booking != null)
-                {
-                    return ThirdParty_Booking.Names;
-                }
-                else if (Booking != null && Booking.Excursion != null)
-                {
-                    return Booking.Names;
-                }
-                return "Error";
-            }
-        }
-
-        public string ExcursionName
-        {
-            get
-            {
-                if (Personal_Booking != null)
-                {
-                    return Personal_Booking.Destination;
-                }
-                else if (ThirdParty_Booking != null)
-                {
-                    return ThirdParty_Booking.City;
-                }
-                else if (Booking != null && Booking.Excursion != null)
-                {
-                    return Booking.Excursion.Name;
-                }
-                return "Error";
-            }
-        }
-
-        public Personal_Booking Personal_Booking { get; set; }
-        public ThirdParty_Booking ThirdParty_Booking { get; set; }
-
-        private bool _Outgoing;
-
-        public bool Outgoing
-        {
-            get
-            {
-                return _Outgoing;
-            }
-
-            set
-            {
-                if (_Outgoing == value)
-                {
-                    return;
-                }
-
-                _Outgoing = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private bool? _Checked;
-
-        public bool? Checked
-        {
-            get
-            {
-                return _Checked;
-            }
-
-            set
-            {
-                if (_Checked == value)
-                {
-                    return;
-                }
-
-                _Checked = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private int _PaymentMethod;
-
-        private User _User;
+        #region Constructors
 
         public Payment()
         {
@@ -182,35 +24,27 @@ namespace LATravelManager.Model.BookingData
             User = p.User;
         }
 
+        #endregion Constructors
+
+        #region Fields
+
+        private decimal _Amount;
+
         private Booking _Booking;
+        private bool? _Checked;
+        private string _Comment = string.Empty;
 
-        public Booking Booking
-        {
-            get
-            {
-                return _Booking;
-            }
+        private DateTime _Date;
 
-            set
-            {
-                if (_Booking == value)
-                {
-                    return;
-                }
+        private bool _Outgoing;
+        private int _PaymentMethod;
+        private SolidColorBrush _PColor;
 
-                _Booking = value;
-                RaisePropertyChanged();
-            }
-        }
+        private User _User;
 
-        // public const string AmountStringPropertyName = nameof(AmountString);
-
-        #endregion Fields + Constructors
+        #endregion Fields
 
         #region Properties
-
-        [NotMapped]
-        public decimal EPSILON { get; private set; } = 0.0001m;
 
         /// <summary>
         /// Sets and gets the Amount property. Changes to that property's value raise the
@@ -243,26 +77,67 @@ namespace LATravelManager.Model.BookingData
             }
         }
 
+        public Booking Booking
+        {
+            get
+            {
+                return _Booking;
+            }
+
+            set
+            {
+                if (_Booking == value)
+                {
+                    return;
+                }
+
+                _Booking = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool? Checked
+        {
+            get
+            {
+                return _Checked;
+            }
+
+            set
+            {
+                if (_Checked == value)
+                {
+                    return;
+                }
+
+                _Checked = value;
+                RaisePropertyChanged();
+            }
+        }
+
         /// <summary>
-        /// Sets and gets the PriceString property. Changes to that property's value raise the
+        /// Sets and gets the Comment property. Changes to that property's value raise the
         /// PropertyChanged event.
         /// </summary>
-        //[NotMapped]
-        //public string AmountString
-        //{
-        //    get
-        //    {
-        //        return _AmountString;
-        //    }
+        [StringLength(20)]
+        public string Comment
+        {
+            get
+            {
+                return _Comment;
+            }
 
-        //    set
-        //    {
-        //        if (_AmountString == value)
-        //        {
-        //            return;
-        //        }
+            set
+            {
+                if (_Comment == value)
+                {
+                    return;
+                }
 
-        //        _AmountString = value;
+                _Comment = value;
+                RaisePropertyChanged();
+            }
+        }
 
         //        if (!string.IsNullOrEmpty(_AmountString))
         //        {
@@ -290,31 +165,6 @@ namespace LATravelManager.Model.BookingData
         //        RaisePropertyChanged(AmountStringPropertyName);
         //    }
         //}
-
-        /// <summary>
-        /// Sets and gets the Comment property. Changes to that property's value raise the
-        /// PropertyChanged event.
-        /// </summary>
-        [StringLength(20)]
-        public string Comment
-        {
-            get
-            {
-                return _Comment;
-            }
-
-            set
-            {
-                if (_Comment == value)
-                {
-                    return;
-                }
-
-                _Comment = value;
-                RaisePropertyChanged();
-            }
-        }
-
         /// <summary>
         /// Sets and gets the Date property. Changes to that property's value raise the
         /// PropertyChanged event.
@@ -339,30 +189,85 @@ namespace LATravelManager.Model.BookingData
             }
         }
 
-        public string GetPaymentMethod()
+        public string Dates
         {
-            switch (PaymentMethod)
+            get
             {
-                case 0:
-                    return "ΜΕΤΡΗΤΑ";
+                if (Personal_Booking != null)
+                {
+                    return Personal_Booking.Dates;
+                }
+                else if (ThirdParty_Booking != null)
+                {
+                    return ThirdParty_Booking.Dates;
+                }
+                else if (Booking != null && Booking.Excursion != null)
+                {
+                    return Booking.Dates;
+                }
+                return "Error";
+            }
+        }
 
-                case 1:
-                    return "ΤΡ. ΚΑΤΑΘΕΣΗ(ΠΕΙΡΑΩΣ)";
+        [NotMapped]
+        public decimal EPSILON { get; private set; } = 0.0001m;
 
-                case 2:
-                    return "ΤΡ. ΚΑΤΑΘΕΣΗ(ΕΘΝΙΚΗ)";
+        public string ExcursionName
+        {
+            get
+            {
+                if (Personal_Booking != null)
+                {
+                    return Personal_Booking.Destination;
+                }
+                else if (ThirdParty_Booking != null)
+                {
+                    return ThirdParty_Booking.City;
+                }
+                else if (Booking != null && Booking.Excursion != null)
+                {
+                    return Booking.Excursion.Name;
+                }
+                return "Error";
+            }
+        }
 
-                case 3:
-                    return "ΤΡ. ΚΑΤΑΘΕΣΗ(EUROBANK)";
+        public string Names
+        {
+            get
+            {
+                if (Personal_Booking != null)
+                {
+                    return Personal_Booking.Names;
+                }
+                else if (ThirdParty_Booking != null)
+                {
+                    return ThirdParty_Booking.Names;
+                }
+                else if (Booking != null && Booking.Excursion != null)
+                {
+                    return Booking.Names;
+                }
+                return "Error";
+            }
+        }
 
-                case 4:
-                    return "ΤΡ. ΚΑΤΑΘΕΣΗ(ALPHABANK)";
+        public bool Outgoing
+        {
+            get
+            {
+                return _Outgoing;
+            }
 
-                case 5:
-                    return "ΠΙΣΤΩΤΙΚΗ ΚΑΡΤΑ(POS)";
+            set
+            {
+                if (_Outgoing == value)
+                {
+                    return;
+                }
 
-                default:
-                    return "ERROR";
+                _Outgoing = value;
+                RaisePropertyChanged();
             }
         }
 
@@ -389,6 +294,34 @@ namespace LATravelManager.Model.BookingData
                 RaisePropertyChanged();
             }
         }
+
+        [NotMapped]
+        public SolidColorBrush PColor
+        {
+            get
+            {
+                if (_PColor == null)
+                {
+                    SetPColor();
+                }
+                return _PColor;
+            }
+
+            set
+            {
+                if (_PColor == value)
+                {
+                    return;
+                }
+
+                _PColor = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public Personal_Booking Personal_Booking { get; set; }
+
+        public ThirdParty_Booking ThirdParty_Booking { get; set; }
 
         /// <summary>
         /// Sets and gets the User property. Changes to that property's value raise the
@@ -418,6 +351,72 @@ namespace LATravelManager.Model.BookingData
 
         #region Methods
 
+        //        _AmountString = value;
+        public string GetPaymentMethod()
+        {
+            switch (PaymentMethod)
+            {
+                case 0:
+                    return "ΜΕΤΡΗΤΑ";
+
+                case 1:
+                    return "ΤΡ. ΚΑΤΑΘΕΣΗ(ΠΕΙΡΑΩΣ)";
+
+                case 2:
+                    return "ΤΡ. ΚΑΤΑΘΕΣΗ(ΕΘΝΙΚΗ)";
+
+                case 3:
+                    return "ΤΡ. ΚΑΤΑΘΕΣΗ(EUROBANK)";
+
+                case 4:
+                    return "ΤΡ. ΚΑΤΑΘΕΣΗ(ALPHABANK)";
+
+                case 5:
+                    return "ΠΙΣΤΩΤΙΚΗ ΚΑΡΤΑ(POS)";
+
+                default:
+                    return "ERROR";
+            }
+        }
+
+
+
+        public void SetPColor()
+        {
+            if (Checked == true)
+            {
+                PColor = new SolidColorBrush(Colors.Green);
+            }
+            else if (Outgoing)
+            {
+                PColor = new SolidColorBrush(Colors.Blue);
+            }
+            else if (Checked == null)
+            {
+                PColor = new SolidColorBrush(Colors.Transparent);
+            }
+            else
+                PColor = new SolidColorBrush(Colors.Red);
+        }
+        // public const string AmountStringPropertyName = nameof(AmountString);
+        /// <summary>
+        /// Sets and gets the PriceString property. Changes to that property's value raise the
+        /// PropertyChanged event.
+        /// </summary>
+        //[NotMapped]
+        //public string AmountString
+        //{
+        //    get
+        //    {
+        //        return _AmountString;
+        //    }
+
+        //    set
+        //    {
+        //        if (_AmountString == value)
+        //        {
+        //            return;
+        //        }
         public override string ToString()
         {
             switch (PaymentMethod)
@@ -444,5 +443,6 @@ namespace LATravelManager.Model.BookingData
         }
 
         #endregion Methods
+
     }
 }

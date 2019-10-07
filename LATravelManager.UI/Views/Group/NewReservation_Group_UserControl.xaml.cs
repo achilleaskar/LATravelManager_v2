@@ -102,5 +102,10 @@ namespace LATravelManager.UI.Views.Group
         private void Button_Click(object sender, RoutedEventArgs e)
         {
         }
+
+        private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+
+        }
     }
 }

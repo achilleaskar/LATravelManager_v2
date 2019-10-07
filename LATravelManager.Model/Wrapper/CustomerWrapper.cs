@@ -1,4 +1,5 @@
-﻿using LATravelManager.Model.BookingData;
+﻿using LATravelManager.Model;
+using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Services;
@@ -7,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
-using static LATravelManager.Model.Enums;
 
 namespace LATravelManager.UI.Helpers
 {

@@ -18,8 +18,6 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Group
             MessengerInstance.Register<SelectedExcursionChangedMessage>(this, async exc => { await SelectedExcursionChanged(exc.SelectedExcursion); });
         }
 
-
-
         #region Properties
 
         public bool Enabled

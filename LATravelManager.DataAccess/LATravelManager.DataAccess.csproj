@@ -146,6 +146,18 @@
     <Compile Include="Migrations\201908091104327_89.Designer.cs">
       <DependentUpon>201908091104327_89.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201909181014490_918.cs" />
+    <Compile Include="Migrations\201909181014490_918.Designer.cs">
+      <DependentUpon>201909181014490_918.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201909241319220_924.cs" />
+    <Compile Include="Migrations\201909241319220_924.Designer.cs">
+      <DependentUpon>201909241319220_924.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201909271115115_brat.cs" />
+    <Compile Include="Migrations\201909271115115_brat.Designer.cs">
+      <DependentUpon>201909271115115_brat.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\ContextConfiguration.cs" />
     <Compile Include="MainDataBase.cs" />
     <Compile Include="Migrations\201902040958584_44.cs" />
@@ -368,6 +380,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201908091104327_89.resx">
       <DependentUpon>201908091104327_89.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201909181014490_918.resx">
+      <DependentUpon>201909181014490_918.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201909241319220_924.resx">
+      <DependentUpon>201909241319220_924.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201909271115115_brat.resx">
+      <DependentUpon>201909271115115_brat.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

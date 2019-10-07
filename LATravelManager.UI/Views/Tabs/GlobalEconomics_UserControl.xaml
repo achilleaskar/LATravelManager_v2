@@ -22,6 +22,9 @@
             <TabItem Header="Κέρδη">
                 <local:TotalEarns_UserControl DataContext="{Binding TotalEarns_ViewModel}" />
             </TabItem>
+            <TabItem Header="Οφειλέτες">
+            <local:Remaining_UserControl DataContext="{Binding Remaining_ViewModel}" />
+            </TabItem>
         </TabControl>
     </Grid>
 </UserControl>

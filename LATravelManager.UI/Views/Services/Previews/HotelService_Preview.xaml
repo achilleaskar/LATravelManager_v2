@@ -87,11 +87,13 @@
                    Grid.Column="1" />
             <Label Content="Option:"
                    Grid.Row="2"
+                   Visibility="{Binding Allerretour,Converter={StaticResource booleanToVisibilityConverter}}"
                    Grid.Column="2" />
             <Label Grid.Row="2"
                    HorizontalAlignment="Left"
                    Grid.Column="3"
-                   Content="{Binding Option,StringFormat='{}{0:dd/MM/yyyy}'}" />
+                   Visibility="{Binding Allerretour,Converter={StaticResource booleanToVisibilityConverter}}"
+                   Content="{Binding Option,ConverterParameter='dd/MM/yyyy-HH:mm', Converter={StaticResource dateTimeToString}}" />
             <Label Content="Σημειώσεις:"
                    Grid.Row="3"
                    Grid.Column="0" />

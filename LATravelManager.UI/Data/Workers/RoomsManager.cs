@@ -1,5 +1,6 @@
 ﻿using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.LocalModels;
@@ -12,7 +13,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-using static LATravelManager.Model.Enums;
 
 namespace LATravelManager.UI.Data.Workers
 {
@@ -176,7 +176,7 @@ namespace LATravelManager.UI.Data.Workers
                 MaxDay = MaxDay.AddDays(10);
                 //mhpws edw na epairna dwmatia?
 
-                Bookings = (await GenericRepository.GetAllBookingInPeriod(MinDay, MaxDay, excursionfilter.Id)).ToList();
+                Bookings = (await GenericRepository.GetAllBookingInPeriod(MinDay, MaxDay, excursionfilter.Destinations[0])).ToList();
 
                 if (unSavedBooking != null)
                 {
@@ -262,6 +262,7 @@ namespace LATravelManager.UI.Data.Workers
                                     RoomTypeEnm = tmpRoomWr.DailyBookingInfo[counter].RoomTypeEnm,
                                     RoomState = tmpRoomWr.DailyBookingInfo[counter].RoomTypeEnm == RoomTypeEnum.Allotment ? RoomStateEnum.Allotment : tmpRoomWr.DailyBookingInfo[counter].RoomTypeEnm
                                     == RoomTypeEnum.Booking ? RoomStateEnum.Booking : RoomStateEnum.Available,
+                                    MinimumStay = tmpRoomWr.DailyBookingInfo[counter].MinimunStay,
                                     Room = tmpRoomWr
                                 });
                                 counter++;

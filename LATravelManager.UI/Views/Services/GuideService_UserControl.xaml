@@ -57,13 +57,14 @@
                Grid.Column="0" />
         <TextBox Grid.Row="0"
                  Width="300"
-                 Grid.ColumnSpan="3"
+                 Grid.ColumnSpan="3" HorizontalAlignment="Left"
                  Text="{Binding Service.From,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                  Grid.Column="1" />
         <Label Content="Στοιχεία Ξεναγού:"
                Grid.Row="1"
                Grid.Column="0" />
         <TextBox Grid.Row="1"
+                 HorizontalAlignment="Left"
                  Text="{Binding Service.CompanyInfo,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                  Width="300"
                  Grid.Column="1"
@@ -74,15 +75,14 @@
                                 Grid.Column="1"
                                 FormatString="dd/MM/yy HH:mm"
                                 Kind="Local"
-                                Margin="5"
+                              
                                 HorizontalAlignment="Left"
-                                ShowButtonSpinner="True"
-                                ShowDropDownButton="True"
-
+                                ShowButtonSpinner="False"
+                                VerticalAlignment="Center"
                                 Value="{Binding Service.TimeGo,UpdateSourceTrigger=PropertyChanged}"
                                 Format="Custom" />
         <Label Content="Ημέρες Ξενάγησης:"
-               Grid.Row="2"
+               Grid.Row="2" Margin="8 0"
                Grid.Column="2" />
         <TextBox Grid.Row="2"
                  Text="{Binding Service.Duration,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
@@ -94,12 +94,14 @@
                Grid.Column="0" />
         <TextBox Text="{Binding Service.Profit,Converter={StaticResource floatToStringConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                  Grid.Row="3"
+                 Width="50"
+                 HorizontalAlignment="Left"
                  Grid.Column="1" />
         <Label Content="Κόστος(ΝΕΤ):"
                Grid.Row="3"
                Grid.Column="2" />
         <TextBox Text="{Binding Service.NetPrice,Converter={StaticResource floatToStringConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                 Grid.Row="3"
+                 Grid.Row="3" Width="50" HorizontalAlignment="Left"
                  Grid.Column="3" />
     </Grid>
 </UserControl>

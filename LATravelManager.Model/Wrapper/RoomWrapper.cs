@@ -1,4 +1,5 @@
-﻿using LATravelManager.Model.Hotels;
+﻿using LATravelManager.Model;
+using LATravelManager.Model.Hotels;
 using LATravelManager.Model.LocalModels;
 using LATravelManager.Model.Plan;
 using LATravelManager.Model.Wrapper;
@@ -8,7 +9,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Windows;
-using static LATravelManager.Model.Enums;
 
 namespace LATravelManager.UI.Wrapper
 {

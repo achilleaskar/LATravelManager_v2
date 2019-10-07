@@ -43,12 +43,9 @@ namespace LATravelManager.UI.Helpers
 
         private async Task PrintListAsync(int parameter)
         {
-            string PhoneNumbers = "";
             string wbPath = null;
             List<string> selectedCities = new List<string>();
             var sampleFile = AppDomain.CurrentDomain.BaseDirectory;
-            ExcelRange modelTable;
-            int lineNum;
 
             FileInfo fileInfo = new FileInfo(sampleFile);
             ExcelPackage p = new ExcelPackage(fileInfo);
@@ -84,7 +81,7 @@ namespace LATravelManager.UI.Helpers
             switch (parameter)
             {
                 case 1:
-                    IEnumerable<Booking> bookings = await Context.GetAllBookingInPeriod(Date, Date, ExcursionId);
+                   // IEnumerable<Booking> bookings = await Context.GetAllBookingInPeriod(Date, Date, ExcursionId);
 
                     //foreach (CityDepartureInfo city in PerCityDepartureList)
                     //    if (city.IsChecked)

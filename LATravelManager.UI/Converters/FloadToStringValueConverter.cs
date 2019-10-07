@@ -28,7 +28,8 @@ namespace LATravelManager.UI.Converters
                     firstDot -= 3;
                 }
             }
-
+            if (parameter is string s1 && s1[0]=='0')
+                return s;
             return s + " €";
             //return decimalValue > 0 ? decimalValue.ToString() + " €" : "0 €";
         }

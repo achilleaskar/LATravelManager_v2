@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using static LATravelManager.Model.Enums;
 
 namespace LATravelManager.Model.Excursions
 {

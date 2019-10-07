@@ -14,6 +14,10 @@ namespace LATravelManager.UI.Converters
             {
                 return val.ToString(par);
             }
+            if (value is TimeSpan ts)
+            {
+                return ts.ToString(@"hh\:mm");
+            }
             return "Error";
         }
 

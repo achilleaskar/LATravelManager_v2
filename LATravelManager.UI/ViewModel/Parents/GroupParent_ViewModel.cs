@@ -45,6 +45,7 @@ namespace LATravelManager.UI.ViewModel.Parents
         public override void Load(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
             GroupExcursions = new ObservableCollection<ExcursionWrapper>(BasicDataManager.GroupExcursions.Where(e => e.ExcursionDates.Any(b => b.CheckOut > DateTime.Today)).Select(c => new ExcursionWrapper(c)));
+            SelectedExcursion = GroupExcursions.FirstOrDefault();
         }
 
         public RelayCommand UpdateExcursionsCommand { get; set; }

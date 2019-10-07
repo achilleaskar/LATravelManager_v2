@@ -12,7 +12,8 @@ namespace LATravelManager.Model.Services
             Tittle = "Αεροπορικό";
             Allerretour = true;
             To = From = "";
-            WaitingTime = new DateTime(1, 1, 1, 0, 0, 0);
+            StopArrive = new TimeSpan(0);
+            StopLeave = new TimeSpan(0);
         }
 
         #endregion Constructors
@@ -26,8 +27,6 @@ namespace LATravelManager.Model.Services
         private bool _Stop = false;
 
         private string _StopPlace;
-
-        private DateTime? _WaitingTime;
 
         #endregion Fields
 
@@ -48,6 +47,57 @@ namespace LATravelManager.Model.Services
                 }
 
                 _Airline = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
+
+
+
+        private TimeSpan _StopArrive;
+
+
+        public TimeSpan StopArrive
+        {
+            get
+            {
+                return _StopArrive;
+            }
+
+            set
+            {
+                if (_StopArrive == value)
+                {
+                    return;
+                }
+
+                _StopArrive = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
+
+
+        private TimeSpan _StopLeave;
+
+
+        public TimeSpan StopLeave
+        {
+            get
+            {
+                return _StopLeave;
+            }
+
+            set
+            {
+                if (_StopLeave == value)
+                {
+                    return;
+                }
+
+                _StopLeave = value;
                 RaisePropertyChanged();
             }
         }
@@ -109,24 +159,7 @@ namespace LATravelManager.Model.Services
             }
         }
 
-        public DateTime? WaitingTime
-        {
-            get
-            {
-                return _WaitingTime;
-            }
-
-            set
-            {
-                if (_WaitingTime == value)
-                {
-                    return;
-                }
-
-                _WaitingTime = value;
-                RaisePropertyChanged();
-            }
-        }
+       
 
         #endregion Properties
     }

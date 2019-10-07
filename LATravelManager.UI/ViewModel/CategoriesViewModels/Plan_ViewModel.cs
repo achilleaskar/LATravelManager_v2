@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
+using LATravelManager.Model;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.LocalModels;
 using LATravelManager.Model.Plan;
@@ -19,7 +20,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;
-using static LATravelManager.Model.Enums;
 
 namespace LATravelManager.UI.ViewModel.CategoriesViewModels
 {
@@ -50,7 +50,8 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
 
         private void SelectedExcursionChanged(ExcursionWrapper selectedExcursion)
         {
-            if (selectedExcursion.ExcursionType.Category == ExcursionTypeEnum.Group)
+
+            if (selectedExcursion != null && selectedExcursion.ExcursionType.Category == ExcursionTypeEnum.Group)
             {
                 if (selectedExcursion != null && (selectedExcursion.Start > DateTime.Today || selectedExcursion.End < DateTime.Today))
                 {

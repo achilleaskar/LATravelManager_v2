@@ -1,8 +1,8 @@
-﻿using System;
+﻿using LATravelManager.Model;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Data;
-using static LATravelManager.Model.Enums;
 using static LATravelManager.UI.Helpers.Definitions;
 
 namespace LATravelManager.UI.Converters

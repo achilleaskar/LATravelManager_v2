@@ -1,4 +1,5 @@
-﻿using LATravelManager.Model.Hotels;
+﻿using GalaSoft.MvvmLight.Messaging;
+using LATravelManager.Model.Hotels;
 using LATravelManager.Model.Locations;
 using System;
 
@@ -11,8 +12,8 @@ namespace LATravelManager.Model.Services
         public HotelService()
         {
             Tittle = "Διαμονή";
-            Option = DateTime.Today;
-            PropertyChanged += HotelService_PropertyChanged;
+            Option = DateTime.Today.AddMinutes(6);
+            //PropertyChanged += HotelService_PropertyChanged;
         }
 
         #endregion Constructors
@@ -31,6 +32,7 @@ namespace LATravelManager.Model.Services
 
         #region Properties
 
+        public bool HasOption => Option.Minute != 6;
         public City City
         {
             get
@@ -83,7 +85,7 @@ namespace LATravelManager.Model.Services
                     return;
                 }
 
-                _Option = value;
+                _Option = value.AddMinutes(-value.Minute);
                 RaisePropertyChanged();
             }
         }
@@ -113,10 +115,7 @@ namespace LATravelManager.Model.Services
 
         private void HotelService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(TimeGo) && TimeGo.Year > 2000)
-            {
-                Option = TimeGo.AddDays(-10);
-            }
+            
         }
 
         #endregion Methods

@@ -34,6 +34,8 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
             AddCustomerCommand = new RelayCommand(AddRandomCustomer);
             UploadFileCommand = new RelayCommand(UploadFile);
             OpenFileCommand = new RelayCommand(OpenFile, CanOpenFile);
+            PrintRecieptCommand = new RelayCommand(PrintReciept);
+
 
             DeleteSelectedCustomersCommand = new RelayCommand(DeleteSelectedCustomers, CanDeleteCustomers);
             UpdateAllCommand = new RelayCommand(async () => { await UpdateAll(); }, CanUpdateAll);
@@ -44,6 +46,23 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
             MainViewModel = mainViewModel;
             ToggleDisabilityCommand = new RelayCommand(ToggleDisability, CanToggleDisability);
         }
+        public DocumentsManagement DocumentsManagement { get; set; }
+
+        private void PrintReciept()
+        {
+            if (SelectedCustomer == null)
+            {
+                MessageBox.Show("Παρακαλώ επιλέξτε πελάτη");
+                return;
+            }
+            if (DocumentsManagement == null)
+            {
+                DocumentsManagement = new DocumentsManagement(StartingRepository);
+            }
+            DocumentsManagement.PrintPaymentsReciept(SelectedPayment, SelectedCustomer.Model);
+        }
+
+        public RelayCommand PrintRecieptCommand { get; set; }
 
         public RelayCommand ToggleDisabilityCommand { get; set; }
 
@@ -653,7 +672,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
 
         private string ValidatePayment()
         {
-            if ((!Payment.Outgoing && Payment.Amount > ThirdPartyWr.Remaining) || (Payment.Outgoing && Payment.Amount > ThirdPartyWr.NetRemaining))
+            if ((!Payment.Outgoing && Payment.Amount > (ThirdPartyWr.Remaining + 0.05m)) || (Payment.Outgoing && Payment.Amount > (ThirdPartyWr.NetRemaining + 0.05m)))
             {
                 return "Το ποσό υπερβαίνει το υπολοιπόμενο ποσό";
             }

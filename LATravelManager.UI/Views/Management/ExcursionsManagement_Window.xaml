@@ -7,6 +7,7 @@
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         FontSize="14"
         mc:Ignorable="d"
+        Closing="Window_Closing"
         Title="{Binding ControlName}"
         Height="650"
         Width="900">
@@ -224,14 +225,18 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Όνομα"
                                             MaxWidth="100"
+                                            IsReadOnly="True"
                                             Binding="{Binding Name}" />
                         <DataGridTextColumn Header="Κατηγορία"
+                                            IsReadOnly="True"
                                             Binding="{Binding ExcursionType.Name}" />
                         <DataGridTextColumn Header="Έναρξη"
                                             Width="85"
+                                            IsReadOnly="True"
                                             Binding="{Binding Start,StringFormat='{}{0:dd/MM/yyyy}'}" />
                         <DataGridTextColumn Header="Λήξη"
                                             Width="85"
+                                            IsReadOnly="True"
                                             Binding="{Binding End,StringFormat='{}{0:dd/MM/yyyy}'}" />
                     </DataGrid.Columns>
                 </DataGrid>

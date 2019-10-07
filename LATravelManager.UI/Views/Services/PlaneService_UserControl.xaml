@@ -15,6 +15,7 @@
     <Grid>
         <Grid.Resources>
             <converters:FloadToStringValueConverter x:Key="floatToStringConverter" />
+            <converters:TimeSpanToDateTimeConverter x:Key="TimeSToDateConverter" />
             <Style TargetType="TextBox">
                 <Setter Property="Margin"
                         Value="0 5" />
@@ -57,13 +58,13 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal"
-                    Grid.Row="1"
+                    Grid.Row="0"
                     Grid.ColumnSpan="2"
                     Margin="5 0 0 0">
             <Label Margin="20 0 0 0 "
                    Content="Από:" />
             <StackPanel HorizontalAlignment="Right">
-                <TextBox Width="155"
+                <TextBox Width="157"
                          Padding="5, 3, 5, 3"
                          KeyUp="TextBox_KeyUp"
                          Text="{Binding Service.From,UpdateSourceTrigger=PropertyChanged}"
@@ -88,7 +89,7 @@
             </StackPanel>
         </StackPanel>
         <StackPanel Orientation="Horizontal"
-                    Grid.Row="1"
+                    Grid.Row="0"
                     Grid.Column="2"
                     Grid.ColumnSpan="2"
                     Margin="5 0 0 0">
@@ -96,8 +97,9 @@
                    Grid.Row="1"
                    Grid.Column="2" />
             <StackPanel HorizontalAlignment="Right">
-                <TextBox Width="155"
+                <TextBox Width="162"
                          Padding="5, 3, 0, 3"
+                         Margin="0 5 6.5 5"
                          Text="{Binding Service.To,UpdateSourceTrigger=PropertyChanged}"
                          KeyUp="TextBox_KeyUp2"
                          LostFocus="TextBox_LostFocus2"
@@ -121,28 +123,28 @@
             </StackPanel>
         </StackPanel>
         <StackPanel Orientation="Horizontal"
-                    Grid.Row="2"
+                    Grid.Row="1"
                     Grid.ColumnSpan="2"
                     Grid.Column="2"
                     HorizontalAlignment="Right">
             <Label  Content="Με Επιστροφή" />
             <CheckBox Name="AllerretourCheckBox"
-                      Margin="4"
+                      Margin="6.5 5"
                       IsChecked="{Binding Service.Allerretour}" />
         </StackPanel>
         <Label Content="Εταιρεία:"
-               Grid.Row="2"
+               Grid.Row="1"
                Grid.Column="0" />
         <ComboBox ItemsSource="{Binding AirLines}"
                   SelectedItem="{Binding Service.Airline}"
                   VerticalAlignment="Center"
                   DisplayMemberPath="Name"
-                  Grid.Row="2"
+                  Grid.Row="1"
                   Margin="5"
                   Grid.Column="1" />
         <Label Content="Αναχώρηση:"
-               Grid.Row="3" />
-        <toolkit:DateTimePicker Grid.Row="3"
+               Grid.Row="2" />
+        <toolkit:DateTimePicker Grid.Row="2"
                                 Grid.Column="1"
                                 FormatString="dd/MM/yy HH:mm"
                                 Kind="Local"
@@ -152,29 +154,34 @@
                                 Value="{Binding Service.TimeGo,UpdateSourceTrigger=PropertyChanged}"
                                 Format="Custom" />
         <Label Content="Επιστροφή:"
-               Grid.Row="3"
+               Grid.Row="2"
                Grid.Column="2" />
-        <toolkit:DateTimePicker Grid.Row="3"
+        <toolkit:DateTimePicker Grid.Row="2"
                                 HorizontalAlignment="Right"
                                 IsEnabled="{Binding IsChecked, ElementName=AllerretourCheckBox}"
                                 Grid.Column="3"
                                 FormatString="dd/MM/yy HH:mm"
                                 Kind="Local"
-                                Margin="5"
+                                Margin="6.5 5"
                                 ShowButtonSpinner="True"
                                 ShowDropDownButton="True"
                                 Value="{Binding Service.TimeReturn,UpdateSourceTrigger=PropertyChanged}"
                                 Format="Custom" />
+
+        <Border Grid.ColumnSpan="2"
+                Grid.Row="3"
+                BorderThickness="0"
+                Visibility="{Binding IsChecked, ElementName=HasStopCheckBox, Converter={StaticResource booleanToVisibilityConverter}}"
+                Background="AntiqueWhite" />
         <Label Content="Ενδιαμ. Στάση:"
-               Grid.Row="4" />
+               Grid.Row="3" />
         <StackPanel Orientation="Horizontal"
-                    Grid.Row="4"
-                    Grid.Column="1"
-                    Grid.ColumnSpan="3">
+                    Grid.Row="3"
+                    Grid.Column="1">
             <CheckBox IsChecked="{Binding Service.Stop}"
                       Name="HasStopCheckBox"
-                      Grid.Column="1"
-                      Grid.Row="4" />
+                      Grid.Column="1" 
+                      Grid.Row="3" />
             <StackPanel Orientation="Horizontal"
                         Visibility="{Binding IsChecked, ElementName=HasStopCheckBox, Converter={StaticResource booleanToVisibilityConverter}}">
                 <Label Content="Πόλη:"
@@ -182,35 +189,62 @@
                        Grid.Column="2" />
                 <TextBox Text="{Binding Service.StopPlace}"
                          Grid.Row="4"
+                         Width="120"
                          Grid.Column="3" />
-                <Label Content="Αναμονή:"
-                       Grid.Row="4"
-                       Grid.Column="2" />
-                <toolkit:TimePicker Value="{Binding Service.WaitingTime }"
-                                    TimeInterval="00:30"
-                                    Format="Custom"
-                                    Margin="5"
-                                    FormatString="HH:mm"
-                                    Grid.Row="4"
-                                    Grid.Column="3" />
             </StackPanel>
         </StackPanel>
+        <Border Grid.Column="2"
+                Grid.ColumnSpan="2"
+                Margin="0 0  6.5 0"
+                Grid.Row="3"
+                BorderThickness='0'
+                Visibility="{Binding IsChecked, ElementName=HasStopCheckBox, Converter={StaticResource booleanToVisibilityConverter}}"
+                Background="AntiqueWhite"
+                Grid.RowSpan="2" />
+
+        <Label Grid.Column="2"
+               Grid.Row="3"
+               Visibility="{Binding IsChecked, ElementName=HasStopCheckBox, Converter={StaticResource booleanToVisibilityConverter}}"
+               Content="Άφιξη:" />
+        <toolkit:TimePicker Value="{Binding Service.StopArrive ,Converter={StaticResource TimeSToDateConverter},UpdateSourceTrigger=PropertyChanged }"
+                            TimeInterval="00:30"
+                            Format="Custom"
+                            Visibility="{Binding IsChecked, ElementName=HasStopCheckBox, Converter={StaticResource booleanToVisibilityConverter}}"
+                            Margin="6.5 5"
+                            ShowButtonSpinner="False"
+                            FormatString="HH:mm"
+                            Grid.Row="3"
+                            Grid.Column="3" />
+        <Label Grid.Column="2"
+               Grid.Row="4"
+               Visibility="{Binding IsChecked, ElementName=HasStopCheckBox, Converter={StaticResource booleanToVisibilityConverter}}"
+               Content="Αναχώρηση:" />
+        <toolkit:TimePicker Value="{Binding Service.StopLeave,Converter={StaticResource TimeSToDateConverter} ,UpdateSourceTrigger=PropertyChanged}"
+                            TimeInterval="00:30"
+                            Format="Custom"
+                            Margin="6.5 5"
+                            ShowButtonSpinner="False"
+                            Visibility="{Binding IsChecked, ElementName=HasStopCheckBox, Converter={StaticResource booleanToVisibilityConverter}}"
+                            FormatString="HH:mm"
+                            Grid.Row="4"
+                            Grid.Column="3" />
+
         <Label Content="PNR:"
-               Grid.Row="5" />
+               Grid.Row="4" />
         <TextBox Text="{Binding Service.PNR,UpdateSourceTrigger=PropertyChanged}"
-                 Grid.Row="5"
+                 Grid.Row="4"
                  Grid.Column="1" />
         <Label Content="Κέρδος:"
-               Grid.Row="6"
+               Grid.Row="5"
                Grid.Column="0" />
         <TextBox Text="{Binding Service.Profit,Converter={StaticResource floatToStringConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                 Grid.Row="6"
+                 Grid.Row="5"
                  Grid.Column="1" />
         <Label Content="Κόστος(ΝΕΤ):"
-               Grid.Row="6"
+               Grid.Row="5"
                Grid.Column="2" />
         <TextBox Text="{Binding Service.NetPrice,Converter={StaticResource floatToStringConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                 Grid.Row="6"
+                 Grid.Row="5"
                  Grid.Column="3" />
     </Grid>
 </UserControl>

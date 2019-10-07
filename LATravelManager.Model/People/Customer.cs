@@ -18,6 +18,51 @@ namespace LATravelManager.Model.People
             //DOB = DateTime.Now.AddYears(-20);
         }
 
+        private DateTime _PassportExpiration;
+
+
+        public DateTime PassportExpiration
+        {
+            get
+            {
+                return _PassportExpiration;
+            }
+
+            set
+            {
+                if (_PassportExpiration == value)
+                {
+                    return;
+                }
+
+                _PassportExpiration = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private DateTime _PassportPublish;
+
+        public DateTime PassportPublish
+        {
+            get
+            {
+                return _PassportPublish;
+            }
+
+            set
+            {
+                if (_PassportPublish == value)
+                {
+                    return;
+                }
+
+                _PassportPublish = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
+
         public ICollection<Service> Services { get; }
 
         #region Properties
@@ -48,7 +93,7 @@ namespace LATravelManager.Model.People
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Το όνομα είναι υποχρεωτικό")]
-        [RegularExpression(@"^[a-z A-Z]+$", ErrorMessage = "Παρακαλώ χρησιμοποιήστε μόνο λατινικούς χαρακτήρες")]
+        [RegularExpression(@"^[a-z- A-Z]+$", ErrorMessage = "Παρακαλώ χρησιμοποιήστε μόνο λατινικούς χαρακτήρες")]
         [StringLength(20, MinimumLength = 3, ErrorMessage = "Το Όνομα μπορεί να είναι από 3 έως 20 χαρακτήρες")]
         public string Name { get; set; }
 
@@ -68,7 +113,7 @@ namespace LATravelManager.Model.People
         public string StartingPlace { get; set; }
 
         [Required(ErrorMessage = "Το επίθετο είναι υποχρεωτικό.")]
-        [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Παρακαλώ χρησιμοπποιήστε μόνο λατινικούς χαρακτήρες")]
+        [RegularExpression(@"^[a-z- A-Z]+$", ErrorMessage = "Παρακαλώ χρησιμοπποιήστε μόνο λατινικούς χαρακτήρες")]
         [StringLength(20, MinimumLength = 3, ErrorMessage = "Το Επίθετο μπορεί να είναι από 3 έως 20 χαρακτήρες")]
         public string Surename { get; set; }
 

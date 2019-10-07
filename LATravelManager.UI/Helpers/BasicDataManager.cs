@@ -291,7 +291,7 @@ namespace LATravelManager.UI.Helpers
             Excursions = new ObservableCollection<Excursion>((await Context.GetAllExcursionsAsync()).OrderBy(ex => ex, new ExcursionComparer()));
             Partners = new ObservableCollection<Partner>(await Context.GetAllAsyncSortedByName<Partner>());
             HotelCategories = new ObservableCollection<HotelCategory>(await Context.GetAllAsync<HotelCategory>());
-            GroupExcursions = new ObservableCollection<Excursion>(Excursions.Where(e => e.ExcursionType.Category == Enums.ExcursionTypeEnum.Group));
+            GroupExcursions = new ObservableCollection<Excursion>(Excursions.Where(e => e.ExcursionType.Category == ExcursionTypeEnum.Group));
             Airlines = new ObservableCollection<Airline>(await Context.GetAllAsync<Airline>());
         }
 
@@ -315,32 +315,69 @@ namespace LATravelManager.UI.Helpers
             if (model is Hotel h)
             {
                 Hotels.Add(h);
+                Hotels = new ObservableCollection<Hotel>(Hotels.OrderBy(m => m.Name));
             }
             else if (model is Partner p)
             {
                 Partners.Add(p);
+                Partners = new ObservableCollection<Partner>(Partners.OrderBy(m => m.Name));
             }
             else if (model is City c)
             {
                 Cities.Add(c);
+                Cities = new ObservableCollection<City>(Cities.OrderBy(m => m.Name));
             }
             else if (model is Country co)
             {
                 Countries.Add(co);
+                Countries = new ObservableCollection<Country>(Countries.OrderBy(m => m.Name));
             }
             else if (model is Excursion e)
             {
                 Excursions.Add(e);
+                if (e.ExcursionType.Category==ExcursionTypeEnum.Group)
+                {
+                    GroupExcursions.Add(e);
+                    GroupExcursions = new ObservableCollection<Excursion>(GroupExcursions.OrderBy(m => m.Name));
+                }
+                Excursions = new ObservableCollection<Excursion>(Excursions.OrderBy(m => m.Name));
             }
             else if (model is User u)
             {
                 Users.Add(u);
+                Users = new ObservableCollection<User>(Users.OrderBy(m => m.Name));
             }
         }
 
+       
+           
         internal void Delete<TEntity>(TEntity model) where TEntity : BaseModel, new()
         {
             Context.Delete(model);
+            if (model is Hotel h)
+            {
+                Hotels.Remove(h);
+            }
+            else if (model is Partner p)
+            {
+                Partners.Remove(p);
+            }
+            else if (model is City c)
+            {
+                Cities.Remove(c);
+            }
+            else if (model is Country co)
+            {
+                Countries.Remove(co);
+            }
+            else if (model is Excursion e)
+            {
+                Excursions.Remove(e);
+            }
+            else if (model is User u)
+            {
+                Users.Remove(u);
+            }
         }
 
         internal async Task SaveAsync()

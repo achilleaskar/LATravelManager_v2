@@ -56,9 +56,8 @@
                Grid.Row="0"
                Grid.Column="0" />
         <TextBox Grid.Row="0"
-                 Width="Auto"
-                 Margin="5"
-                 HorizontalAlignment="Stretch"
+                Width="340"
+                 HorizontalAlignment="Left"
                  Text="{Binding Service.CompanyInfo,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                  Grid.Column="1"
                  Grid.ColumnSpan="3" />
@@ -68,22 +67,22 @@
                                 Grid.Column="1"
                                 FormatString="dd/MM/yy HH:mm"
                                 Kind="Local"
-                                Margin="5" Width="130"
-                                ShowButtonSpinner="True"
-                                ShowDropDownButton="True"
+                                VerticalAlignment="Center"
+                                ShowButtonSpinner="False"
+                               
                                 Value="{Binding Service.TimeGo,UpdateSourceTrigger=PropertyChanged}"
                                 Format="Custom" />
         <Label Content="Κέρδος:"
                Grid.Row="2"
                Grid.Column="0" />
         <TextBox Text="{Binding Service.Profit,Converter={StaticResource floatToStringConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                 Grid.Row="2"
+                 Grid.Row="2" HorizontalAlignment="Left" Width="50"
                  Grid.Column="1" />
         <Label Content="Κόστος(ΝΕΤ):"
-               Grid.Row="2"
+              Margin="10 0" Grid.Row="2"
                Grid.Column="2" />
         <TextBox Text="{Binding Service.NetPrice,Converter={StaticResource floatToStringConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                 Grid.Row="2"
+                 Grid.Row="2" Width="50" HorizontalAlignment="Left"
                  Grid.Column="3" />
     </Grid>
 </UserControl>

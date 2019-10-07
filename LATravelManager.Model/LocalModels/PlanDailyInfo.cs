@@ -2,7 +2,6 @@
 using LATravelManager.UI.Wrapper;
 using System;
 using System.Windows.Media;
-using static LATravelManager.Model.Enums;
 
 namespace LATravelManager.Model.LocalModels
 {
@@ -45,6 +44,31 @@ namespace LATravelManager.Model.LocalModels
         #endregion Fields
 
         #region Properties
+
+
+
+
+        private int _MinimumStay;
+
+
+        public int MinimumStay
+        {
+            get
+            {
+                return _MinimumStay;
+            }
+
+            set
+            {
+                if (_MinimumStay == value)
+                {
+                    return;
+                }
+
+                _MinimumStay = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public SolidColorBrush CellColor
         {

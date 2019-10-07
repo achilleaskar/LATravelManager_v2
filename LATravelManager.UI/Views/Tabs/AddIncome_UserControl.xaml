@@ -5,11 +5,147 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:LATravelManager.UI.Views.Tabs"
              mc:Ignorable="d"
+             FontSize="14"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:helpers="clr-namespace:LATravelManager.UI.Helpers"
+             xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
+             xmlns:enum="clr-namespace:LATravelManager.Model;assembly=LATravelManager.Model"
              xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.Tabs.TabViewmodels"
              d:DataContext="{d:DesignInstance viewmodels:AddIncome_ViewModel}"
              d:DesignHeight="450"
+             Background="White"
              d:DesignWidth="800">
-    <Grid>
+    <UserControl.Resources>
+        <converters:EnumVisibilityConverter x:Key="EnumVisibilityConverter" />
+        <Style TargetType="{x:Type ListBox}">
+            <!-- ControlTemplate taken from MSDN http://msdn.microsoft.com/en-us/library/ms754242.aspx -->
+            <Setter Property="SnapsToDevicePixels"
+                    Value="true" />
+            <Setter Property="OverridesDefaultStyle"
+                    Value="true" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility"
+                    Value="Auto" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility"
+                    Value="Auto" />
+            <Setter Property="ScrollViewer.CanContentScroll"
+                    Value="true" />
+            <Setter Property="VerticalAlignment"
+                    Value="Top" />
+            <Setter Property="MinWidth"
+                    Value="120" />
 
+            <Setter Property="FontSize"
+                    Value="15" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBox">
+                        <Border Name="Border"
+                                Background="Transparent"
+                                BorderBrush="Gray"
+                                Margin="0 0 5 0"
+                                BorderThickness="1"
+                                CornerRadius="2">
+                            <ScrollViewer Margin="0"
+                                          Focusable="false">
+                                <StackPanel Margin="2"
+                                            IsItemsHost="True" />
+                            </ScrollViewer>
+                        </Border>
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsGrouping"
+                                     Value="true">
+                                <Setter Property="ScrollViewer.CanContentScroll"
+                                        Value="false" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="Margin"
+                                Value="2" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                    <Border Name="theBorder"
+                                            Background="Transparent">
+                                        <RadioButton Focusable="False"
+                                                     IsHitTestVisible="False"
+                                                     IsChecked="{TemplateBinding IsSelected}">
+                                            <ContentPresenter />
+                                        </RadioButton>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="250" />
+            <RowDefinition Height="250" />
+        </Grid.RowDefinitions>
+        <StackPanel VerticalAlignment="Top"
+                    Margin="15 10"
+                    Orientation="Horizontal">
+            <ListBox ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:TransactionType}}}"
+                     SelectedItem="{Binding Transaction.TransactionType}" />
+            <ListBox Visibility="{Binding  Transaction.TransactionType,Converter={StaticResource EnumVisibilityConverter},ConverterParameter=0}"
+                     ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:IncomeBaseCategories}}}"
+                     SelectedItem="{Binding Transaction.IncomeBaseCategory}" />
+            <ListBox Visibility="{Binding Transaction.TransactionType,Converter={StaticResource EnumVisibilityConverter},ConverterParameter=1}"
+                     ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:ExpenseBaseCategories}}}"
+                     SelectedItem="{Binding Transaction.ExpenseBaseCategory}" />
+
+            <ListBox Visibility="{Binding Transaction.ExpenseBaseCategory,Converter={StaticResource EnumVisibilityConverter},ConverterParameter=1}"
+                     ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:GroupExpenseCategories}}}"
+                     SelectedItem="{Binding Transaction.GroupExpenseCategory}" />
+
+            <ListBox Visibility="{Binding Transaction.ExpenseBaseCategory,Converter={StaticResource EnumVisibilityConverter},ConverterParameter=3}"
+                     ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:StandardExpenseCategories}}}"
+                     SelectedItem="{Binding Transaction.StandardExpenseCategory}" />
+
+            <ListBox Visibility="{Binding Transaction.ExpenseBaseCategory,Converter={StaticResource EnumVisibilityConverter},ConverterParameter=4}"
+                     ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:TaxExpenseCategories}}}"
+                     SelectedItem="{Binding Transaction.TaxExpenseCategory}" />
+        </StackPanel>
+        <Border BorderBrush="Gray"
+                Grid.Row="1"
+                BorderThickness="1"
+                VerticalAlignment="Top"
+                Margin="15 0"
+                CornerRadius="2">
+
+            <StackPanel Orientation="Horizontal">
+
+                <StackPanel Orientation="Vertical"
+                            Margin="5">
+                    <TextBlock Text="Ποσό:" />
+                    <TextBox Text="{Binding Transaction.Amount}" />
+                </StackPanel>
+                <StackPanel Orientation="Vertical"
+                            Margin="5">
+                    <TextBlock Text="Ημερομηνία:" />
+                    <DatePicker SelectedDate="{Binding Transaction.Date}"
+                                FontSize="13"
+                                Width="100" />
+                </StackPanel>
+                <StackPanel Orientation="Vertical"
+                            Margin="5">
+                    <TextBlock Text="Περιγραφή:" />
+                    <TextBox Text="{Binding Transaction.Description}"
+                             TextWrapping="Wrap"
+                             Height="70"
+                             Width="180" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
     </Grid>
 </UserControl>

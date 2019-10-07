@@ -222,6 +222,7 @@
     <Compile Include="Converters\BoolToBorderColorConverter.cs" />
     <Compile Include="Converters\DateTimeToString.cs" />
     <Compile Include="Converters\DayStateToContentConverter.cs" />
+    <Compile Include="Converters\EnumVisibilityConverter.cs" />
     <Compile Include="Converters\FloadToStringValueConverter.cs" />
     <Compile Include="Converters\IsGroupConverter.cs" />
     <Compile Include="Converters\RoomsLeftMultiBindingConverter.cs" />
@@ -230,17 +231,20 @@
     <Compile Include="Converters\RoomsLeftToVisibiliyConverter.cs" />
     <Compile Include="Converters\RoomToColorConverter.cs" />
     <Compile Include="Converters\RoomTypeToRoomsLeftConverter.cs" />
+    <Compile Include="Converters\TimeSpanToDateTimeConverter.cs" />
     <Compile Include="Converters\ToolTipVisibilityConverter.cs" />
     <Compile Include="Data\Workers\Lists.cs" />
     <Compile Include="ExcursionCategoryChangedMessage.cs" />
     <Compile Include="Helpers\Actor.cs" />
     <Compile Include="Helpers\BasicDataManager.cs" />
     <Compile Include="Helpers\DailyDepartureInfo.cs" />
+    <Compile Include="Helpers\EnumBindingSourceExtension.cs" />
     <Compile Include="Helpers\ExcursionComparer.cs" />
     <Compile Include="Helpers\PaymentInfo.cs" />
     <Compile Include="Message\ChangeChildViewModelMessage.cs" />
     <Compile Include="Helpers\DocumentsManagement.cs" />
     <Compile Include="Message\LoginLogOutMessage.cs" />
+    <Compile Include="Message\PersonalCityChanged.cs" />
     <Compile Include="Message\ReservationChanged_Message.cs" />
     <Compile Include="Message\SelectedExcursionChangedMessage.cs" />
     <Compile Include="NotifyTaskCompletion.cs" />
@@ -288,6 +292,7 @@
     <Compile Include="ViewModel\Tabs\GlobalSearchTab.cs" />
     <Compile Include="ViewModel\Tabs\InfoTab.cs" />
     <Compile Include="ViewModel\Tabs\PlanTab.cs" />
+    <Compile Include="ViewModel\Tabs\TabViewmodels\Remaining_ViewModel.cs" />
     <Compile Include="ViewModel\Tabs\TabViewmodels\AddIncome_ViewModel.cs" />
     <Compile Include="ViewModel\Tabs\TabViewmodels\EconomicData_ViewModel.cs" />
     <Compile Include="ViewModel\Tabs\TabViewmodels\GlobalEconomics_ViewModel.cs" />
@@ -469,6 +474,9 @@
     <Compile Include="Helpers\RowDataInfoValidationRule.cs" />
     <Compile Include="Helpers\SearchBookingsHelper.cs" />
     <Compile Include="Helpers\StaticResources.cs" />
+    <Compile Include="Views\Tabs\Remaining_UserControl.xaml.cs">
+      <DependentUpon>Remaining_UserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Tabs\TotalEarns_UserControl.xaml.cs">
       <DependentUpon>TotalEarns_UserControl.xaml</DependentUpon>
     </Compile>
@@ -660,6 +668,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Tabs\InfoTab_UserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Tabs\Remaining_UserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

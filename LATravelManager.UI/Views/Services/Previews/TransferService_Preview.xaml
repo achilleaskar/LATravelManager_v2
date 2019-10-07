@@ -69,10 +69,12 @@
                    Content="{Binding TimeGo ,ConverterParameter='dd/MM/yyyy-HH:mm', Converter={StaticResource dateTimeToString}}" />
             <Label Content="Επιστροφή:"
                    Grid.Row="2"
+                   Visibility="{Binding Allerretour,Converter={StaticResource booleanToVisibilityConverter}}"
                    Grid.Column="2" />
             <Label Grid.Row="2"
                    Grid.Column="3"
                    HorizontalAlignment="Left"
+                   Visibility="{Binding Allerretour,Converter={StaticResource booleanToVisibilityConverter}}"
                    Width="100"
                    Content="{Binding TimeReturn ,ConverterParameter='dd/MM/yyyy-HH:mm', Converter={StaticResource dateTimeToString}}" />
             <Label Content="Με Επιστροφή:"
@@ -80,6 +82,7 @@
                    Grid.Column="0" />
             <CheckBox IsChecked="{Binding Allerretour}"
                       Grid.Row="1" Margin="5,0"
+                      IsEnabled="False"
                       Grid.Column="1" />
             <Label Content="Στοιχεία Οδηγού:"
                    Grid.Row="1"

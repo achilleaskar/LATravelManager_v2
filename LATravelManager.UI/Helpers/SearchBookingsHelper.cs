@@ -31,12 +31,12 @@ namespace LATravelManager.UI.Helpers
 
         internal async Task DeleteReservation(ReservationWrapper selectedReservation)
         {
-            if (selectedReservation.ExcursionType == Model.Enums.ExcursionTypeEnum.ThirdParty)
+            if (selectedReservation.ExcursionType == Model.ExcursionTypeEnum.ThirdParty)
             {
                 Context.DeletePayments(selectedReservation.ThirdPartyModel.Id);
                 Context.Delete(selectedReservation.ThirdPartyModel.Model);
             }
-            else if (selectedReservation.ExcursionType == Model.Enums.ExcursionTypeEnum.Personal)
+            else if (selectedReservation.ExcursionType == Model.ExcursionTypeEnum.Personal)
             {
                 Context.DeletePayments(selectedReservation.PersonalModel.Id);
                 Context.Delete(selectedReservation.PersonalModel.Model);

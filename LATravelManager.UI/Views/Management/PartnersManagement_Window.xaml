@@ -9,6 +9,7 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterOwner"
         Title="{Binding ControlName}"
+        Closing="Window_Closing"
         Height="450"
         Width="800">
 
@@ -115,10 +116,12 @@
                           SelectedItem="{Binding SelectedEntity}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Όνομα"
+                                            IsReadOnly="True"
                                             Width="100"
                                             Binding="{Binding Name}" />
                         <DataGridTextColumn Header="Τηλέφωνο"
                                             Width="100"
+                                            IsReadOnly="True"
                                             Binding="{Binding Tel}" />
                     </DataGrid.Columns>
                 </DataGrid>

@@ -275,7 +275,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                 int index = -1;
                 switch (Templates[SelectedTemplateIndex].Category)
                 {
-                    case Model.Enums.ExcursionTypeEnum.Bansko:
+                    case Model.ExcursionTypeEnum.Bansko:
                         index = TemplateViewmodels.FindIndex(x => x.GetType() == typeof(BanskoParent_ViewModel));
                         if (index >= 0)
                             SelectedExcursionType = TemplateViewmodels[index];
@@ -285,7 +285,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                         }
                         break;
 
-                    case Model.Enums.ExcursionTypeEnum.Group:
+                    case Model.ExcursionTypeEnum.Group:
 
                         index = TemplateViewmodels.FindIndex(x => x.GetType() == typeof(GroupParent_ViewModel));
                         if (index >= 0)
@@ -296,7 +296,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                         }
                         break;
 
-                    case Model.Enums.ExcursionTypeEnum.Personal:
+                    case Model.ExcursionTypeEnum.Personal:
                         index = TemplateViewmodels.FindIndex(x => x.GetType() == typeof(PersonalParent_ViewModel));
                         if (index >= 0)
                             SelectedExcursionType = TemplateViewmodels[index];
@@ -306,7 +306,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                         }
                         break;
 
-                    case Model.Enums.ExcursionTypeEnum.ThirdParty:
+                    case Model.ExcursionTypeEnum.ThirdParty:
                         index = TemplateViewmodels.FindIndex(x => x.GetType() == typeof(ThirdPartyParent_ViewModel));
                         if (index >= 0)
                             SelectedExcursionType = TemplateViewmodels[index];
@@ -317,7 +317,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
                         break;
 
-                    case Model.Enums.ExcursionTypeEnum.Skiathos:
+                    case Model.ExcursionTypeEnum.Skiathos:
                         index = TemplateViewmodels.FindIndex(x => x.GetType() == typeof(SkiathosParent_ViewModel));
                         if (index >= 0)
                             SelectedExcursionType = TemplateViewmodels[index];

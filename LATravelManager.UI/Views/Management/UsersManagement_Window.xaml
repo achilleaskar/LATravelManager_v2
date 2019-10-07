@@ -8,6 +8,7 @@
         xmlns:ap="clr-namespace:LATravelManager.UI.AttachedProperties"
         mc:Ignorable="d"
         FontSize="14"
+        Closing="Window_Closing"
         WindowStartupLocation="CenterOwner"
         Title="{Binding ControlName}"
         Height="470"
@@ -162,11 +163,13 @@
                           CanUserDeleteRows="False"
                           SelectedItem="{Binding SelectedEntity}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Όνομα"
+                        <DataGridTextColumn Header="Όνομα" IsReadOnly="True"
                                             Binding="{Binding Name}" />
                         <DataGridTextColumn Header="Γραφείο"
+                                            IsReadOnly="True"
                                             Binding="{Binding BaseLocation}" />
                         <DataGridTextColumn Header="Τηλέφωνο"
+                                            IsReadOnly="True"
                                             Binding="{Binding Tel }" />
                     </DataGrid.Columns>
                 </DataGrid>

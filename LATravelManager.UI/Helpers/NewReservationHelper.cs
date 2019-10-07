@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
+using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.People;
@@ -12,7 +13,6 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Media;
-using static LATravelManager.Model.Enums;
 
 public class NewReservationHelper : ViewModelBase
 {

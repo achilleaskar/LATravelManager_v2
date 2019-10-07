@@ -1,6 +1,7 @@
 ﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
+using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
@@ -18,7 +19,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using static LATravelManager.Model.Enums;
 using DW = DocumentFormat.OpenXml.Drawing.Wordprocessing;
 using PIC = DocumentFormat.OpenXml.Drawing.Pictures;
 using TEST = DocumentFormat.OpenXml.Drawing;
@@ -73,10 +73,29 @@ namespace LATravelManager.UI.Helpers
         {
             string outputpath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
 
-            string RecieptFilename = string.Format(@"\Πληρωμή {0}_{1}.docx", selectedPayment.Booking.ReservationsInBooking[0].CustomersList[0].Surename, selectedPayment.Booking.Excursion.Destinations[0].Name);
             Directory.CreateDirectory(outputpath + @"\Payments");
+            if (selectedPayment==null)
+            {
+                return;
+            }
+            if (selectedPayment.Booking != null)
+            {
+                string RecieptFilename = string.Format(@"\Πληρωμή {0}_{1}.docx", selectedCustomer.Surename, selectedPayment.Booking.Excursion.Destinations[0].Name);
 
-            CreateWordReciept(outputpath + @"\Payments\" + RecieptFilename, selectedPayment, selectedCustomer);
+                CreateWordReciept(outputpath + @"\Payments\" + RecieptFilename, selectedPayment, selectedCustomer);
+            }
+            else if (selectedPayment.Personal_Booking != null)
+            {
+                string RecieptFilename = string.Format(@"\Πληρωμή {0}.docx", selectedCustomer.Surename);
+
+                CreateWordReciept(outputpath + @"\Payments\" + RecieptFilename, selectedPayment, selectedCustomer);
+            }
+            else if (selectedPayment.ThirdParty_Booking != null)
+            {
+                string RecieptFilename = string.Format(@"\Πληρωμή {0}.docx", selectedCustomer.Surename);
+
+                CreateWordReciept(outputpath + @"\Payments\" + RecieptFilename, selectedPayment, selectedCustomer);
+            }
         }
 
         private void CreateWordReciept(string saveAs, Payment selectedPayment, Customer SelectedCustomer)
@@ -111,7 +130,17 @@ namespace LATravelManager.UI.Helpers
                         docText = sr.ReadToEnd();
                     }
 
-                    var bokingWr = new BookingWrapper(selectedPayment.Booking);
+                    if (true)
+                    {
+
+                    }
+                    int id = selectedPayment.Booking != null?selectedPayment.Booking.Id:selectedPayment.Personal_Booking!=null?selectedPayment.Personal_Booking.Id:selectedPayment.ThirdParty_Booking.Id;
+                    decimal remaining = selectedPayment.Booking != null ? new BookingWrapper(selectedPayment.Booking).Remaining : selectedPayment.Personal_Booking != null ? new Personal_BookingWrapper(selectedPayment.Personal_Booking).Remaining : new ThirdParty_Booking_Wrapper(selectedPayment.ThirdParty_Booking).Remaining;
+                    decimal total = selectedPayment.Booking != null ? new BookingWrapper(selectedPayment.Booking).FullPrice : selectedPayment.Personal_Booking != null ? new Personal_BookingWrapper(selectedPayment.Personal_Booking).FullPrice : new ThirdParty_Booking_Wrapper(selectedPayment.ThirdParty_Booking).FullPrice;
+                    string Description = selectedPayment.Booking != null ? new BookingWrapper(selectedPayment.Booking).GetPacketDescription() : selectedPayment.Personal_Booking != null ? new Personal_BookingWrapper(selectedPayment.Personal_Booking).GetPacketDescription() : new ThirdParty_Booking_Wrapper(selectedPayment.ThirdParty_Booking).GetPacketDescription();
+
+
+
 
                     Regex regexText = new Regex("regexcustomerid");
                     docText = regexText.Replace(docText, SelectedCustomer.Id.ToString());
@@ -124,13 +153,15 @@ namespace LATravelManager.UI.Helpers
                     regexText = new Regex("regexdatetoday");
                     docText = regexText.Replace(docText, DateTime.Now.ToString("dd/MM/yyyy HH:mm"));
                     regexText = new Regex("regexbookingid");
-                    docText = regexText.Replace(docText, bokingWr.Id.ToString());
+                    docText = regexText.Replace(docText, id.ToString());
                     regexText = new Regex("regexremainingamount");
-                    docText = regexText.Replace(docText, bokingWr.Remaining.ToString("c2"));
+                    docText = regexText.Replace(docText, remaining.ToString("c2"));
                     regexText = new Regex("regexdescription");
-                    docText = regexText.Replace(docText, bokingWr.GetPacketDescription());
+                    docText = regexText.Replace(docText, Description);
                     regexText = new Regex("regexfullwordamount");
-                    docText = regexText.Replace(docText, StaticResources.ConvertAmountToWords(selectedPayment.Amount)); ;
+                    docText = regexText.Replace(docText, StaticResources.ConvertAmountToWords(selectedPayment.Amount)); 
+                    regexText = new Regex("regextotalamount");
+                    docText = regexText.Replace(docText, total.ToString("c2"));
                     regexText = new Regex("regexamount");
                     docText = regexText.Replace(docText, selectedPayment.Amount.ToString("c2"));
                     regexText = new Regex("regexusername");
@@ -176,7 +207,7 @@ namespace LATravelManager.UI.Helpers
             int customersCount;
             using (GenericRepository Context = new GenericRepository())
             {
-                List<Booking> AllBookings = (await Context.GetAllBookingInPeriod(new DateTime(2018, 09, 01), new DateTime(2019, 09, 01), 2)).ToList();
+                List<Booking> AllBookings = (await Context.GetAllBookingInPeriod(new DateTime(2018, 09, 01), new DateTime(2019, 09, 01), new City { Id = 15 })).ToList();
 
                 if (AllBookings.Count > 0)
                 {

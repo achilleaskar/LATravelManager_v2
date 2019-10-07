@@ -8,6 +8,7 @@
         mc:Ignorable="d"
         Title="{Binding ControlName}"
         Height="450"
+        Closing="Window_Closing"
         Width="800">
     <Window.DataContext>
         <Binding Path="Countries"
@@ -98,8 +99,10 @@
                           SelectedItem="{Binding SelectedEntity}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Όνομα"
+                                            IsReadOnly="True"
                                             Binding="{Binding Name}" />
                         <DataGridTextColumn Header="Ήπειρος"
+                                            IsReadOnly="True"
                                             Binding="{Binding Continent}" />
                     </DataGrid.Columns>
                 </DataGrid>

@@ -29,6 +29,12 @@ namespace LATravelManager.UI.Wrapper
             set { SetValue(value); }
         }
 
+        public string Email
+        {
+            get { return GetValue<string>(); }
+            set { SetValue(value); }
+        }
+
         public City City
         {
             get { return GetValue<City>(); }

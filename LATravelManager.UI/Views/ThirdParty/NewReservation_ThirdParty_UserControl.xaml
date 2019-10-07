@@ -366,13 +366,13 @@
                                                        Stretch="Fill" />
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <!--<MenuItem Header="Εκτ. Απόδειξης"
+                                        <MenuItem Header="Εκτ. Απόδειξης"
                                                   Command="{Binding DataContext.PrintRecieptCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
                                             <MenuItem.Icon>
                                                 <Image MaxHeight="20"
                                                        Stretch="Fill" />
                                             </MenuItem.Icon>
-                                        </MenuItem>-->
+                                        </MenuItem>
                                     </ContextMenu>
                                 </ListView.Resources>
                                 <ListView.ItemContainerStyle>

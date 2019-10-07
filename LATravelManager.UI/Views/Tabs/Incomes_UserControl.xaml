@@ -4,8 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
-             
              xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.Tabs.TabViewmodels"
+             xmlns:local="clr-namespace:LATravelManager.UI.Views.Tabs"
              mc:Ignorable="d"
              Background="White"
              d:DesignHeight="450"
@@ -18,9 +18,10 @@
     <Grid>
         <TabControl>
             <TabItem Header="Καταχώρηση Εσόδου">
+                <local:AddIncome_UserControl DataContext="{Binding AddIncome_ViewModel}" />
             </TabItem>
             <TabItem Header="Προβολή Εσόδων">
-                
+                <local:IncomesPreview_UserControl DataContext="{Binding PreviewIncomes_ViewModel}" />
             </TabItem>
         </TabControl>
     </Grid>

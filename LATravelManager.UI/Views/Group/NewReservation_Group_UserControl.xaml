@@ -43,6 +43,13 @@
             <Setter Property="IsTabStop"
                     Value="False" />
         </Style>
+        <CollectionViewSource x:Key="cvs"
+                              Source="{Binding FilteredRoomList}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="RoomType" />
+                <PropertyGroupDescription PropertyName="Hotel" />
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>
     </UserControl.Resources>
 
     <ScrollViewer HorizontalScrollBarVisibility="Auto"
@@ -70,7 +77,7 @@
                             </Style>
                         </StackPanel.Resources>
 
-                        <ListView ItemsSource="{Binding FilteredRoomList}"
+                        <ListView ItemsSource="{Binding Source={StaticResource cvs}}"
                                   Grid.Row="1"
                                   Width="460"
                                   HorizontalAlignment="Left"
@@ -101,9 +108,15 @@
                             </ListView.Resources>
                             <ListView.View>
                                 <GridView>
-                                    <GridViewColumn Header="Ξενοδοχείο"
+                                    <!--<GridViewColumn Header="Ξενοδοχείο"
                                                     Width="120"
-                                                    DisplayMemberBinding="{Binding Hotel.Name}" />
+                                                    DisplayMemberBinding="{Binding Hotel.Name}" />-->
+
+                                    <GridViewColumn Width="40">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate />
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
                                     <GridViewColumn Header="Τύπος Δωματίου"
                                                     Width="100"
                                                     DisplayMemberBinding="{Binding RoomType.Name}" />
@@ -129,9 +142,9 @@
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate>
-                                                        <Expander IsExpanded="False"
-                                                                  IsEnabled="{Binding Converter={StaticResource RoomsLeftToVisibilityConverter}}">
+                                                        <Expander IsExpanded="False">
                                                             <Expander.Header>
+                                                                <!--IsEnabled="{Binding Converter={StaticResource RoomsLeftToVisibilityConverter}}">-->
                                                                 <StackPanel Orientation="Horizontal">
                                                                     <TextBlock Text="{Binding ItemCount}"
                                                                                FontSize="16"
@@ -150,8 +163,54 @@
                                                                                FontSize="14"
                                                                                TextWrapping="Wrap"
                                                                                Width="310"
-                                                                               Text="{Binding Converter={StaticResource RoomsLeftToHotelsConverter}}"
                                                                                VerticalAlignment="Center" />
+                                                                    <!--Text="{Binding Converter={StaticResource RoomsLeftToHotelsConverter}}"-->
+                                                                    <!--Visibility="{Binding Converter={StaticResource RoomsHotelsToVisibilityConverter}}"-->
+                                                                    <!--
+                                                                    <Button Content="No Name"
+                                                                            Command="{Binding DataContext.BookRoomNoNameCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}, Mode=FindAncestor}}"
+                                                                            CommandParameter="{Binding Name}"
+                                                                            Margin="5,0" />-->
+                                                                </StackPanel>
+                                                            </Expander.Header>
+                                                            <ItemsPresenter />
+                                                        </Expander>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </GroupStyle.ContainerStyle>
+                                </GroupStyle>
+                                <GroupStyle>
+                                    <GroupStyle.ContainerStyle>
+                                        <Style TargetType="{x:Type GroupItem}">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate>
+                                                        <Expander IsExpanded="False"
+                                                                  Margin="23 0 0 0">
+                                                            <Expander.Header>
+                                                                <!--IsEnabled="{Binding Converter={StaticResource RoomsLeftToVisibilityConverter}}">-->
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <TextBlock Text="{Binding ItemCount}"
+                                                                               FontSize="14"
+                                                                               Width="25"
+                                                                               Foreground="Blue"
+                                                                               FontWeight="Bold"
+                                                                               VerticalAlignment="Top"
+                                                                               FontStyle="Italic" />
+                                                                    <TextBlock Text="{Binding Name}"
+                                                                               FontWeight="Bold"
+                                                                               VerticalAlignment="Top"
+                                                                               Foreground="Black"
+                                                                               FontSize="14" />
+                                                                    <!--<TextBlock Foreground="Blue"
+                                                                               Margin="10 0"
+                                                                               FontSize="14"
+                                                                               TextWrapping="Wrap"
+                                                                               Width="310"
+                                                                               VerticalAlignment="Center" />-->
+                                                                    <!--Text="{Binding Converter={StaticResource RoomsLeftToHotelsConverter}}"-->
                                                                     <!--Visibility="{Binding Converter={StaticResource RoomsHotelsToVisibilityConverter}}"-->
                                                                     <!--
                                                                     <Button Content="No Name"
@@ -278,6 +337,7 @@
                                         Margin="0,0,5,0" />
                                 <Button Content="OverBook"
                                         VerticalAlignment="Center"
+                                        Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
                                         Command="{Binding OverBookHotelCommand}"
                                         Margin="0,0,5,0" />
                                 <Button Content="Transfer"
@@ -367,21 +427,31 @@
                                 <TextBlock Text="Σύνολο:"
                                            HorizontalAlignment="Left" />
                                 <TextBox Text="{Binding BookingWr.FullPrice,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                         Margin="5,0,5,5"
+                                         Margin="0,0,5,5"
                                          VerticalAlignment="Center"
+                                         HorizontalAlignment="Left"
                                          MinWidth="40"
                                          MaxWidth="60"
                                          Grid.Column="1" />
                                 <TextBlock Text="Προμήθεια (%):"
                                            Grid.Row="1"
                                            HorizontalAlignment="Left" />
-                                <TextBox Text="{Binding BookingWr.Commision,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                         Margin="5,0,5,5"
-                                         VerticalAlignment="Center"
-                                         MinWidth="40"
-                                         MaxWidth="60"
-                                         Grid.Row="1"
-                                         Grid.Column="1" />
+                                <StackPanel   Grid.Row="1"
+                                              Orientation="Horizontal"
+                                              Grid.Column="1">
+
+                                    <TextBox Text="{Binding BookingWr.Commision,Converter={StaticResource FtoSConverter},ConverterParameter=0,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                             Margin="0,0,5,5"
+                                             VerticalAlignment="Center"
+                                             HorizontalAlignment="Left"
+                                             Width="50" />
+                                    <TextBox Width="30"
+                                             VerticalAlignment="Center"
+                                             HorizontalAlignment="Left"
+                                             Margin="0,0,0,5"
+                                             Text="{Binding BookingWr.FIxedCommision,UpdateSourceTrigger=PropertyChanged}"
+                                             Visibility="{Binding BookingWr.Partner.People}" />
+                                </StackPanel>
                                 <TextBlock Text="Νet τιμή:"
                                            Grid.Row="2"
                                            HorizontalAlignment="Left" />
@@ -635,6 +705,13 @@
                                         <MenuItem Header="Διαγραφη"
                                                   Visibility="{Binding Converter={StaticResource UserToVisibilityConverter},ConverterParameter=1,  Mode=OneWay}"
                                                   Command="{Binding DataContext.DeletePaymentCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
+                                            <MenuItem.Icon>
+                                                <Image MaxHeight="20"
+                                                       Stretch="Fill" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="Εκτ. Απόδειξης"
+                                                  Command="{Binding DataContext.PrintRecieptCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
                                             <MenuItem.Icon>
                                                 <Image MaxHeight="20"
                                                        Stretch="Fill" />

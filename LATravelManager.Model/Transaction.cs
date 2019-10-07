@@ -6,20 +6,34 @@ namespace LATravelManager.Model
 {
     public class Transaction : EditTracker
     {
+        #region Constructors
+
+        public Transaction()
+        {
+            Date = DateTime.Today;
+        }
+
+        #endregion Constructors
+
         #region Fields
 
         private decimal _Amount;
         private Booking _Booking;
         private DateTime _CheckIn;
         private DateTime _CheckOut;
-        private int _Code;
 
         private DateTime _Date;
 
         private string _Description;
 
+        private ExpenseBaseCategories _ExpenseBaseCategory;
+        private GroupExpenseCategories _GroupExpenseCategory;
+        private IncomeBaseCategories _IncomeBaseCategory;
         private User _PaymentTo;
 
+        private StandardExpenseCategories _StandardExpenseCategory;
+        private TaxExpenseCategories _TaxExpenseCategory;
+        private TransactionType _TransactionType;
         private User _User;
 
         #endregion Fields
@@ -102,25 +116,6 @@ namespace LATravelManager.Model
             }
         }
 
-        public int Code
-        {
-            get
-            {
-                return _Code;
-            }
-
-            set
-            {
-                if (_Code == value)
-                {
-                    return;
-                }
-
-                _Code = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public DateTime Date
         {
             get
@@ -159,6 +154,74 @@ namespace LATravelManager.Model
             }
         }
 
+        public ExpenseBaseCategories ExpenseBaseCategory
+        {
+            get
+            {
+                return _ExpenseBaseCategory;
+            }
+
+            set
+            {
+                if (_ExpenseBaseCategory == value)
+                {
+                    return;
+                }
+
+                _ExpenseBaseCategory = value;
+                RaisePropertyChanged();
+                GroupExpenseCategory = GroupExpenseCategories.None;
+                IncomeBaseCategory = IncomeBaseCategories.None;
+                StandardExpenseCategory = StandardExpenseCategories.None;
+                TaxExpenseCategory = TaxExpenseCategories.None;
+            }
+        }
+
+        public GroupExpenseCategories GroupExpenseCategory
+        {
+            get
+            {
+                return _GroupExpenseCategory;
+            }
+
+            set
+            {
+                if (_GroupExpenseCategory == value)
+                {
+                    return;
+                }
+
+                _GroupExpenseCategory = value;
+                RaisePropertyChanged();
+                IncomeBaseCategory = IncomeBaseCategories.None;
+                StandardExpenseCategory = StandardExpenseCategories.None;
+                TaxExpenseCategory = TaxExpenseCategories.None;
+            }
+        }
+
+        public IncomeBaseCategories IncomeBaseCategory
+        {
+            get
+            {
+                return _IncomeBaseCategory;
+            }
+
+            set
+            {
+                if (_IncomeBaseCategory == value)
+                {
+                    return;
+                }
+
+                _IncomeBaseCategory = value;
+                RaisePropertyChanged();
+                GroupExpenseCategory = GroupExpenseCategories.None;
+                ExpenseBaseCategory = ExpenseBaseCategories.None;
+                StandardExpenseCategory = StandardExpenseCategories.None;
+                TaxExpenseCategory = TaxExpenseCategories.None;
+            }
+        }
+
         public User PaymentTo
         {
             get
@@ -175,6 +238,74 @@ namespace LATravelManager.Model
 
                 _PaymentTo = value;
                 RaisePropertyChanged();
+            }
+        }
+
+        public StandardExpenseCategories StandardExpenseCategory
+        {
+            get
+            {
+                return _StandardExpenseCategory;
+            }
+
+            set
+            {
+                if (_StandardExpenseCategory == value)
+                {
+                    return;
+                }
+
+                _StandardExpenseCategory = value;
+                RaisePropertyChanged();
+                GroupExpenseCategory = GroupExpenseCategories.None;
+                IncomeBaseCategory = IncomeBaseCategories.None;
+                TaxExpenseCategory = TaxExpenseCategories.None;
+            }
+        }
+
+        public TaxExpenseCategories TaxExpenseCategory
+        {
+            get
+            {
+                return _TaxExpenseCategory;
+            }
+
+            set
+            {
+                if (_TaxExpenseCategory == value)
+                {
+                    return;
+                }
+
+                _TaxExpenseCategory = value;
+                RaisePropertyChanged();
+                GroupExpenseCategory = GroupExpenseCategories.None;
+                IncomeBaseCategory = IncomeBaseCategories.None;
+                StandardExpenseCategory = StandardExpenseCategories.None;
+            }
+        }
+
+        public TransactionType TransactionType
+        {
+            get
+            {
+                return _TransactionType;
+            }
+
+            set
+            {
+                if (_TransactionType == value)
+                {
+                    return;
+                }
+
+                _TransactionType = value;
+                RaisePropertyChanged();
+                GroupExpenseCategory = GroupExpenseCategories.None;
+                IncomeBaseCategory = IncomeBaseCategories.None;
+                ExpenseBaseCategory = ExpenseBaseCategories.None;
+                StandardExpenseCategory = StandardExpenseCategories.None;
+                TaxExpenseCategory = TaxExpenseCategories.None;
             }
         }
 

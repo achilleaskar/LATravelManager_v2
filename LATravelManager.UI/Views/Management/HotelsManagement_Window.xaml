@@ -8,6 +8,7 @@
         mc:Ignorable="d"
         Title="{Binding ControlName}"
         Height="450"
+        Closing="Window_Closing"
         Width="800">
     <Window.DataContext>
         <Binding Path="Hotels"
@@ -27,6 +28,7 @@
                     <ColumnDefinition Width="120" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -66,8 +68,15 @@
                          Margin="0,5,5,5"
                          Grid.Row="3"
                          Grid.Column="1" />
+                <Label Content="Email:"
+                       Grid.Row="4"
+                       Grid.Column="0" />
+                <TextBox Text="{Binding SelectedEntity.Email,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0,5,5,5"
+                         Grid.Row="4"
+                         Grid.Column="1" />
                 <StackPanel Orientation="Vertical"
-                            Grid.Row="4"
+                            Grid.Row="5"
                             Grid.ColumnSpan="2">
                     <Button Content="Προσθήκη"
                             Margin="5,5,5,0"
@@ -80,7 +89,7 @@
                             Command="{Binding ClearEntityCommand}" />
                 </StackPanel>
                 <TextBlock Text="{Binding ResultMessage}"
-                           Grid.Row="5"
+                           Grid.Row="6"
                            Grid.ColumnSpan="2"
                            TextWrapping="Wrap"
                            Width="195"
@@ -116,9 +125,11 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Όνομα"
                                             Binding="{Binding Name}"
+                                            IsReadOnly="True"
                                             Width="120" />
                         <DataGridTextColumn Header="Κατηγορία"
                                             Width="100"
+                                            IsReadOnly="True"
                                             Binding="{Binding HotelCategory.Name}" />
                     </DataGrid.Columns>
                 </DataGrid>

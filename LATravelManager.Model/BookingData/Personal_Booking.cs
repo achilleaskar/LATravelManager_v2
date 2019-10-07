@@ -21,6 +21,8 @@ namespace LATravelManager.Model.BookingData
         }
 
         public bool Disabled { get; set; }
+        public bool Reciept { get; set; }
+
         public string CancelReason { get; set; }
 
         public DateTime? DisableDate { get; set; }

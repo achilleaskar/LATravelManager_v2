@@ -1,6 +1,7 @@
 ﻿using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using GalaSoft.MvvmLight.CommandWpf;
+using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.LocalModels;
@@ -26,7 +27,6 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using static LATravelManager.Model.Enums;
 
 namespace LATravelManager.UI.ViewModel.BaseViewModels
 {
@@ -176,6 +176,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             if (SelectedCustomer == null)
             {
                 MessageBox.Show("Παρακαλώ επιλέξτε πελάτη");
+                return;
             }
             DocumentsManagement.PrintPaymentsReciept(SelectedPayment, SelectedCustomer.Model);
         }
@@ -931,24 +932,26 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                         allotmentDays = 0;
                         isfree = addThis = true;
 
-                        foreach (PlanDailyInfo pi in room.PlanDailyInfo)
+                        foreach (PlanDailyInfo day in room.PlanDailyInfo)
                         {
-                            if (pi.Date < BookingWr.CheckIn && !BookingWr.Excursion.NightStart)
+                            if (day.Date < BookingWr.CheckIn && !BookingWr.Excursion.NightStart)
                             {
                                 continue;
                             }
-                            if (BookingWr.Excursion.NightStart && pi.Date < BookingWr.CheckIn.AddDays(1))
+                            if (BookingWr.Excursion.NightStart && day.Date < BookingWr.CheckIn.AddDays(1))
                             {
                                 continue;
                             }
-                            if (!addThis || pi.Date >= BookingWr.CheckOut)
+                            if (!addThis || day.Date >= BookingWr.CheckOut)
                             {
                                 break;
                             }
-                            addThis &= pi.RoomState == RoomStateEnum.Available
-                                || pi.RoomState == RoomStateEnum.MovableNoName;
+                            addThis &= (day.RoomState == RoomStateEnum.Available
+                                || day.RoomState == RoomStateEnum.MovableNoName) &&
+                                ((BookingWr.Excursion.NightStart && (BookingWr.CheckOut - BookingWr.CheckIn).TotalDays - 1 >= day.MinimumStay) ||
+                                (!BookingWr.Excursion.NightStart && (BookingWr.CheckOut - BookingWr.CheckIn).TotalDays >= day.MinimumStay));
                             //|| pi.RoomState == RoomStateEnum.Allotment;
-                            isfree &= pi.RoomState == RoomStateEnum.Available;
+                            isfree &= day.RoomState == RoomStateEnum.Available;
 
                             //if (room.PlanDailyInfo[i].IsAllotment)
                             //{
@@ -989,8 +992,10 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
                 FilteredRoomList = new ObservableCollection<RoomWrapper>(tmplist.OrderBy(f => f.RoomType.MinCapacity).ToList());
                 CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(FilteredRoomList);
-                PropertyGroupDescription groupDescription = new PropertyGroupDescription(nameof(RoomType));
-                view.GroupDescriptions.Add(groupDescription);
+                //PropertyGroupDescription groupDescription = new PropertyGroupDescription(nameof(RoomType));
+                //PropertyGroupDescription groupDescriptionb = new PropertyGroupDescription(nameof(Hotel));
+                //view.GroupDescriptions.Add(groupDescription);
+                //view.GroupDescriptions.Add(groupDescriptionb);
                 RaisePropertyChanged(nameof(FilteredRoomList));
             }
             //try
@@ -1148,7 +1153,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
                     int hotelId = SelectedHotelIndex > 0 && Hotels != null && SelectedHotelIndex < Hotels.Count ? Hotels[SelectedHotelIndex - 1].Id : 0;
                     int roomTypeId = SelectedRoomTypeIndex > 0 && RoomTypes != null && SelectedRoomTypeIndex < RoomTypes.Count ? RoomTypes[SelectedRoomTypeIndex - 1].Id : 0;
-                    int partnerId = SelectedPartnerIndex >= 0 && Partners != null && SelectedPartnerIndex < Partners.Count ? Partners[SelectedPartnerIndex].Id : -1;
+                    int partnerId = -1;
                     if (BookingWr.IsPartners && SelectedPartnerIndex > 0)
                     {
                         partnerId = SelectedPartnerIndex >= 0 && Partners != null && SelectedPartnerIndex < Partners.Count ? Partners[SelectedPartnerIndex].Id : -1;
@@ -1961,7 +1966,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         private string ValidatePayment()
         {
-            if (Payment.Amount > BookingWr.Remaining)
+            if (Payment.Amount > (BookingWr.Remaining + 0.05m))
             {
                 return "Το ποσό υπερβαίνει το υπόλοιπο της κράτησης";
             }
@@ -1970,7 +1975,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             {
                 return "Το ποσό πληρωμής δεν μπορεί να είναι αρνητικό";
             }
-            if (Payment.Amount > BookingWr.Remaining)
+            if (Payment.Amount > (BookingWr.Remaining + 0.05m))
             {
                 return "Το ποσό πληρωμής υπερβαίνει το υπολειπόμενο ποσό";
             }

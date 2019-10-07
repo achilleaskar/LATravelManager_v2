@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Command;
+using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Hotels;
@@ -19,7 +20,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using static LATravelManager.Model.Enums;
 
 namespace LATravelManager.UI.Data.Workers
 {
@@ -676,7 +676,7 @@ namespace LATravelManager.UI.Data.Workers
             List<RoomingList> rl = new List<RoomingList>();
             IEnumerable<Booking> tmplist = null;
             List<Reservation> tmpress = new List<Reservation>();
-            tmplist = (await GenericRepository.GetAllBookingInPeriod(From, To, Excursion.Id));
+            tmplist = (await GenericRepository.GetAllBookingInPeriod(From, To, Excursion.Destinations[0]));
             RoomingList rmList = null;
             RoomingList nonameroominglist = new RoomingList { Hotel = new HotelWrapper { Name = "NO NAME" } };
 

@@ -71,22 +71,20 @@
                                 FormatString="dd/MM/yy HH:mm"
                                 Kind="Local"
                                 Margin="5"
-                                ShowButtonSpinner="True"
-                                ShowDropDownButton="True"
+                                ShowButtonSpinner="False"
                                 Value="{Binding Service.TimeGo,UpdateSourceTrigger=PropertyChanged}"
                                 Format="Custom" />
         <Label Content="Επιστροφή:"
                Grid.Row="2"
                Grid.Column="2" />
         <toolkit:DateTimePicker Grid.Row="2"
-                                HorizontalAlignment="Right"
+                                HorizontalAlignment="Center"
                                 IsEnabled="{Binding IsChecked, ElementName=AllerretourCheckBox}"
                                 Grid.Column="3"
                                 FormatString="dd/MM/yy HH:mm"
                                 Kind="Local"
                                 Margin="5"
-                                ShowButtonSpinner="True"
-                                ShowDropDownButton="True"
+                                ShowButtonSpinner="False"
                                 Value="{Binding Service.TimeReturn,UpdateSourceTrigger=PropertyChanged}"
                                 Format="Custom" />
         <Label Content="Εταιρεία:"
@@ -94,8 +92,6 @@
                Grid.Column="2" />
         <TextBox Grid.Row="1"
                  Text="{Binding Service.CompanyInfo,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                 Width="Auto"
-                 Margin=" 0 5 5 5 "
                  HorizontalAlignment="Stretch"
                  Grid.Column="3" />
         <Label Content="Με Επιστροφή:"

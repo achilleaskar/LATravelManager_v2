@@ -27,7 +27,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         {
             ToDepartureInfo = DateTime.Today;
             FromDepartureInfo = DateTime.Today;
-            ShowDepartureInfoCommand = new RelayCommand(async () => { await ShowDepartureInfo(); }, CanShowDepartureInfoM);
+            ShowDepartureInfoCommand = new RelayCommand(async () => { await ShowDepartureInfo(); }, CanShowDepartureInfo);
             MainViewModel = mainViewModel;
         }
 
@@ -310,7 +310,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         {
             Context = new GenericRepository();
             Mouse.OverrideCursor = Cursors.Wait;
-            Bookings = (await Context.GetAllBookingInPeriod(FromDepartureInfo, ToDepartureInfo, SelectedFilterExcursion.Id)).ToList();
+            Bookings = (await Context.GetAllBookingInPeriod(FromDepartureInfo, ToDepartureInfo, excursionId: SelectedFilterExcursion.Id)).ToList();
             //foreach (var b in Bookings)
             //{
             //    if (b.ReservationsInBooking.Count > 0)
@@ -354,7 +354,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             DailyDepartureInfo dayDeparture = new DailyDepartureInfo(Context, SelectedFilterExcursion.Id);
             DailyDepartureInfo tmpDayDeparture = new DailyDepartureInfo(Context, SelectedFilterExcursion.Id);
             CityDepartureInfo cityDepartureInfo;
-            if (SelectedFilterExcursion.ExcursionType.Category == Model.Enums.ExcursionTypeEnum.Group)
+            if (SelectedFilterExcursion.ExcursionType.Category == Model.ExcursionTypeEnum.Group)
             {
                 foreach (ExcursionDate datePair in SelectedFilterExcursion.ExcursionDates)
                 {
@@ -362,9 +362,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
                     foreach (Booking b in Bookings)
                     {
-                        if (b.DifferentDates)
-                        {
-                        }
                         if (b.ExcursionDate.Id == datePair.Id)
                         {
                             foreach (var r in b.ReservationsInBooking)
@@ -461,7 +458,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                                         {
                                             cityDepartureInfo.OnlyShipGo++;
                                         }
-                                        else if (r.ReservationType == Model.Enums.ReservationTypeEnum.OneDay)
+                                        else if (r.ReservationType == Model.ReservationTypeEnum.OneDay)
                                         {
                                             cityDepartureInfo.OneDayGo++;
                                         }
@@ -497,7 +494,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                                         {
                                             cityDepartureInfo.OnlyShipReturn++;
                                         }
-                                        else if (r.ReservationType == Model.Enums.ReservationTypeEnum.OneDay)
+                                        else if (r.ReservationType == Model.ReservationTypeEnum.OneDay)
                                         {
                                             cityDepartureInfo.OneDayReturn++;
                                         }

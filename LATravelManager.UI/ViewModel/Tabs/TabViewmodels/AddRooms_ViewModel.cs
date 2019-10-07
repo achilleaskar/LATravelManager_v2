@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
 using LaTravelManager.ViewModel.Management;
+using LATravelManager.Model;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.Locations;
 using LATravelManager.Model.Plan;
@@ -20,7 +21,6 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using static LATravelManager.Model.Enums;
 
 namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {
@@ -51,6 +51,31 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
 
             MainViewModel = mainViewModel;
+        }
+
+
+
+
+        private int _MinimumStay;
+
+
+        public int MinimumStay
+        {
+            get
+            {
+                return _MinimumStay;
+            }
+
+            set
+            {
+                if (_MinimumStay == value)
+                {
+                    return;
+                }
+
+                _MinimumStay = value;
+                RaisePropertyChanged();
+            }
         }
 
         private void OpenHotelsWindow()
@@ -660,6 +685,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 {
                     Rooms.Remove(r);
                 }
+                CountRooms();
             }
             catch (DbUpdateException)
             {
@@ -668,6 +694,31 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             catch (Exception ex)
             {
                 MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
+            }
+        }
+
+
+
+
+        private string _RoomsCounter;
+
+
+        public string RoomsCounter
+        {
+            get
+            {
+                return _RoomsCounter;
+            }
+
+            set
+            {
+                if (_RoomsCounter == value)
+                {
+                    return;
+                }
+
+                _RoomsCounter = value;
+                RaisePropertyChanged();
             }
         }
 
@@ -688,9 +739,13 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                     };
                     if (HasOption)
                         tmproom.Options.Add(new Option { Date = Option.Date, Note = Option.Note });
+                    if (MinimumStay > 7 || MinimumStay > 0)
+                    {
+
+                    }
                     for (int j = 0; j < SelectedDates.Count - 1; j++)
                     {
-                        tmproom.DailyBookingInfo.Add(new BookingInfoPerDay { Date = SelectedDates[j], RoomTypeEnm = IsAllotment ? RoomTypeEnum.Allotment : RoomTypeEnum.Available });
+                        tmproom.DailyBookingInfo.Add(new BookingInfoPerDay { Date = SelectedDates[j], MinimunStay = MinimumStay, RoomTypeEnm = IsAllotment ? RoomTypeEnum.Allotment : RoomTypeEnum.Available });
                     }
                     GenericRepository.Add(tmproom);
                 }
@@ -706,6 +761,32 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
+        public void CountRooms()
+        {
+            StringBuilder sb = new StringBuilder();
+            Dictionary<RoomType, int> dict = new Dictionary<RoomType, int>();
+            int count;
+            if (Rooms != null)
+                foreach (var rw in Rooms)
+                {
+                    count = 0;
+                    dict.TryGetValue(rw.RoomType, out count);
+                    dict[rw.RoomType] = count + 1;
+                }
+
+            if (dict.Count() > 0)
+            {
+
+                foreach (KeyValuePair<RoomType, int> entry in dict)
+                {
+                    sb.Append(entry.Key.Name);
+                    sb.Append(": ");
+                    sb.Append(entry.Value);
+                    sb.Append(", ");
+                }
+            }
+            RoomsCounter = sb.ToString().TrimEnd(' ').TrimEnd(',');
+        }
         private async Task ShowRooms()
         {
             GenericRepository = new GenericRepository();
@@ -720,6 +801,15 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 roomtypeId = RoomTypes[SelectedRoomTypeIndex - 1].Id;
 
             ObservableCollection<RoomWrapper> tmpList = new ObservableCollection<RoomWrapper>((await GenericRepository.GetAllRoomsFiltered(cityId, hotelId, roomtypeId)).Select(x => new RoomWrapper(x)));
+
+            //foreach (var room in tmpList)
+            //{
+            //    if ((room.Id >= 3105 && room.Id <= 3124) || (room.Id >= 3145 && room.Id <= 3156))
+            //    {
+            //        GenericRepository.Add(new Option { Date = new DateTime(2019, 10, 21), Room = room.Model });
+            //    }
+            //}
+            //await GenericRepository.SaveAsync();
             if (DatesFilter)
             {
                 foreach (RoomWrapper room in tmpList)
@@ -728,6 +818,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
             else
                 Rooms = tmpList;
+            CountRooms();
             Mouse.OverrideCursor = Cursors.Arrow;
         }
 

@@ -76,6 +76,7 @@
     <Compile Include="BookingData\Personal_Booking.cs" />
     <Compile Include="BookingData\ThirdParty_Booking.cs" />
     <Compile Include="CustomFile.cs" />
+    <Compile Include="EnumDescriptionTypeConverter.cs" />
     <Compile Include="LocalModels\CityDepartureInfo.cs" />
     <Compile Include="LocalModels\Email.cs" />
     <Compile Include="LocalModels\NoName.cs" />

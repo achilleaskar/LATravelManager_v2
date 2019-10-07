@@ -62,6 +62,7 @@
                Grid.Row="0"
                Grid.Column="2" />
         <TextBox Grid.Row="0"
+                 HorizontalAlignment="Left"
                  Text="{Binding Service.To,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                  Grid.Column="3" />
         <Label Content="Αναχώρηση:"
@@ -70,23 +71,24 @@
                                 Grid.Column="1"
                                 FormatString="dd/MM/yy HH:mm"
                                 Kind="Local"
-                                Margin="5"
-                                ShowButtonSpinner="True"
-                                ShowDropDownButton="True"
+                              
+                                VerticalAlignment="Center"
+                                Width="120"
+                                ShowButtonSpinner="False"
                                 Value="{Binding Service.TimeGo,UpdateSourceTrigger=PropertyChanged}"
                                 Format="Custom" />
         <Label Content="Επιστροφή:"
                Grid.Row="2"
                Grid.Column="2" />
         <toolkit:DateTimePicker Grid.Row="2"
-                                HorizontalAlignment="Right"
+                                HorizontalAlignment="Left"
                                 IsEnabled="{Binding IsChecked, ElementName=AllerretourCheckBox}"
                                 Grid.Column="3"
                                 FormatString="dd/MM/yy HH:mm"
                                 Kind="Local"
-                                Margin="5"
-                                ShowButtonSpinner="True"
-                                ShowDropDownButton="True"
+                          VerticalAlignment="Center" Width="120"
+                                ShowButtonSpinner="False"
+                                
                                 Value="{Binding Service.TimeReturn,UpdateSourceTrigger=PropertyChanged}"
                                 Format="Custom" />
         <Label Content="Με Επιστροφή:"
@@ -100,7 +102,7 @@
                       Name="AllerretourCheckBox" />
             <Label Content="Στοιχεία Οδηγού:" />
             <TextBox Text="{Binding Service.CompanyInfo, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
-                     Width="220"
+                     Width="200"
                      HorizontalAlignment="Stretch" />
         </StackPanel>
         <Label Content="Κέρδος:"
@@ -113,6 +115,7 @@
                Grid.Row="3"
                Grid.Column="2" />
         <TextBox Text="{Binding Service.NetPrice,Converter={StaticResource floatToStringConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                 HorizontalAlignment="Left"
                  Grid.Row="3"
                  Grid.Column="3" />
     </Grid>

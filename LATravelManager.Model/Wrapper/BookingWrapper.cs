@@ -11,7 +11,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Data;
 using System.Windows.Media;
-using static LATravelManager.Model.Enums;
 
 namespace LATravelManager.Model.Wrapper
 {
@@ -212,9 +211,12 @@ namespace LATravelManager.Model.Wrapper
                 {
                     value = 0;
                 }
-                SetValue(value);
-                NetPrice = FullPrice - FullPrice * Commision / 100;
-                CalculateRemainingAmount();
+                if (Math.Abs(value - GetValue<decimal>()) >= 0.01m)
+                {
+                    SetValue(value);
+                    NetPrice = Math.Round(FullPrice - FullPrice * Commision / 100, 2);
+                    CalculateRemainingAmount();
+                }
             }
         }
 
@@ -242,7 +244,7 @@ namespace LATravelManager.Model.Wrapper
         {
             if (Excursion != null)
             {
-                return $"ΕΚΔΡΟΜΗ ΓΙΑ {Excursion.Destinations[0].Name.TrimEnd('Σ')} / {new ReservationWrapper(ReservationsInBooking[0]).Dates} / {Customers.Count} ΑΤΟΜΑ / {GetHotels()}";
+                return $"ΕΚΔΡΟΜΗ ΓΙΑ {Excursion.Destinations[0].Name} / {new ReservationWrapper(ReservationsInBooking[0]).Dates} / {Customers.Count} ΑΤΟΜΑ / {GetHotels()}";
             }
             else
             {
@@ -258,6 +260,10 @@ namespace LATravelManager.Model.Wrapper
                 if (res.Room != null && !hotels.Any(x => x == res.Room.Hotel.Name))
                 {
                     hotels.Add(res.Room.Hotel.Name);
+                }
+                if (res.NoNameRoomType != null && res.Hotel != null && !hotels.Any(x => x == res.Hotel.Name))
+                {
+                    hotels.Add(res.Hotel.Name);
                 }
                 if (res.ReservationType == ReservationTypeEnum.Noname && !hotels.Any(x => x == "NO NAME"))
                 {
@@ -371,7 +377,7 @@ namespace LATravelManager.Model.Wrapper
                 {
                     if (Commision > 0)
                     {
-                        NetPrice = FullPrice * (1 - (Commision / 100));
+                        NetPrice = Math.Round(FullPrice * (1 - (Commision / 100)), 2);
                     }
                     else if (Commision == 0)
                     {
@@ -412,7 +418,7 @@ namespace LATravelManager.Model.Wrapper
                     Partner = null;
 
                     Calculating = true;
-                    if (FullPrice >= 0)
+                    if (FullPrice >= 0 && Customers.Count > 0)
                     {
                         decimal tmpPrice = Math.Round(FullPrice / Customers.Count, 2);
                         foreach (CustomerWrapper customer in Customers)
@@ -495,7 +501,7 @@ namespace LATravelManager.Model.Wrapper
 
                 if (Math.Abs(_Remaining - value) > 0.0001m)
                 {
-                    _Remaining = Math.Round(value, 1);
+                    _Remaining = Math.Round(value, 2);
                     RaisePropertyChanged();
                 }
             }
@@ -574,9 +580,43 @@ namespace LATravelManager.Model.Wrapper
             }
             else
             {
-                Remaining = NetPrice - Recieved;
+                if (Partner != null && Partner.Person)
+                {
+                    Remaining = FullPrice - Recieved;
+                    if (FullPrice > 0 && Commision > 0 && NetPrice > 0 && FIxedCommision == 0)
+                        FIxedCommision = FullPrice - NetPrice;
+                }
+                else
+                    Remaining = NetPrice - Recieved;
             }
         }
+
+        private decimal _FIxedCommision;
+
+        public decimal FIxedCommision
+        {
+            get
+            {
+                return _FIxedCommision;
+            }
+
+            set
+            {
+                if (_FIxedCommision == value)
+                {
+                    return;
+                }
+
+                if (Math.Abs(value - _FIxedCommision) >= 0.01m)
+                {
+                    _FIxedCommision = Math.Round(value, 2);
+                    Commision = Math.Round(_FIxedCommision * 100 / FullPrice, 2);
+                }
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal EPSILON { get; private set; } = 0.0001m;
 
         public bool Contains(string key)
         {

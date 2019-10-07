@@ -95,7 +95,7 @@
                         VerticalAlignment="Top"
                         Margin="0 5 0 1"
                         Command="{Binding ToggleDisabilityCommand}"
-                        Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}"
+                        Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
                         HorizontalAlignment="Center" />
                 <TextBlock Text="Λόγος:" />
                 <TextBox HorizontalAlignment="Center"
@@ -123,7 +123,7 @@
                            Margin=" 5 0 0 0"
                            HorizontalAlignment="Center" />
                 <Button Content="Επαναφορά"
-                        Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}"
+                        Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
                         Grid.Row="0"
                         Grid.Column="1"
                         VerticalAlignment="Center"
@@ -151,6 +151,13 @@
                          TextWrapping="Wrap" />
             </Grid>
         </DataTemplate>
+        <CollectionViewSource x:Key="cvs"
+                              Source="{Binding FilteredRoomList}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="RoomType" />
+                <PropertyGroupDescription PropertyName="Hotel" />
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>
     </Window.Resources>
     <ScrollViewer HorizontalScrollBarVisibility="Auto">
         <Grid VerticalAlignment="Center"
@@ -385,32 +392,48 @@
                 </StackPanel>
                 <Border BorderThickness="1"
                         Height="250"
+                        Width="140"
                         VerticalAlignment="Top"
                         Margin="0,10">
                     <Grid  Margin="5">
+
                         <Grid.Resources>
                             <Style TargetType="Label">
                                 <Setter Property="HorizontalAlignment"
                                         Value="Center" />
                                 <Setter Property="Padding"
                                         Value="0,5,0,0" />
+                                <Setter Property="FontSize"
+                                        Value="11" />
                             </Style>
                         </Grid.Resources>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <StackPanel Grid.Row="0"
+                        <StackPanel Orientation="Horizontal">
+
+                            <Label Content="Κωδικός:"
+                                   Padding="0"
+                                   HorizontalAlignment="Left" />
+                            <Label Content="{Binding BookingWr.Id}"
+                                   Padding="0"
+                                   HorizontalAlignment="Left" />
+                        </StackPanel>
+                        <StackPanel Grid.Row="1"
                                     VerticalAlignment="Top">
+                            <Separator />
                             <Label Content="Πωλητής:"
                                    Padding="0" />
-                            <TextBlock Text="{Binding BookingWr.User.UserName }" />
+                            <Label Padding="0"
+                                   Content="{Binding BookingWr.User.UserName }" />
                             <Label Content="Προστέθηκε:"
                                    Padding="0" />
                             <TextBlock Text="{Binding BookingWr.CreatedDate, StringFormat='{}{0:dd/MM/yyyy}' }" />
                         </StackPanel>
-                        <StackPanel Grid.Row="1"
+                        <StackPanel Grid.Row="2"
                                     VerticalAlignment="Center">
                             <Separator />
                             <TextBlock Background="LightGray"
@@ -420,7 +443,7 @@
                                        Text="{Binding SelectedCustomer.CheckOut, StringFormat='{}{0:dd/MM/yyyy}'}" />
                             <Separator />
                         </StackPanel>
-                        <StackPanel Grid.Row="2"
+                        <StackPanel Grid.Row="3"
                                     IsEnabled="{Binding IsAnyResSelected}"
                                     VerticalAlignment="Bottom">
                             <Label Content="Ξενοδόχείο:"
@@ -750,20 +773,9 @@
                                 <Button Content="OverBook"
                                         VerticalAlignment="Center"
                                         Command="{Binding OverBookHotelCommand}"
+                                        Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
                                         Margin="0,0,5,0">
-                                    <Button.Style>
-                                        <Style TargetType="Button">
-                                            <Setter Property="Visibility"
-                                                    Value="Collapsed" />
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding SelectedExcursion.ExcursionType.Category}"
-                                                             Value="3">
-                                                    <Setter Property="Visibility"
-                                                            Value="Visible" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Button.Style>
+                                   
                                 </Button>
                                 <Button Content="Transfer"
                                         VerticalAlignment="Center"
@@ -775,7 +787,7 @@
                                         Margin="0,0,5,0" />
                             </StackPanel>
                         </StackPanel>
-                        <ListView ItemsSource="{Binding FilteredRoomList}"
+                        <ListView ItemsSource="{Binding Source={StaticResource cvs}}"
                                   Grid.Row="1"
                                   Width="400"
                                   HorizontalAlignment="Left"
@@ -831,32 +843,81 @@
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate>
-                                                        <Expander IsExpanded="False"
-                                                                  IsEnabled="{Binding Converter={StaticResource RoomsLeftToVisibilityConverter}}">
+                                                        <Expander IsExpanded="False">
                                                             <Expander.Header>
+                                                                <!--IsEnabled="{Binding Converter={StaticResource RoomsLeftToVisibilityConverter}}">-->
                                                                 <StackPanel Orientation="Horizontal">
                                                                     <TextBlock Text="{Binding ItemCount}"
                                                                                FontSize="16"
                                                                                Foreground="Green"
                                                                                FontWeight="Bold"
+                                                                               VerticalAlignment="Top"
                                                                                FontStyle="Italic"
-                                                                               Margin="0,0,10,0"
-                                                                               VerticalAlignment="Center" />
+                                                                               Margin="0,0,10,0" />
                                                                     <TextBlock Text="{Binding Name}"
                                                                                FontWeight="Bold"
+                                                                               VerticalAlignment="Top"
                                                                                Foreground="Black"
-                                                                               FontSize="16"
+                                                                               FontSize="16" />
+                                                                    <TextBlock Foreground="Black"
+                                                                               Margin="10 0"
+                                                                               FontSize="14"
+                                                                               TextWrapping="Wrap"
+                                                                               Width="310"
                                                                                VerticalAlignment="Center" />
-                                                                    <TextBlock FontWeight="Bold"
-                                                                               Foreground="Black"
-                                                                               FontSize="16"
-                                                                               Text="{Binding Converter={StaticResource RoomTypeToRoomsLeftConverter}}"
-                                                                               VerticalAlignment="Center" />
+                                                                    <!--Text="{Binding Converter={StaticResource RoomsLeftToHotelsConverter}}"-->
                                                                     <!--Visibility="{Binding Converter={StaticResource RoomsHotelsToVisibilityConverter}}"-->
+                                                                    <!--
                                                                     <Button Content="No Name"
-                                                                            Command="{Binding DataContext.BookRoomNoNameCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}, Mode=FindAncestor}}"
+                                                                            Command="{Binding DataContext.BookRoomNoNameCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}, Mode=FindAncestor}}"
                                                                             CommandParameter="{Binding Name}"
-                                                                            Margin="5,0" />
+                                                                            Margin="5,0" />-->
+                                                                </StackPanel>
+                                                            </Expander.Header>
+                                                            <ItemsPresenter />
+                                                        </Expander>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </GroupStyle.ContainerStyle>
+                                </GroupStyle>
+                                <GroupStyle>
+                                    <GroupStyle.ContainerStyle>
+                                        <Style TargetType="{x:Type GroupItem}">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate>
+                                                        <Expander IsExpanded="False"
+                                                                  Margin="23 0 0 0">
+                                                            <Expander.Header>
+                                                                <!--IsEnabled="{Binding Converter={StaticResource RoomsLeftToVisibilityConverter}}">-->
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <TextBlock Text="{Binding ItemCount}"
+                                                                               FontSize="14"
+                                                                               Width="25"
+                                                                               Foreground="Blue"
+                                                                               FontWeight="Bold"
+                                                                               VerticalAlignment="Top"
+                                                                               FontStyle="Italic" />
+                                                                    <TextBlock Text="{Binding Name}"
+                                                                               FontWeight="Bold"
+                                                                               VerticalAlignment="Top"
+                                                                               Foreground="Black"
+                                                                               FontSize="14" />
+                                                                    <!--<TextBlock Foreground="Blue"
+                                                                               Margin="10 0"
+                                                                               FontSize="14"
+                                                                               TextWrapping="Wrap"
+                                                                               Width="310"
+                                                                               VerticalAlignment="Center" />-->
+                                                                    <!--Text="{Binding Converter={StaticResource RoomsLeftToHotelsConverter}}"-->
+                                                                    <!--Visibility="{Binding Converter={StaticResource RoomsHotelsToVisibilityConverter}}"-->
+                                                                    <!--
+                                                                    <Button Content="No Name"
+                                                                            Command="{Binding DataContext.BookRoomNoNameCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}, Mode=FindAncestor}}"
+                                                                            CommandParameter="{Binding Name}"
+                                                                            Margin="5,0" />-->
                                                                 </StackPanel>
                                                             </Expander.Header>
                                                             <ItemsPresenter />
@@ -962,21 +1023,30 @@
                                 <TextBlock Text="Σύνολο:"
                                            HorizontalAlignment="Left" />
                                 <TextBox Text="{Binding BookingWr.FullPrice,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                         Margin="5,0,5,5"
+                                         Margin="0,0,5,5"
                                          VerticalAlignment="Center"
-                                         MinWidth="40"
-                                         MaxWidth="60"
+                                         HorizontalAlignment="Left"
+                                         Width="50"
                                          Grid.Column="1" />
                                 <TextBlock Text="Προμήθεια (%):"
                                            Grid.Row="1"
                                            HorizontalAlignment="Left" />
-                                <TextBox Text="{Binding BookingWr.Commision,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                         Margin="5,0,5,5"
-                                         VerticalAlignment="Center"
-                                         MinWidth="40"
-                                         MaxWidth="60"
-                                         Grid.Row="1"
-                                         Grid.Column="1" />
+                                <StackPanel   Grid.Row="1"
+                                              Orientation="Horizontal"
+                                              Grid.Column="1">
+
+                                    <TextBox Text="{Binding BookingWr.Commision,Converter={StaticResource FtoSConverter},ConverterParameter=0,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                             Margin="0,0,5,5"
+                                             VerticalAlignment="Center"
+                                             HorizontalAlignment="Left"
+                                             Width="50" />
+                                    <TextBox Width="30"
+                                             VerticalAlignment="Center"
+                                             HorizontalAlignment="Left"
+                                             Text="{Binding BookingWr.FIxedCommision,UpdateSourceTrigger=PropertyChanged}"
+                                             Margin="0,0,0,5"
+                                             Visibility="{Binding BookingWr.Partner.People}" />
+                                </StackPanel>
                                 <TextBlock Text="Νet τιμή:"
                                            Grid.Row="2"
                                            HorizontalAlignment="Left" />
@@ -984,6 +1054,7 @@
                                            Margin="5,0,5,5"
                                            VerticalAlignment="Center"
                                            MinWidth="40"
+                                           HorizontalAlignment="Left"
                                            MaxWidth="60"
                                            Grid.Row="2"
                                            Grid.Column="1" />
@@ -1061,7 +1132,7 @@
                                       SelectedIndex="{Binding SelectedUserIndex}"
                                       DisplayMemberPath="UserName"
                                       Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}"
-                                      Margin="0"
+                                      Margin="5 0"
                                       VerticalAlignment="Center" />
                             <Button Content="Αποθήκευση"
                                     Margin="5,5,5,0"

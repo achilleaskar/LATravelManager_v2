@@ -103,7 +103,7 @@
                     <DataGrid Margin="5"
                               FontSize="12"
                               Height="250"
-                              Width="601"
+                              Width="610"
                               LoadingRow="DataGrid_LoadingRow"
                               PreparingCellForEdit="CustomersDataGrid_PreparingCellForEdit"
                               x:Name="CustomersDataGrid"
@@ -158,13 +158,13 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Header="Γέννηση"
+                            <DataGridTemplateColumn Header="Γέννηση" Width="Auto"
                                                     CellStyle="{StaticResource DataGridCellStyle}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <DatePicker Width="Auto"
+                                        <DatePicker 
                                                     VerticalAlignment="Center"
-                                                    MinWidth="60"
+                                                    Width="95"
                                                     SelectedDate="{Binding DOB}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
@@ -188,10 +188,31 @@
                                     </Style>
                                 </DataGridComboBoxColumn.EditingElementStyle>
                             </DataGridComboBoxColumn>
-                            <DataGridTextColumn Header="Αρ. Ταυτ."
-                                                MinWidth="80"
+                            <DataGridTextColumn Header="Passport Id"
                                                 MaxWidth="200"
                                                 Binding="{Binding PassportNum,UpdateSourceTrigger=PropertyChanged}" />
+                            <DataGridTemplateColumn Header="Έκδοση"
+                                                    Width="Auto"
+                                                    CellStyle="{StaticResource DataGridCellStyle}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <DatePicker VerticalAlignment="Center"
+                                                    Width="95"
+                                                    SelectedDate="{Binding PassportPublish}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Λήξη"
+                                                    Width="Auto"
+                                                    CellStyle="{StaticResource DataGridCellStyle}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <DatePicker VerticalAlignment="Center" 
+                                                    Width="95"
+                                                    SelectedDate="{Binding PassportExpiration}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                             <DataGridTemplateColumn Header="Πάσο"
                                                     Width="70">
                                 <DataGridTemplateColumn.CellTemplate>
@@ -237,7 +258,6 @@
                               FontSize="12"
                               ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                               ScrollViewer.CanContentScroll="False">
-
                         <ListView.Resources>
                             <ContextMenu x:Key="ItemContextMenu">
                                 <MenuItem Header="Επεξεργασία"
@@ -266,6 +286,16 @@
                             <DataTemplate DataType="{x:Type services:TransferService}">
                                 <ServicePreviews:TransferService_Preview />
                             </DataTemplate>
+                            <Style TargetType="GroupBox">
+                                <Setter Property="HeaderTemplate">
+                                    <Setter.Value>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding}"
+                                                       FontWeight="Bold" Foreground="Blue" />
+                                        </DataTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
                         </ListView.Resources>
                         <ListView.ItemContainerStyle>
                             <Style TargetType="{x:Type ListViewItem}">
@@ -370,8 +400,18 @@
                                     <CheckBox Name="IsPartnerCheckBox"
                                               Checked="IsPartnerCheckBox_Checked"
                                               Unchecked="IsPartnerCheckBox_Unchecked"
-                                              IsChecked="{Binding PersonalWr.IsPartners,UpdateSourceTrigger=PropertyChanged}"
+                                              IsChecked="{Binding IsPartners,UpdateSourceTrigger=PropertyChanged}"
                                               HorizontalAlignment="Left"
+                                              VerticalAlignment="Center" />
+                                    <TextBlock FlowDirection="LeftToRight"
+                                               VerticalAlignment="Center"
+                                               Margin="15 0 5 0 "
+                                               Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
+                                               HorizontalAlignment="Left"
+                                               Text="Απόδειξη" />
+                                    <CheckBox HorizontalAlignment="Left"
+                                              Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
+                                              IsChecked="{Binding PersonalWr.Reciept,UpdateSourceTrigger=PropertyChanged}"
                                               VerticalAlignment="Center" />
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal"
@@ -607,6 +647,13 @@
                                         <ContextMenu x:Key="ItemContextMenu">
                                             <MenuItem Header="Διαγραφη"
                                                       Command="{Binding DataContext.DeletePaymentCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}">
+                                                <MenuItem.Icon>
+                                                    <Image MaxHeight="20"
+                                                           Stretch="Fill" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="Εκτ. Απόδειξης"
+                                                      Command="{Binding DataContext.PrintRecieptCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
                                                 <MenuItem.Icon>
                                                     <Image MaxHeight="20"
                                                            Stretch="Fill" />

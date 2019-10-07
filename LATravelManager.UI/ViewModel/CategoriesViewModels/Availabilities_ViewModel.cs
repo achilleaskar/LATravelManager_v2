@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
+using LATravelManager.Model;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.LocalModels;
 using LATravelManager.UI.Wrapper;
@@ -7,7 +8,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
-using static LATravelManager.Model.Enums;
 
 namespace LATravelManager.UI.ViewModel.CategoriesViewModels
 {

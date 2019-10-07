@@ -63,84 +63,109 @@
                    Width="100"
                    HorizontalAlignment="Left"
                    Grid.Column="3" />
-            <Label  Content="Με Επιστροφή"
-                    Grid.Row="2"
-                    Grid.Column="2" />
-            <CheckBox Name="AllerretourCheckBox"
-                      Grid.Row="2"
-                      Grid.Column="3"
-                      IsChecked="{Binding Allerretour}" />
             <Label Content="Εταιρεία:"
-                   Grid.Row="2"
+                   Grid.Row="1"
                    Grid.Column="0" />
             <Label Content="{Binding Airline.Name}"
-                   Grid.Row="2"
+                   Grid.Row="1"
                    HorizontalAlignment="Left"
                    Width="100"
                    Grid.Column="1" />
+            <Label  Content="Με Επιστροφή"
+                    Grid.Row="1"
+                    Grid.Column="2" />
+            <CheckBox Name="AllerretourCheckBox"
+                      Grid.Row="1"
+                      IsEnabled="False"
+                      Grid.Column="3"
+                      IsChecked="{Binding Allerretour}" />
             <Label Content="Αναχώρηση:"
-                   Grid.Row="3" />
-            <Label Grid.Row="3"
+                   Grid.Row="2" />
+            <Label Grid.Row="2"
                    Grid.Column="1"
                    Content="{Binding TimeGo ,ConverterParameter='dd/MM/yyyy-HH:mm', Converter={StaticResource dateTimeToString}}" />
             <Label Content="Επιστροφή:"
-                   Grid.Row="3"
+                   Visibility="{Binding Allerretour,Converter={StaticResource booleanToVisibilityConverter}}"
+                   Grid.Row="2"
                    Grid.Column="2" />
-            <Label Grid.Row="3"
+            <Label Grid.Row="2"
                    HorizontalAlignment="Left"
+                   Visibility="{Binding Allerretour,Converter={StaticResource booleanToVisibilityConverter}}"
                    Grid.Column="3"
                    Content="{Binding TimeReturn ,ConverterParameter='dd/MM/yyyy-HH:mm', Converter={StaticResource dateTimeToString}}" />
+            <Border Grid.ColumnSpan="2"
+                    Grid.Row="3"
+                    BorderThickness="0"
+                    Visibility="{Binding Stop,  Converter={StaticResource booleanToVisibilityConverter}}"
+                    Background="AntiqueWhite" />
             <Label Content=" Στάση:"
-                   Grid.Row="4" />
+                   Grid.Row="3" />
+
             <StackPanel Orientation="Horizontal"
-                        Grid.Row="4"
-                        Grid.Column="1"
-                        Grid.ColumnSpan="1">
+                        Grid.Row="3"
+                        Grid.Column="1">
                 <CheckBox IsChecked="{Binding Stop}"
                           Name="HasStopCheckBox"
                           Grid.Column="1"
                           IsEnabled="False"
-                          Grid.Row="4" />
+                          Grid.Row="3" />
                 <StackPanel Orientation="Horizontal"
-                            Visibility="{Binding IsChecked, ElementName=HasStopCheckBox, Converter={StaticResource booleanToVisibilityConverter}}">
+                            Visibility="{Binding Stop,  Converter={StaticResource booleanToVisibilityConverter}}">
                     <Label Content="Πόλη:"
                            Grid.Row="4"
                            Grid.Column="2" />
-                    <Label Content="{Binding StopPlace}"
-                           Grid.Row="4"
-                           Width="100"
-                           Grid.Column="3" />
+                    <TextBox Text="{Binding Service.StopPlace}"
+                             Grid.Row="4" VerticalAlignment="Center"
+                             Width="120"
+                             Grid.Column="3" />
                 </StackPanel>
             </StackPanel>
-            <Label Content="Αναμονή:"
+            <Border Grid.Column="2"
+                    Grid.ColumnSpan="2"
+                    Margin="0 0  6.5 0"
+                    Grid.Row="3"
+                    BorderThickness='0'
+                    Visibility="{Binding Stop,  Converter={StaticResource booleanToVisibilityConverter}}"
+                    Background="AntiqueWhite"
+                    Grid.RowSpan="2" />
+
+            <Label Grid.Column="2"
+                   Grid.Row="3" 
+                   Visibility="{Binding Stop,  Converter={StaticResource booleanToVisibilityConverter}}"
+                   Content="Άφιξη:" />
+            <Label Content="{Binding StopArrive, Converter={StaticResource dateTimeToString} }"
+                   Visibility="{Binding Stop,  Converter={StaticResource booleanToVisibilityConverter}}"
+                 HorizontalAlignment="Left"
+                   Grid.Row="3"
+                   Grid.Column="3" />
+            <Label Grid.Column="2"
                    Grid.Row="4"
-                   Visibility="{Binding IsChecked, ElementName=HasStopCheckBox, Converter={StaticResource booleanToVisibilityConverter}}"
-                   Grid.Column="2" />
-            <Label Grid.Row="4"
+                   Visibility="{Binding Stop,  Converter={StaticResource booleanToVisibilityConverter}}"
+                   Content="Αναχώρηση:" />
+            <Label Content="{Binding StopLeave , Converter={StaticResource dateTimeToString}}"
                    HorizontalAlignment="Left"
-                   Grid.Column="3"
-                   Visibility="{Binding IsChecked, ElementName=HasStopCheckBox, Converter={StaticResource booleanToVisibilityConverter}}"
-                   Content="{Binding TimeReturn,StringFormat='{}{0:dd/MM/yyyy-HH:mm}'}" />
+                   Visibility="{Binding Stop,  Converter={StaticResource booleanToVisibilityConverter}}"
+                   Grid.Row="4"
+                   Grid.Column="3" />
             <Label Content="PNR:"
-                   Grid.Row="5" />
+                   Grid.Row="4" />
             <Label Content="{Binding PNR}"
-                   Grid.Row="5"
+                   Grid.Row="4"
                    HorizontalAlignment="Left"
                    Width="100"
                    Grid.Column="1" />
             <Label Content="Κέρδος:"
-                   Grid.Row="6"
+                   Grid.Row="5"
                    Grid.Column="0" />
             <Label Content="{Binding Profit,Converter={StaticResource floatToStringConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                   Grid.Row="6"
+                   Grid.Row="5"
                    HorizontalAlignment="Left"
-
                    Grid.Column="1" />
             <Label Content="Κόστος(ΝΕΤ):"
-                   Grid.Row="6"
+                   Grid.Row="5"
                    Grid.Column="2" />
             <Label Content="{Binding NetPrice,Converter={StaticResource floatToStringConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                   Grid.Row="6"
+                   Grid.Row="5"
                    HorizontalAlignment="Left"
                    Grid.Column="3" />
         </Grid>

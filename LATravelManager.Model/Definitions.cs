@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using static LATravelManager.Model.Enums;
 
 namespace LATravelManager.Model
 {

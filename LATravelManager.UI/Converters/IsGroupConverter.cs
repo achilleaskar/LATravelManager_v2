@@ -12,7 +12,7 @@ namespace LATravelManager.UI.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             BookingWrapper booking = value as BookingWrapper;
-            if (booking.Excursion.ExcursionType.Category == Model.Enums.ExcursionTypeEnum.Group)
+            if (booking.Excursion.ExcursionType.Category == Model.ExcursionTypeEnum.Group)
             {
                 return true;
             }

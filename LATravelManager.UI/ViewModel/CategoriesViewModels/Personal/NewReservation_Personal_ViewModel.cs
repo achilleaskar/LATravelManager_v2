@@ -2,21 +2,23 @@
 using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Hotels;
+using LATravelManager.Model.LocalModels;
 using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Services;
+using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.ServiceViewModels;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
-using LATravelManager.UI.Wrapper;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 {
@@ -39,8 +41,29 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             Payment = new Payment();
             MainViewModel = mainViewModel;
 
+            PrintRecieptCommand = new RelayCommand(PrintReciept);
+
             EditServiceCommand = new RelayCommand(EditService);
+            Emails = new ObservableCollection<Email>();
         }
+
+        public DocumentsManagement DocumentsManagement { get; set; }
+
+        private void PrintReciept()
+        {
+            if (SelectedCustomer == null)
+            {
+                MessageBox.Show("Παρακαλώ επιλέξτε πελάτη");
+                return;
+            }
+            if (DocumentsManagement == null)
+            {
+                DocumentsManagement = new DocumentsManagement(StartingRepository);
+            }
+            DocumentsManagement.PrintPaymentsReciept(SelectedPayment, SelectedCustomer.Model);
+        }
+
+        public RelayCommand PrintRecieptCommand { get; set; }
 
         #endregion Constructors
 
@@ -70,6 +93,8 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
         private List<ServiceViewModel> _Templates;
 
         private ObservableCollection<User> _Users;
+        private ObservableCollection<Email> _Emails;
+        private Email _SelectedEmail;
 
         #endregion Fields
 
@@ -185,6 +210,8 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 
         public Payment Payment { get; private set; }
 
+        private Email _PartnerEmail;
+
         public Personal_BookingWrapper PersonalWr
         {
             get
@@ -202,6 +229,29 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
                 _PersonalWr = value;
                 PersonalWr.PropertyChanged += PersonalWr_PropertyChanged;
 
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool IsPartners
+        {
+            get
+            {
+                return PersonalWr != null && PersonalWr.IsPartners;
+            }
+
+            set
+            {
+                if (PersonalWr.IsPartners == value)
+                {
+                    return;
+                }
+
+                PersonalWr.IsPartners = value;
+                if (!value)
+                {
+                    SelectedPartnerIndex = -1;
+                }
                 RaisePropertyChanged();
             }
         }
@@ -233,15 +283,64 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             {
                 return _SelectedPartnerIndex;
             }
-
             set
             {
                 if (_SelectedPartnerIndex == value)
                 {
                     return;
                 }
-
                 _SelectedPartnerIndex = value;
+                if (SelectedPartnerIndex >= 0 && (PersonalWr.Partner == null || (PersonalWr.Partner != null && PersonalWr.Partner.Id != Partners[SelectedPartnerIndex].Id)))
+                {
+                    PersonalWr.Partner = StartingRepository.GetById<Partner>(Partners[SelectedPartnerIndex].Id);
+                    Emails = (PersonalWr.Partner.Emails != null && PersonalWr.Partner.Emails.Count() > 0) ? new ObservableCollection<Email>(PersonalWr.Partner.Emails.Split(',').Select(e => new Email(e))) : new ObservableCollection<Email>();
+                    if (Emails.Count > 0)
+                    {
+                        SelectedEmail = Emails[0];
+                    }
+                }
+                RaisePropertyChanged();
+            }
+        }
+
+        public Email SelectedEmail
+        {
+            get
+            {
+                return _SelectedEmail;
+            }
+
+            set
+            {
+                if (_SelectedEmail == value)
+                {
+                    return;
+                }
+
+                _SelectedEmail = value;
+                if (value != null && PersonalWr.Partner != null)
+                {
+                    PersonalWr.PartnerEmail = value.EValue;
+                }
+                RaisePropertyChanged();
+            }
+        }
+
+        public ObservableCollection<Email> Emails
+        {
+            get
+            {
+                return _Emails;
+            }
+
+            set
+            {
+                if (_Emails == value)
+                {
+                    return;
+                }
+
+                _Emails = value;
                 RaisePropertyChanged();
             }
         }
@@ -605,7 +704,11 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
                     StartingRepository = MainViewModel.StartingRepository;
                 }
                 int userId = SelectedUserIndex >= 0 && Users != null && SelectedUserIndex < Users.Count ? Users[SelectedUserIndex].Id : -1;
-                int partnerId = SelectedPartnerIndex >= 0 && Partners != null && SelectedPartnerIndex < Partners.Count ? Partners[SelectedPartnerIndex].Id : -1;
+                int partnerId = -1;
+                if (PersonalWr.IsPartners && SelectedPartnerIndex > 0)
+                {
+                    partnerId = SelectedPartnerIndex >= 0 && Partners != null && SelectedPartnerIndex < Partners.Count ? Partners[SelectedPartnerIndex].Id : -1;
+                }
                 Users = BasicDataManager.Users;
                 Partners = BasicDataManager.Partners;
 
@@ -616,6 +719,15 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
                 else
                 {
                     SelectedUserIndex = Users.IndexOf(Users.Where(x => x.Id == userId).FirstOrDefault());
+                }
+                if (PersonalWr.Id > 0 && PersonalWr.IsPartners)
+                {
+                    SelectedPartnerIndex = Partners.IndexOf(Partners.Where(p => p.Id == PersonalWr.Partner.Id).FirstOrDefault());
+                    SelectedEmail = Emails.Where(e => e.EValue == PersonalWr.PartnerEmail).FirstOrDefault();
+                }
+                else
+                {
+                    SelectedPartnerIndex = Partners.IndexOf(Partners.Where(x => x.Id == partnerId).FirstOrDefault());
                 }
             }
             catch (Exception ex)
@@ -679,7 +791,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 
         private string ValidatePayment()
         {
-            if (Payment.Amount > PersonalWr.Remaining)
+            if (Payment.Amount > (PersonalWr.Remaining + 0.05m))
             {
                 return "Το ποσό υπερβαίνει το υπόλοιπο της κράτησης";
             }
@@ -688,7 +800,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             {
                 return "Το ποσό πληρωμής δεν μπορεί να είναι αρνητικό";
             }
-            if (Payment.Amount > PersonalWr.Remaining)
+            if (Payment.Amount > (PersonalWr.Remaining + 0.05m))
             {
                 return "Το ποσό πληρωμής υπερβαίνει το υπολειπόμενο ποσό";
             }

@@ -7,7 +7,7 @@
         FontSize="14"
         mc:Ignorable="d"
         WindowStartupLocation="CenterOwner"
-
+Closing="Window_Closing"
         Title="{Binding ControlName}"
         Height="450"
         Width="800">
@@ -99,10 +99,13 @@
                           CanUserDeleteRows="False"
                           SelectedItem="{Binding SelectedEntity}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Όνομα" Width="100"
+                        <DataGridTextColumn Header="Όνομα"
+                                            Width="100"
+                                            IsReadOnly="True"
                                             Binding="{Binding Name}" />
                         <DataGridTextColumn Header="Χώρα"
                                             Width="100"
+                                            IsReadOnly="True"
                                             Binding="{Binding Country.Name}" />
                     </DataGrid.Columns>
                 </DataGrid>

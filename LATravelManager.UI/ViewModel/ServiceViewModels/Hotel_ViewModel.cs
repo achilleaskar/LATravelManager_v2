@@ -1,7 +1,13 @@
-﻿using LATravelManager.Model.Hotels;
+﻿using GalaSoft.MvvmLight.CommandWpf;
+using LaTravelManager.ViewModel.Management;
+using LATravelManager.Model.Hotels;
 using LATravelManager.Model.Locations;
 using LATravelManager.Model.Services;
+using LATravelManager.UI.Message;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Personal;
+using LATravelManager.UI.ViewModel.Window_ViewModels;
+using LATravelManager.UI.Views;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Data;
@@ -12,9 +18,44 @@ namespace LATravelManager.UI.ViewModel.ServiceViewModels
     {
         public Hotel_ViewModel(NewReservation_Personal_ViewModel parent) : base(parent)
         {
+            this.PropertyChanged += Hotel_ViewModel_PropertyChanged;
             Service = new HotelService();
+            OpenHotelEditCommand = new RelayCommand(OpenHotelsWindow);
             Refresh();
         }
+
+        private void Hotel_ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (Service is HotelService && e.PropertyName == nameof(Service))
+            {
+                Service.PropertyChanged += Service_PropertyChanged;
+                if (HotelsCv != null)
+                    HotelsCv.Refresh();
+            }
+        }
+
+        private void Service_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (Service is HotelService && e.PropertyName == "City")
+            {
+                if (HotelsCv != null)
+                    HotelsCv.Refresh();
+            }
+            if (sender is HotelService hs && e.PropertyName == nameof(hs.TimeGo) && hs.TimeGo.Year > 2000)
+            {
+                hs.Option = hs.TimeGo.AddDays(-10);
+            }
+        }
+
+        private void OpenHotelsWindow()
+        {
+            HotelsManagement_ViewModel vm = new HotelsManagement_ViewModel(Parent.MainViewModel.BasicDataManager);
+            vm.ReLoad();
+            MessengerInstance.Send(new OpenChildWindowCommand(new HotelsManagement_Window { DataContext = vm }));
+            HotelsList = new ObservableCollection<Hotel>(Parent.MainViewModel.BasicDataManager.Hotels);
+        }
+
+        public RelayCommand OpenHotelEditCommand { get; }
 
         public override void Refresh()
         {
@@ -42,6 +83,8 @@ namespace LATravelManager.UI.ViewModel.ServiceViewModels
 
                 _HotelsList = value;
                 RaisePropertyChanged();
+                HotelsCv = CollectionViewSource.GetDefaultView(HotelsList);
+                HotelsCv.Filter = HotelsFilter;
             }
         }
 
@@ -63,11 +106,38 @@ namespace LATravelManager.UI.ViewModel.ServiceViewModels
 
                 _Hotels = value;
                 _Hotels.Filter = HotelsFilter;
+                if (_Hotels != null)
+                    _Hotels.Refresh();
                 RaisePropertyChanged();
             }
         }
 
         private ObservableCollection<City> _Cities;
+
+
+
+
+        private ICollectionView _HotelsCv;
+
+
+        public ICollectionView HotelsCv
+        {
+            get
+            {
+                return _HotelsCv;
+            }
+
+            set
+            {
+                if (_HotelsCv == value)
+                {
+                    return;
+                }
+
+                _HotelsCv = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public ObservableCollection<City> Cities
         {
@@ -115,9 +185,8 @@ namespace LATravelManager.UI.ViewModel.ServiceViewModels
 
         public bool HotelsFilter(object item)
         {
-            if (City == null)
-                return true;
-            return (item as Hotel).City.Id == City.Id;
+
+            return Service is HotelService hs && hs.City != null && item is Hotel ho && ho.City.Id == hs.City.Id;
         }
 
         public ObservableCollection<RoomType> RoomTypes

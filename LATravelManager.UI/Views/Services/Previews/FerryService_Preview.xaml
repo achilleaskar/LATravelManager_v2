@@ -67,9 +67,11 @@
                    Content="{Binding TimeGo ,ConverterParameter='dd/MM/yyyy-HH:mm', Converter={StaticResource dateTimeToString}}" />
             <Label Content="Επιστροφή:"
                    Grid.Row="1"
+                   Visibility="{Binding Allerretour,Converter={StaticResource booleanToVisibilityConverter}}"
                    Grid.Column="2" />
             <Label Grid.Row="1"
                    Grid.Column="3"
+                   Visibility="{Binding Allerretour,Converter={StaticResource booleanToVisibilityConverter}}"
                    HorizontalAlignment="Left"
                    Content="{Binding TimeReturn ,ConverterParameter='dd/MM/yyyy-HH:mm', Converter={StaticResource dateTimeToString}}" />
             <Label Content="Εταιρεία:"
@@ -85,6 +87,7 @@
                    Grid.Row="2"
                    Grid.Column="0" />
             <CheckBox Grid.Row="2"
+                      IsEnabled="False"
                       IsChecked="{Binding Allerretour}"
                       HorizontalAlignment="Left"
                       Grid.Column="1" />

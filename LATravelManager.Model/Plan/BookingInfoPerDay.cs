@@ -1,7 +1,6 @@
 ﻿using LATravelManager.Model.BookingData;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
-using static LATravelManager.Model.Enums;
 
 namespace LATravelManager.Model.Plan
 {
@@ -16,7 +15,6 @@ namespace LATravelManager.Model.Plan
 
         #region Properties
 
-        public const string MinimunStayPropertyName = nameof(MinimunStay);
 
         private int _MinimunStay;
 
@@ -35,7 +33,7 @@ namespace LATravelManager.Model.Plan
                 }
 
                 _MinimunStay = value;
-                RaisePropertyChanged(MinimunStayPropertyName);
+                RaisePropertyChanged();
             }
         }
 

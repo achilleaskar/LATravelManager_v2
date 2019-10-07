@@ -49,8 +49,8 @@ using System.Windows;
 // [assembly: AssemblyVersion("1.0.*")]
 
 [assembly: NeutralResourcesLanguage("el-GR")]
-[assembly: AssemblyVersion("0.5.6")]
-[assembly: AssemblyFileVersion("0.5.6")]
+[assembly: AssemblyVersion("0.6.7")]
+[assembly: AssemblyFileVersion("0.6.7")]
 /*
     cd "LATravelManager.UI\bin\Release"
     nuget pack .\LaTravelManager.nuspec

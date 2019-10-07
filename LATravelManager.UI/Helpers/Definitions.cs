@@ -1,6 +1,6 @@
-﻿using System;
+﻿using LATravelManager.Model;
+using System;
 using System.Collections.Generic;
-using static LATravelManager.Model.Enums;
 
 namespace LATravelManager.UI.Helpers
 {

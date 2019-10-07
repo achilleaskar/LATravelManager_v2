@@ -23,7 +23,7 @@ namespace LATravelManager.DataAccess
 
 #if DEBUG
 
-        public MainDatabase() : base(alt)
+        public MainDatabase() : base(normal)
         {
             Configuration.ValidateOnSaveEnabled = false;
 
@@ -31,7 +31,7 @@ namespace LATravelManager.DataAccess
         }
 
 #else
-         public MainDatabase() : base(normal)
+        public MainDatabase() : base(normal)
         {
             Configuration.ValidateOnSaveEnabled = false;
 

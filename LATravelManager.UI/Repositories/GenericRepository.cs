@@ -140,9 +140,10 @@ namespace LATravelManager.UI.Repositories
             return await RunTask(Context.Set<TEntity>().OrderBy(x => x.Name).ToListAsync);
         }
 
-        public async Task<IEnumerable<Booking>> GetAllBookingInPeriod(DateTime minDay, DateTime maxDay, int excursionId, bool canceled = false)
+        public async Task<IEnumerable<Booking>> GetAllBookingInPeriod(DateTime minDay, DateTime maxDay, City city = null, int excursionId = -1, bool canceled = false)
         {
-            return await RunTask(Context.Bookings.Where(c => c.Excursion.Id == excursionId && ((c.CheckIn <= maxDay && c.CheckIn >= minDay) || (c.CheckOut <= maxDay && c.CheckOut >= minDay)))
+            int cityId = city != null ? city.Id : -1;
+            return await RunTask(Context.Bookings.Where(c => ((cityId > 0 && c.Excursion.Destinations.FirstOrDefault().Id == cityId) || (excursionId > 0 && c.Excursion.Id == excursionId)) && ((c.CheckIn <= maxDay && c.CheckIn >= minDay) || (c.CheckOut <= maxDay && c.CheckOut >= minDay)))
                 .Include(f => f.Partner)
                 .Include(f => f.ExcursionDate)
                 .Include(f => f.User)
@@ -211,7 +212,7 @@ namespace LATravelManager.UI.Repositories
             try
             {
                 return await RunTask(Context.Set<Excursion>()
-                .Where(c => c.ExcursionType.Category == Enums.ExcursionTypeEnum.Group)
+                .Where(c => c.ExcursionType.Category == ExcursionTypeEnum.Group)
                 .Include(c => c.Destinations.Select(d => d.Country))
                 .Include(c => c.ExcursionType)
                 .Include(c => c.ExcursionDates)
@@ -226,7 +227,7 @@ namespace LATravelManager.UI.Repositories
         public async Task<IEnumerable<Reservation>> GetAllGroupReservationsByCreationDate(DateTime afterThisDay, bool canceled = false)
         {
             return await RunTask(Context.Reservations
-                .Where(c => c.Booking.Excursion.ExcursionType.Category == Enums.ExcursionTypeEnum.Group && c.CreatedDate >= afterThisDay)
+                .Where(c => c.Booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Group && c.CreatedDate >= afterThisDay)
                 .Include(f => f.Booking)
                 .Include(f => f.Booking.User)
                 .Include(f => f.Booking.ExcursionDate)
@@ -395,7 +396,7 @@ namespace LATravelManager.UI.Repositories
         private void RejectNavigationChanges()
         {
             var objectContext = ((IObjectContextAdapter)Context).ObjectContext;
-            var deletedRelationships = objectContext.ObjectStateManager.GetObjectStateEntries(EntityState.Deleted).Where(e => e.IsRelationship && !this.RelationshipContainsKeyEntry(e));
+            var deletedRelationships = objectContext.ObjectStateManager.GetObjectStateEntries(EntityState.Deleted).Where(e => e.IsRelationship && !RelationshipContainsKeyEntry(e));
             var addedRelationships = objectContext.ObjectStateManager.GetObjectStateEntries(EntityState.Added).Where(e => e.IsRelationship);
 
             foreach (var relationship in addedRelationships)
@@ -427,9 +428,6 @@ namespace LATravelManager.UI.Repositories
 
         public async Task SaveAsync()
         {
-#if DEBUG
-            MessageBox.Show("Prosoxi, fake DB");
-#endif
             List<DbEntityEntry> AddedEntities = Context.ChangeTracker.Entries().Where(E => E.State == EntityState.Added).ToList();
 
             AddedEntities.ForEach(E =>
@@ -450,39 +448,39 @@ namespace LATravelManager.UI.Repositories
                 }
             });
 
-            IEnumerable<DbEntityEntry> changes = from e in Context.ChangeTracker.Entries()
-                                                 where e.State != EntityState.Unchanged
-                                                 select e;
+            //IEnumerable<DbEntityEntry> changes = from e in Context.ChangeTracker.Entries()
+            //                                     where e.State != EntityState.Unchanged
+            //                                     select e;
 
-            foreach (DbEntityEntry change in changes)
-            {
-                if (change.State == EntityState.Added)
-                {
-                    // Log Added
-                }
-                else if (change.State == EntityState.Modified)
-                {
-                    // Log Modified
-                    object item = change.Entity;
-                    DbPropertyValues originalValues = Context.Entry(item).OriginalValues;
-                    DbPropertyValues currentValues = Context.Entry(item).CurrentValues;
+            //foreach (DbEntityEntry change in changes)
+            //{
+            //    if (change.State == EntityState.Added)
+            //    {
+            //        // Log Added
+            //    }
+            //    else if (change.State == EntityState.Modified)
+            //    {
+            //        // Log Modified
+            //        object item = change.Entity;
+            //        DbPropertyValues originalValues = Context.Entry(item).OriginalValues;
+            //        DbPropertyValues currentValues = Context.Entry(item).CurrentValues;
 
-                    foreach (string propertyName in originalValues.PropertyNames)
-                    {
-                        object original = originalValues[propertyName];
-                        object current = currentValues[propertyName];
+            //        foreach (string propertyName in originalValues.PropertyNames)
+            //        {
+            //            object original = originalValues[propertyName];
+            //            object current = currentValues[propertyName];
 
-                        Console.WriteLine("Property {0} changed from {1} to {2}",
-                     propertyName,
-                     originalValues[propertyName],
-                     currentValues[propertyName]);
-                    }
-                }
-                else if (change.State == EntityState.Deleted)
-                {
-                    // log deleted
-                }
-            }
+            //            Console.WriteLine("Property {0} changed from {1} to {2}",
+            //         propertyName,
+            //         originalValues[propertyName],
+            //         currentValues[propertyName]);
+            //        }
+            //    }
+            //    else if (change.State == EntityState.Deleted)
+            //    {
+            //        // log deleted
+            //    }
+            //}
             await RunTask(Context.SaveChangesAsync);
         }
 
@@ -672,14 +670,16 @@ namespace LATravelManager.UI.Repositories
                .ToListAsync);
         }
 
-        internal async Task<List<Personal_Booking>> GetAllPersonalBookingsFiltered(int userId, bool completed, DateTime dateLimit, bool canceled = false)
+        internal async Task<List<Personal_Booking>> GetAllPersonalBookingsFiltered(int userId, bool completed, DateTime dateLimit, int par = 0, DateTime checkin = new DateTime(), DateTime checkout = new DateTime(), bool canceled = false)
         {
             var x = await RunTask(Context.Personal_Bookings
                 .Where(c =>
                 c.CreatedDate >= dateLimit &&
                 (userId == 0 || c.User.Id == userId) &&
+                (par == 0 || c.Services.Any(s => s.TimeGo >= checkin) && c.Services.Any(s => s.TimeGo <= checkout)) &&
                 (completed || c.Services.Any(s => s.TimeReturn >= DateTime.Today)))
                 .Include(f => f.User)
+                .Include(f => f.Services)
                 .Include(f => f.Services)
                 .Include(f => f.Partner)
                 .Include(f => f.Payments)
@@ -727,6 +727,27 @@ namespace LATravelManager.UI.Repositories
                   .ToListAsync);
         }
 
+        internal async Task<List<Reservation>> GetAllRemainingReservationsFiltered(int excursionId, int userId, int category, int par = 0, DateTime checkin = new DateTime(), DateTime checkout = new DateTime())
+        {
+            DateTime limit = new DateTime(2019, 04, 01);
+            return await RunTask(Context.Reservations.Where(
+                c => (category >= 0 ? (int)c.Booking.Excursion.ExcursionType.Category == category : true) &&
+                  (excursionId == 0 || c.Booking.Excursion.Id == excursionId) &&
+                  (userId == 0 || c.Booking.User.Id == userId) &&
+                  (par == 0 || c.Booking.CheckIn >= checkin && c.Booking.CheckIn <= checkout) &&
+                  (c.CreatedDate >= limit) &&
+                  (StaticResources.User.BaseLocation == 1 || c.Booking.Partner.Id != 219) &&
+                  !c.Booking.Disabled)
+                  .Include(f => f.Booking.User)
+                  .Include(f => f.Booking.ExcursionDate)
+                  .Include(f => f.Booking.Partner)
+                  .Include(f => f.Booking.Excursion)
+                  .Include(f => f.Booking.Excursion.ExcursionType)
+                  .Include(f => f.Booking.Payments)
+                  .Include(f => f.CustomersList)
+                  .ToListAsync);
+        }
+
         internal async Task<IEnumerable<Room>> GetAllRoomsFiltered(int cityId = -1, int hotelId = -1, int roomTypeId = -1)
         {
             return await RunTask(Context.Rooms
@@ -742,12 +763,13 @@ namespace LATravelManager.UI.Repositories
                .ToListAsync);
         }
 
-        internal async Task<List<ThirdParty_Booking>> GetAllThirdPartyBookingsFiltered(int userId, bool completed, DateTime dateLimit, bool canceled = false)
+        internal async Task<List<ThirdParty_Booking>> GetAllThirdPartyBookingsFiltered(int userId, bool completed, DateTime dateLimit, int par = 0, DateTime checkin = new DateTime(), DateTime checkout = new DateTime(), bool canceled = false)
         {
             var x = await RunTask(Context.ThirdParty_Bookings
                 .Where(c =>
                 c.CreatedDate >= dateLimit &&
                 (userId == 0 || c.User.Id == userId) &&
+                (par == 0 || c.CheckIn >= checkin && c.CheckIn <= checkout) &&
                 (completed || c.CheckIn >= DateTime.Today))
                  .Include(f => f.User)
                  .Include(f => f.Payments)

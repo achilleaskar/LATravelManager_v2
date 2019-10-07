@@ -1,11 +1,12 @@
 ﻿using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.People;
+using LATravelManager.Model.Services;
 using LATravelManager.UI.Wrapper;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-using static LATravelManager.Model.Enums;
 
 namespace LATravelManager.Model.Wrapper
 {
@@ -56,11 +57,11 @@ namespace LATravelManager.Model.Wrapper
                         }
                     }
                     FullPrice = total;
-                    Remaining = total - Recieved;
+                    Remaining = (total - Recieved) >= 1 ? total - Recieved : 0;
                 }
                 else
                 {
-                    Remaining = Booking.NetPrice - Recieved;
+                    Remaining = Booking.NetPrice <= Recieved ? 0 : Booking.NetPrice - Recieved;
                 }
             }
             else if (ExcursionType == ExcursionTypeEnum.Personal)
@@ -113,6 +114,8 @@ namespace LATravelManager.Model.Wrapper
                 }
             }
         }
+
+
 
         public Booking Booking
         {
@@ -184,6 +187,51 @@ namespace LATravelManager.Model.Wrapper
                 }
             }
         }
+        public string Comment
+        {
+            get
+            {
+                switch (ExcursionType)
+                {
+                    case ExcursionTypeEnum.Bansko:
+                    case ExcursionTypeEnum.Skiathos:
+                    case ExcursionTypeEnum.Group:
+                        return Booking.Comment;
+
+                    case ExcursionTypeEnum.Personal:
+                        return PersonalModel.Comment;
+
+                    case ExcursionTypeEnum.ThirdParty:
+                        return ThirdPartyModel.Comment;
+
+                    default:
+                        return "";
+                }
+            }
+        }
+
+        public bool Reciept
+        {
+            get
+            {
+                switch (ExcursionType)
+                {
+                    case ExcursionTypeEnum.Bansko:
+                    case ExcursionTypeEnum.Skiathos:
+                    case ExcursionTypeEnum.Group:
+                        return Booking.Reciept;
+
+                    case ExcursionTypeEnum.Personal:
+                        return PersonalModel.Reciept;
+
+                    case ExcursionTypeEnum.ThirdParty:
+                        return ThirdPartyModel.Reciept;
+
+                    default:
+                        return false;
+                }
+            }
+        }
 
         public string Partner
         {
@@ -207,6 +255,32 @@ namespace LATravelManager.Model.Wrapper
                 }
             }
         }
+
+
+        public DateTime DateOfCreate
+        {
+            get
+            {
+                switch (ExcursionType)
+                {
+                    case ExcursionTypeEnum.Bansko:
+                    case ExcursionTypeEnum.Skiathos:
+                    case ExcursionTypeEnum.Group:
+                        return Booking.CreatedDate;
+
+                    case ExcursionTypeEnum.Personal:
+                        return PersonalModel.CreatedDate;
+
+                    case ExcursionTypeEnum.ThirdParty:
+                        return ThirdPartyModel.CreatedDate;
+
+                    default:
+                        return new DateTime();
+                }
+            }
+        }
+
+
 
         public string To => GetDestination();
 
@@ -669,7 +743,13 @@ namespace LATravelManager.Model.Wrapper
         {
             if (PersonalModel != null)
             {
-                return "";
+                StringBuilder sb = new StringBuilder();
+
+                foreach (Service s in PersonalModel.Services.Where(se => se is HotelService hs && hs.Hotel != null))
+                {
+                    sb.Append((s as HotelService).Hotel.Name + ", ");
+                }
+                return sb.ToString().TrimEnd(',', ' ');
             }
             else if (ThirdPartyModel != null)
             {
@@ -686,7 +766,7 @@ namespace LATravelManager.Model.Wrapper
                         return "NO NAME";
 
                     case ReservationTypeEnum.Overbooked:
-                        return Hotel != null ? Hotel.Name : "";
+                        return Hotel != null ? Hotel.Name + "*" : "";
 
                     case ReservationTypeEnum.NoRoom:
                         return "NO ROOM";
@@ -759,6 +839,14 @@ namespace LATravelManager.Model.Wrapper
 
             if (PersonalModel != null)
             {
+                StringBuilder sb = new StringBuilder();
+
+                foreach (Service s in PersonalModel.Services.Where(se => se is HotelService hs && hs.RoomType != null))
+                {
+                    if (!sb.ToString().Contains((s as HotelService).RoomType.Name))
+                        sb.Append((s as HotelService).RoomType.Name + ", ");
+                }
+                return sb.ToString().TrimEnd(',', ' ');
             }
             else if (ThirdPartyModel != null)
             {
