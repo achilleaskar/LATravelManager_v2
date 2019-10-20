@@ -19,7 +19,7 @@ using System.Windows.Input;
 
 namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {
-    public class Info_ViewModel : MyViewModelBaseAsync
+    public class Info_ViewModel : MyViewModelBase
     {
         #region Constructors
 
@@ -29,6 +29,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             FromDepartureInfo = DateTime.Today;
             ShowDepartureInfoCommand = new RelayCommand(async () => { await ShowDepartureInfo(); }, CanShowDepartureInfo);
             MainViewModel = mainViewModel;
+            Load();
         }
 
         #endregion Constructors
@@ -282,11 +283,10 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         #region Methods
 
-        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
+        public override void Load(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
             try
             {
-                await Task.Delay(0);
                 Context = new GenericRepository();
 
                 Excursions = new ObservableCollection<Excursion>(MainViewModel.BasicDataManager.Excursions.OrderBy(e => e.ExcursionDates.OrderBy(ed => ed.CheckIn).FirstOrDefault().CheckIn));
@@ -301,7 +301,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-        public override Task ReloadAsync()
+        public override void Reload()
         {
             throw new NotImplementedException();
         }

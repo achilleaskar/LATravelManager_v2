@@ -9,19 +9,11 @@ namespace LATravelManager.Model.Lists
         private bool _IsChecked = false;
         private int _Quantity = 1;
         private string _StartingPlace = string.Empty;
-        public const string IsCheckedPropertyName = nameof(IsChecked);
-        public const string QuantityPropertyName = nameof(Quantity);
-
-        public const string StartingPlacePropertyName = nameof(StartingPlace);
 
         #endregion Fields + Constructors
 
         #region Properties
 
-        /// <summary>
-        /// Sets and gets the IsChecked property.
-        /// Changes to that property's value raise the PropertyChanged event.
-        /// </summary>
         public bool IsChecked
         {
             get
@@ -37,14 +29,10 @@ namespace LATravelManager.Model.Lists
                 }
 
                 _IsChecked = value;
-                RaisePropertyChanged(IsCheckedPropertyName);
+                RaisePropertyChanged();
             }
         }
 
-        /// <summary>
-        /// Sets and gets the Quantity property.
-        /// Changes to that property's value raise the PropertyChanged event.
-        /// </summary>
         public int Quantity
         {
             get
@@ -60,14 +48,10 @@ namespace LATravelManager.Model.Lists
                 }
 
                 _Quantity = value;
-                RaisePropertyChanged(QuantityPropertyName);
+                RaisePropertyChanged();
             }
         }
 
-        /// <summary>
-        /// Sets and gets the StartingPlace property.
-        /// Changes to that property's value raise the PropertyChanged event.
-        /// </summary>
         [StringLength(20)]
         public string StartingPlace
         {
@@ -84,7 +68,7 @@ namespace LATravelManager.Model.Lists
                 }
 
                 _StartingPlace = value;
-                RaisePropertyChanged(StartingPlacePropertyName);
+                RaisePropertyChanged();
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using LATravelManager.Model.Plan;
+﻿using LATravelManager.Model.People;
+using LATravelManager.Model.Plan;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,6 +16,29 @@ namespace LATravelManager.Model.Hotels
         {
             Options = new ObservableCollection<Option>();
             DailyBookingInfo = new List<BookingInfoPerDay>();
+        }
+
+        public string UserName => User != null ? User.UserName : "Παλιό";
+
+        private User _User;
+
+        public User User
+        {
+            get
+            {
+                return _User;
+            }
+
+            set
+            {
+                if (_User == value)
+                {
+                    return;
+                }
+
+                _User = value;
+                RaisePropertyChanged();
+            }
         }
 
         #endregion Constructors

@@ -180,7 +180,7 @@
                     Grid.Column="1">
             <CheckBox IsChecked="{Binding Service.Stop}"
                       Name="HasStopCheckBox"
-                      Grid.Column="1" 
+                      Grid.Column="1"
                       Grid.Row="3" />
             <StackPanel Orientation="Horizontal"
                         Visibility="{Binding IsChecked, ElementName=HasStopCheckBox, Converter={StaticResource booleanToVisibilityConverter}}">

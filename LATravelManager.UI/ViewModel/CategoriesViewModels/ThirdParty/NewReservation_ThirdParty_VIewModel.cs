@@ -27,7 +27,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
 
         public NewReservation_ThirdParty_VIewModel(MainViewModel mainViewModel)
         {
-            StartingRepository = mainViewModel.StartingRepository;
+            GenericRepository = mainViewModel.StartingRepository;
             BasicDataManager = mainViewModel.BasicDataManager;
             //Commands
             ClearBookingCommand = new RelayCommand(async () => { await ClearBooking(); });
@@ -35,7 +35,6 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
             UploadFileCommand = new RelayCommand(UploadFile);
             OpenFileCommand = new RelayCommand(OpenFile, CanOpenFile);
             PrintRecieptCommand = new RelayCommand(PrintReciept);
-
 
             DeleteSelectedCustomersCommand = new RelayCommand(DeleteSelectedCustomers, CanDeleteCustomers);
             UpdateAllCommand = new RelayCommand(async () => { await UpdateAll(); }, CanUpdateAll);
@@ -46,6 +45,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
             MainViewModel = mainViewModel;
             ToggleDisabilityCommand = new RelayCommand(ToggleDisability, CanToggleDisability);
         }
+
         public DocumentsManagement DocumentsManagement { get; set; }
 
         private void PrintReciept()
@@ -57,7 +57,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
             }
             if (DocumentsManagement == null)
             {
-                DocumentsManagement = new DocumentsManagement(StartingRepository);
+                DocumentsManagement = new DocumentsManagement(GenericRepository);
             }
             DocumentsManagement.PrintPaymentsReciept(SelectedPayment, SelectedCustomer.Model);
         }
@@ -75,7 +75,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
             else
             {
                 ThirdPartyWr.DisableDate = DateTime.Now;
-                ThirdPartyWr.DisabledBy = StartingRepository.GetById<User>(StaticResources.User.Id);
+                ThirdPartyWr.DisabledBy = GenericRepository.GetById<User>(StaticResources.User.Id);
                 ThirdPartyWr.Disabled = true;
             }
         }
@@ -260,7 +260,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
                 _SelectedPartnerIndex = value;
                 if (SelectedPartnerIndex >= 0 && (ThirdPartyWr.Partner == null || (ThirdPartyWr.Partner != null && ThirdPartyWr.Partner.Id != Partners[SelectedPartnerIndex].Id)))
                 {
-                    ThirdPartyWr.Partner = StartingRepository.GetById<Partner>(Partners[SelectedPartnerIndex].Id);
+                    ThirdPartyWr.Partner = GenericRepository.GetById<Partner>(Partners[SelectedPartnerIndex].Id);
                 }
                 RaisePropertyChanged();
             }
@@ -297,13 +297,13 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
                 _SelectedUserIndex = value;
                 if (SelectedUserIndex >= 0 && (ThirdPartyWr.User == null || (ThirdPartyWr.User != null && ThirdPartyWr.User.Id != Users[SelectedUserIndex].Id)))
                 {
-                    ThirdPartyWr.User = StartingRepository.GetById<User>(Users[SelectedUserIndex].Id);
+                    ThirdPartyWr.User = GenericRepository.GetById<User>(Users[SelectedUserIndex].Id);
                 }
                 RaisePropertyChanged();
             }
         }
 
-        public GenericRepository StartingRepository { get; private set; }
+        public GenericRepository GenericRepository { get; private set; }
 
         public ThirdParty_Booking_Wrapper ThirdPartyWr
         {
@@ -345,7 +345,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
             }
         }
 
-        private bool AreContexesFree => (BasicDataManager != null && BasicDataManager.IsContextAvailable) && (StartingRepository != null && StartingRepository.IsContextAvailable);
+        private bool AreContexesFree => (BasicDataManager != null && BasicDataManager.IsContextAvailable) && (GenericRepository != null && GenericRepository.IsContextAvailable);
 
         #endregion Properties
 
@@ -400,10 +400,10 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
             {
                 if (id > 0)
                 {
-                    StartingRepository = new GenericRepository();
+                    GenericRepository = new GenericRepository();
                 }
                 ThirdParty_Booking booking = id > 0
-                      ? await StartingRepository.GetFullThirdPartyBookingByIdAsync(id)
+                      ? await GenericRepository.GetFullThirdPartyBookingByIdAsync(id)
                       : await CreateNewBooking();
 
                 InitializeBooking(booking);
@@ -482,7 +482,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
                 BookedMessage = string.Empty;
                 SelectedUserIndex = Users.IndexOf(Users.Where(x => x.Id == StaticResources.User.Id).FirstOrDefault());
                 SelectedPartnerIndex = -1;
-                StartingRepository.RollBack();
+                GenericRepository.RollBack();
             }
         }
 
@@ -493,7 +493,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
 
         private void DeletePayment()
         {
-            StartingRepository.Delete(SelectedPayment);
+            GenericRepository.Delete(SelectedPayment);
         }
 
         private string GetBookingDataValidationError(string propertyName)
@@ -523,7 +523,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
                 string x = e.PropertyName;
                 if (!HasChanges)
                 {
-                    HasChanges = StartingRepository.HasChanges();
+                    HasChanges = GenericRepository.HasChanges();
                     if (ThirdPartyWr.Id == 0)
                     {
                         HasChanges = true;
@@ -564,9 +564,9 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
 
                 if (makeNew)
                     await MainViewModel.BasicDataManager.Refresh();
-                if (StartingRepository == null)
+                if (GenericRepository == null)
                 {
-                    StartingRepository = MainViewModel.StartingRepository;
+                    GenericRepository = MainViewModel.StartingRepository;
                 }
                 if (SelectedUserIndex < 0)
                 {
@@ -610,15 +610,15 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
 
                 if (Payment.Amount > 0)
                 {
-                    ThirdPartyWr.Payments.Add(new Payment { Amount = Payment.Amount, Outgoing = Payment.Outgoing, Comment = Payment.Comment, Date = DateTime.Now, PaymentMethod = Payment.PaymentMethod, User = await StartingRepository.GetByIdAsync<User>(StaticResources.User.Id), Checked = (Payment.PaymentMethod == 0 || Payment.PaymentMethod == 5) ? (bool?)false : null });
+                    ThirdPartyWr.Payments.Add(new Payment { Amount = Payment.Amount, Outgoing = Payment.Outgoing, Comment = Payment.Comment, Date = DateTime.Now, PaymentMethod = Payment.PaymentMethod, User = await GenericRepository.GetByIdAsync<User>(StaticResources.User.Id), Checked = (Payment.PaymentMethod == 0 || Payment.PaymentMethod == 5) ? (bool?)false : null });
                 }
 
                 if (ThirdPartyWr.Id == 0)
                 {
-                    StartingRepository.Add(ThirdPartyWr.Model);
+                    GenericRepository.Add(ThirdPartyWr.Model);
                 }
 
-                await StartingRepository.SaveAsync();
+                await GenericRepository.SaveAsync();
 
                 Payment = new Payment();
                 BookedMessage = "H κράτηση απόθηκέυτηκε επιτυχώς";

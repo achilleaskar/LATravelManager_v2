@@ -130,7 +130,7 @@
                     Grid.RowSpan="2" />
 
             <Label Grid.Column="2"
-                   Grid.Row="3" 
+                   Grid.Row="3"
                    Visibility="{Binding Stop,  Converter={StaticResource booleanToVisibilityConverter}}"
                    Content="Άφιξη:" />
             <Label Content="{Binding StopArrive, Converter={StaticResource dateTimeToString} }"

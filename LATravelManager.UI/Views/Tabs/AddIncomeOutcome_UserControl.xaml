@@ -1,0 +1,362 @@
+﻿<UserControl x:Class="LATravelManager.UI.Views.Tabs.AddIncomeOutcome_UserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:LATravelManager.UI.Views.Tabs"
+             mc:Ignorable="d"
+             FontSize="12"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:helpers="clr-namespace:LATravelManager.UI.Helpers"
+             xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
+             xmlns:enum="clr-namespace:LATravelManager.Model;assembly=LATravelManager.Model"
+             xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.Tabs.TabViewmodels"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             d:DataContext="{d:DesignInstance viewmodels:AddIncomeOutcome_ViewModel}"
+             d:DesignHeight="550"
+             Background="White"
+             d:DesignWidth="1200">
+    <UserControl.Resources>
+        <converters:EnumVisibilityConverter x:Key="EnumVisibilityConverter" />
+        <converters:FloadToStringValueConverter x:Key="FloadToStringValueConverter" />
+        <converters:EmptyStringToZeroConverter x:Key="EmptyStringToZeroConverter" />
+        <converters:ReservationSelectorVisibilityConverter x:Key="ReservationSelectorVisibilityConverter" />
+        <Style TargetType="{x:Type ListBox}">
+            <Setter Property="SnapsToDevicePixels"
+                    Value="true" />
+            <Setter Property="OverridesDefaultStyle"
+                    Value="true" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility"
+                    Value="Auto" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility"
+                    Value="Auto" />
+            <Setter Property="ScrollViewer.CanContentScroll"
+                    Value="true" />
+            <Setter Property="VerticalAlignment"
+                    Value="Top" />
+            <Setter Property="MinWidth"
+                    Value="120" />
+            <Setter Property="FontSize"
+                    Value="14" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBox">
+                        <Border Name="Border"
+                                Background="Transparent"
+                                BorderBrush="Gray"
+                                Margin="0 0 5 0"
+                                BorderThickness="1"
+                                CornerRadius="2">
+                            <ScrollViewer Margin="0"
+                                          Focusable="false">
+                                <StackPanel Margin="2"
+                                            IsItemsHost="True" />
+                            </ScrollViewer>
+                        </Border>
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsGrouping"
+                                     Value="true">
+                                <Setter Property="ScrollViewer.CanContentScroll"
+                                        Value="false" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="Margin"
+                                Value="2" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                    <Border Name="theBorder"
+                                            Background="Transparent">
+                                        <RadioButton Focusable="False"
+                                                     IsHitTestVisible="False"
+                                                     IsChecked="{TemplateBinding IsSelected}">
+                                            <ContentPresenter />
+                                        </RadioButton>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="250" />
+            <RowDefinition Height="250" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <StackPanel VerticalAlignment="Top"
+                    Margin="15 10"
+                    IsEnabled="{Binding Transaction.Saved}"
+                    MinWidth="600"
+                    Orientation="Horizontal">
+            <ListBox ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:TransactionType}}}"
+                     SelectedItem="{Binding Transaction.TransactionType}" />
+            <ListBox Visibility="{Binding  Transaction.TransactionType,Converter={StaticResource EnumVisibilityConverter},ConverterParameter=0}"
+                     ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:IncomeBaseCategories}}}"
+                     SelectedItem="{Binding Transaction.IncomeBaseCategory}" />
+            <ListBox Visibility="{Binding Transaction.TransactionType,Converter={StaticResource EnumVisibilityConverter},ConverterParameter=1}"
+                     ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:ExpenseBaseCategories}}}"
+                     SelectedItem="{Binding Transaction.ExpenseBaseCategory}" />
+
+            <ListBox Visibility="{Binding Transaction.ExpenseBaseCategory,Converter={StaticResource EnumVisibilityConverter},ConverterParameter=1}"
+                     ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:GroupExpenseCategories}}}"
+                     SelectedItem="{Binding Transaction.GroupExpenseCategory}" />
+
+            <ListBox Visibility="{Binding Transaction.ExpenseBaseCategory,Converter={StaticResource EnumVisibilityConverter},ConverterParameter=3}"
+                     ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:StandardExpenseCategories}}}"
+                     SelectedItem="{Binding Transaction.StandardExpenseCategory}" />
+
+            <ListBox Visibility="{Binding Transaction.ExpenseBaseCategory,Converter={StaticResource EnumVisibilityConverter},ConverterParameter=4}"
+                     ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:TaxExpenseCategories}}}"
+                     SelectedItem="{Binding Transaction.TaxExpenseCategory}" />
+
+            <ListBox Visibility="{Binding Transaction.ExpenseBaseCategory,Converter={StaticResource EnumVisibilityConverter},ConverterParameter=1}"
+                     ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:ExcursionExpenseCategories}}}"
+                     SelectedItem="{Binding Transaction.ExcursionExpenseCategory}" />
+
+            <ListBox Visibility="{Binding Transaction,Converter={StaticResource ReservationSelectorVisibilityConverter},ConverterParameter=3}"
+                     ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:GeneralOrDatesExpenseCategories}}}"
+                     SelectedItem="{Binding Transaction.GeneralOrDatesExpenseCategory}" />
+        </StackPanel>
+
+        <Grid Grid.Column="1"
+              Grid.RowSpan="2"
+              IsEnabled="{Binding Transaction.Saved}"
+              HorizontalAlignment="Left">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <GroupBox Header="Εκδρομή"
+                      Visibility="{Binding Transaction, Converter={StaticResource ReservationSelectorVisibilityConverter},ConverterParameter=2}">
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Εκδρομή:" />
+                    <ComboBox  Width="105"
+                               Margin="0 0 5 0"
+                               IsSynchronizedWithCurrentItem="True"
+                               VerticalAlignment="Center"
+                               ItemsSource="{Binding ExcursionsCollectionView}"
+                               SelectedItem="{Binding SelectedExcursion}" />
+                    <CheckBox Content="Όλοκληρωμένες"
+                              IsChecked="{Binding Completed}"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Center" />
+                </StackPanel>
+            </GroupBox>
+            <Grid Grid.Row="1"
+                  Visibility="{Binding Transaction, Converter={StaticResource ReservationSelectorVisibilityConverter},ConverterParameter=0}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="200" />
+                    <RowDefinition Height="200" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label Content="Λέξη κλειδί:"
+                       HorizontalAlignment="Left" />
+                <TextBox VerticalAlignment="Center"
+                         Grid.Column="1"
+                         Width="100"
+                         Text="{Binding Keyword,UpdateSourceTrigger=PropertyChanged}"
+                         HorizontalAlignment="Left" />
+                <Label Content="# Κράτ:"
+                       HorizontalAlignment="Left"
+                       Grid.Row="1" />
+                <TextBox VerticalAlignment="Center"
+                         Grid.Column="1"
+                         Grid.Row="1"
+                         Text="{Binding Path=IdInt, UpdateSourceTrigger=PropertyChanged,Converter={StaticResource EmptyStringToZeroConverter}}"
+                         Width="100"
+                         HorizontalAlignment="Left" />
+                <Button VerticalAlignment="Center"
+                        HorizontalAlignment="Left"
+                        Margin="5"
+                        Content="Αναζήτηση"
+                        IsDefault="True"
+                        Padding="5"
+                        Command="{Binding SearchForReservationsCommand}"
+                        Grid.RowSpan="2"
+                        Grid.Column="2" />
+                <DataGrid Grid.Row="2"
+                          Grid.ColumnSpan="3"
+                          Margin="0,5,0,0"
+                          CanUserSortColumns="True"
+                          HorizontalAlignment="Left"
+                          VerticalAlignment="Stretch"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          IsReadOnly="True"
+                          CanUserReorderColumns="False"
+                          AutoGenerateColumns="False"
+                          ItemsSource="{Binding FilteredReservations,UpdateSourceTrigger=PropertyChanged}"
+                          SelectedItem="{Binding SelectedReservation,UpdateSourceTrigger=PropertyChanged}">
+                    <DataGrid.Resources>
+                        <ContextMenu x:Key="reservationContextSubMenu">
+                            <MenuItem Header="Επεξεργασία"
+                                      Command="{Binding DataContext.EditBookingCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}">
+                                <MenuItem.Icon>
+                                    <iconPacks:PackIconFontAwesome Kind="EditRegular" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </DataGrid.Resources>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="{x:Type DataGridRow}"
+                               BasedOn="{StaticResource {x:Type DataGridRow}}">
+                            <Setter Property="ContextMenu"
+                                    Value="{StaticResource reservationContextSubMenu}" />
+                            <EventSetter Event="MouseDoubleClick"
+                                         Handler="ListView_MouseDoubleClick" />
+                        </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Αναχ."
+                                            Width="45"
+                                            Binding="{Binding CheckIn ,StringFormat='{}{0:dd/MM}'}" />
+                        <DataGridTextColumn Header="Ονόματα"
+                                            Width="250"
+                                            CanUserResize="True"
+                                            Binding="{Binding Names}" />
+                        <DataGridTextColumn Header="Προορισμός"
+                                            Width="95"
+                                            Binding="{Binding To}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+                <GroupBox Header="Λεπτομέριες Κράτησης"
+                          Margin="0 5"
+                          BorderBrush="Silver"
+                          VerticalAlignment="Top"
+                          Visibility="{Binding HasItem, Converter={StaticResource booleanToVisibilityConverter}}"
+                          Grid.Row="3"
+                          Grid.ColumnSpan="3">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <Label Content="Ονόματα:" />
+                        <Label Content="{Binding SelectedReservation.Names}"
+                               Grid.Column="1"
+                               Width="280"
+                               Grid.ColumnSpan="3" />
+                        <Label Grid.Row="1"
+                               Content="Προορισμος:" />
+                        <Label Grid.Row="1"
+                               Grid.Column="1"
+                               Width="160"
+                               Grid.ColumnSpan="3"
+                               HorizontalAlignment="Left"
+                               Content="{Binding SelectedReservation.To}" />
+                        <Label Grid.Row="2"
+                               Content="Check In:" />
+                        <Label Grid.Row="2"
+                               Grid.Column="1"
+                               Width="110"
+                               Content="{Binding SelectedReservation.CheckIn,StringFormat='{}{0:dd/MM}'}" />
+                        <Label Grid.Row="2"
+                               Grid.Column="2"
+                               Content="Check Out:" />
+                        <Label Grid.Row="2"
+                               Grid.Column="3"
+                               Width="110"
+                               Content="{Binding SelectedReservation.CheckOut,StringFormat='{}{0:dd/MM}'}" />
+                    </Grid>
+                </GroupBox>
+            </Grid>
+        </Grid>
+        <StackPanel  Grid.Row="1"
+                     Margin="15 0"
+                     VerticalAlignment="Top"
+                     HorizontalAlignment="Left">
+            <Border BorderBrush="Gray"
+                    BorderThickness="1"
+                    IsEnabled="{Binding Transaction.Saved}"
+                    CornerRadius="2">
+                <StackPanel Orientation="Horizontal">
+
+                    <StackPanel Orientation="Vertical"
+                                Margin="5">
+                        <TextBlock Text="Ποσό:" />
+                        <TextBox Width="40"
+                                 Text="{Binding Transaction.Amount,Converter={StaticResource FloadToStringValueConverter},UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical"
+                                Margin="5">
+                        <TextBlock Text="Ημερομηνία:" />
+                        <DatePicker SelectedDate="{Binding Transaction.Date,UpdateSourceTrigger=PropertyChanged}"
+                                    FontSize="13"
+                                    Width="100" />
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical"
+                                Margin="5">
+                        <TextBlock Text="Περιγραφή:" />
+                        <TextBox Text="{Binding Transaction.Description,UpdateSourceTrigger=PropertyChanged}"
+                                 TextWrapping="Wrap"
+                                 Height="70"
+                                 Width="180" />
+                    </StackPanel>
+                    <GroupBox Header="Διάστημα"
+                              Visibility="{Binding Transaction, Converter={StaticResource ReservationSelectorVisibilityConverter},ConverterParameter=1}">
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Vertical"
+                                        Margin="5">
+                                <TextBlock Text="Από:" />
+                                <DatePicker SelectedDate="{Binding Transaction.CheckIn,UpdateSourceTrigger=PropertyChanged}"
+                                            FontSize="13"
+                                            Width="100" />
+                            </StackPanel>
+                            <StackPanel Orientation="Vertical"
+                                        Margin="5">
+                                <TextBlock Text="Έως:" />
+                                <DatePicker SelectedDate="{Binding Transaction.CheckOut,UpdateSourceTrigger=PropertyChanged}"
+                                            FontSize="13"
+                                            Width="100" />
+                            </StackPanel>
+                        </StackPanel>
+                    </GroupBox>
+                </StackPanel>
+            </Border>
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Αποθήκευση"
+                        HorizontalAlignment="Left"
+                        Command="{Binding SaveTransactionCommand}"
+                        Margin="0 5 5 0" />
+                <Button Content="Καθαρισμός"
+                        HorizontalAlignment="Left"
+                        Command="{Binding ClearTransactionCommand}"
+                        Margin="0 5 0 0" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

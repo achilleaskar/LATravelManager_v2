@@ -77,6 +77,7 @@
     <Compile Include="BookingData\ThirdParty_Booking.cs" />
     <Compile Include="CustomFile.cs" />
     <Compile Include="EnumDescriptionTypeConverter.cs" />
+    <Compile Include="Lists\Vehicle.cs" />
     <Compile Include="LocalModels\CityDepartureInfo.cs" />
     <Compile Include="LocalModels\Email.cs" />
     <Compile Include="LocalModels\NoName.cs" />
@@ -125,11 +126,13 @@
     <Compile Include="Services\TransferService.cs" />
     <Compile Include="Transaction.cs" />
     <Compile Include="Wrapper\BookingWrapper.cs" />
+    <Compile Include="Wrapper\VehicleWrapper.cs" />
     <Compile Include="Wrapper\CityWrapper.cs" />
     <Compile Include="Wrapper\CountryWrapper.cs" />
     <Compile Include="Wrapper\CustomerWrapper.cs" />
     <Compile Include="Wrapper\ExcursionWrapper.cs" />
     <Compile Include="Wrapper\HotelWrapper.cs" />
+    <Compile Include="Wrapper\LeaderWrapper.cs" />
     <Compile Include="Wrapper\ModelWrapper.cs" />
     <Compile Include="Wrapper\NotifyDataErrorInfoBase.cs" />
     <Compile Include="Wrapper\PartnerWrapper.cs" />

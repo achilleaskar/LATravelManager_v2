@@ -24,23 +24,23 @@ namespace LATravelManager.UI.ViewModel
                 MainViewModel = mainViewModel;
 
                 _SecondaryTabs = new List<TabsBaseViewModel>();
-                SecondaryViewModels = new List<MyViewModelBaseAsync>();
+                SecondaryViewModels = new List<MyViewModelBase>();
 
                 SecondaryTabs.Add(new GlobalSearchTab());
-                SecondaryTabs.Add(new InfoTab());
+                SecondaryTabs.Add(new ManagementTab());
                 SecondaryTabs.Add(new EconomicData_Tab());
                 SecondaryTabs.Add(new AddRoomsTab());
                 //  SecondaryTabs.Add(new SettingsTab());
 
-                SecondaryViewModels.Add(new GlobalSearch_ViewModel(mainViewModel));
-                SecondaryViewModels.Add(new Info_ViewModel(mainViewModel));
+                SecondaryViewModels.Add(new GlobalSearch_ViewModel(mainViewModel));//
+                SecondaryViewModels.Add(new Management_ViewModel(mainViewModel));//
                 SecondaryViewModels.Add(new GlobalEconomics_ViewModel(mainViewModel));
                 SecondaryViewModels.Add(new AddRooms_ViewModel(mainViewModel));
                 // SecondaryViewModels.Add(new Settings_Viewmodel(mainViewModel));
 
                 SelectedSecondaryTabIndex = -1;
-                SelectedTabChangedCommand = new RelayCommand(async () => { await SelectTab(SelectedPrimaryTabIndex); });
-                SelectedChildTabChangedCommand = new RelayCommand(async () => { await SelectTab(SelectedSecondaryTabIndex, true); });
+                SelectedTabChangedCommand = new RelayCommand(() => SelectTab(SelectedPrimaryTabIndex));
+                SelectedChildTabChangedCommand = new RelayCommand(() => SelectTab(SelectedSecondaryTabIndex, true));
             }
             catch (Exception ex)
             {
@@ -52,7 +52,7 @@ namespace LATravelManager.UI.ViewModel
 
         #region Fields
 
-        private readonly List<MyViewModelBaseAsync> SecondaryViewModels;
+        private readonly List<MyViewModelBase> SecondaryViewModels;
 
         private bool _Expanded = true;
 
@@ -202,7 +202,7 @@ namespace LATravelManager.UI.ViewModel
             throw new NotImplementedException();
         }
 
-        public async Task SetTabs()
+        public void SetTabs()
         {
             parent = MainUserControl_ViewModel.SelectedExcursionType;
             List<TabsBaseViewModel> tabs;
@@ -223,10 +223,10 @@ namespace LATravelManager.UI.ViewModel
             {
                 _SelectedPrimaryTabIndex = parent.Childs.IndexOf(parent.SelectedChildViewModel);
             }
-            await SelectTab(_SelectedPrimaryTabIndex);
+            SelectTab(_SelectedPrimaryTabIndex);
         }
 
-        internal async Task SelectTab(int index, bool secondary = false)
+        internal void SelectTab(int index, bool secondary = false)
         {
             if (index >= 0)
             {
@@ -237,7 +237,7 @@ namespace LATravelManager.UI.ViewModel
                         if (!Tabs[index].Selected)
                         {
                             Tabs[index].Selected = true;
-                            await parent.SetProperChildViewModel(index);
+                            parent.SetProperChildViewModel(index);
                         }
                     }
                     else
@@ -252,7 +252,7 @@ namespace LATravelManager.UI.ViewModel
                         if (!SecondaryTabs[index].Selected)
                         {
                             SecondaryTabs[index].Selected = true;
-                            await SelectSecondaryTab(i);
+                            SelectSecondaryTab(i);
                         }
                     }
                     else
@@ -263,11 +263,11 @@ namespace LATravelManager.UI.ViewModel
             }
         }
 
-        private async Task SelectSecondaryTab(int tabIndex)
+        private void SelectSecondaryTab(int tabIndex)
         {
             parent.SelectedChildViewModel = SecondaryViewModels[tabIndex];
-            if (!parent.SelectedChildViewModel.IsLoaded)
-                await parent.SelectedChildViewModel.LoadAsync();
+            if (parent.SelectedChildViewModel is MyViewModelBase mb && !mb.IsLoaded)
+                mb.Load();
         }
 
         #endregion Methods

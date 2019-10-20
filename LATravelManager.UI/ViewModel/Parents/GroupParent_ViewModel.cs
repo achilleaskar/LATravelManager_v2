@@ -10,6 +10,7 @@ using LATravelManager.UI.Wrapper;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace LATravelManager.UI.ViewModel.Parents
 {
@@ -18,15 +19,27 @@ namespace LATravelManager.UI.ViewModel.Parents
         public GroupParent_ViewModel(MainViewModel mainViewModel) : base(mainViewModel)
         {
             GroupExcursions = new ObservableCollection<ExcursionWrapper>();
-            UpdateExcursionsCommand = new RelayCommand(Reload, CanUpdate);
+            UpdateExcursionsCommand = new RelayCommand(async () => { await ReloadExcursions(); }, CanUpdate);
 
-            Tabs.Add(new MakeReservationTab { Index = Tabs.Count });
-            Tabs.Add(new PlanTab { Index = Tabs.Count });
+            Tabs.Add(new MakeReservationTab
+            {
+                Index = Tabs.Count
+            });
+            Tabs.Add(new PlanTab
+            {
+                Index = Tabs.Count
+            });
             // Tabs.Add(new SearchTab { Index = Tabs.Count });
             // Tabs.Add(new MoveTab { Index = Tabs.Count });
             // Tabs.Add(new ListManagementTab { Index = Tabs.Count });
             // Tabs.Add(new OptionalActivitiesTab { Index = Tabs.Count });
             LoadChildViewModels();
+        }
+
+        private async Task ReloadExcursions()
+        {
+            await BasicDataManager.Refresh();
+            Load();
         }
 
         public bool Enable => SelectedExcursion != null || SelectedChildViewModel is GlobalSearch_ViewModel || SelectedChildViewModel is Info_ViewModel;

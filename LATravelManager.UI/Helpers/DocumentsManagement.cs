@@ -51,7 +51,10 @@ namespace LATravelManager.UI.Helpers
         #endregion Properties
 
         #region Methods
+        protected virtual void Dispose(bool b)
+        {
 
+        }
         public static string GetPath(string fileName, string folderpath)
         {
             int i = 1;
@@ -74,7 +77,7 @@ namespace LATravelManager.UI.Helpers
             string outputpath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
 
             Directory.CreateDirectory(outputpath + @"\Payments");
-            if (selectedPayment==null)
+            if (selectedPayment == null)
             {
                 return;
             }
@@ -132,15 +135,11 @@ namespace LATravelManager.UI.Helpers
 
                     if (true)
                     {
-
                     }
-                    int id = selectedPayment.Booking != null?selectedPayment.Booking.Id:selectedPayment.Personal_Booking!=null?selectedPayment.Personal_Booking.Id:selectedPayment.ThirdParty_Booking.Id;
+                    int id = selectedPayment.Booking != null ? selectedPayment.Booking.Id : selectedPayment.Personal_Booking != null ? selectedPayment.Personal_Booking.Id : selectedPayment.ThirdParty_Booking.Id;
                     decimal remaining = selectedPayment.Booking != null ? new BookingWrapper(selectedPayment.Booking).Remaining : selectedPayment.Personal_Booking != null ? new Personal_BookingWrapper(selectedPayment.Personal_Booking).Remaining : new ThirdParty_Booking_Wrapper(selectedPayment.ThirdParty_Booking).Remaining;
                     decimal total = selectedPayment.Booking != null ? new BookingWrapper(selectedPayment.Booking).FullPrice : selectedPayment.Personal_Booking != null ? new Personal_BookingWrapper(selectedPayment.Personal_Booking).FullPrice : new ThirdParty_Booking_Wrapper(selectedPayment.ThirdParty_Booking).FullPrice;
                     string Description = selectedPayment.Booking != null ? new BookingWrapper(selectedPayment.Booking).GetPacketDescription() : selectedPayment.Personal_Booking != null ? new Personal_BookingWrapper(selectedPayment.Personal_Booking).GetPacketDescription() : new ThirdParty_Booking_Wrapper(selectedPayment.ThirdParty_Booking).GetPacketDescription();
-
-
-
 
                     Regex regexText = new Regex("regexcustomerid");
                     docText = regexText.Replace(docText, SelectedCustomer.Id.ToString());
@@ -159,7 +158,7 @@ namespace LATravelManager.UI.Helpers
                     regexText = new Regex("regexdescription");
                     docText = regexText.Replace(docText, Description);
                     regexText = new Regex("regexfullwordamount");
-                    docText = regexText.Replace(docText, StaticResources.ConvertAmountToWords(selectedPayment.Amount)); 
+                    docText = regexText.Replace(docText, StaticResources.ConvertAmountToWords(selectedPayment.Amount));
                     regexText = new Regex("regextotalamount");
                     docText = regexText.Replace(docText, total.ToString("c2"));
                     regexText = new Regex("regexamount");
@@ -190,9 +189,7 @@ namespace LATravelManager.UI.Helpers
             return folder;
         }
 
-        public void Dispose()
-        {
-        }
+
 
         public async void PrintAllBookings()
         {
@@ -1156,6 +1153,14 @@ namespace LATravelManager.UI.Helpers
 
             // Append the reference to body, the element should be in a Run.
             wordDoc.MainDocumentPart.Document.Body.AppendChild(new Paragraph(new Run(element)));
+        }
+
+        public void Dispose()
+        {
+            // Dispose of unmanaged resources.
+            Dispose(true);
+            // Suppress finalization.
+            GC.SuppressFinalize(this);
         }
 
         #endregion Methods

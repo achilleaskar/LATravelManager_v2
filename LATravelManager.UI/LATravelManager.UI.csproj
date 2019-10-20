@@ -220,11 +220,14 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\BoolToBorderColorConverter.cs" />
+    <Compile Include="Converters\EmptyStringToZeroConverter.cs" />
     <Compile Include="Converters\DateTimeToString.cs" />
     <Compile Include="Converters\DayStateToContentConverter.cs" />
+    <Compile Include="Converters\EnumToStringConverter.cs" />
     <Compile Include="Converters\EnumVisibilityConverter.cs" />
     <Compile Include="Converters\FloadToStringValueConverter.cs" />
     <Compile Include="Converters\IsGroupConverter.cs" />
+    <Compile Include="Converters\ReservationSelectorVisibilityConverter.cs" />
     <Compile Include="Converters\RoomsLeftMultiBindingConverter.cs" />
     <Compile Include="Converters\RoomsLeftToHotelsConverter.cs" />
     <Compile Include="Converters\RoomsLeftToVisibilityConverter.cs" />
@@ -260,6 +263,8 @@
     <Compile Include="ViewModel\CategoriesViewModels\Plan_ViewModel.cs" />
     <Compile Include="ViewModel\CategoriesViewModels\Skiathos\NewReservation_Skiathos_ViewModel.cs" />
     <Compile Include="ViewModel\CategoriesViewModels\ThirdParty\NewReservation_ThirdParty_VIewModel.cs" />
+    <Compile Include="ViewModel\Management\LeadersManagement_ViewModel.cs" />
+    <Compile Include="ViewModel\Management\VehiclesManagement_viewModel.cs" />
     <Compile Include="ViewModel\Management\CitiesManagement_ViewModel.cs" />
     <Compile Include="ViewModel\Management\CountriesManagement_ViewModel.cs" />
     <Compile Include="ViewModel\Management\ExcursionsManagement_ViewModel.cs" />
@@ -290,16 +295,18 @@
     <Compile Include="ViewModel\ServiceViewModels\Transfer_ViewModel.cs" />
     <Compile Include="ViewModel\Tabs\EconomicData_Tab.cs" />
     <Compile Include="ViewModel\Tabs\GlobalSearchTab.cs" />
-    <Compile Include="ViewModel\Tabs\InfoTab.cs" />
+    <Compile Include="ViewModel\Tabs\ManagementTab.cs" />
     <Compile Include="ViewModel\Tabs\PlanTab.cs" />
+    <Compile Include="ViewModel\Tabs\TabViewmodels\ListManagement_ViewModel.cs" />
+    <Compile Include="ViewModel\Tabs\TabViewmodels\Management_ViewModel.cs" />
     <Compile Include="ViewModel\Tabs\TabViewmodels\Remaining_ViewModel.cs" />
-    <Compile Include="ViewModel\Tabs\TabViewmodels\AddIncome_ViewModel.cs" />
+    <Compile Include="ViewModel\Tabs\TabViewmodels\AddIncomeOutcome_ViewModel.cs" />
     <Compile Include="ViewModel\Tabs\TabViewmodels\EconomicData_ViewModel.cs" />
     <Compile Include="ViewModel\Tabs\TabViewmodels\GlobalEconomics_ViewModel.cs" />
     <Compile Include="ViewModel\Tabs\TabViewmodels\GlobalSearch_ViewModel.cs" />
-    <Compile Include="ViewModel\Tabs\TabViewmodels\Incomes_ViewModel.cs" />
+    <Compile Include="ViewModel\Tabs\TabViewmodels\IncomesOutcomes_ViewModel.cs" />
     <Compile Include="ViewModel\Tabs\TabViewmodels\Info_ViewModel.cs" />
-    <Compile Include="ViewModel\Tabs\TabViewmodels\PreviewIncomes_ViewModel.cs" />
+    <Compile Include="ViewModel\Tabs\TabViewmodels\PreviewIncomesOutcomes_ViewModel.cs" />
     <Compile Include="ViewModel\Tabs\TabViewmodels\TotalEarns_ViewModel.cs" />
     <Compile Include="ViewModel\Window_ViewModels\MainUserControl_ViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModels\MyViewModelBaseAsync.cs" />
@@ -324,14 +331,20 @@
     <Compile Include="ViewModel\Window_ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModels\NavigationViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModels\ViewModelLocator.cs" />
+    <Compile Include="Views\Management\BusesManagement_Window.xaml.cs">
+      <DependentUpon>BusesManagement_Window.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Management\LeadersManagement_Widnow.xaml.cs">
+      <DependentUpon>LeadersManagement_Widnow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Personal\EditPersonalBooking_Window.xaml.cs">
       <DependentUpon>EditPersonalBooking_Window.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Plan_UserControl.xaml.cs">
       <DependentUpon>Plan_UserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Tabs\AddIncome_UserControl.xaml.cs">
-      <DependentUpon>AddIncome_UserControl.xaml</DependentUpon>
+    <Compile Include="Views\Tabs\AddIncomeOutcome_UserControl.xaml.cs">
+      <DependentUpon>AddIncomeOutcome_UserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Tabs\AddRooms_UserControl.xaml.cs">
       <DependentUpon>AddRooms_UserControl.xaml</DependentUpon>
@@ -447,11 +460,11 @@
     <Compile Include="Views\Tabs\GlobalSearch_UserControl.xaml.cs">
       <DependentUpon>GlobalSearch_UserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Tabs\IncomesPreview_UserControl.xaml.cs">
-      <DependentUpon>IncomesPreview_UserControl.xaml</DependentUpon>
+    <Compile Include="Views\Tabs\IncomesOutcomesPreview_UserControl.xaml.cs">
+      <DependentUpon>IncomesOutcomesPreview_UserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Tabs\Incomes_UserControl.xaml.cs">
-      <DependentUpon>Incomes_UserControl.xaml</DependentUpon>
+    <Compile Include="Views\Tabs\IncomesOutcomes_UserControl.xaml.cs">
+      <DependentUpon>IncomesOutcomes_UserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Tabs\InfoTab_UserControl.xaml.cs">
       <DependentUpon>InfoTab_UserControl.xaml</DependentUpon>
@@ -474,6 +487,12 @@
     <Compile Include="Helpers\RowDataInfoValidationRule.cs" />
     <Compile Include="Helpers\SearchBookingsHelper.cs" />
     <Compile Include="Helpers\StaticResources.cs" />
+    <Compile Include="Views\Tabs\ListManagement_UserControl.xaml.cs">
+      <DependentUpon>ListManagement_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Tabs\Management_UserControl.xaml.cs">
+      <DependentUpon>Management_UserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Tabs\Remaining_UserControl.xaml.cs">
       <DependentUpon>Remaining_UserControl.xaml</DependentUpon>
     </Compile>
@@ -495,6 +514,14 @@
     <Compile Include="Views\Universal\Availabilities_Window.xaml.cs">
       <DependentUpon>Availabilities_Window.xaml</DependentUpon>
     </Compile>
+    <Page Include="Views\Management\BusesManagement_Window.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Management\LeadersManagement_Widnow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Personal\EditPersonalBooking_Window.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -503,7 +530,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Tabs\AddIncome_UserControl.xaml">
+    <Page Include="Views\Tabs\AddIncomeOutcome_UserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -659,15 +686,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Tabs\IncomesPreview_UserControl.xaml">
+    <Page Include="Views\Tabs\IncomesOutcomesPreview_UserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Tabs\Incomes_UserControl.xaml">
+    <Page Include="Views\Tabs\IncomesOutcomes_UserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Tabs\InfoTab_UserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Tabs\ListManagement_UserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Tabs\Management_UserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

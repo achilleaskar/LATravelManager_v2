@@ -2,12 +2,14 @@
 using LATravelManager.Model;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Hotels;
+using LATravelManager.Model.Lists;
 using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
 using LATravelManager.UI.Repositories;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace LATravelManager.UI.Helpers
 {
@@ -32,6 +34,27 @@ namespace LATravelManager.UI.Helpers
                 }
 
                 _Airlines = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private ObservableCollection<Vehicle> _Vehicles;
+
+        public ObservableCollection<Vehicle> Vehicles
+        {
+            get
+            {
+                return _Vehicles;
+            }
+
+            set
+            {
+                if (_Vehicles == value)
+                {
+                    return;
+                }
+
+                _Vehicles = value;
                 RaisePropertyChanged();
             }
         }
@@ -273,6 +296,32 @@ namespace LATravelManager.UI.Helpers
 
         #region Methods
 
+
+
+
+
+        private ObservableCollection<Leader> _Leaders;
+
+
+        public ObservableCollection<Leader> Leaders
+        {
+            get
+            {
+                return _Leaders;
+            }
+
+            set
+            {
+                if (_Leaders == value)
+                {
+                    return;
+                }
+
+                _Leaders = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public bool HasChanges()
         {
             return Context.HasChanges();
@@ -280,6 +329,7 @@ namespace LATravelManager.UI.Helpers
 
         public async Task LoadAsync()
         {
+            Mouse.OverrideCursor = Cursors.Wait;
             Hotels = new ObservableCollection<Hotel>(await Context.GetAllHotelsAsync<Hotel>());
             Countries = new ObservableCollection<Country>(await Context.GetAllAsyncSortedByName<Country>());
             Cities = new ObservableCollection<City>(await Context.GetAllCitiesAsyncSortedByName());
@@ -293,6 +343,9 @@ namespace LATravelManager.UI.Helpers
             HotelCategories = new ObservableCollection<HotelCategory>(await Context.GetAllAsync<HotelCategory>());
             GroupExcursions = new ObservableCollection<Excursion>(Excursions.Where(e => e.ExcursionType.Category == ExcursionTypeEnum.Group));
             Airlines = new ObservableCollection<Airline>(await Context.GetAllAsync<Airline>());
+            Vehicles = new ObservableCollection<Vehicle>(await Context.GetAllAsync<Vehicle>());
+            Leaders = new ObservableCollection<Leader>(await Context.GetAllAsync<Leader>());
+            Mouse.OverrideCursor = Cursors.Arrow;
         }
 
         public async Task LoadPersonal()
@@ -335,7 +388,7 @@ namespace LATravelManager.UI.Helpers
             else if (model is Excursion e)
             {
                 Excursions.Add(e);
-                if (e.ExcursionType.Category==ExcursionTypeEnum.Group)
+                if (e.ExcursionType.Category == ExcursionTypeEnum.Group)
                 {
                     GroupExcursions.Add(e);
                     GroupExcursions = new ObservableCollection<Excursion>(GroupExcursions.OrderBy(m => m.Name));
@@ -349,8 +402,6 @@ namespace LATravelManager.UI.Helpers
             }
         }
 
-       
-           
         internal void Delete<TEntity>(TEntity model) where TEntity : BaseModel, new()
         {
             Context.Delete(model);

@@ -3,6 +3,7 @@ using LaTravelManager.ViewModel.Management;
 using LATravelManager.Model;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.Locations;
+using LATravelManager.Model.People;
 using LATravelManager.Model.Plan;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
@@ -24,7 +25,7 @@ using System.Windows.Input;
 
 namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {
-    public class AddRooms_ViewModel : MyViewModelBaseAsync
+    public class AddRooms_ViewModel : MyViewModelBase
     {
         #region Constructors
 
@@ -53,101 +54,36 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             MainViewModel = mainViewModel;
         }
 
-
-
-
-        private int _MinimumStay;
-
-
-        public int MinimumStay
-        {
-            get
-            {
-                return _MinimumStay;
-            }
-
-            set
-            {
-                if (_MinimumStay == value)
-                {
-                    return;
-                }
-
-                _MinimumStay = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private void OpenHotelsWindow()
-        {
-            HotelsManagement_ViewModel vm = new HotelsManagement_ViewModel(MainViewModel.BasicDataManager);
-            vm.ReLoad();
-            MessengerInstance.Send(new OpenChildWindowCommand(new HotelsManagement_Window { DataContext = vm }));
-            Hotels = new ObservableCollection<Hotel>(MainViewModel.BasicDataManager.Hotels);
-        }
-
         #endregion Constructors
 
         #region Fields
-
-        private ICollectionView _HotelsCV;
-
-        public ICollectionView HotelsCV
-        {
-            get
-            {
-                return _HotelsCV;
-            }
-
-            set
-            {
-                if (_HotelsCV == value)
-                {
-                    return;
-                }
-
-                _HotelsCV = value;
-                RaisePropertyChanged();
-            }
-        }
 
         private Calendar _calendar;
         private DateTime _CheckIn;
         private DateTime _CheckOut;
         private ObservableCollection<City> _Cities;
         private bool _DatesFilter;
-
+        private GenericRepository _GenericRepository;
         private bool _HasOption = false;
-
         private ObservableCollection<Hotel> _Hotels;
-
+        private ICollectionView _HotelsCV;
         private bool _IsAllotment = false;
-
+        private int _MinimumStay;
         private Option _Option = new Option();
-
         private string _OutPut = string.Empty;
-
         private int _Quantity;
-
         private ObservableCollection<RoomWrapper> _Rooms;
-
+        private string _RoomsCounter;
         private ObservableCollection<RoomType> _RoomTypes;
-
         private RoomWrapper _RoomUnderEdit;
-
         private City _SelectedCity;
-
         private int _SelectedCityIndex;
-
         private List<DateTime> _SelectedDates = new List<DateTime>();
-
         private string _SelectedDatesString = string.Empty;
-
         private int _SelectedHotelIndex;
-
         private RoomWrapper _SelectedRoom;
-
         private int _SelectedRoomTypeIndex;
+        private int _SelectedTab;
 
         #endregion Fields
 
@@ -238,7 +174,25 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         }
 
         public RelayCommand DeleteRoomCommand { get; set; }
-        public RelayCommand OpenHotelEditCommand { get; }
+
+        public GenericRepository GenericRepository
+        {
+            get
+            {
+                return _GenericRepository;
+            }
+
+            set
+            {
+                if (_GenericRepository == value)
+                {
+                    return;
+                }
+
+                _GenericRepository = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public bool HasOption
         {
@@ -283,9 +237,23 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-        private bool HotelsFilter(object obj)
+        public ICollectionView HotelsCV
         {
-            return obj != null && obj is Hotel h && SelectedCity != null && SelectedCity.Id == h.City.Id;
+            get
+            {
+                return _HotelsCV;
+            }
+
+            set
+            {
+                if (_HotelsCV == value)
+                {
+                    return;
+                }
+
+                _HotelsCV = value;
+                RaisePropertyChanged();
+            }
         }
 
         public bool IsAllotment
@@ -308,6 +276,27 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         }
 
         public MainViewModel MainViewModel { get; }
+
+        public int MinimumStay
+        {
+            get
+            {
+                return _MinimumStay;
+            }
+
+            set
+            {
+                if (_MinimumStay == value)
+                {
+                    return;
+                }
+
+                _MinimumStay = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public RelayCommand OpenHotelEditCommand { get; }
 
         public Option Option
         {
@@ -381,6 +370,25 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 }
 
                 _Rooms = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string RoomsCounter
+        {
+            get
+            {
+                return _RoomsCounter;
+            }
+
+            set
+            {
+                if (_RoomsCounter == value)
+                {
+                    return;
+                }
+
+                _RoomsCounter = value;
                 RaisePropertyChanged();
             }
         }
@@ -564,42 +572,65 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-        public RelayCommand ShowRoomsCommnad { get; set; }
-
-        #endregion Properties
-
-        private GenericRepository _GenericRepository;
-
-        public GenericRepository GenericRepository
+        public int SelectedTab
         {
             get
             {
-                return _GenericRepository;
+                return _SelectedTab;
             }
 
             set
             {
-                if (_GenericRepository == value)
+                if (_SelectedTab == value)
                 {
                     return;
                 }
 
-                _GenericRepository = value;
+                _SelectedTab = value;
                 RaisePropertyChanged();
             }
         }
 
+        public RelayCommand ShowRoomsCommnad { get; set; }
+
+        #endregion Properties
+
         #region Methods
 
-        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
+        public void CountRooms()
+        {
+            StringBuilder sb = new StringBuilder();
+            Dictionary<RoomType, int> dict = new Dictionary<RoomType, int>();
+            int count;
+            if (Rooms != null)
+                foreach (var rw in Rooms)
+                {
+                    count = 0;
+                    dict.TryGetValue(rw.RoomType, out count);
+                    dict[rw.RoomType] = count + 1;
+                }
+
+            if (dict.Count() > 0)
+            {
+                foreach (KeyValuePair<RoomType, int> entry in dict)
+                {
+                    sb.Append(entry.Key.Name);
+                    sb.Append(": ");
+                    sb.Append(entry.Value);
+                    sb.Append(", ");
+                }
+            }
+            RoomsCounter = sb.ToString().TrimEnd(' ').TrimEnd(',');
+        }
+
+        public override void Load(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
             RoomTypes = MainViewModel.BasicDataManager.RoomTypes;
             Cities = MainViewModel.BasicDataManager.Cities;
             Hotels = new ObservableCollection<Hotel>(MainViewModel.BasicDataManager.Hotels);
-            await Task.Delay(0);
         }
 
-        public override Task ReloadAsync()
+        public override void Reload()
         {
             throw new NotImplementedException();
         }
@@ -672,6 +703,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             List<RoomWrapper> RoomsToDelete = new List<RoomWrapper>();
             try
             {
+                Mouse.OverrideCursor = Cursors.Wait;
                 foreach (RoomWrapper room in Rooms)
                 {
                     if (room.IsSelected)
@@ -695,31 +727,23 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             {
                 MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
             }
+            finally
+            {
+                Mouse.OverrideCursor = Cursors.Arrow;
+            }
         }
 
-
-
-
-        private string _RoomsCounter;
-
-
-        public string RoomsCounter
+        private bool HotelsFilter(object obj)
         {
-            get
-            {
-                return _RoomsCounter;
-            }
+            return obj != null && obj is Hotel h && SelectedCity != null && SelectedCity.Id == h.City.Id;
+        }
 
-            set
-            {
-                if (_RoomsCounter == value)
-                {
-                    return;
-                }
-
-                _RoomsCounter = value;
-                RaisePropertyChanged();
-            }
+        private void OpenHotelsWindow()
+        {
+            HotelsManagement_ViewModel vm = new HotelsManagement_ViewModel(MainViewModel.BasicDataManager);
+            vm.ReLoad();
+            MessengerInstance.Send(new OpenChildWindowCommand(new HotelsManagement_Window { DataContext = vm }));
+            Hotels = new ObservableCollection<Hotel>(MainViewModel.BasicDataManager.Hotels);
         }
 
         private async Task SaveRooms()
@@ -727,21 +751,28 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             Room tmproom;
             try
             {
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                RoomType tmpRT = await GenericRepository.GetByIdAsync<RoomType>(RoomUnderEdit.RoomType.Id);
+                Hotel tmpH = await GenericRepository.GetByIdAsync<Hotel>(RoomUnderEdit.Hotel.Id);
+                User tmpUsr = await GenericRepository.GetByIdAsync<User>(Helpers.StaticResources.User.Id);
+
                 for (int i = 0; i < Quantity; i++)
                 {
                     tmproom = new Room
                     {
                         DailyBookingInfo = new List<BookingInfoPerDay>(),
-                        Hotel = await GenericRepository.GetByIdAsync<Hotel>(RoomUnderEdit.Hotel.Id),
+                        Hotel = tmpH,
                         Options = new ObservableCollection<Option>(),
                         Note = RoomUnderEdit.Note,
-                        RoomType = await GenericRepository.GetByIdAsync<RoomType>(RoomUnderEdit.RoomType.Id)
+                        RoomType = tmpRT,
+                        User = tmpUsr
                     };
                     if (HasOption)
                         tmproom.Options.Add(new Option { Date = Option.Date, Note = Option.Note });
-                    if (MinimumStay > 7 || MinimumStay > 0)
+                    if (MinimumStay > 10 || MinimumStay < 0)
                     {
-
+                        MinimumStay = 0;
                     }
                     for (int j = 0; j < SelectedDates.Count - 1; j++)
                     {
@@ -759,34 +790,12 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             {
                 MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
             }
-        }
-
-        public void CountRooms()
-        {
-            StringBuilder sb = new StringBuilder();
-            Dictionary<RoomType, int> dict = new Dictionary<RoomType, int>();
-            int count;
-            if (Rooms != null)
-                foreach (var rw in Rooms)
-                {
-                    count = 0;
-                    dict.TryGetValue(rw.RoomType, out count);
-                    dict[rw.RoomType] = count + 1;
-                }
-
-            if (dict.Count() > 0)
+            finally
             {
-
-                foreach (KeyValuePair<RoomType, int> entry in dict)
-                {
-                    sb.Append(entry.Key.Name);
-                    sb.Append(": ");
-                    sb.Append(entry.Value);
-                    sb.Append(", ");
-                }
+                Mouse.OverrideCursor = Cursors.Arrow;
             }
-            RoomsCounter = sb.ToString().TrimEnd(' ').TrimEnd(',');
         }
+
         private async Task ShowRooms()
         {
             GenericRepository = new GenericRepository();

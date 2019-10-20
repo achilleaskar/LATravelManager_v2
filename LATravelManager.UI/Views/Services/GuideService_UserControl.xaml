@@ -75,7 +75,7 @@
                                 Grid.Column="1"
                                 FormatString="dd/MM/yy HH:mm"
                                 Kind="Local"
-                              
+
                                 HorizontalAlignment="Left"
                                 ShowButtonSpinner="False"
                                 VerticalAlignment="Center"

@@ -1,0 +1,28 @@
+﻿<UserControl x:Class="LATravelManager.UI.Views.Tabs.Management_UserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
+             xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.Tabs.TabViewmodels"
+             xmlns:local="clr-namespace:LATravelManager.UI.Views.Tabs"
+             mc:Ignorable="d"
+             Background="White"
+             d:DesignHeight="450"
+             d:DataContext="{d:DesignInstance viewmodels:Management_ViewModel}"
+             d:DesignWidth="800">
+    <UserControl.Resources>
+        <converters:UserToVisibility x:Key="UserToVisibilityConverter" />
+        <converters:FloadToStringValueConverter x:Key="FtoSConverter" />
+    </UserControl.Resources>
+    <Grid>
+        <TabControl>
+            <TabItem Header="Πληροφορίες Αναχωρήσεων">
+                <local:InfoTab_UserControl DataContext="{Binding InfoViewModel}" />
+            </TabItem>
+            <TabItem Header="Λίστες">
+                <local:ListManagement_UserControl DataContext="{Binding ListManagement}" />
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

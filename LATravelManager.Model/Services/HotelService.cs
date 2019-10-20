@@ -1,5 +1,4 @@
-﻿using GalaSoft.MvvmLight.Messaging;
-using LATravelManager.Model.Hotels;
+﻿using LATravelManager.Model.Hotels;
 using LATravelManager.Model.Locations;
 using System;
 
@@ -33,6 +32,7 @@ namespace LATravelManager.Model.Services
         #region Properties
 
         public bool HasOption => Option.Minute != 6;
+
         public City City
         {
             get
@@ -115,7 +115,6 @@ namespace LATravelManager.Model.Services
 
         private void HotelService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            
         }
 
         #endregion Methods

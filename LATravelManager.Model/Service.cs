@@ -8,7 +8,6 @@ namespace LATravelManager.Model.Services
 {
     public abstract class Service : EditTracker
     {
-
         #region Constructors
 
         public Service()
@@ -76,6 +75,7 @@ namespace LATravelManager.Model.Services
         }
 
         public List<Customer> Customers { get; set; }
+
         public string From
         {
             get
@@ -214,6 +214,5 @@ namespace LATravelManager.Model.Services
         }
 
         #endregion Methods
-
     }
 }

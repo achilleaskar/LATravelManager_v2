@@ -1,5 +1,4 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
-using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.LocalModels;
 using LATravelManager.Model.Wrapper;
@@ -43,15 +42,15 @@ namespace LATravelManager.UI.Helpers
 
         private async Task PrintListAsync(int parameter)
         {
-            string wbPath = null;
-            List<string> selectedCities = new List<string>();
+            //string wbPath = null;
+           // List<string> selectedCities = new List<string>();
             var sampleFile = AppDomain.CurrentDomain.BaseDirectory;
-
+            await Task.Delay(0);
             FileInfo fileInfo = new FileInfo(sampleFile);
             ExcelPackage p = new ExcelPackage(fileInfo);
             ExcelWorksheet myWorksheet = p.Workbook.Worksheets[1];
-            int counter = 0;
-            int customersCount, secondline;
+           // int counter = 0;
+           // int customersCount, secondline;
             List<ReservationWrapper> reservationsThisDay = new List<ReservationWrapper>();
             List<ReservationWrapper> RestReservations = new List<ReservationWrapper>();
 
@@ -81,7 +80,7 @@ namespace LATravelManager.UI.Helpers
             switch (parameter)
             {
                 case 1:
-                   // IEnumerable<Booking> bookings = await Context.GetAllBookingInPeriod(Date, Date, ExcursionId);
+                    // IEnumerable<Booking> bookings = await Context.GetAllBookingInPeriod(Date, Date, ExcursionId);
 
                     //foreach (CityDepartureInfo city in PerCityDepartureList)
                     //    if (city.IsChecked)

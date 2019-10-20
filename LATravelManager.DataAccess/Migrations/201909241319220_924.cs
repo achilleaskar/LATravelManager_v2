@@ -1,8 +1,7 @@
 namespace LATravelManager.DataAccess.Migrations
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class _924 : DbMigration
     {
         public override void Up()
@@ -15,7 +14,7 @@ namespace LATravelManager.DataAccess.Migrations
             AddColumn("dbo.Services", "StopLeave", c => c.Time(precision: 0));
             DropColumn("dbo.Services", "WaitingTime");
         }
-        
+
         public override void Down()
         {
             AddColumn("dbo.Services", "WaitingTime", c => c.DateTime(precision: 0));

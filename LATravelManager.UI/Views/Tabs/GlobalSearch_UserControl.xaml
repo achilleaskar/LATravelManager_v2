@@ -89,6 +89,7 @@
                                         BorderThickness="1,0,0,0" />
                                 <Button Content="Όλες"
                                         Click="Button_Click_1"
+                                        IsDefault="True"
                                         Margin="5"
                                         Command="{Binding ShowReservationsCommand}"
                                         Padding="5,2" />
@@ -219,6 +220,7 @@
 
             <TextBlock Text="{Binding People}"
                        VerticalAlignment="Top"
+                       TextWrapping="Wrap"
                        Margin="0 0 0 25" />
             <StackPanel Orientation="Horizontal">
 
@@ -304,7 +306,7 @@
             </DataGrid.RowStyle>
             <DataGrid.Columns>
                 <DataGridCheckBoxColumn Header="Απ."
-                                        Binding="{Binding Booking.Reciept,Mode=OneWay}"
+                                        Binding="{Binding Reciept,Mode=OneWay}"
                                         Width="29"
                                         Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
                                         IsReadOnly="True" />
@@ -319,7 +321,7 @@
                                     CanUserResize="True"
                                     Binding="{Binding Names}" />
                 <DataGridTextColumn Header="Προορισμός"
-                                    Width="85"
+                                    Width="100"
                                     Binding="{Binding To}" />
                 <DataGridTextColumn Header="Ξενοδοχείο"
                                     Width="115"

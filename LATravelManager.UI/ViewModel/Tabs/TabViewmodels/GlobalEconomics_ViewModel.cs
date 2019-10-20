@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {
-    public class GlobalEconomics_ViewModel : MyViewModelBaseAsync
+    public class GlobalEconomics_ViewModel : MyViewModelBase
     {
         public GlobalEconomics_ViewModel()
         {
@@ -14,13 +14,34 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         public GlobalEconomics_ViewModel(MainViewModel mainViewModel)
         {
             MainViewModel = mainViewModel;
+            EconomicData_ViewModel = new EconomicData_ViewModel(MainViewModel);
+            IncomesOutcomes_ViewModel = new IncomesOutcomes_ViewModel(MainViewModel);
+            TotalEarns_ViewModel = new TotalEarns_ViewModel(MainViewModel);
+            Remaining_ViewModel = new Remaining_ViewModel(MainViewModel);
         }
 
+        private int _SelectedIndex;
 
+        public int SelectedIndex
+        {
+            get
+            {
+                return _SelectedIndex;
+            }
 
+            set
+            {
+                if (_SelectedIndex == value)
+                {
+                    return;
+                }
+
+                _SelectedIndex = value;
+                RaisePropertyChanged();
+            }
+        }
 
         private Remaining_ViewModel _Remaining_ViewModel;
-
 
         public Remaining_ViewModel Remaining_ViewModel
         {
@@ -41,9 +62,9 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-        private Incomes_ViewModel _Incomes_ViewModel;
+        private IncomesOutcomes_ViewModel _Incomes_ViewModel;
 
-        public Incomes_ViewModel Incomes_ViewModel
+        public IncomesOutcomes_ViewModel IncomesOutcomes_ViewModel
         {
             get
             {
@@ -83,10 +104,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-
-
         private TotalEarns_ViewModel _TotalEarns_ViewModel;
-
 
         public TotalEarns_ViewModel TotalEarns_ViewModel
         {
@@ -106,21 +124,15 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 RaisePropertyChanged();
             }
         }
+
         public MainViewModel MainViewModel { get; }
 
-        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
+        public override void Load(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
-            EconomicData_ViewModel = new EconomicData_ViewModel(MainViewModel);
-            Incomes_ViewModel = new Incomes_ViewModel(MainViewModel);
-            TotalEarns_ViewModel = new TotalEarns_ViewModel(MainViewModel);
-            Remaining_ViewModel=new Remaining_ViewModel(MainViewModel);
-            Remaining_ViewModel.Load();
-            await Task.Delay(0);
         }
 
-        public override Task ReloadAsync()
+        public override void Reload()
         {
-            throw new NotImplementedException();
         }
     }
 }

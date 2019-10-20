@@ -8,7 +8,6 @@ namespace LATravelManager.Model.BookingData
 {
     public class Payment : BaseModel
     {
-
         #region Constructors
 
         public Payment()
@@ -379,8 +378,6 @@ namespace LATravelManager.Model.BookingData
             }
         }
 
-
-
         public void SetPColor()
         {
             if (Checked == true)
@@ -398,6 +395,7 @@ namespace LATravelManager.Model.BookingData
             else
                 PColor = new SolidColorBrush(Colors.Red);
         }
+
         // public const string AmountStringPropertyName = nameof(AmountString);
         /// <summary>
         /// Sets and gets the PriceString property. Changes to that property's value raise the
@@ -443,6 +441,5 @@ namespace LATravelManager.Model.BookingData
         }
 
         #endregion Methods
-
     }
 }

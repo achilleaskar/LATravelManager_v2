@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Security;
+using System.Windows;
 
 namespace LATravelManager.UI.Security
 {
@@ -17,6 +18,10 @@ namespace LATravelManager.UI.Security
                 for (int i = 0; i < value.Length; i++)
                 {
                     short unicodeChar = System.Runtime.InteropServices.Marshal.ReadInt16(valuePtr, i * 2);
+                    if (unicodeChar > 255)
+                    {
+                        MessageBox.Show("Μόνο λατινικά η αριθμούς");
+                    }
                     returnVal[i] = Convert.ToByte(unicodeChar);
                 }
 

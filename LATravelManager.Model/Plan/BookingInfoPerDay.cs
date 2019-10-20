@@ -15,7 +15,6 @@ namespace LATravelManager.Model.Plan
 
         #region Properties
 
-
         private int _MinimunStay;
 
         public int MinimunStay

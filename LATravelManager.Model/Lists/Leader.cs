@@ -4,21 +4,17 @@ namespace LATravelManager.Model.Lists
 {
     public class Leader : BaseModel, INamed
     {
-        #region Fields + Constructors
+
+        #region Fields
 
         private string _Name = string.Empty;
         private string _Tel;
-        public const string NamePropertyName = nameof(Name);
-        public const string TelPropertyName = nameof(Tel);
 
-        #endregion Fields + Constructors
+        #endregion Fields
 
         #region Properties
 
-        /// <summary>
-        /// Sets and gets the Name property.
-        /// Changes to that property's value raise the PropertyChanged event.
-        /// </summary>
+        [Required]
         [StringLength(20)]
         public string Name
         {
@@ -35,15 +31,13 @@ namespace LATravelManager.Model.Lists
                 }
 
                 _Name = value;
-                RaisePropertyChanged(NamePropertyName);
+                RaisePropertyChanged();
             }
         }
-
-        /// <summary>
-        /// Sets and gets the Tel property.
-        /// Changes to that property's value raise the PropertyChanged event.
-        /// </summary>
-        [StringLength(20)]
+        
+        [Required]
+        [MaxLength(15), MinLength(10)]
+        [Phone]
         public string Tel
         {
             get
@@ -59,10 +53,11 @@ namespace LATravelManager.Model.Lists
                 }
 
                 _Tel = value;
-                RaisePropertyChanged(TelPropertyName);
+                RaisePropertyChanged();
             }
         }
 
         #endregion Properties
+
     }
 }

@@ -1,0 +1,86 @@
+﻿<UserControl x:Class="LATravelManager.UI.Views.Tabs.ListManagement_UserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:LATravelManager.UI.Views.Tabs"
+             mc:Ignorable="d"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:helpers="clr-namespace:LATravelManager.UI.Helpers"
+             xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
+             xmlns:enum="clr-namespace:LATravelManager.Model;assembly=LATravelManager.Model"
+             xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.Tabs.TabViewmodels"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             d:DataContext="{d:DesignInstance viewmodels:ListManagement_ViewModel}"
+             Background="Aquamarine"
+             d:DesignHeight="450"
+             d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="250" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal">
+                <Label Content="Εκδρομή:"
+                       VerticalAlignment="Center" />
+                <ComboBox  Width="105"
+                           Margin="0 0 5 0"
+                           IsSynchronizedWithCurrentItem="True"
+                           VerticalAlignment="Center"
+                           ItemsSource="{Binding Excursions}"
+                           SelectedItem="{Binding SelectedExcursion}" />
+                <Label Content="Γραφείο:"
+                       VerticalAlignment="Center" />
+                <ComboBox  Width="105"
+                           VerticalAlignment="Center"
+                           SelectedIndex="{Binding DepartmentIndexBookingFilter}">
+                    <ComboBoxItem Content="Όλα" />
+                    <ComboBoxItem Content="Θεσσαλονίκης" />
+                    <ComboBoxItem Content="Λάρισας" />
+                    <ComboBoxItem Content="Συνεργάτών" />
+                </ComboBox>
+            <Button Content="Provoli" Margin="5" VerticalAlignment="Center"
+                    Command="{Binding ShowCustomersCommand}"/>
+        </StackPanel>
+        <GroupBox Header="Φίλτρα"
+                  Grid.Column="0"
+                  Grid.Row="1">
+            <Grid HorizontalAlignment="Left">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <GroupBox Header="Cities">
+                    <ListBox Name="lbTodoList"
+                             HorizontalContentAlignment="Stretch">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="100" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Title}" />
+                                    <ProgressBar Grid.Column="1"
+                                                 Minimum="0"
+                                                 Maximum="100"
+                                                 Value="{Binding Completion}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </GroupBox>
+                <GroupBox Header="Hotels"
+                          Grid.Column="1">
+
+                </GroupBox>
+
+            </Grid>
+        </GroupBox>
+    </Grid>
+</UserControl>

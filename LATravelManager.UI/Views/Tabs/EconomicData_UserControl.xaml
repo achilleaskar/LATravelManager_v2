@@ -220,7 +220,7 @@
             </Grid>
         </StackPanel>
         <TabControl Grid.Row="1"
-                    SelectedIndex="{Binding SelectedUserList}"
+                    SelectedIndex="{Binding SelectedUser}"
                     ItemsSource="{Binding UsersList}">
             <TabControl.ItemTemplate>
                 <DataTemplate>

@@ -5,9 +5,9 @@ namespace LATravelManager.UI.Views.Tabs
     /// <summary>
     /// Interaction logic for Incomes_UserControl.xaml
     /// </summary>
-    public partial class Incomes_UserControl : UserControl
+    public partial class IncomesOutcomes_UserControl : UserControl
     {
-        public Incomes_UserControl()
+        public IncomesOutcomes_UserControl()
         {
             InitializeComponent();
         }

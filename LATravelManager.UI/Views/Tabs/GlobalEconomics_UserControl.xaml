@@ -10,14 +10,12 @@
              d:DesignHeight="450"
              d:DesignWidth="800">
     <Grid>
-        <TabControl>
+        <TabControl SelectedIndex="{Binding SelectedIndex}">
             <TabItem Header="Ταμείο">
                 <local:EconomicData_UserControl DataContext="{Binding EconomicData_ViewModel}" />
             </TabItem>
-            <TabItem Header="Έσοδα">
-                <local:Incomes_UserControl DataContext="{Binding Incomes_ViewModel}" />
-            </TabItem>
-            <TabItem Header="Έξοδα">
+            <TabItem Header="Έσοδα-Έξοδα">
+                <local:IncomesOutcomes_UserControl DataContext="{Binding IncomesOutcomes_ViewModel}" />
             </TabItem>
             <TabItem Header="Κέρδη">
                 <local:TotalEarns_UserControl DataContext="{Binding TotalEarns_ViewModel}" />

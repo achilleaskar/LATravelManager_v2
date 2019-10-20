@@ -5,9 +5,7 @@ using LATravelManager.Model.Locations;
 using LATravelManager.Model.Services;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Personal;
-using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Views;
-using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Data;
@@ -114,11 +112,7 @@ namespace LATravelManager.UI.ViewModel.ServiceViewModels
 
         private ObservableCollection<City> _Cities;
 
-
-
-
         private ICollectionView _HotelsCv;
-
 
         public ICollectionView HotelsCv
         {
@@ -185,7 +179,6 @@ namespace LATravelManager.UI.ViewModel.ServiceViewModels
 
         public bool HotelsFilter(object item)
         {
-
             return Service is HotelService hs && hs.City != null && item is Hotel ho && ho.City.Id == hs.City.Id;
         }
 

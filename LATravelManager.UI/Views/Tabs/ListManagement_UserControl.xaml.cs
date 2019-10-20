@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace LATravelManager.UI.Views.Tabs
 {
     /// <summary>
-    /// Interaction logic for AddIncome_UserControl.xaml
+    /// Interaction logic for ListManagement_UserControl.xaml
     /// </summary>
-    public partial class AddIncome_UserControl : UserControl
+    public partial class ListManagement_UserControl : UserControl
     {
-        public AddIncome_UserControl()
+        public ListManagement_UserControl()
         {
             InitializeComponent();
         }

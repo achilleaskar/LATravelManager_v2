@@ -30,8 +30,6 @@ public class NewReservationHelper : ViewModelBase
 
     #endregion Fields
 
-
-
     #region Methods
 
     public CustomerWrapper CreateRandomCustomer()

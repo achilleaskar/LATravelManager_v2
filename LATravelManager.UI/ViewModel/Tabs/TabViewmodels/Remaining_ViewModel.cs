@@ -47,12 +47,12 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             CheckIn = DateTime.Today;
             CheckOut = DateTime.Today.AddDays(3);
             MainViewModel = mainViewModel;
+            Load();
         }
 
         #endregion Constructors
 
         #region Fields
-
 
         private DateTime _CheckIn;
 
@@ -61,8 +61,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         private bool _Completed = false;
 
         private int _DepartmentIndexBookingFilter;
-
-
 
         private int _ExcursionCategoryIndexBookingFilter;
 
@@ -78,7 +76,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         private bool _IsOk = true;
 
-        private Booking _SelectedBooking;
 
         private Excursion _SelectedExcursionFilter;
 
@@ -157,7 +154,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         }
 
         public RelayCommand EditBookingCommand { get; set; }
-
 
         public int ExcursionCategoryIndexBookingFilter
         {
@@ -425,11 +421,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             return IsOk;
         }
 
-
-
-
-
-
         public bool Completed
         {
             get
@@ -532,7 +523,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 List<ReservationWrapper> list = new List<ReservationWrapper>();
                 if (parameter == "0")
                 {
-
                     list = (await Context.GetAllRemainingReservationsFiltered(ExcursionIndexBookingFilter > 0 ? (ExcursionsCollectionView.CurrentItem as Excursion).Id : 0, UserIndexBookingFilter > 0 ? Users[UserIndexBookingFilter - 1].Id : 0, ExcursionCategoryIndexBookingFilter > 0 ? ExcursionCategoryIndexBookingFilter - 1 : -1)).Select(r => new ReservationWrapper(r)).ToList();
 
                     if (ExcursionIndexBookingFilter == 0 && (ExcursionCategoryIndexBookingFilter == 3 || ExcursionCategoryIndexBookingFilter == 0))
@@ -546,7 +536,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 }
                 else if (parameter == "1")
                 {
-
                     list = (await Context.GetAllRemainingReservationsFiltered(ExcursionIndexBookingFilter > 0 ? (ExcursionsCollectionView.CurrentItem as Excursion).Id : 0, UserIndexBookingFilter > 0 ? Users[UserIndexBookingFilter - 1].Id : 0, ExcursionCategoryIndexBookingFilter > 0 ? ExcursionCategoryIndexBookingFilter - 1 : -1, 1, CheckIn, CheckOut)).Select(r => new ReservationWrapper(r)).ToList();
 
                     if (ExcursionIndexBookingFilter == 0 && (ExcursionCategoryIndexBookingFilter == 3 || ExcursionCategoryIndexBookingFilter == 0))

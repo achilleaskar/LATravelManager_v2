@@ -26,9 +26,11 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
     {
         #region Constructors
 
+        public RelayCommand ToggleDisabilityCommand { get; set; }
+
         public NewReservation_Personal_ViewModel(MainViewModel mainViewModel)
         {
-            StartingRepository = mainViewModel.StartingRepository;
+            GenericRepository = mainViewModel.StartingRepository;
             BasicDataManager = mainViewModel.BasicDataManager;
             //Commands
             ClearBookingCommand = new RelayCommand(async () => { await ClearBooking(); });
@@ -37,6 +39,8 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             DeletePaymentCommand = new RelayCommand(DeletePayment, CanDeletePayment);
             ClearServiceCommand = new RelayCommand(ClearService, CanClearService);
             AddServiceCommand = new RelayCommand(AddService, CanAddService);
+            ToggleDisabilityCommand = new RelayCommand(ToggleDisability, CanToggleDisability);
+
             SaveCommand = new RelayCommand(async () => { await SaveAsync(); }, CanSave);
             Payment = new Payment();
             MainViewModel = mainViewModel;
@@ -45,6 +49,25 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 
             EditServiceCommand = new RelayCommand(EditService);
             Emails = new ObservableCollection<Email>();
+        }
+
+        private bool CanToggleDisability()
+        {
+            return PersonalWr != null && !string.IsNullOrEmpty(PersonalWr.CancelReason);
+        }
+
+        private void ToggleDisability()
+        {
+            if (PersonalWr.Disabled)
+            {
+                PersonalWr.Disabled = false;
+            }
+            else
+            {
+                PersonalWr.DisableDate = DateTime.Now;
+                PersonalWr.DisabledBy = GenericRepository.GetById<User>(StaticResources.User.Id);
+                PersonalWr.Disabled = true;
+            }
         }
 
         public DocumentsManagement DocumentsManagement { get; set; }
@@ -58,7 +81,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             }
             if (DocumentsManagement == null)
             {
-                DocumentsManagement = new DocumentsManagement(StartingRepository);
+                DocumentsManagement = new DocumentsManagement(GenericRepository);
             }
             DocumentsManagement.PrintPaymentsReciept(SelectedPayment, SelectedCustomer.Model);
         }
@@ -210,7 +233,6 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 
         public Payment Payment { get; private set; }
 
-        private Email _PartnerEmail;
 
         public Personal_BookingWrapper PersonalWr
         {
@@ -292,7 +314,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
                 _SelectedPartnerIndex = value;
                 if (SelectedPartnerIndex >= 0 && (PersonalWr.Partner == null || (PersonalWr.Partner != null && PersonalWr.Partner.Id != Partners[SelectedPartnerIndex].Id)))
                 {
-                    PersonalWr.Partner = StartingRepository.GetById<Partner>(Partners[SelectedPartnerIndex].Id);
+                    PersonalWr.Partner = GenericRepository.GetById<Partner>(Partners[SelectedPartnerIndex].Id);
                     Emails = (PersonalWr.Partner.Emails != null && PersonalWr.Partner.Emails.Count() > 0) ? new ObservableCollection<Email>(PersonalWr.Partner.Emails.Split(',').Select(e => new Email(e))) : new ObservableCollection<Email>();
                     if (Emails.Count > 0)
                     {
@@ -414,7 +436,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
                 _SelectedUserIndex = value;
                 if (SelectedUserIndex >= 0 && (PersonalWr.User == null || (PersonalWr.User != null && PersonalWr.User.Id != Users[SelectedUserIndex].Id)))
                 {
-                    PersonalWr.User = StartingRepository.GetById<User>(Users[SelectedUserIndex].Id);
+                    PersonalWr.User = GenericRepository.GetById<User>(Users[SelectedUserIndex].Id);
                 }
                 RaisePropertyChanged();
             }
@@ -439,7 +461,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             }
         }
 
-        public GenericRepository StartingRepository { get; private set; }
+        public GenericRepository GenericRepository { get; private set; }
 
         public List<ServiceViewModel> Templates
         {
@@ -476,7 +498,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             }
         }
 
-        private bool AreContexesFree => (BasicDataManager != null && BasicDataManager.IsContextAvailable) && (StartingRepository != null && StartingRepository.IsContextAvailable);
+        private bool AreContexesFree => (BasicDataManager != null && BasicDataManager.IsContextAvailable) && (GenericRepository != null && GenericRepository.IsContextAvailable);
 
         #endregion Properties
 
@@ -488,13 +510,13 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             {
                 if (id > 0)
                 {
-                    StartingRepository = new GenericRepository();
-                    BasicDataManager = new BasicDataManager(StartingRepository);
+                    GenericRepository = new GenericRepository();
+                    BasicDataManager = new BasicDataManager(GenericRepository);
                     await BasicDataManager.LoadPersonal();
                 }
 
                 Personal_Booking booking = id > 0
-                      ? await StartingRepository.GetFullPersonalBookingByIdAsync(id)
+                      ? await GenericRepository.GetFullPersonalBookingByIdAsync(id)
                       : await CreateNewBooking();
 
                 InitializeBooking(booking);
@@ -599,7 +621,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 
         private void DeletePayment()
         {
-            StartingRepository.Delete(SelectedPayment);
+            GenericRepository.Delete(SelectedPayment);
         }
 
         private void EditService()
@@ -661,7 +683,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
                 string x = e.PropertyName;
                 if (!HasChanges)
                 {
-                    HasChanges = StartingRepository.HasChanges();
+                    HasChanges = GenericRepository.HasChanges();
                     if (PersonalWr.Id == 0)
                     {
                         HasChanges = true;
@@ -699,9 +721,9 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 
                 if (makeNew)
                     await MainViewModel.BasicDataManager.Refresh();
-                if (StartingRepository == null)
+                if (GenericRepository == null)
                 {
-                    StartingRepository = MainViewModel.StartingRepository;
+                    GenericRepository = MainViewModel.StartingRepository;
                 }
                 int userId = SelectedUserIndex >= 0 && Users != null && SelectedUserIndex < Users.Count ? Users[SelectedUserIndex].Id : -1;
                 int partnerId = -1;
@@ -748,32 +770,32 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 
                 if (Payment.Amount > 0)
                 {
-                    PersonalWr.Payments.Add(new Payment { Amount = Payment.Amount, Comment = Payment.Comment, Date = DateTime.Now, PaymentMethod = Payment.PaymentMethod, User = await StartingRepository.GetByIdAsync<User>(StaticResources.User.Id), Checked = (Payment.PaymentMethod == 0 || Payment.PaymentMethod == 5) ? (bool?)false : null });
+                    PersonalWr.Payments.Add(new Payment { Amount = Payment.Amount, Comment = Payment.Comment, Date = DateTime.Now, PaymentMethod = Payment.PaymentMethod, User = await GenericRepository.GetByIdAsync<User>(StaticResources.User.Id), Checked = (Payment.PaymentMethod == 0 || Payment.PaymentMethod == 5) ? (bool?)false : null });
                 }
 
                 if (PersonalWr.Id == 0)
                 {
-                    StartingRepository.Add(PersonalWr.Model);
+                    GenericRepository.Add(PersonalWr.Model);
                 }
                 foreach (var s in Services)
                 {
                     if (s is PlaneService ps)
                     {
                         if (ps.Airline != null)
-                            ps.Airline = StartingRepository.GetById<Airline>(ps.Airline.Id);
+                            ps.Airline = GenericRepository.GetById<Airline>(ps.Airline.Id);
                     }
                     else if (s is HotelService hs)
                     {
                         if (hs.Hotel != null)
-                            hs.Hotel = StartingRepository.GetById<Hotel>(hs.Hotel.Id);
+                            hs.Hotel = GenericRepository.GetById<Hotel>(hs.Hotel.Id);
                         if (hs.City != null)
-                            hs.City = StartingRepository.GetById<City>(hs.City.Id);
+                            hs.City = GenericRepository.GetById<City>(hs.City.Id);
                         if (hs.RoomType != null)
-                            hs.RoomType = StartingRepository.GetById<RoomType>(hs.RoomType.Id);
+                            hs.RoomType = GenericRepository.GetById<RoomType>(hs.RoomType.Id);
                     }
                 }
 
-                await StartingRepository.SaveAsync();
+                await GenericRepository.SaveAsync();
 
                 Payment = new Payment();
                 BookedMessage = "H κράτηση απόθηκέυτηκε επιτυχώς";

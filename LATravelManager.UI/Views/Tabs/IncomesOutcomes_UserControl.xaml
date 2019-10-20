@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="LATravelManager.UI.Views.Tabs.Incomes_UserControl"
+﻿<UserControl x:Class="LATravelManager.UI.Views.Tabs.IncomesOutcomes_UserControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -9,7 +9,7 @@
              mc:Ignorable="d"
              Background="White"
              d:DesignHeight="450"
-             d:DataContext="{d:DesignInstance viewmodels:Incomes_ViewModel}"
+             d:DataContext="{d:DesignInstance viewmodels:IncomesOutcomes_ViewModel}"
              d:DesignWidth="800">
     <UserControl.Resources>
         <converters:UserToVisibility x:Key="UserToVisibilityConverter" />
@@ -17,12 +17,13 @@
     </UserControl.Resources>
     <Grid>
         <TabControl>
-            <TabItem Header="Καταχώρηση Εσόδου">
-                <local:AddIncome_UserControl DataContext="{Binding AddIncome_ViewModel}" />
+            <TabItem Header="Καταχώρηση">
+                <local:AddIncomeOutcome_UserControl DataContext="{Binding AddIncomeOutcome_ViewModel}" />
             </TabItem>
-            <TabItem Header="Προβολή Εσόδων">
-                <local:IncomesPreview_UserControl DataContext="{Binding PreviewIncomes_ViewModel}" />
+            <TabItem Header="Προβολή">
+                <local:IncomesOutcomesPreview_UserControl DataContext="{Binding PreviewIncomesOutcomes_ViewModel}" />
             </TabItem>
+            
         </TabControl>
     </Grid>
 </UserControl>

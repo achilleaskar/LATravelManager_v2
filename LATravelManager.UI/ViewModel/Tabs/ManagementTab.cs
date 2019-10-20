@@ -2,13 +2,13 @@
 
 namespace LATravelManager.UI.ViewModel.Tabs
 {
-    public class InfoTab : TabsBaseViewModel
+    public class ManagementTab : TabsBaseViewModel
     {
-        public InfoTab()
+        public ManagementTab()
         {
             Level = 2;
             IconName = "InformationVariant";
-            Content = "Πληροφορίες";
+            Content = "Διαχείρηση";
         }
     }
 }

@@ -16,6 +16,7 @@ namespace LATravelManager.Model
     {
         [Description("Έσοδο")]
         Income = 0,
+
         [Description("Έξοδο")]
         Expense = 1
     }
@@ -25,6 +26,7 @@ namespace LATravelManager.Model
     {
         [Description("Γενικά")]
         None = 0,
+
         [Description("Προαιρετικά")]
         OptionalActivities = 1
     }
@@ -34,12 +36,16 @@ namespace LATravelManager.Model
     {
         [Description("Γενικά")]
         None = 0,
+
         [Description("Οργανωμένων")]
         GroupExpense = 1,
+
         [Description("Ατομικών")]
         PersonelExpense = 2,
+
         [Description("Πάγια")]
         StandardExpense = 3,
+
         [Description("Φορολογικά")]
         TaxExpense = 4
     }
@@ -49,14 +55,41 @@ namespace LATravelManager.Model
     {
         [Description("Γενικά")]
         None = 0,
+
         [Description("Διαμονή")]
         Hotel = 1,
+
         [Description("Μεταφορά")]
         Bus = 2,
+
         [Description("Συνοδός")]
         Escort = 3,
+
         [Description("Ξεναγός")]
         Guide = 4
+    }
+
+    [TypeConverter(typeof(EnumDescriptionTypeConverter))]
+    public enum ExcursionExpenseCategories //100
+    {
+        [Description("Σύνολο Εκδρομής")]
+        Total = 0,
+
+        [Description("Ημερομηνίες")]
+        Dates = 1,
+
+        [Description("Κράτηση")]
+        Booking = 2
+    }
+
+    [TypeConverter(typeof(EnumDescriptionTypeConverter))]
+    public enum GeneralOrDatesExpenseCategories //100
+    {
+        [Description("Γενικά")]
+        Total = 0,
+
+        [Description("Ημερομηνίες")]
+        Dates = 1,
     }
 
     [TypeConverter(typeof(EnumDescriptionTypeConverter))]
@@ -64,16 +97,22 @@ namespace LATravelManager.Model
     {
         [Description("Γενικά")]
         None = 0,
+
         [Description("Ρέυμα")]
         Power = 1,
+
         [Description("Νερό")]
         Water = 2,
+
         [Description("Ενοίκιο")]
         Rent = 3,
+
         [Description("Κοινόχρηστα")]
         BuildingFees = 4,
+
         [Description("Σταθερό")]
         Telephone = 5,
+
         [Description("Κινητό")]
         Mobile = 6
     }
@@ -83,14 +122,19 @@ namespace LATravelManager.Model
     {
         [Description("Γενικά")]
         None = 0,
+
         [Description("Ρύθμιση Οφειλής")]
         Setting = 1, //rythmisi ofeilhs
+
         [Description("Φόρος Εισοδήματος")]
         IncomeTax = 2, //foros eisodhmatos
+
         [Description("Άλλοι Φόροι")]
         GeneralTaxes = 3,//allo foroi
+
         [Description("ΕΦΚΑ")]
         EFKA = 4,
+
         [Description("ΙΚΑ")]
         IKA = 5
     }

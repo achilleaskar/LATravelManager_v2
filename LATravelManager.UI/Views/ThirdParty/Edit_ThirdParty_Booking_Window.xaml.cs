@@ -23,7 +23,7 @@ namespace LATravelManager.UI.Views.ThirdParty
                     e.Cancel = true;
                 }
                 else
-                    a.StartingRepository.RollBack();
+                    a.GenericRepository.RollBack();
             }
         }
     }

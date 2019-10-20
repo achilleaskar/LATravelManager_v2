@@ -10,8 +10,6 @@ namespace LATravelManager.Model.Plan
 
         #endregion Fields
 
-
-
         #region Properties
 
         public DateTime Date { get; set; }

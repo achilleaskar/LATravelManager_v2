@@ -35,8 +35,8 @@
         <DataTemplate DataType="{x:Type tabs:GlobalSearch_ViewModel}">
             <tabViews:GlobalSearch_UserControl />
         </DataTemplate>
-        <DataTemplate DataType="{x:Type tabs:Info_ViewModel}">
-            <tabViews:InfoTab_UserControl />
+        <DataTemplate DataType="{x:Type tabs:Management_ViewModel}">
+            <tabViews:Management_UserControl />
         </DataTemplate>
         <DataTemplate DataType="{x:Type tabs:GlobalEconomics_ViewModel}">
             <tabViews:GlobalEconomics_UserControl />
@@ -85,6 +85,12 @@
                               Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}" />
                     <MenuItem Command="{Binding OpenPartnersEditCommand}"
                               Header="Συνεργάτες"
+                              Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}" />
+                    <MenuItem Command="{Binding OpenLeadersEditCommand}"
+                              Header="Αρχηγοί"
+                              Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}" />
+                    <MenuItem Command="{Binding OpenVehiclesEditCommand}"
+                              Header="Λεωφορεία"
                               Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}" />
                 </MenuItem>
             </Menu>

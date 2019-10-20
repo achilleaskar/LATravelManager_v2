@@ -2,7 +2,6 @@
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Services;
-using LATravelManager.UI.Wrapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,282 +25,20 @@ namespace LATravelManager.Model.Wrapper
 
         #region Fields
 
+        public DateTime _CheckOut;
         private Room _NoNameRoom;
+
+        private Personal_BookingWrapper _PersonalModel;
+        private ThirdParty_Booking_Wrapper _ThirdPartyModel;
 
         #endregion Fields
 
         #region Properties
 
-        public decimal Recieved { get; set; }
-        public decimal Remaining { get; set; }
-        public decimal FullPrice { get; set; }
-
-        public void CalculateAmounts()
-        {
-            decimal total = 0;
-            if (ExcursionType != ExcursionTypeEnum.Personal && ExcursionType != ExcursionTypeEnum.ThirdParty)
-            {
-                Recieved = 0;
-                foreach (Payment payment in Booking.Payments)
-                {
-                    Recieved += payment.Amount;
-                }
-
-                if (!Booking.IsPartners)
-                {
-                    foreach (Reservation r in Booking.ReservationsInBooking)
-                    {
-                        foreach (Customer c in r.CustomersList)
-                        {
-                            total += c.Price;
-                        }
-                    }
-                    FullPrice = total;
-                    Remaining = (total - Recieved) >= 1 ? total - Recieved : 0;
-                }
-                else
-                {
-                    Remaining = Booking.NetPrice <= Recieved ? 0 : Booking.NetPrice - Recieved;
-                }
-            }
-            else if (ExcursionType == ExcursionTypeEnum.Personal)
-            {
-                PersonalModel.CalculateRemainingAmount();
-                Recieved = PersonalModel.Recieved;
-                Remaining = PersonalModel.Remaining;
-            }
-            else if (ExcursionType == ExcursionTypeEnum.ThirdParty)
-            {
-                ThirdPartyModel.FullPrice = ThirdPartyModel.NetPrice + ThirdPartyModel.Commision;
-                ThirdPartyModel.CalculateRemainingAmount();
-                Recieved = ThirdPartyModel.Recieved;
-                Remaining = ThirdPartyModel.Remaining;
-            }
-            //else if (ExcursionType==ExcursionTypeEnum.Personal)
-            //{
-            //    PersonalModel.CalculateRemainingAmount();
-            //}
-        }
-
-        public ExcursionTypeEnum ExcursionType
-        {
-            get
-            {
-                if (Booking != null)
-                    if (Booking.Excursion.Id == 2)
-                    {
-                        return ExcursionTypeEnum.Bansko;
-                    }
-                    else if (Booking.Excursion.Id == 29)
-                    {
-                        return ExcursionTypeEnum.Skiathos;
-                    }
-                    else
-                    {
-                        return ExcursionTypeEnum.Group;
-                    }
-                else if (PersonalModel != null)
-                {
-                    return ExcursionTypeEnum.Personal;
-                }
-                else if (ThirdPartyModel != null)
-                {
-                    return ExcursionTypeEnum.ThirdParty;
-                }
-                else
-                {
-                    return ExcursionTypeEnum.Group;
-                }
-            }
-        }
-
-
-
         public Booking Booking
         {
             get { return GetValue<Booking>(); }
             set { SetValue(value); }
-        }
-
-        private ThirdParty_Booking_Wrapper _ThirdPartyModel;
-
-        public ThirdParty_Booking_Wrapper ThirdPartyModel
-        {
-            get
-            {
-                return _ThirdPartyModel;
-            }
-
-            set
-            {
-                if (_ThirdPartyModel == value)
-                {
-                    return;
-                }
-
-                _ThirdPartyModel = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private Personal_BookingWrapper _PersonalModel;
-
-        public Personal_BookingWrapper PersonalModel
-        {
-            get
-            {
-                return _PersonalModel;
-            }
-
-            set
-            {
-                if (_PersonalModel == value)
-                {
-                    return;
-                }
-
-                _PersonalModel = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public string User
-        {
-            get
-            {
-                switch (ExcursionType)
-                {
-                    case ExcursionTypeEnum.Bansko:
-                    case ExcursionTypeEnum.Skiathos:
-                    case ExcursionTypeEnum.Group:
-                        return Booking.User.ToString();
-
-                    case ExcursionTypeEnum.Personal:
-                        return PersonalModel.User != null ? PersonalModel.User.ToString() : "";
-
-                    case ExcursionTypeEnum.ThirdParty:
-                        return ThirdPartyModel.User != null ? ThirdPartyModel.User.ToString() : "";
-
-                    default:
-                        return "";
-                }
-            }
-        }
-        public string Comment
-        {
-            get
-            {
-                switch (ExcursionType)
-                {
-                    case ExcursionTypeEnum.Bansko:
-                    case ExcursionTypeEnum.Skiathos:
-                    case ExcursionTypeEnum.Group:
-                        return Booking.Comment;
-
-                    case ExcursionTypeEnum.Personal:
-                        return PersonalModel.Comment;
-
-                    case ExcursionTypeEnum.ThirdParty:
-                        return ThirdPartyModel.Comment;
-
-                    default:
-                        return "";
-                }
-            }
-        }
-
-        public bool Reciept
-        {
-            get
-            {
-                switch (ExcursionType)
-                {
-                    case ExcursionTypeEnum.Bansko:
-                    case ExcursionTypeEnum.Skiathos:
-                    case ExcursionTypeEnum.Group:
-                        return Booking.Reciept;
-
-                    case ExcursionTypeEnum.Personal:
-                        return PersonalModel.Reciept;
-
-                    case ExcursionTypeEnum.ThirdParty:
-                        return ThirdPartyModel.Reciept;
-
-                    default:
-                        return false;
-                }
-            }
-        }
-
-        public string Partner
-        {
-            get
-            {
-                switch (ExcursionType)
-                {
-                    case ExcursionTypeEnum.Bansko:
-                    case ExcursionTypeEnum.Skiathos:
-                    case ExcursionTypeEnum.Group:
-                        return Booking.IsPartners ? Booking.Partner.Name : "";
-
-                    case ExcursionTypeEnum.Personal:
-                        return "";
-
-                    case ExcursionTypeEnum.ThirdParty:
-                        return ThirdPartyModel.Partner.Name;
-
-                    default:
-                        return "";
-                }
-            }
-        }
-
-
-        public DateTime DateOfCreate
-        {
-            get
-            {
-                switch (ExcursionType)
-                {
-                    case ExcursionTypeEnum.Bansko:
-                    case ExcursionTypeEnum.Skiathos:
-                    case ExcursionTypeEnum.Group:
-                        return Booking.CreatedDate;
-
-                    case ExcursionTypeEnum.Personal:
-                        return PersonalModel.CreatedDate;
-
-                    case ExcursionTypeEnum.ThirdParty:
-                        return ThirdPartyModel.CreatedDate;
-
-                    default:
-                        return new DateTime();
-                }
-            }
-        }
-
-
-
-        public string To => GetDestination();
-
-        private string GetDestination()
-        {
-            switch (ExcursionType)
-            {
-                case ExcursionTypeEnum.Bansko:
-                case ExcursionTypeEnum.Skiathos:
-                case ExcursionTypeEnum.Group:
-                    return Booking.Excursion.Name;
-
-                case ExcursionTypeEnum.Personal:
-                    return PersonalModel.GetDestinations();
-
-                case ExcursionTypeEnum.ThirdParty:
-                    return ThirdPartyModel.City;
-
-                default:
-                    return "";
-            }
         }
 
         public DateTime CheckIn
@@ -371,8 +108,6 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
-        public DateTime _CheckOut;
-
         public DateTime CheckOut
         {
             set { _CheckOut = value; }
@@ -425,27 +160,135 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
+        public string Comment
+        {
+            get
+            {
+                switch (ExcursionType)
+                {
+                    case ExcursionTypeEnum.Bansko:
+                    case ExcursionTypeEnum.Skiathos:
+                    case ExcursionTypeEnum.Group:
+                        return Booking.Comment;
+
+                    case ExcursionTypeEnum.Personal:
+                        return PersonalModel.Comment;
+
+                    case ExcursionTypeEnum.ThirdParty:
+                        return ThirdPartyModel.Comment;
+
+                    default:
+                        return "";
+                }
+            }
+        }
+
         public List<Customer> CustomersList
         {
             get { return GetValue<List<Customer>>(); }
             set { SetValue(value); }
         }
 
-        public string Dates => CheckIn.ToString("dd/MM") + "-" + CheckOut.ToString("dd/MM");
-
-        public string HotelDates
+        public DateTime DateOfCreate
         {
             get
             {
-                if (Booking != null && Booking.Excursion != null)
-                    return (Booking.Excursion.NightStart ? CheckIn.AddDays(1).ToString("dd.MM") : CheckIn.ToString("dd.MM")) + "-" + CheckOut.ToString("dd.MM");
-                return "";
+                switch (ExcursionType)
+                {
+                    case ExcursionTypeEnum.Bansko:
+                    case ExcursionTypeEnum.Skiathos:
+                    case ExcursionTypeEnum.Group:
+                        return Booking.CreatedDate;
+
+                    case ExcursionTypeEnum.Personal:
+                        return PersonalModel.CreatedDate;
+
+                    case ExcursionTypeEnum.ThirdParty:
+                        return ThirdPartyModel.CreatedDate;
+
+                    default:
+                        return new DateTime();
+                }
             }
         }
+
+        public string Dates => CheckIn.ToString("dd/MM") + "-" + CheckOut.ToString("dd/MM");
 
         public int DaysCount
         {
             get { return Nights + 1; }
+        }
+
+        public DateTime DisableDate
+        {
+            get
+            {
+                if (PersonalModel != null && PersonalModel.DisableDate != null)
+                {
+                    return PersonalModel.DisableDate.Value;
+                }
+                else if (ThirdPartyModel != null && ThirdPartyModel.DisableDate != null)
+                {
+                    return ThirdPartyModel.DisableDate.Value;
+                }
+                else if (Booking != null && Booking.DisableDate != null)
+                {
+                    return Booking.DisableDate.Value;
+                }
+                return new DateTime();
+            }
+        }
+
+        public string DisableReason
+        {
+            get
+            {
+                if (PersonalModel != null && PersonalModel.CancelReason != null)
+                {
+                    return PersonalModel.CancelReason;
+                }
+                else if (ThirdPartyModel != null && ThirdPartyModel.CancelReason != null)
+                {
+                    return ThirdPartyModel.CancelReason;
+                }
+                else if (Booking != null && Booking.DisableDate != null)
+                {
+                    return Booking.CancelReason;
+                }
+                return "";
+            }
+        }
+
+        public ExcursionTypeEnum ExcursionType
+        {
+            get
+            {
+                if (Booking != null)
+                    if (Booking.Excursion.Id == 2)
+                    {
+                        return ExcursionTypeEnum.Bansko;
+                    }
+                    else if (Booking.Excursion.Id == 29)
+                    {
+                        return ExcursionTypeEnum.Skiathos;
+                    }
+                    else
+                    {
+                        return ExcursionTypeEnum.Group;
+                    }
+                else if (PersonalModel != null)
+                {
+                    return ExcursionTypeEnum.Personal;
+                }
+                else if (ThirdPartyModel != null)
+                {
+                    return ExcursionTypeEnum.ThirdParty;
+                }
+                else
+                {
+                    return ExcursionTypeEnum.Group;
+                }
+            }
         }
 
         public string FirstHotel
@@ -457,6 +300,8 @@ namespace LATravelManager.Model.Wrapper
                     SetValue(value);
             }
         }
+
+        public decimal FullPrice { get; set; }
 
         public bool HB
         {
@@ -476,10 +321,18 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
+        public string HotelDates
+        {
+            get
+            {
+                if (Booking != null && Booking.Excursion != null)
+                    return (Booking.Excursion.NightStart ? CheckIn.AddDays(1).ToString("dd.MM") : CheckIn.ToString("dd.MM")) + "-" + CheckOut.ToString("dd.MM");
+                return "";
+            }
+        }
+
         public string HotelName => GetHotelName();
-
         public string Locations => GetLocations();
-
         public string Names => GetNames();
 
         public int Nights
@@ -530,6 +383,74 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
+        public string Partner
+        {
+            get
+            {
+                switch (ExcursionType)
+                {
+                    case ExcursionTypeEnum.Bansko:
+                    case ExcursionTypeEnum.Skiathos:
+                    case ExcursionTypeEnum.Group:
+                        return Booking.IsPartners ? Booking.Partner.Name : "";
+
+                    case ExcursionTypeEnum.Personal:
+                        return PersonalModel.IsPartners ? PersonalModel.Partner.Name : "";
+
+                    case ExcursionTypeEnum.ThirdParty:
+                        return ThirdPartyModel.Partner.Name;
+
+                    default:
+                        return "";
+                }
+            }
+        }
+
+        public Personal_BookingWrapper PersonalModel
+        {
+            get
+            {
+                return _PersonalModel;
+            }
+
+            set
+            {
+                if (_PersonalModel == value)
+                {
+                    return;
+                }
+
+                _PersonalModel = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool Reciept
+        {
+            get
+            {
+                switch (ExcursionType)
+                {
+                    case ExcursionTypeEnum.Bansko:
+                    case ExcursionTypeEnum.Skiathos:
+                    case ExcursionTypeEnum.Group:
+                        return Booking.Reciept;
+
+                    case ExcursionTypeEnum.Personal:
+                        return PersonalModel.Reciept;
+
+                    case ExcursionTypeEnum.ThirdParty:
+                        return ThirdPartyModel.Reciept;
+
+                    default:
+                        return false;
+                }
+            }
+        }
+
+        public decimal Recieved { get; set; }
+        public decimal Remaining { get; set; }
+
         public ReservationTypeEnum ReservationType
         {
             get { return GetValue<ReservationTypeEnum>(); }
@@ -544,7 +465,30 @@ namespace LATravelManager.Model.Wrapper
 
         public string RoomTypeName => GetRoomTypeName();
 
+        public string RoomTypeNameByNum => GetRoomTypeNameByNum();
+
         public string Tel => GetTel();
+
+        public ThirdParty_Booking_Wrapper ThirdPartyModel
+        {
+            get
+            {
+                return _ThirdPartyModel;
+            }
+
+            set
+            {
+                if (_ThirdPartyModel == value)
+                {
+                    return;
+                }
+
+                _ThirdPartyModel = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string To => GetDestination();
 
         public bool Transfer
         {
@@ -552,7 +496,28 @@ namespace LATravelManager.Model.Wrapper
             set { SetValue(value); }
         }
 
-        public string RoomTypeNameByNum => GetRoomTypeNameByNum();
+        public string User
+        {
+            get
+            {
+                switch (ExcursionType)
+                {
+                    case ExcursionTypeEnum.Bansko:
+                    case ExcursionTypeEnum.Skiathos:
+                    case ExcursionTypeEnum.Group:
+                        return Booking.User.ToString();
+
+                    case ExcursionTypeEnum.Personal:
+                        return PersonalModel.User != null ? PersonalModel.User.ToString() : "";
+
+                    case ExcursionTypeEnum.ThirdParty:
+                        return ThirdPartyModel.User != null ? ThirdPartyModel.User.ToString() : "";
+
+                    default:
+                        return "";
+                }
+            }
+        }
 
         public User UserWr
         {
@@ -577,115 +542,56 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
-        public DateTime DisableDate
-        {
-            get
-            {
-                if (PersonalModel != null && PersonalModel.DisableDate != null)
-                {
-                    return PersonalModel.DisableDate.Value;
-                }
-                else if (ThirdPartyModel != null && ThirdPartyModel.DisableDate != null)
-                {
-                    return ThirdPartyModel.DisableDate.Value;
-                }
-                else if (Booking != null && Booking.DisableDate != null)
-                {
-                    return Booking.DisableDate.Value;
-                }
-                return new DateTime();
-            }
-        }
-
-        public string DisableReason
-        {
-            get
-            {
-                if (PersonalModel != null && PersonalModel.CancelReason != null)
-                {
-                    return PersonalModel.CancelReason;
-                }
-                else if (ThirdPartyModel != null && ThirdPartyModel.CancelReason != null)
-                {
-                    return ThirdPartyModel.CancelReason;
-                }
-                else if (Booking != null && Booking.DisableDate != null)
-                {
-                    return Booking.CancelReason;
-                }
-                return "";
-            }
-        }
-
-        private string GetRoomTypeNameByNum()
-        {
-            bool handled = false;
-            string roomname = "";
-            if (Room != null)
-            {
-                if (CustomersList.Count == 2 && (Room.RoomType.Id == 2 || Room.RoomType.Id == 3))
-                {
-                    roomname = Room.RoomType.Name;
-                    handled = true;
-                }
-            }
-            else if (NoNameRoomType != null)
-            {
-                if (CustomersList.Count == 2 && (NoNameRoomType.Id == 2 || NoNameRoomType.Id == 3))
-                {
-                    roomname = NoNameRoomType.Name;
-                    handled = true;
-                }
-            }
-            else if (ReservationType == ReservationTypeEnum.Transfer)
-            {
-                return "TRANSFER";
-            }
-            else if (ReservationType == ReservationTypeEnum.OneDay)
-            {
-                return "ONEDAY";
-            }
-            if (!handled)
-            {
-                switch (CustomersList.Count)
-                {
-                    case 1:
-                        roomname = "SINGLE";
-                        break;
-
-                    case 2:
-                        roomname = "TWIN";
-                        break;
-
-                    case 3:
-                        roomname = "TRIPLE";
-                        break;
-
-                    case 4:
-                        roomname = "QUAD";
-                        break;
-
-                    case 5:
-                        roomname = "5BED";
-                        break;
-
-                    case 6:
-                        roomname = "6BED";
-                        break;
-                }
-            }
-
-            if (HB)
-            {
-                roomname += "-HB";
-            }
-
-            return roomname;
-        }
-
         #endregion Properties
 
         #region Methods
+
+        public void CalculateAmounts()
+        {
+            decimal total = 0;
+            if (ExcursionType != ExcursionTypeEnum.Personal && ExcursionType != ExcursionTypeEnum.ThirdParty)
+            {
+                Recieved = 0;
+                foreach (Payment payment in Booking.Payments)
+                {
+                    Recieved += payment.Amount;
+                }
+
+                if (!Booking.IsPartners)
+                {
+                    foreach (Reservation r in Booking.ReservationsInBooking)
+                    {
+                        foreach (Customer c in r.CustomersList)
+                        {
+                            total += c.Price;
+                        }
+                    }
+                    FullPrice = total;
+                    Remaining = (total - Recieved) >= 1 ? total - Recieved : 0;
+                }
+                else
+                {
+                    Remaining = Booking.NetPrice <= Recieved ? 0 : Booking.NetPrice - Recieved;
+                }
+            }
+            else if (ExcursionType == ExcursionTypeEnum.Personal)
+            {
+                PersonalModel.CalculateRemainingAmount();
+                Recieved = PersonalModel.Recieved;
+                Remaining = PersonalModel.Remaining;
+            }
+            else if (ExcursionType == ExcursionTypeEnum.ThirdParty)
+            {
+                ThirdPartyModel.FullPrice = ThirdPartyModel.NetPrice + ThirdPartyModel.Commision;
+                ThirdPartyModel.CalculateRemainingAmount();
+                Recieved = ThirdPartyModel.Recieved;
+                Remaining = ThirdPartyModel.Remaining;
+            }
+            //else if (ExcursionType==ExcursionTypeEnum.Personal)
+            //{
+            //    PersonalModel.CalculateRemainingAmount();
+            //}
+        }
 
         public bool Contains(string key)
         {
@@ -737,6 +643,26 @@ namespace LATravelManager.Model.Wrapper
                 }
             }
             return false;
+        }
+
+        private string GetDestination()
+        {
+            switch (ExcursionType)
+            {
+                case ExcursionTypeEnum.Bansko:
+                case ExcursionTypeEnum.Skiathos:
+                case ExcursionTypeEnum.Group:
+                    return Booking.Excursion.Name;
+
+                case ExcursionTypeEnum.Personal:
+                    return PersonalModel.GetDestinations();
+
+                case ExcursionTypeEnum.ThirdParty:
+                    return ThirdPartyModel.City;
+
+                default:
+                    return "";
+            }
         }
 
         private string GetHotelName()
@@ -907,6 +833,72 @@ namespace LATravelManager.Model.Wrapper
                     roomname += "-HB";
                 }
             }
+            return roomname;
+        }
+
+        private string GetRoomTypeNameByNum()
+        {
+            bool handled = false;
+            string roomname = "";
+            if (Room != null)
+            {
+                if (CustomersList.Count == 2 && (Room.RoomType.Id == 2 || Room.RoomType.Id == 3))
+                {
+                    roomname = Room.RoomType.Name;
+                    handled = true;
+                }
+            }
+            else if (NoNameRoomType != null)
+            {
+                if (CustomersList.Count == 2 && (NoNameRoomType.Id == 2 || NoNameRoomType.Id == 3))
+                {
+                    roomname = NoNameRoomType.Name;
+                    handled = true;
+                }
+            }
+            else if (ReservationType == ReservationTypeEnum.Transfer)
+            {
+                return "TRANSFER";
+            }
+            else if (ReservationType == ReservationTypeEnum.OneDay)
+            {
+                return "ONEDAY";
+            }
+            if (!handled)
+            {
+                switch (CustomersList.Count)
+                {
+                    case 1:
+                        roomname = "SINGLE";
+                        break;
+
+                    case 2:
+                        roomname = "TWIN";
+                        break;
+
+                    case 3:
+                        roomname = "TRIPLE";
+                        break;
+
+                    case 4:
+                        roomname = "QUAD";
+                        break;
+
+                    case 5:
+                        roomname = "5BED";
+                        break;
+
+                    case 6:
+                        roomname = "6BED";
+                        break;
+                }
+            }
+
+            if (HB)
+            {
+                roomname += "-HB";
+            }
+
             return roomname;
         }
 

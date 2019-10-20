@@ -1,5 +1,6 @@
 ﻿using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Excursions;
+using LATravelManager.Model.Lists;
 using LATravelManager.Model.Services;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,8 @@ namespace LATravelManager.Model.People
 {
     public class Customer : EditTracker, INamed
     {
+        #region Constructors
+
         public Customer()
         {
             Services = new ObservableCollection<Service>();
@@ -18,52 +21,15 @@ namespace LATravelManager.Model.People
             //DOB = DateTime.Now.AddYears(-20);
         }
 
+        #endregion Constructors
+        public Bus Bus{ get; set; }
+        #region Fields
+
         private DateTime _PassportExpiration;
-
-
-        public DateTime PassportExpiration
-        {
-            get
-            {
-                return _PassportExpiration;
-            }
-
-            set
-            {
-                if (_PassportExpiration == value)
-                {
-                    return;
-                }
-
-                _PassportExpiration = value;
-                RaisePropertyChanged();
-            }
-        }
 
         private DateTime _PassportPublish;
 
-        public DateTime PassportPublish
-        {
-            get
-            {
-                return _PassportPublish;
-            }
-
-            set
-            {
-                if (_PassportPublish == value)
-                {
-                    return;
-                }
-
-                _PassportPublish = value;
-                RaisePropertyChanged();
-            }
-        }
-
-
-
-        public ICollection<Service> Services { get; }
+        #endregion Fields
 
         #region Properties
 
@@ -99,15 +65,52 @@ namespace LATravelManager.Model.People
 
         public OptionalExcursion OptionalExcursion { get; set; }
 
+        public DateTime PassportExpiration
+        {
+            get
+            {
+                return _PassportExpiration;
+            }
+
+            set
+            {
+                if (_PassportExpiration == value)
+                {
+                    return;
+                }
+
+                _PassportExpiration = value;
+                RaisePropertyChanged();
+            }
+        }
         [StringLength(20, ErrorMessage = "Πολύ μεγάλο")]
         public string PassportNum { get; set; }
 
-        public decimal Price { get; set; }
+        public DateTime PassportPublish
+        {
+            get
+            {
+                return _PassportPublish;
+            }
 
+            set
+            {
+                if (_PassportPublish == value)
+                {
+                    return;
+                }
+
+                _PassportPublish = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal Price { get; set; }
         public Reservation Reservation { get; set; }
 
+        [StringLength(30, MinimumLength = 0)]
         public string ReturningPlace { get; set; }
-
+        public ICollection<Service> Services { get; }
         [Required(ErrorMessage = "Επιλέξτε σημέιο αναχώρησης")]
         [StringLength(20)]
         public string StartingPlace { get; set; }
@@ -123,9 +126,13 @@ namespace LATravelManager.Model.People
 
         #endregion Properties
 
+        #region Methods
+
         public override string ToString()
         {
             return Surename + " " + Name;
         }
+
+        #endregion Methods
     }
 }

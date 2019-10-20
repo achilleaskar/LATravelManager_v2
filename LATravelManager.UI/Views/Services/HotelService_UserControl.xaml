@@ -81,8 +81,7 @@
                     HorizontalAlignment="Right"
                     Height="22"
                     Width="22"
-                    Command="{Binding OpenHotelEditCommand}"
-                   >
+                    Command="{Binding OpenHotelEditCommand}">
                 <iconPacks:PackIconFontAwesome Kind="PlusSolid"
                                                VerticalAlignment="Center" />
             </Button>

@@ -49,11 +49,10 @@ using System.Windows;
 // [assembly: AssemblyVersion("1.0.*")]
 
 [assembly: NeutralResourcesLanguage("el-GR")]
-[assembly: AssemblyVersion("0.6.7")]
-[assembly: AssemblyFileVersion("0.6.7")]
+[assembly: AssemblyVersion("0.7.6")]
+[assembly: AssemblyFileVersion("0.7.6")]
 /*
     cd "LATravelManager.UI\bin\Release"
     nuget pack .\LaTravelManager.nuspec
     squirrel --releasify .\LATravelManager.UI\bin\Release\LATravelManager.0.2.3.nupkg --no-msi
-
 */

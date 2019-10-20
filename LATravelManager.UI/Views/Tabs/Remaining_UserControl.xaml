@@ -167,7 +167,6 @@
                     </StackPanel>
                 </StackPanel>
             </StackPanel>
-
         </StackPanel>
         <DataGrid Grid.Row="1"
                   Grid.ColumnSpan="2"

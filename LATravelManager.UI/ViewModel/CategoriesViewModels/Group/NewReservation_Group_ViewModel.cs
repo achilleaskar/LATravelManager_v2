@@ -11,12 +11,20 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Group
 {
     public class NewReservation_Group_ViewModel : NewReservationGroup_Base
     {
-        private bool _enabled;
+        #region Constructors
 
         public NewReservation_Group_ViewModel(MainViewModel mainViewModel) : base(mainViewModel)
         {
             MessengerInstance.Register<SelectedExcursionChangedMessage>(this, async exc => { await SelectedExcursionChanged(exc.SelectedExcursion); });
         }
+
+        #endregion Constructors
+
+        #region Fields
+
+        private bool _enabled;
+
+        #endregion Fields
 
         #region Properties
 
@@ -47,6 +55,8 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Group
         {
             try
             {
+                if (id > 0)
+                    GenericRepository = new GenericRepository();
                 if (SelectedExcursion != null || id > 0)
                 {
                     Booking booking = id > 0

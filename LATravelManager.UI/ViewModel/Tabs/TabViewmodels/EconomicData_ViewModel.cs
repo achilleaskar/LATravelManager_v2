@@ -56,7 +56,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         private decimal _Peiraios;
         private ExcursionWrapper _SelectedExcursion;
         private Excursion _SelectedExcursionFilter;
-        private PaymentInfo _SelectedUserList;
+        private int _SelectedUserList;
 
         private DateTime _To;
 
@@ -310,7 +310,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-        public PaymentInfo SelectedUserList
+        public int SelectedUser
         {
             get
             {

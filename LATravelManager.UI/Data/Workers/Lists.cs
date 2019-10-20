@@ -25,6 +25,7 @@ namespace LATravelManager.UI.Data.Workers
 {
     public class Lists : MyViewModelBaseAsync
     {
+
         #region Constructors
 
         public Lists(Excursion excursion, DateTime from, DateTime to)
@@ -48,17 +49,6 @@ namespace LATravelManager.UI.Data.Workers
 
         #region Fields
 
-        public const string DepartmentsPropertyName = nameof(Departments);
-        public const string FilteredBookingsPropertyName = nameof(FilteredBookings);
-        public const string FilteredCustomersPropertyName = nameof(FilteredCustomers);
-        public const string HotelsPropertyName = nameof(Hotels);
-        public const string RoomingListPropertyName = nameof(RoomingList);
-        public const string RoomListCheckInFromPropertyName = nameof(RoomListCheckInFrom);
-        public const string RoomListCheckOutFromPropertyName = nameof(RoomListCheckInTo);
-        public const string SecondDepartsPropertyName = nameof(SecondDeparts);
-
-        public const string SelectedDatePropertyName = nameof(SelectedDate);
-        public const string SelectedHotelIndexPropertyName = nameof(SelectedHotelIndex);
         private ObservableCollection<Department> _Departments = new ObservableCollection<Department>();
         private ObservableCollection<Booking> _FilteredBookings;
         private ObservableCollection<Customer> _FilteredCustomers;
@@ -95,9 +85,11 @@ namespace LATravelManager.UI.Data.Workers
                 }
 
                 _Departments = value;
-                RaisePropertyChanged(DepartmentsPropertyName);
+                RaisePropertyChanged();
             }
         }
+
+        public Excursion Excursion { get; }
 
         /// <summary>
         /// Sets and gets the FilteredBookings property. Changes to that property's value raise the
@@ -118,7 +110,7 @@ namespace LATravelManager.UI.Data.Workers
                 }
 
                 _FilteredBookings = value;
-                RaisePropertyChanged(FilteredBookingsPropertyName);
+                RaisePropertyChanged();
             }
         }
 
@@ -141,9 +133,13 @@ namespace LATravelManager.UI.Data.Workers
                 }
 
                 _FilteredCustomers = value;
-                RaisePropertyChanged(FilteredCustomersPropertyName);
+                RaisePropertyChanged();
             }
         }
+
+        public DateTime From { get; }
+
+        public GenericRepository GenericRepository { get; set; }
 
         /// <summary>
         /// Sets and gets the Hotels property.
@@ -164,7 +160,7 @@ namespace LATravelManager.UI.Data.Workers
                 }
 
                 _Hotels = value;
-                RaisePropertyChanged(HotelsPropertyName);
+                RaisePropertyChanged();
             }
         }
 
@@ -199,7 +195,7 @@ namespace LATravelManager.UI.Data.Workers
                 }
 
                 _RoomingList = value;
-                RaisePropertyChanged(RoomingListPropertyName);
+                RaisePropertyChanged();
             }
         }
 
@@ -222,7 +218,7 @@ namespace LATravelManager.UI.Data.Workers
                 }
 
                 _RoomListCheckInFrom = value;
-                RaisePropertyChanged(RoomListCheckInFromPropertyName);
+                RaisePropertyChanged();
             }
         }
 
@@ -245,7 +241,7 @@ namespace LATravelManager.UI.Data.Workers
                 }
 
                 _RoomListCheckInTo = value;
-                RaisePropertyChanged(RoomListCheckOutFromPropertyName);
+                RaisePropertyChanged();
             }
         }
 
@@ -268,7 +264,7 @@ namespace LATravelManager.UI.Data.Workers
                 }
 
                 _SecondDeparts = value;
-                RaisePropertyChanged(SecondDepartsPropertyName);
+                RaisePropertyChanged();
             }
         }
 
@@ -291,7 +287,7 @@ namespace LATravelManager.UI.Data.Workers
                 }
 
                 _SelectedDate = value;
-                RaisePropertyChanged(SelectedDatePropertyName);
+                RaisePropertyChanged();
             }
         }
 
@@ -314,13 +310,18 @@ namespace LATravelManager.UI.Data.Workers
                 }
 
                 _SelectedHotelIndex = value;
-                RaisePropertyChanged(SelectedHotelIndexPropertyName);
+                RaisePropertyChanged();
             }
         }
 
         public RelayCommand ShowCustomersCommand { get; set; }
 
         public RelayCommand ShowRoomingListCommand { get; set; }
+
+        //    RoomingList = new ObservableCollection<Reservation>(tmproomingList);
+        //    Mouse.OverrideCursor = Cursors.Arrow;
+        //}
+        public DateTime To { get; }
 
         #endregion Properties
 
@@ -646,29 +647,23 @@ namespace LATravelManager.UI.Data.Workers
         //    return SelectedDate.Year >= 2018;
         //}
 
-        private void DepartmentModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+        //    int count = 1;
+        //    foreach (var b in tmplist)
+        //    {
+        //        foreach (var r in b.ReservationsInBooking)
+        //        {
+        //            if (r.CheckIn >= RoomListCheckInFrom && r.CheckIn <= RoomListCheckInTo && ((r.Room != null && r.Room.Hotel.Id == hotelid) || (r.Hotel != null && r.Hotel.Id == hotelid)))
+        //            {
+        //                r.Number = count;
+        //                tmproomingList.Add(r);
+        //                count++;
+        //            }
+        //        }
+        //    }
+        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
-            SelectCustomers();
-        }
-
-        private void Departments_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == NotifyCollectionChangedAction.Remove)
-            {
-                foreach (Department item in e.OldItems)
-                {
-                    //Removed items
-                    item.PropertyChanged -= DepartmentModelPropertyChanged;
-                }
-            }
-            else if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-                foreach (Department item in e.NewItems)
-                {
-                    //Added items
-                    item.PropertyChanged += DepartmentModelPropertyChanged;
-                }
-            }
+            GenericRepository = new GenericRepository();
+            Hotels = new ObservableCollection<Hotel>(await GenericRepository.GetAllHotelsInCityAsync(Excursion.Destinations[0].Id));
         }
 
         public async Task PrintAllRoomingLists()
@@ -746,6 +741,36 @@ namespace LATravelManager.UI.Data.Workers
             CreateRoomingList(rl);
         }
 
+        //    List<Reservation> tmproomingList = new List<Reservation>();
+        public override Task ReloadAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DepartmentModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            SelectCustomers();
+        }
+
+        private void Departments_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                foreach (Department item in e.OldItems)
+                {
+                    //Removed items
+                    item.PropertyChanged -= DepartmentModelPropertyChanged;
+                }
+            }
+            else if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (Department item in e.NewItems)
+                {
+                    //Added items
+                    item.PropertyChanged += DepartmentModelPropertyChanged;
+                }
+            }
+        }
         private void RoomingListChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             //if (e.Action == NotifyCollectionChangedAction.Remove)
@@ -784,6 +809,8 @@ namespace LATravelManager.UI.Data.Workers
                 }
             }
         }
+
+        #endregion Methods
 
         //private void ShowCustomers()
         //{
@@ -849,43 +876,5 @@ namespace LATravelManager.UI.Data.Workers
         //    tmplist = UOW.GenericRepository.Get<Booking>(filter: x => x.Excursion.Id == SelectedExcursion.Id && x.CheckIn >= RoomListCheckInFrom && x.CheckIn <= RoomListCheckInTo,
         //        includeProperties: "Excursion, ReservationsInBooking.CustomersList");
         //    // }
-
-        //    List<Reservation> tmproomingList = new List<Reservation>();
-
-        //    int count = 1;
-        //    foreach (var b in tmplist)
-        //    {
-        //        foreach (var r in b.ReservationsInBooking)
-        //        {
-        //            if (r.CheckIn >= RoomListCheckInFrom && r.CheckIn <= RoomListCheckInTo && ((r.Room != null && r.Room.Hotel.Id == hotelid) || (r.Hotel != null && r.Hotel.Id == hotelid)))
-        //            {
-        //                r.Number = count;
-        //                tmproomingList.Add(r);
-        //                count++;
-        //            }
-        //        }
-        //    }
-
-        //    RoomingList = new ObservableCollection<Reservation>(tmproomingList);
-        //    Mouse.OverrideCursor = Cursors.Arrow;
-        //}
-
-        public GenericRepository GenericRepository { get; set; }
-        public Excursion Excursion { get; }
-        public DateTime From { get; }
-        public DateTime To { get; }
-
-        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
-        {
-            GenericRepository = new GenericRepository();
-            Hotels = new ObservableCollection<Hotel>(await GenericRepository.GetAllHotelsInCityAsync(Excursion.Destinations[0].Id));
-        }
-
-        public override Task ReloadAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion Methods
     }
 }

@@ -51,12 +51,7 @@ namespace LATravelManager.Model.Services
             }
         }
 
-
-
-
-
         private TimeSpan _StopArrive;
-
 
         public TimeSpan StopArrive
         {
@@ -77,11 +72,7 @@ namespace LATravelManager.Model.Services
             }
         }
 
-
-
-
         private TimeSpan _StopLeave;
-
 
         public TimeSpan StopLeave
         {
@@ -158,8 +149,6 @@ namespace LATravelManager.Model.Services
                 RaisePropertyChanged();
             }
         }
-
-       
 
         #endregion Properties
     }

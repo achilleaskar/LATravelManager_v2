@@ -17,7 +17,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using Xceed.Wpf.Toolkit;
+using System.Windows.Input;
 
 namespace LATravelManager.UI.Repositories
 {
@@ -97,6 +97,16 @@ namespace LATravelManager.UI.Repositories
 
         #region Methods
 
+        protected virtual void Dispose(bool b)
+        {
+            if (b)
+            {
+                Context.Dispose();
+                GC.SuppressFinalize(this);
+                return;
+            }
+        }
+
         public void Add<TEntity>(TEntity model) where TEntity : BaseModel
         {
             Context.Set<TEntity>().Add(model);
@@ -115,7 +125,10 @@ namespace LATravelManager.UI.Repositories
 
         public void Dispose()
         {
-            Context.Dispose();
+            // Dispose of unmanaged resources.
+            Dispose(true);
+            // Suppress finalization.
+            GC.SuppressFinalize(this);
         }
 
         public async Task<List<TEntity>> GetAllAsync<TEntity>(Expression<Func<TEntity, bool>> filter = null) where TEntity : BaseModel
@@ -190,6 +203,15 @@ namespace LATravelManager.UI.Repositories
                .Include(f => f.ReservationsInBooking.Select(i => i.NoNameRoomType))
                .Include(f => f.ReservationsInBooking.Select(i => i.Hotel))
                .Where(b => b.Disabled == false)
+               .ToListAsync);
+        }
+
+        public async Task<IEnumerable<Booking>> GetAllBookingsForLists(int excursionId)
+        {
+            return await RunTask(Context.Bookings.Where(b => b.Excursion.Id==excursionId && b.Disabled==false)
+               .Include(f => f.ReservationsInBooking.Select(i => i.CustomersList.Select(b1=>b1.Bus)))
+               .Include(f => f.ReservationsInBooking.Select(i => i.Room).Select(r => r.Hotel))
+               .Include(f => f.ReservationsInBooking.Select(i => i.Hotel))
                .ToListAsync);
         }
 
@@ -373,6 +395,17 @@ namespace LATravelManager.UI.Repositories
                 .FirstOrDefaultAsync);
         }
 
+        public bool HasChanges()
+        {
+            return Context.ChangeTracker.HasChanges();
+        }
+
+        public void RemoveById<TEntity>(int id) where TEntity : BaseModel
+        {
+            TEntity entity = Context.Set<TEntity>().Find(id);
+            Delete(entity);
+        }
+
         public void RollBack()
         {
             foreach (var entry in Context.ChangeTracker.Entries())
@@ -393,41 +426,9 @@ namespace LATravelManager.UI.Repositories
             RejectNavigationChanges();
         }
 
-        private void RejectNavigationChanges()
-        {
-            var objectContext = ((IObjectContextAdapter)Context).ObjectContext;
-            var deletedRelationships = objectContext.ObjectStateManager.GetObjectStateEntries(EntityState.Deleted).Where(e => e.IsRelationship && !RelationshipContainsKeyEntry(e));
-            var addedRelationships = objectContext.ObjectStateManager.GetObjectStateEntries(EntityState.Added).Where(e => e.IsRelationship);
-
-            foreach (var relationship in addedRelationships)
-                relationship.Delete();
-
-            foreach (var relationship in deletedRelationships)
-                relationship.ChangeState(EntityState.Unchanged);
-        }
-
-        private bool RelationshipContainsKeyEntry(ObjectStateEntry stateEntry)
-        {
-            //prevent exception: "Cannot change state of a relationship if one of the ends of the relationship is a KeyEntry"
-            //I haven't been able to find the conditions under which this happens, but it sometimes does.
-            var objectContext = ((IObjectContextAdapter)Context).ObjectContext;
-            var keys = new[] { stateEntry.OriginalValues[0], stateEntry.OriginalValues[1] };
-            return keys.Any(key => objectContext.ObjectStateManager.GetObjectStateEntry(key).Entity == null);
-        }
-
-        public bool HasChanges()
-        {
-            return Context.ChangeTracker.HasChanges();
-        }
-
-        public void RemoveById<TEntity>(int id) where TEntity : BaseModel
-        {
-            TEntity entity = Context.Set<TEntity>().Find(id);
-            Delete(entity);
-        }
-
         public async Task SaveAsync()
         {
+            Mouse.OverrideCursor = Cursors.Wait;
             List<DbEntityEntry> AddedEntities = Context.ChangeTracker.Entries().Where(E => E.State == EntityState.Added).ToList();
 
             AddedEntities.ForEach(E =>
@@ -482,6 +483,7 @@ namespace LATravelManager.UI.Repositories
             //    }
             //}
             await RunTask(Context.SaveChangesAsync);
+            Mouse.OverrideCursor = Cursors.Arrow;
         }
 
         public virtual void UpdateValues<TEntity>(TEntity entity, TEntity newEntity)
@@ -670,14 +672,15 @@ namespace LATravelManager.UI.Repositories
                .ToListAsync);
         }
 
-        internal async Task<List<Personal_Booking>> GetAllPersonalBookingsFiltered(int userId, bool completed, DateTime dateLimit, int par = 0, DateTime checkin = new DateTime(), DateTime checkout = new DateTime(), bool canceled = false)
+        internal async Task<List<Personal_Booking>> GetAllPersonalBookingsFiltered(int userId, bool completed, DateTime dateLimit, int remainingPar = 0, DateTime checkin = new DateTime(), DateTime checkout = new DateTime(), bool canceled = false, string keyword = null, int id = 0, bool common = true)
         {
             var x = await RunTask(Context.Personal_Bookings
                 .Where(c =>
                 c.CreatedDate >= dateLimit &&
                 (userId == 0 || c.User.Id == userId) &&
-                (par == 0 || c.Services.Any(s => s.TimeGo >= checkin) && c.Services.Any(s => s.TimeGo <= checkout)) &&
-                (completed || c.Services.Any(s => s.TimeReturn >= DateTime.Today)))
+                (remainingPar == 0 || c.Services.Any(s => s.TimeGo >= checkin) && c.Services.Any(s => s.TimeGo <= checkout)) &&
+                (completed || c.Services.Any(s => s.TimeReturn >= DateTime.Today)) &&
+                ((id > 0 && c.Id == id) || (id == 0 && (common || (c.IsPartners && c.Partner.Name.StartsWith(keyword)) || c.Customers.Any(p => p.Name.StartsWith(keyword) || p.Surename.StartsWith(keyword) || p.Tel.StartsWith(keyword))))))
                 .Include(f => f.User)
                 .Include(f => f.Services)
                 .Include(f => f.Services)
@@ -687,6 +690,27 @@ namespace LATravelManager.UI.Repositories
                 .Where(b => b.Disabled == canceled)
                 .ToListAsync);
             return x;
+        }
+
+        internal async Task<List<Reservation>> GetAllRemainingReservationsFiltered(int excursionId, int userId, int category, int par = 0, DateTime checkin = new DateTime(), DateTime checkout = new DateTime())
+        {
+            DateTime limit = new DateTime(2019, 04, 01);
+            return await RunTask(Context.Reservations.Where(
+                c => (category >= 0 ? (int)c.Booking.Excursion.ExcursionType.Category == category : true) &&
+                  (excursionId == 0 || c.Booking.Excursion.Id == excursionId) &&
+                  (userId == 0 || c.Booking.User.Id == userId) &&
+                  (par == 0 || c.Booking.CheckIn >= checkin && c.Booking.CheckIn <= checkout) &&
+                  (c.CreatedDate >= limit) &&
+                  (StaticResources.User.BaseLocation == 1 || c.Booking.Partner.Id != 219) &&
+                  !c.Booking.Disabled)
+                  .Include(f => f.Booking.User)
+                  .Include(f => f.Booking.ExcursionDate)
+                  .Include(f => f.Booking.Partner)
+                  .Include(f => f.Booking.Excursion)
+                  .Include(f => f.Booking.Excursion.ExcursionType)
+                  .Include(f => f.Booking.Payments)
+                  .Include(f => f.CustomersList)
+                  .ToListAsync);
         }
 
         internal async Task<List<Reservation>> GetAllReservationsDimitri(Expression<Func<Reservation, bool>> p, bool canceled = false)
@@ -727,24 +751,24 @@ namespace LATravelManager.UI.Repositories
                   .ToListAsync);
         }
 
-        internal async Task<List<Reservation>> GetAllRemainingReservationsFiltered(int excursionId, int userId, int category, int par = 0, DateTime checkin = new DateTime(), DateTime checkout = new DateTime())
+        internal async Task<IEnumerable<Reservation>> GetAllReservationsForAddIncome(int grafeio, string keyword, DateTime datelimit, int id = 0, bool canceled = false)
         {
-            DateTime limit = new DateTime(2019, 04, 01);
-            return await RunTask(Context.Reservations.Where(
-                c => (category >= 0 ? (int)c.Booking.Excursion.ExcursionType.Category == category : true) &&
-                  (excursionId == 0 || c.Booking.Excursion.Id == excursionId) &&
-                  (userId == 0 || c.Booking.User.Id == userId) &&
-                  (par == 0 || c.Booking.CheckIn >= checkin && c.Booking.CheckIn <= checkout) &&
-                  (c.CreatedDate >= limit) &&
-                  (StaticResources.User.BaseLocation == 1 || c.Booking.Partner.Id != 219) &&
-                  !c.Booking.Disabled)
+            return await RunTask(Context.Reservations.Where(c =>
+                  c.Booking.ReservationsInBooking.Any(r => r.CreatedDate >= datelimit) &&
+                  c.Booking.Disabled == canceled &&
+                 (grafeio == 0 || c.Booking.User.BaseLocation == grafeio) &&
+                ((id > 0 && c.Booking.Id == id) || (id == 0 && ((c.Booking.IsPartners && c.Booking.Partner.Name.StartsWith(keyword)) || c.CustomersList.Any(p => p.Name.StartsWith(keyword) || p.Surename.StartsWith(keyword) || p.Tel.StartsWith(keyword))))))
                   .Include(f => f.Booking.User)
                   .Include(f => f.Booking.ExcursionDate)
                   .Include(f => f.Booking.Partner)
                   .Include(f => f.Booking.Excursion)
                   .Include(f => f.Booking.Excursion.ExcursionType)
-                  .Include(f => f.Booking.Payments)
+                  .Include(f => f.Booking.ReservationsInBooking.Select(i => i.CustomersList))
+                  .Include(f => f.Room.Hotel)
+                  .Include(f => f.Room.RoomType)
                   .Include(f => f.CustomersList)
+                  .Include(f => f.Hotel)
+                  .Include(f => f.NoNameRoomType)
                   .ToListAsync);
         }
 
@@ -763,22 +787,38 @@ namespace LATravelManager.UI.Repositories
                .ToListAsync);
         }
 
-        internal async Task<List<ThirdParty_Booking>> GetAllThirdPartyBookingsFiltered(int userId, bool completed, DateTime dateLimit, int par = 0, DateTime checkin = new DateTime(), DateTime checkout = new DateTime(), bool canceled = false)
+        internal async Task<List<ThirdParty_Booking>> GetAllThirdPartyBookingsFiltered(int userId, bool completed, DateTime dateLimit, int par = 0, DateTime checkin = new DateTime(), DateTime checkout = new DateTime(), bool canceled = false, string keyword = null, int id = 0, bool common = true)
         {
             var x = await RunTask(Context.ThirdParty_Bookings
                 .Where(c =>
                 c.CreatedDate >= dateLimit &&
                 (userId == 0 || c.User.Id == userId) &&
                 (par == 0 || c.CheckIn >= checkin && c.CheckIn <= checkout) &&
-                (completed || c.CheckIn >= DateTime.Today))
-                 .Include(f => f.User)
-                 .Include(f => f.Payments)
-                 .Include(f => f.Customers)
-                 .Include(f => f.Partner)
-                 .Include(f => f.File)
-                 .Where(b => b.Disabled == canceled)
-                 .ToListAsync);
+                (completed || c.CheckIn >= DateTime.Today) &&
+                ((id > 0 && c.Id == id) || (id == 0 && (common || c.Partner.Name.StartsWith(keyword) || c.Customers.Any(p => p.Name.StartsWith(keyword) || p.Surename.StartsWith(keyword) || p.Tel.StartsWith(keyword))))))
+                .Include(f => f.User)
+                .Include(f => f.Payments)
+                .Include(f => f.Customers)
+                .Include(f => f.Partner)
+                .Include(f => f.File)
+                .Where(b => b.Disabled == canceled)
+                .ToListAsync);
             return x;
+        }
+
+        internal async Task<List<Transaction>> GetAllTransactionsFiltered()
+        {
+            return await RunTask(Context.Transactions
+                 .Include(t => t.User)
+                 .Include(t => t.Booking)
+                 .Include(t => t.Booking.ReservationsInBooking.Select(r => r.CustomersList))
+                 .Include(t => t.PersonalBooking.Customers)
+                 .Include(t => t.ThirdPartyBooking.Customers)
+                 .Include(t => t.Excursion)
+                 .Include(t => t.PaymentTo)
+                 .Include(t => t.PersonalBooking)
+                 .Include(t => t.ThirdPartyBooking)
+                 .ToListAsync);
         }
 
         internal async Task<ThirdParty_Booking> GetFullThirdPartyBookingByIdAsync(int id)
@@ -1028,6 +1068,28 @@ namespace LATravelManager.UI.Repositories
             }
             System.Data.Entity.Core.Objects.ObjectStateEntry objectStateEntry = ((IObjectContextAdapter)Context).ObjectContext.ObjectStateManager.GetObjectStateEntry(entry.Entity);
             return objectStateEntry.EntityKey.EntityKeyValues[0].Value;
+        }
+
+        private void RejectNavigationChanges()
+        {
+            var objectContext = ((IObjectContextAdapter)Context).ObjectContext;
+            var deletedRelationships = objectContext.ObjectStateManager.GetObjectStateEntries(EntityState.Deleted).Where(e => e.IsRelationship && !RelationshipContainsKeyEntry(e));
+            var addedRelationships = objectContext.ObjectStateManager.GetObjectStateEntries(EntityState.Added).Where(e => e.IsRelationship);
+
+            foreach (var relationship in addedRelationships)
+                relationship.Delete();
+
+            foreach (var relationship in deletedRelationships)
+                relationship.ChangeState(EntityState.Unchanged);
+        }
+
+        private bool RelationshipContainsKeyEntry(ObjectStateEntry stateEntry)
+        {
+            //prevent exception: "Cannot change state of a relationship if one of the ends of the relationship is a KeyEntry"
+            //I haven't been able to find the conditions under which this happens, but it sometimes does.
+            var objectContext = ((IObjectContextAdapter)Context).ObjectContext;
+            var keys = new[] { stateEntry.OriginalValues[0], stateEntry.OriginalValues[1] };
+            return keys.Any(key => objectContext.ObjectStateManager.GetObjectStateEntry(key).Entity == null);
         }
 
         private async Task<T> RunTask<T>(Func<Task<T>> task)

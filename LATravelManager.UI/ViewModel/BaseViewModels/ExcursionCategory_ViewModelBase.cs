@@ -1,4 +1,5 @@
-﻿using LATravelManager.UI.Helpers;
+﻿using GalaSoft.MvvmLight;
+using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Wrapper;
@@ -15,7 +16,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         public ExcursionCategory_ViewModelBase(MainViewModel mainViewModel)
         {
-            Childs = new List<MyViewModelBaseAsync>();
+            Childs = new List<ViewModelBase>();
             Tabs = new List<TabsBaseViewModel>();
             MainViewModel = mainViewModel;
         }
@@ -24,15 +25,15 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         #region Fields
 
-        private List<MyViewModelBaseAsync> _Childs;
-        private MyViewModelBaseAsync _SelectedChildViewModel;
+        private List<ViewModelBase> _Childs;
+        private ViewModelBase _SelectedChildViewModel;
         private ExcursionWrapper _SelectedExcursion;
 
         #endregion Fields
 
         #region Properties
 
-        public List<MyViewModelBaseAsync> Childs
+        public List<ViewModelBase> Childs
         {
             get
             {
@@ -51,7 +52,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
-        public MyViewModelBaseAsync SelectedChildViewModel
+        public ViewModelBase SelectedChildViewModel
         {
             get
             {
@@ -99,13 +100,15 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         #region Methods
 
-        internal async Task SetProperChildViewModel(int index)
+        internal void SetProperChildViewModel(int index)
         {
             if (index < Childs.Count)
             {
                 SelectedChildViewModel = Childs[index];
-                if (!SelectedChildViewModel.IsLoaded)
-                    await SelectedChildViewModel.LoadAsync();
+                if (SelectedChildViewModel is MyViewModelBaseAsync ba && !ba.IsLoaded)
+                    ba.LoadAsync();
+                else if (SelectedChildViewModel is MyViewModelBase bs && !bs.IsLoaded)
+                    bs.Load();
             }
         }
 

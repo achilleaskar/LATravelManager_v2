@@ -70,8 +70,6 @@ namespace LATravelManager.Model.Wrapper
         {
         }
 
-        
-
         public Personal_BookingWrapper(Personal_Booking model) : base(model)
         {
             CustomerWrappers = new ObservableCollection<CustomerWrapper>(Customers.Select(c => new CustomerWrapper(c)));
@@ -317,7 +315,6 @@ namespace LATravelManager.Model.Wrapper
             return sb.ToString().ToUpper(); ;
         }
 
-
         public string GetPacketDescription()
         {
             StringBuilder sb = new StringBuilder();
@@ -343,7 +340,7 @@ namespace LATravelManager.Model.Wrapper
             {
                 if (s is PlaneService ps)
                 {
-                    tmp = ps.From ?? "" ;
+                    tmp = ps.To ?? "";
                     if (tmp.Length > 1 && !planes.Contains(tmp))
                         planes += tmp + "-";
                 }
@@ -359,7 +356,7 @@ namespace LATravelManager.Model.Wrapper
             {
                 if (s is FerryService ps)
                 {
-                    tmp = ps.From ?? "" ;
+                    tmp = ps.To ?? "";
                     if (tmp.Length > 1 && !ferrys.Contains(tmp))
                         ferrys += tmp + "-";
                 }
@@ -377,7 +374,7 @@ namespace LATravelManager.Model.Wrapper
             {
                 if (s is GuideService ps)
                 {
-                    tmp = ps.From ?? "" ;
+                    tmp = ps.From ?? "";
                     if (tmp.Length > 1 && !guides.Contains(tmp))
                         guides += tmp + "-";
                 }
@@ -395,7 +392,7 @@ namespace LATravelManager.Model.Wrapper
             {
                 if (s is TransferService ps)
                 {
-                    tmp = ps.From ?? "" ;
+                    tmp = ps.To ?? "";
                     if (tmp.Length > 1 && !transfers.Contains(tmp))
                         transfers += tmp + "-";
                 }
@@ -413,7 +410,7 @@ namespace LATravelManager.Model.Wrapper
             {
                 if (s is OptionalService ps)
                 {
-                    tmp = ps.From ?? "" ;
+                    tmp = ps.CompanyInfo ?? "";
                     if (tmp.Length > 1 && !optionals.Contains(tmp))
                         optionals += tmp + "-";
                 }

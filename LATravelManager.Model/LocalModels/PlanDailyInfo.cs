@@ -45,11 +45,7 @@ namespace LATravelManager.Model.LocalModels
 
         #region Properties
 
-
-
-
         private int _MinimumStay;
-
 
         public int MinimumStay
         {

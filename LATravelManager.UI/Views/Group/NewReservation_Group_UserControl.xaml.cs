@@ -105,7 +105,6 @@ namespace LATravelManager.UI.Views.Group
 
         private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-
         }
     }
 }

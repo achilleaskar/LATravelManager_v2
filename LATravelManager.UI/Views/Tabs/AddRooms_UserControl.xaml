@@ -18,7 +18,7 @@
         <converters:TabSizeConverter x:Key="tabSizeConverter" />
     </UserControl.Resources>
     <Grid>
-        <TabControl>
+        <TabControl SelectedIndex="{Binding SelectedTab}">
             <TabItem  Header="Προσθήκη Δωματίων">
                 <StackPanel  HorizontalAlignment="Left"
                              VerticalAlignment="Top"
@@ -285,7 +285,8 @@
                                 VerticalAlignment="Bottom"
                                 Margin="2"
                                 Command="{Binding ShowRoomsCommnad}" />
-                        <Label Content="{Binding RoomsCounter}"  HorizontalAlignment="Right"/>
+                        <Label Content="{Binding RoomsCounter}"
+                               HorizontalAlignment="Right" />
                     </StackPanel>
                     <DataGrid AutoGenerateColumns="False"
                               Grid.Row="1"
@@ -329,6 +330,8 @@
                                                 Binding="{Binding Dates}" />
                             <DataGridTextColumn Header="Id"
                                                 Binding="{Binding Id}" />
+                            <DataGridTextColumn Header="Χρήστης"
+                                                Binding="{Binding UserName}" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>

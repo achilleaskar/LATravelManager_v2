@@ -1,10 +1,8 @@
 ﻿using LaTravelManager.BaseTypes;
 using LATravelManager.Model.Locations;
 using LATravelManager.UI.Helpers;
-using LATravelManager.UI.Message;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.Wrapper;
-using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -20,21 +18,8 @@ namespace LaTravelManager.ViewModel.Management
 
         public override void ReLoad(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
-            try
-            {
-                MessengerInstance.Send(new IsBusyChangedMessage(true));
-
-                MainCollection = new ObservableCollection<CityWrapper>(BasicDataManager.Cities.Select(c => new CityWrapper(c)));
-                Countries = new ObservableCollection<Country>(BasicDataManager.Countries);
-            }
-            catch (Exception ex)
-            {
-                MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
-            }
-            finally
-            {
-                MessengerInstance.Send(new IsBusyChangedMessage(false));
-            }
+            MainCollection = new ObservableCollection<CityWrapper>(BasicDataManager.Cities.Select(c => new CityWrapper(c)));
+            Countries = new ObservableCollection<Country>(BasicDataManager.Countries);
         }
 
         private ObservableCollection<Country> _Countries;

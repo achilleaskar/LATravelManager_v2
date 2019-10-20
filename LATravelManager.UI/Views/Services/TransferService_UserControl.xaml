@@ -71,7 +71,7 @@
                                 Grid.Column="1"
                                 FormatString="dd/MM/yy HH:mm"
                                 Kind="Local"
-                              
+
                                 VerticalAlignment="Center"
                                 Width="120"
                                 ShowButtonSpinner="False"
@@ -88,7 +88,7 @@
                                 Kind="Local"
                           VerticalAlignment="Center" Width="120"
                                 ShowButtonSpinner="False"
-                                
+
                                 Value="{Binding Service.TimeReturn,UpdateSourceTrigger=PropertyChanged}"
                                 Format="Custom" />
         <Label Content="Με Επιστροφή:"

@@ -873,12 +873,37 @@
                                     </Style>
                                 </DataGridComboBoxColumn.EditingElementStyle>
                             </DataGridComboBoxColumn>
-                            <DataGridTextColumn Header="Αρ. Ταυτ."
-                                                MinWidth="80"
+                            <DataGridTextColumn Header="Passport Id"
                                                 MaxWidth="200"
                                                 Binding="{Binding PassportNum,UpdateSourceTrigger=PropertyChanged}"
                                                 Visibility="{Binding DataContext.SelectedExcursion.PassportNeeded, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}" />
 
+                            <DataGridTemplateColumn Header="Έκδοση"
+                                                    Width="Auto"
+                                                    CellStyle="{StaticResource DataGridCellStyle}"
+                                                    Visibility="{Binding DataContext.SelectedExcursion.PassportNeeded, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">
+
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <DatePicker VerticalAlignment="Center"
+                                                    Width="95"
+                                                    SelectedDate="{Binding PassportPublish}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Λήξη"
+                                                    Width="Auto"
+                                                    CellStyle="{StaticResource DataGridCellStyle}"
+                                                    Visibility="{Binding DataContext.SelectedExcursion.PassportNeeded, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">
+
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <DatePicker VerticalAlignment="Center"
+                                                    Width="95"
+                                                    SelectedDate="{Binding PassportExpiration}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                             <DataGridTemplateColumn Header="Πάσο"
                                                     Width="70"
                                                     Visibility="{Binding DataContext.SelectedExcursion.DiscountsExist, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">

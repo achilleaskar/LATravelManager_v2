@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Markup;
 
 namespace LATravelManager.UI.Helpers
@@ -10,6 +6,7 @@ namespace LATravelManager.UI.Helpers
     public class EnumBindingSourceExtension : MarkupExtension
     {
         private Type _enumType;
+
         public Type EnumType
         {
             get { return _enumType; }
@@ -30,7 +27,9 @@ namespace LATravelManager.UI.Helpers
             }
         }
 
-        public EnumBindingSourceExtension() { }
+        public EnumBindingSourceExtension()
+        {
+        }
 
         public EnumBindingSourceExtension(Type enumType)
         {

@@ -77,6 +77,11 @@
                     </Trigger>
                 </Style.Triggers>
             </Style>
+            <Style TargetType="Label"
+                   BasedOn="{StaticResource {x:Type Label}}">
+                <Setter Property="HorizontalAlignment"
+                        Value="Left" />
+            </Style>
             <!--<Style TargetType="DataGridRow">
                 <Style.Resources>
                     <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"

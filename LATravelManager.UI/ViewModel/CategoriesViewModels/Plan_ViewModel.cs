@@ -50,7 +50,6 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
 
         private void SelectedExcursionChanged(ExcursionWrapper selectedExcursion)
         {
-
             if (selectedExcursion != null && selectedExcursion.ExcursionType.Category == ExcursionTypeEnum.Group)
             {
                 if (selectedExcursion != null && (selectedExcursion.Start > DateTime.Today || selectedExcursion.End < DateTime.Today))
@@ -588,6 +587,29 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
                 PeopleCount));
 
             decimal total = 0, free = 0;
+            ////List<BookingInfoPerDay> dbitd = new List<BookingInfoPerDay>();
+            //foreach (var item in FilteredPlanList)
+            //{
+            //    foreach (var r in item.RoomWrappers)
+            //    {
+            //        foreach (var dbi in r.PlanDailyInfo)
+            //            if (dbi.RoomState == RoomStateEnum.Available)
+            //            {
+            //                dbitd.Add(r.DailyBookingInfo.Where(d => d.Date == dbi.Date).FirstOrDefault());
+            //            }
+            //    }
+
+            //}
+            //for (int i = 0; i < dbitd.Count; i++)
+            //{
+            //    Context.Delete(dbitd[i]);
+            //    if (i % 100 == 0 && Context.HasChanges())
+            //    {
+            //        await Context.SaveAsync();
+            //    }
+            //}
+            //await Context.SaveAsync();
+
             FilteredPlanList = MergeRooms(FilteredPlanList);
             foreach (HotelWrapper h in FilteredPlanList)
             {

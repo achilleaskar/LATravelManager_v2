@@ -26,7 +26,6 @@ namespace LATravelManager.UI.Views.Management
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-
             if (DataContext is UsersManagement_viewModel u && u.BasicDataManager.Context.HasChanges())
             {
                 MessageBoxResult result = MessageBox.Show("Υπάρχουν μη απόθηκευμένες αλλαγές, θέλετε σίγουρα να κλείσετε?", "Προσοχή", MessageBoxButton.YesNo, MessageBoxImage.Warning);
