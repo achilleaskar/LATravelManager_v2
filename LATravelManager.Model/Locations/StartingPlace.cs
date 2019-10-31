@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using LATravelManager.Model.Excursions;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace LATravelManager.Model.Locations
 {
@@ -12,13 +14,7 @@ namespace LATravelManager.Model.Locations
 
         private string _Details = string.Empty;
         private string _ReturnTime = string.Empty;
-
         private string _StartTime = string.Empty;
-
-        public const string DetailsPropertyName = nameof(Details);
-        public const string ReturnTimePropertyName = nameof(ReturnTime);
-
-        public const string StartTimePropertyName = nameof(StartTime);
 
         #endregion Fields + Constructors
 
@@ -43,7 +39,7 @@ namespace LATravelManager.Model.Locations
                 }
 
                 _Details = value;
-                RaisePropertyChanged(DetailsPropertyName);
+                RaisePropertyChanged();
             }
         }
 
@@ -70,7 +66,7 @@ namespace LATravelManager.Model.Locations
                 }
 
                 _ReturnTime = value;
-                RaisePropertyChanged(ReturnTimePropertyName);
+                RaisePropertyChanged();
             }
         }
 
@@ -94,7 +90,7 @@ namespace LATravelManager.Model.Locations
                 }
 
                 _StartTime = value;
-                RaisePropertyChanged(StartTimePropertyName);
+                RaisePropertyChanged();
             }
         }
 

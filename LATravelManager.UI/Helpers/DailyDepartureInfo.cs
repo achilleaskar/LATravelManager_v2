@@ -20,114 +20,114 @@ namespace LATravelManager.UI.Helpers
 
         public DailyDepartureInfo(GenericRepository context, int excursionId)
         {
-            PrintListCommand = new RelayCommand<int>(async (obj) => { await PrintListAsync(obj); }, CanPrintList);
+           // PrintListCommand = new RelayCommand<int>(async (obj) => { await PrintListAsync(obj); }, CanPrintList);
             Context = context;
             ExcursionId = excursionId;
         }
 
-        private bool CanPrintList(int arg)
-        {
-            switch (arg)
-            {
-                case 1:
-                    return SelectedGo > 0;
+        //private bool CanPrintList(int arg)
+        //{
+        //    switch (arg)
+        //    {
+        //        case 1:
+        //            return SelectedGo > 0;
 
-                case 4:
-                    return SelectedReturn > 0;
+        //        case 4:
+        //            return SelectedReturn > 0;
 
-                default:
-                    return false;
-            }
-        }
+        //        default:
+        //            return false;
+        //    }
+        //}
 
-        private async Task PrintListAsync(int parameter)
-        {
-            //string wbPath = null;
-           // List<string> selectedCities = new List<string>();
-            var sampleFile = AppDomain.CurrentDomain.BaseDirectory;
-            await Task.Delay(0);
-            FileInfo fileInfo = new FileInfo(sampleFile);
-            ExcelPackage p = new ExcelPackage(fileInfo);
-            ExcelWorksheet myWorksheet = p.Workbook.Worksheets[1];
-           // int counter = 0;
-           // int customersCount, secondline;
-            List<ReservationWrapper> reservationsThisDay = new List<ReservationWrapper>();
-            List<ReservationWrapper> RestReservations = new List<ReservationWrapper>();
+        //private async Task PrintListAsync(int parameter)
+        //{
+        //   // //string wbPath = null;
+           //// List<string> selectedCities = new List<string>();
+           // var sampleFile = AppDomain.CurrentDomain.BaseDirectory;
+           // await Task.Delay(0);
+           // FileInfo fileInfo = new FileInfo(sampleFile);
+           // ExcelPackage p = new ExcelPackage(fileInfo);
+           // ExcelWorksheet myWorksheet = p.Workbook.Worksheets[1];
+           //// int counter = 0;
+           //// int customersCount, secondline;
+           // List<ReservationWrapper> reservationsThisDay = new List<ReservationWrapper>();
+           // List<ReservationWrapper> RestReservations = new List<ReservationWrapper>();
 
-            switch (parameter)
-            {
-                case 0:
-                    sampleFile += @"Sources\protypo_aktoploikon.xlsx";
-                    break;
+           // switch (parameter)
+           // {
+           //     case 0:
+           //         sampleFile += @"Sources\protypo_aktoploikon.xlsx";
+           //         break;
 
-                case 1:
-                    sampleFile += @"Sources\protypo_leoforeia.xlsx";
-                    break;
+           //     case 1:
+           //         sampleFile += @"Sources\protypo_leoforeia.xlsx";
+           //         break;
 
-                case 3:
-                    sampleFile += @"Sources\protypo_aktoploikon.xlsx";
-                    break;
+           //     case 3:
+           //         sampleFile += @"Sources\protypo_aktoploikon.xlsx";
+           //         break;
 
-                case 4:
-                    sampleFile += @"Sources\protypo_leoforeia.xlsx";
-                    break;
+           //     case 4:
+           //         sampleFile += @"Sources\protypo_leoforeia.xlsx";
+           //         break;
 
-                default:
-                    sampleFile += @"Sources\protypo_leoforeia.xlsx";
-                    break;
-            }
+           //     default:
+           //         sampleFile += @"Sources\protypo_leoforeia.xlsx";
+           //         break;
+           // }
 
-            switch (parameter)
-            {
-                case 1:
-                    // IEnumerable<Booking> bookings = await Context.GetAllBookingInPeriod(Date, Date, ExcursionId);
+           // switch (parameter)
+           // {
+           //     case 1:
+           //         // IEnumerable<Booking> bookings = await Context.GetAllBookingInPeriod(Date, Date, ExcursionId);
 
-                    //foreach (CityDepartureInfo city in PerCityDepartureList)
-                    //    if (city.IsChecked)
-                    //    {
-                    //        selectedCities.Add(city.City);
-                    //        foreach (Reservation rese in CollectionsManager.ReservationsCollection)
-                    //            if (rese.From == Date)
-                    //                foreach (Customer cust in rese.Customers)
-                    //                    if (cust.Location == city.City && cust.CustomerHasBusIndex < 2)
-                    //                    {
-                    //                        if (!reservationsThisDay.Contains(rese))
-                    //                            reservationsThisDay.Add(rese);
-                    //                        break;
-                    //                    }
-                    //    }
+           //         //foreach (CityDepartureInfo city in PerCityDepartureList)
+           //         //    if (city.IsChecked)
+           //         //    {
+           //         //        selectedCities.Add(city.City);
+           //         //        foreach (Reservation rese in CollectionsManager.ReservationsCollection)
+           //         //            if (rese.From == Date)
+           //         //                foreach (Customer cust in rese.Customers)
+           //         //                    if (cust.Location == city.City && cust.CustomerHasBusIndex < 2)
+           //         //                    {
+           //         //                        if (!reservationsThisDay.Contains(rese))
+           //         //                            reservationsThisDay.Add(rese);
+           //         //                        break;
+           //         //                    }
+           //         //    }
 
-                    //foreach (Reservation res in CollectionsManager.ReservationsCollection)
-                    //    if (res.From == Date)
-                    //        if (!reservationsThisDay.Contains(res))
-                    //            RestReservations.Add(res);
+           //         //foreach (Reservation res in CollectionsManager.ReservationsCollection)
+           //         //    if (res.From == Date)
+           //         //        if (!reservationsThisDay.Contains(res))
+           //         //            RestReservations.Add(res);
 
-                    //folderNameVouchers = CreateFolder(Date, @"\Vouchers\");
-                    //folderNameInfo = CreateFolder(Date, @"\Ενημερωτικά\");
-                    //di = new DirectoryInfo(folderNameVouchers);
-                    //foreach (FileInfo file in di.GetFiles())
-                    //    file.Delete();
-                    //di = new DirectoryInfo(folderNameInfo);
-                    //foreach (FileInfo file in di.GetFiles())
-                    //    file.Delete();
-                    break;
+           //         //folderNameVouchers = CreateFolder(Date, @"\Vouchers\");
+           //         //folderNameInfo = CreateFolder(Date, @"\Ενημερωτικά\");
+           //         //di = new DirectoryInfo(folderNameVouchers);
+           //         //foreach (FileInfo file in di.GetFiles())
+           //         //    file.Delete();
+           //         //di = new DirectoryInfo(folderNameInfo);
+           //         //foreach (FileInfo file in di.GetFiles())
+           //         //    file.Delete();
+           //         break;
 
-                case 4:
-                    break;
+           //     case 4:
+           //         break;
 
-                default:
-                    break;
-            }
-        }
+           //     default:
+           //         break;
+           // }
+       // }
 
         #endregion Constructors
 
         #region Fields
 
-        private static readonly string[] ValidatePrintProperties =
-        {
-            nameof(PerCityDepartureList)
-        };
+        //private static readonly string[] ValidatePrintProperties =
+        //{
+        //    nameof(PerCityDepartureList)
+        //};
 
         private DateTime _Date;
 

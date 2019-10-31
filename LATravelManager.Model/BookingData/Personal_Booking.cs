@@ -33,13 +33,7 @@ namespace LATravelManager.Model.BookingData
 
         #region Properties
 
-        public string Destination
-        {
-            get
-            {
-                return "Atomiko";
-            }
-        }
+        public static string Destination => "Atomiko";
 
         public string Comment { get; set; }
 

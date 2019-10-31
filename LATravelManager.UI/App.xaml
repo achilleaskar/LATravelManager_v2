@@ -12,9 +12,6 @@
         <ResourceDictionary>
 
             <converters:UserToVisibility x:Key="UserToVisibilityConverter" />
-            <vm:ViewModelLocator x:Key="Locator"
-                                 d:IsDataSource="True"
-                                 xmlns:vm="clr-namespace:LATravelManager.UI.ViewModel.BaseViewModels" />
             <BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" />
             <local:MessageListener x:Key="MessageListener" />
             <Style x:Key="styleCalendar"

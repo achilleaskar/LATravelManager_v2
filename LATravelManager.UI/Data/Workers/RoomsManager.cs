@@ -632,14 +632,18 @@ namespace LATravelManager.UI.Data.Workers
             return Plan.OrderBy(h => h.Name).ToList(); ;
         }
 
-        private Cell AddCellWithText(string text)
+        private static Cell AddCellWithText(string text)
         {
-            Cell c1 = new Cell();
-            c1.DataType = CellValues.InlineString;
+            Cell c1 = new Cell
+            {
+                DataType = CellValues.InlineString
+            };
 
             InlineString inlineString = new InlineString();
-            Text t = new Text();
-            t.Text = text;
+            Text t = new Text
+            {
+                Text = text
+            };
             inlineString.AppendChild(t);
 
             c1.AppendChild(inlineString);
@@ -879,7 +883,7 @@ namespace LATravelManager.UI.Data.Workers
             }
         }
 
-        private bool FitsAfter(NoName noName, RoomWrapper availableroom)
+        private static bool FitsAfter(NoName noName, RoomWrapper availableroom)
         {
             int lastNightI;
             for (int i = 0; i < availableroom.PlanDailyInfo.Count; i++)

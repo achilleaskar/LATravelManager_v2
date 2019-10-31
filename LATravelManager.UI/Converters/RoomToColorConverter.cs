@@ -12,13 +12,13 @@ namespace LATravelManager.UI.Converters
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is Room room)
-            {
-                //if (room.IsRoomAllotment)
-                //{
-                //    return new SolidColorBrush(Colors.Blue);
-                //}
-            }
+            //if (value is Room room)
+            //{
+            //    //if (room.IsRoomAllotment)
+            //    //{
+            //    //    return new SolidColorBrush(Colors.Blue);
+            //    //}
+            //}
             return new SolidColorBrush(Colors.Green);
         }
 

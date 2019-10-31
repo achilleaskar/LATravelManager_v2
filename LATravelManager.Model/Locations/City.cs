@@ -1,6 +1,7 @@
 ﻿using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Hotels;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace LATravelManager.Model.Locations
@@ -12,7 +13,11 @@ namespace LATravelManager.Model.Locations
         public City()
         {
             Excursions = new List<Excursion>();
+           ExcursionTimes = new ObservableCollection<ExcursionTime>();
         }
+
+
+        public ObservableCollection<ExcursionTime> ExcursionTimes { get; set; }
 
         #endregion Constructors
 

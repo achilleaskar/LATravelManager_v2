@@ -100,10 +100,6 @@
                                             Width="100"
                                             IsReadOnly="True"
                                             Binding="{Binding Name}" />
-                        <DataGridTextColumn Header="Χώρα"
-                                            Width="100"
-                                            IsReadOnly="True"
-                                            Binding="{Binding Country.Name}" />
                     </DataGrid.Columns>
                 </DataGrid>
                 <Button Content="Διαγραφη"

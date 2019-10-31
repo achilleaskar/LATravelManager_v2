@@ -478,17 +478,17 @@ namespace LATravelManager.Model.Wrapper
             CalculateRemainingAmount();
         }
 
-        private string GetHotels()
-        {
-            if (!string.IsNullOrEmpty(Stay))
-            {
-                return Description;
-            }
-            else
-            {
-                return "ERROR";
-            }
-        }
+        //private string GetHotels()
+        //{
+        //    if (!string.IsNullOrEmpty(Stay))
+        //    {
+        //        return Description;
+        //    }
+        //    else
+        //    {
+        //        return "ERROR";
+        //    }
+        //}
 
         private void InitializeBookingWrapper()
         {

@@ -1,8 +1,11 @@
-﻿using LATravelManager.Model.Locations;
+﻿using LATravelManager.Model.Lists;
+using LATravelManager.Model.Locations;
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Windows.Data;
 
 namespace LATravelManager.Model.Excursions
 {
@@ -16,26 +19,9 @@ namespace LATravelManager.Model.Excursions
             Destinations = new ObservableCollection<City>();
         }
 
-        private bool _FixedDates;
+        public ObservableCollection<Bus> Buses { get; set; }
 
-        public bool FixedDates
-        {
-            get
-            {
-                return _FixedDates;
-            }
-
-            set
-            {
-                if (_FixedDates == value)
-                {
-                    return;
-                }
-
-                _FixedDates = value;
-                RaisePropertyChanged();
-            }
-        }
+        public bool FixedDates { get; set; }
 
         public DateTime FirstDate => ExcursionDates != null && ExcursionDates.Count > 0 ? ExcursionDates.OrderBy(e => e.CheckIn).FirstOrDefault().CheckIn : new DateTime(1, 1, 1, 1, 1, 1);
 

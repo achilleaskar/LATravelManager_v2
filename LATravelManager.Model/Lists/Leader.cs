@@ -59,5 +59,10 @@ namespace LATravelManager.Model.Lists
 
         #endregion Properties
 
+        public override string ToString()
+        {
+            return Name+": "+Tel;
+        }
+
     }
 }

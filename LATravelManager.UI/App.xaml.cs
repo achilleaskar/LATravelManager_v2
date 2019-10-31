@@ -25,6 +25,9 @@ namespace LATravelManager.UI
 
             Thread.CurrentThread.CurrentCulture = vCulture;
             Thread.CurrentThread.CurrentUICulture = vCulture;
+#if DEBUG
+            Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
+#endif
             CultureInfo.DefaultThreadCurrentCulture = vCulture;
             CultureInfo.DefaultThreadCurrentUICulture = vCulture;
 

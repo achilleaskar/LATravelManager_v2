@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 
 namespace LATravelManager.UI.Security
 {
-    public class PasswordHashing
+    public static class PasswordHashing
     {
         public static byte[] CalculateHash(byte[] inputBytes)
         {

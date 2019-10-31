@@ -1,6 +1,7 @@
 ﻿using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Excursions;
+using LATravelManager.Model.Lists;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Services;
 using LATravelManager.Model.Wrapper;
@@ -13,6 +14,7 @@ namespace LATravelManager.UI.Helpers
 {
     public class CustomerWrapper : ModelWrapper<Customer>
     {
+
         #region Constructors
 
         public CustomerWrapper() : this(new Customer())
@@ -24,21 +26,15 @@ namespace LATravelManager.UI.Helpers
             Services.CollectionChanged += Services_CollectionChanged;
         }
 
-        private void Services_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            RaisePropertyChanged(nameof(NumOfServices));
-            RaisePropertyChanged(nameof(Services));
-        }
-
         #endregion Constructors
 
         #region Fields
 
         private string _HotelName = "KENO";
         private bool _IsSelected;
-        private Brush _RoomColor = new SolidColorBrush(Colors.Green);
         private string _RoomNumber = "OXI";
         private string _RoomTypeName = "KENO";
+        private bool _Selected;
 
         #endregion Fields
 
@@ -50,7 +46,15 @@ namespace LATravelManager.UI.Helpers
             set { SetValue(value); }
         }
 
-        public int NumOfServices => Services.Count;
+        public Bus Bus
+        {
+            get { return GetValue<Bus>(); }
+            set
+            {
+                SetValue(value);
+                RaisePropertyChanged(nameof(NoBus));
+            }
+        }
 
         public DateTime CheckIn
         {
@@ -142,6 +146,16 @@ namespace LATravelManager.UI.Helpers
             get { return GetValue<DateTime?>(); }
             set { SetValue(value); }
         }
+        public DateTime PassportExpiration
+        {
+            get { return GetValue<DateTime>(); }
+            set { SetValue(value); }
+        }
+        public DateTime PassportPublish
+        {
+            get { return GetValue<DateTime>(); }
+            set { SetValue(value); }
+        }
 
         public string Email
         {
@@ -149,8 +163,8 @@ namespace LATravelManager.UI.Helpers
             set { SetValue(value); }
         }
 
+        public string FullName => Surename + " " + Name;
         public bool Handled { get; set; }
-
         public string HotelName
         {
             get
@@ -193,11 +207,25 @@ namespace LATravelManager.UI.Helpers
             }
         }
 
+        public int LeaderDriver
+        {
+            get { return GetValue<int>(); }
+            set { SetValue(value); }
+        }
+
         public string Name
         {
             get { return GetValue<string>(); }
-            set { SetValue(value.ToUpper()); }
+            set
+            {
+                SetValue(value.ToUpper());
+                RaisePropertyChanged(nameof(FullName));
+            }
         }
+
+        public bool NoBus => Bus == null;
+
+        public int NumOfServices => Services.Count;
 
         public OptionalExcursion OptionalExcursion
         {
@@ -228,25 +256,13 @@ namespace LATravelManager.UI.Helpers
             get { return GetValue<string>(); }
             set { SetValue(value); }
         }
-
         public Brush RoomColor
         {
-            get
-            {
-                return _RoomColor;
-            }
-
-            set
-            {
-                if (_RoomColor == value)
-                {
-                    return;
-                }
-
-                _RoomColor = value;
-                RaisePropertyChanged();
-            }
+            get { return GetValue<Brush>(); }
+            set { SetValue(value); }
         }
+
+
 
         public string RoomNumber
         {
@@ -289,6 +305,29 @@ namespace LATravelManager.UI.Helpers
             }
         }
 
+        public bool Selected
+        {
+            get
+            {
+                return _Selected;
+            }
+
+            set
+            {
+                if (_Selected == value)
+                {
+                    return;
+                }
+
+                _Selected = value;
+                RaisePropertyChanged();
+            }
+        }
+        public ObservableCollection<Service> Services
+        {
+            get { return GetValue<ObservableCollection<Service>>(); }
+        }
+
         public string StartingPlace
         {
             get { return GetValue<string>(); }
@@ -299,15 +338,14 @@ namespace LATravelManager.UI.Helpers
             }
         }
 
-        public ObservableCollection<Service> Services
-        {
-            get { return GetValue<ObservableCollection<Service>>(); }
-        }
-
         public string Surename
         {
             get { return GetValue<string>(); }
-            set { SetValue(value.ToUpper()); }
+            set
+            {
+                SetValue(value.ToUpper());
+                RaisePropertyChanged(nameof(FullName));
+            }
         }
 
         public string Tel
@@ -354,7 +392,7 @@ namespace LATravelManager.UI.Helpers
                     return Reservation.NoNameRoomType.Name;
 
                 case ReservationTypeEnum.Normal:
-                    return (Reservation.Room != null) ? Reservation.Room.RoomType.Name : "ERROR";
+                    return (Reservation.Room != null && Reservation.Room.RoomType != null) ? Reservation.Room.RoomType.Name : "ERROR";
 
                 case ReservationTypeEnum.NoRoom:
                     return "NoRoom";
@@ -390,6 +428,12 @@ namespace LATravelManager.UI.Helpers
             //    //    break;
             //}
             return null;
+        }
+
+        private void Services_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            RaisePropertyChanged(nameof(NumOfServices));
+            RaisePropertyChanged(nameof(Services));
         }
 
         #endregion Methods

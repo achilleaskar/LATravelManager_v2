@@ -3,18 +3,24 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:LATravelManager.UI.Views.Tabs"
              mc:Ignorable="d"
-             xmlns:sys="clr-namespace:System;assembly=mscorlib"
-             xmlns:helpers="clr-namespace:LATravelManager.UI.Helpers"
              xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
-             xmlns:enum="clr-namespace:LATravelManager.Model;assembly=LATravelManager.Model"
              xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.Tabs.TabViewmodels"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              d:DataContext="{d:DesignInstance viewmodels:ListManagement_ViewModel}"
-             Background="Aquamarine"
-             d:DesignHeight="450"
+             d:DesignHeight="750"
+             Background="White"
              d:DesignWidth="800">
+    <UserControl.Resources>
+        <converters:RemainingToColorConverter x:Key="RemainingToColorConverter" />
+        <Style x:Key="ForegroundStyle"
+               TargetType="TextBlock">
+            <Setter Property="Foreground"
+                    Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}},
+                Path=Item,
+                Converter={StaticResource RemainingToColorConverter}}" />
+        </Style>
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -22,30 +28,75 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="250" />
+            <RowDefinition Height="300" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal">
-                <Label Content="Εκδρομή:"
-                       VerticalAlignment="Center" />
-                <ComboBox  Width="105"
-                           Margin="0 0 5 0"
-                           IsSynchronizedWithCurrentItem="True"
-                           VerticalAlignment="Center"
-                           ItemsSource="{Binding Excursions}"
-                           SelectedItem="{Binding SelectedExcursion}" />
-                <Label Content="Γραφείο:"
-                       VerticalAlignment="Center" />
-                <ComboBox  Width="105"
-                           VerticalAlignment="Center"
-                           SelectedIndex="{Binding DepartmentIndexBookingFilter}">
-                    <ComboBoxItem Content="Όλα" />
-                    <ComboBoxItem Content="Θεσσαλονίκης" />
-                    <ComboBoxItem Content="Λάρισας" />
-                    <ComboBoxItem Content="Συνεργάτών" />
-                </ComboBox>
-            <Button Content="Provoli" Margin="5" VerticalAlignment="Center"
-                    Command="{Binding ShowCustomersCommand}"/>
+            <Label Content="Εκδρομή:"
+                   VerticalAlignment="Center" />
+            <ComboBox  Width="105"
+                       Margin="0 0 5 0"
+                       IsSynchronizedWithCurrentItem="True"
+                       VerticalAlignment="Center"
+                       ItemsSource="{Binding Excursions}"
+                       SelectedItem="{Binding SelectedExcursion}" />
+            <Label Content="Ημερομηνίες:"
+                   VerticalAlignment="Center" />
+            <ComboBox  Width="105"
+                       VerticalAlignment="Center"
+                       ItemsSource="{Binding SelectedExcursion.ExcursionDates}"
+                       SelectedItem="{Binding SelectedDate}" />
+            <Label Content="Γραφείο:"
+                   VerticalAlignment="Center" />
+            <ComboBox  Width="105"
+                       VerticalAlignment="Center"
+                       SelectedIndex="{Binding DepartmentIndexBookingFilter}">
+                <ComboBoxItem Content="Όλα" />
+                <ComboBoxItem Content="Θεσσαλονίκης" />
+                <ComboBoxItem Content="Λάρισας" />
+                <ComboBoxItem Content="Συνεργάτών" />
+            </ComboBox>
+
+            <Button Content="Προβολή"
+                    Margin="5"
+                    Padding="5 0"
+                    VerticalAlignment="Center"
+                    Command="{Binding ShowCustomersCommand}" />
+            <Label Content="Λεωφορείο:"
+                   Margin="40 0 0 0 "
+                   VerticalAlignment="Center" />
+            <Button HorizontalAlignment="Right"
+                    Cursor="Hand"
+                    Margin="5 0"
+                    Command="{Binding UpdateVehiclesCommand}">
+                <iconPacks:PackIconFontAwesome Kind="SyncSolid"
+                                               VerticalAlignment="Center"
+                                               Spin="{Binding UnitOfWork.IsBusy}"
+                                               Margin="5" />
+            </Button>
+            <Button Content="ClearSelected"
+                    Margin="5"
+                    Padding="5 0"
+                    VerticalAlignment="Center"
+                    Command="{Binding ClearSelCustomersCommand}" />
+            <ComboBox  Width="105"
+                       VerticalAlignment="Center"
+                       IsSynchronizedWithCurrentItem="True"
+                       ItemsSource="{Binding Vehicles}"
+                       DisplayMemberPath="Name"
+                       SelectedItem="{Binding SelectedVehicle}" />
+            <Button Content="Προσθήκη"
+                    Margin="5"
+                    Padding="5 0"
+                    VerticalAlignment="Center"
+                    Command="{Binding AddBusCommand}" />
+            <Border BorderThickness="1 0 1 0"
+                    BorderBrush="Gray" />
+            <Button Content="Αποθήκευση"
+                    Margin="5"
+                    Padding="5 0"
+                    VerticalAlignment="Center"
+                    Command="{Binding SaveBusesCommand}" />
         </StackPanel>
         <GroupBox Header="Φίλτρα"
                   Grid.Column="0"
@@ -55,32 +106,449 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <GroupBox Header="Cities">
-                    <ListBox Name="lbTodoList"
-                             HorizontalContentAlignment="Stretch">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Margin="0,2">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="100" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Text="{Binding Title}" />
-                                    <ProgressBar Grid.Column="1"
-                                                 Minimum="0"
-                                                 Maximum="100"
-                                                 Value="{Binding Completion}" />
-                                </Grid>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                <GroupBox Header="Cities"
+                          Margin="5 0 ">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Margin="5 5 0 5"
+                                    Content="Επιλογή Όλων"
+                                    VerticalAlignment="Center"
+                                    Command="{Binding SelectAllCommand}"
+                                    CommandParameter="0" />
+                            <Button Margin="5 5 0 5"
+                                    Content="Αποεπιλογή Όλων"
+                                    VerticalAlignment="Center"
+                                    Command="{Binding SelectAllCommand}"
+                                    CommandParameter="1" />
+                        </StackPanel>
+                        <DataGrid CanUserSortColumns="True"
+                                  Grid.Row="1"
+                                  HorizontalAlignment="Left"
+                                  VerticalAlignment="Stretch"
+                                  CanUserAddRows="False"
+                                  CanUserDeleteRows="False"
+                                  CanUserReorderColumns="False"
+                                  AutoGenerateColumns="False"
+                                  ItemsSource="{Binding Cities,UpdateSourceTrigger=PropertyChanged}">
+                            <DataGrid.Columns>
+                                <DataGridCheckBoxColumn Binding="{Binding Selected,UpdateSourceTrigger=PropertyChanged}"
+                                                        IsReadOnly="True">
+                                    <DataGridCheckBoxColumn.CellStyle>
+                                        <Style TargetType="DataGridCell">
+                                            <EventSetter Event="PreviewMouseDown"
+                                                         Handler="b1SetColor" />
+                                        </Style>
+                                    </DataGridCheckBoxColumn.CellStyle>
+                                </DataGridCheckBoxColumn>
+                                <DataGridTextColumn Header="Σημείο"
+                                                    IsReadOnly="True"
+                                                    Width="100"
+                                                    Binding="{Binding Name}" />
+                                <DataGridTextColumn Header="Επιλ. Ξεν."
+                                                    IsReadOnly="True"
+                                                    Binding="{Binding Both}"
+                                                    Foreground="Red" />
+                                <DataGridTextColumn Header="Εκτός"
+                                                    IsReadOnly="True"
+                                                    CanUserResize="True"
+                                                    ElementStyle="{StaticResource ForegroundStyle}"
+                                                    Binding="{Binding UnHandled}" />
+                                <DataGridTextColumn Header="Όλοι"
+                                                    IsReadOnly="True"
+                                                    CanUserResize="True"
+                                                    ElementStyle="{StaticResource ForegroundStyle}"
+                                                    Binding="{Binding Total}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
                 </GroupBox>
                 <GroupBox Header="Hotels"
                           Grid.Column="1">
-
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Margin="5 5 0 5"
+                                    Content="Επιλογή Όλων"
+                                    VerticalAlignment="Center"
+                                    Command="{Binding SelectAllCommand}"
+                                    CommandParameter="2" />
+                            <Button Margin="5 5 0 5"
+                                    Content="Αποεπιλογή Όλων"
+                                    VerticalAlignment="Center"
+                                    Command="{Binding SelectAllCommand}"
+                                    CommandParameter="3" />
+                        </StackPanel>
+                        <DataGrid CanUserSortColumns="True"
+                                  Grid.Row="1"
+                                  HorizontalAlignment="Left"
+                                  VerticalAlignment="Stretch"
+                                  CanUserAddRows="False"
+                                  CanUserDeleteRows="False"
+                                  CanUserReorderColumns="False"
+                                  AutoGenerateColumns="False"
+                                  ItemsSource="{Binding Hotels,UpdateSourceTrigger=PropertyChanged}">
+                            <DataGrid.Columns>
+                                <DataGridCheckBoxColumn Binding="{Binding Selected,UpdateSourceTrigger=PropertyChanged}"
+                                                        IsReadOnly="True">
+                                    <DataGridCheckBoxColumn.CellStyle>
+                                        <Style TargetType="DataGridCell">
+                                            <EventSetter Event="PreviewMouseDown"
+                                                         Handler="b1SetColor" />
+                                        </Style>
+                                    </DataGridCheckBoxColumn.CellStyle>
+                                </DataGridCheckBoxColumn>
+                                <DataGridTextColumn Header="Ξενοδοχείο"
+                                                    IsReadOnly="True"
+                                                    Width="120"
+                                                    Binding="{Binding Name }" />
+                                <DataGridTextColumn Header="Επιλ. Πόλ."
+                                                    IsReadOnly="True"
+                                                    Foreground="Red"
+                                                    Binding="{Binding Both}" />
+                                <DataGridTextColumn Header="Εκτός"
+                                                    IsReadOnly="True"
+                                                    CanUserResize="True"
+                                                    ElementStyle="{StaticResource ForegroundStyle}"
+                                                    Binding="{Binding UnHandled}" />
+                                <DataGridTextColumn Header="Όλοι"
+                                                    IsReadOnly="True"
+                                                    CanUserResize="True"
+                                                    ElementStyle="{StaticResource ForegroundStyle}"
+                                                    Binding="{Binding Total}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
                 </GroupBox>
-
             </Grid>
         </GroupBox>
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal">
+            <GroupBox Header="Πελάτες"
+                      HorizontalAlignment="Left">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Stretch">
+                            <Button Margin="0 5 0 5"
+                                    Content="{Binding Remaining}"
+                                    Padding="5 0"
+                                    VerticalAlignment="Center"
+                                    ContentStringFormat="Επιλογή Όλων ({0})"
+                                    Command="{Binding SelectAllCommand}"
+                                    CommandParameter="4" />
+                            <Button Margin="5 5 0 5"
+                                    Padding="5 0"
+                                    Content="{Binding SelectedCustomers}"
+                                    ContentStringFormat="Αποεπιλογή Όλων ({0})"
+                                    VerticalAlignment="Center"
+                                    Command="{Binding SelectAllCommand}"
+                                    CommandParameter="5" />
+                        </StackPanel>
+                        <Button Margin="5 0"
+                                Grid.Column="2"
+                                Content="{Binding SelectedCustomers}"
+                                ContentStringFormat="Προσθήκη ({0}) ->"
+                                VerticalAlignment="Center"
+                                Padding="5 0"
+                                Command="{Binding AddCustomersToBusCommand}"
+                                CommandParameter="5" />
+                    </Grid>
+                    <DataGrid CanUserSortColumns="True"
+                              Grid.Row="1"
+                              Name="datagrid"
+                              HorizontalAlignment="Left"
+                              SelectionMode="Single"
+                              VerticalAlignment="Stretch"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              SelectedItem="{Binding SelectedCustomer}"
+                              CanUserReorderColumns="False"
+                              AutoGenerateColumns="False"
+                              ItemsSource="{Binding Customers,UpdateSourceTrigger=PropertyChanged}">
+                        <DataGrid.Resources>
+                            <ContextMenu x:Key="reservationContextSubMenu">
+                                <MenuItem Header="Επεξεργασία"
+                                          Command="{Binding DataContext.EditBookingCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}">
+                                    <MenuItem.Icon>
+                                        <iconPacks:PackIconFontAwesome Kind="EditRegular" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Επιλογή Παρέας"
+                                          Command="{Binding DataContext.MarkAllCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}"
+                                          CommandParameter="1">
+                                    <MenuItem.Icon>
+                                        <iconPacks:PackIconMaterial Kind="CheckboxMultipleMarkedOutline" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Αποεπιλογή Παρέας"
+                                          Command="{Binding DataContext.MarkAllCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}"
+                                          CommandParameter="0">
+                                    <MenuItem.Icon>
+                                        <iconPacks:PackIconMaterial Kind="CheckboxMultipleBlankOutline" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Πελάτης"
+                                          Command="{Binding DataContext.LeaderDriverCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}"
+                                          CommandParameter="0" />
+                                <MenuItem Header="Συνοδός"
+                                          Command="{Binding DataContext.LeaderDriverCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}"
+                                          CommandParameter="1" />
+                                <MenuItem Header="Ξεναγος"
+                                          Command="{Binding DataContext.LeaderDriverCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}"
+                                          CommandParameter="2" />
+                                <MenuItem Header="Οδηγός"
+                                          Command="{Binding DataContext.LeaderDriverCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}"
+                                          CommandParameter="3" />
+                            </ContextMenu>
+                        </DataGrid.Resources>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="IsEnabled"
+                                        Value="{Binding NoBus}" />
+                                <Setter Property="Background"
+                                        Value="{Binding RoomColor}" />
+                                <Setter Property="ContextMenu"
+                                        Value="{StaticResource reservationContextSubMenu}" />
+                                <!--<EventSetter Event="MouseDoubleClick"
+                                         Handler="ListView_MouseDoubleClick" />-->
+                            </Style>
+                        </DataGrid.RowStyle>
+                        <DataGrid.Columns>
+                            <DataGridCheckBoxColumn Binding="{Binding Selected,UpdateSourceTrigger=PropertyChanged}"
+                                                    IsReadOnly="True">
+                                <DataGridCheckBoxColumn.CellStyle>
+                                    <Style TargetType="DataGridCell">
+                                        <EventSetter Event="PreviewMouseDown"
+                                                     Handler="b1SetColor" />
+                                    </Style>
+                                </DataGridCheckBoxColumn.CellStyle>
+                            </DataGridCheckBoxColumn>
+                            <DataGridTextColumn Header="#"
+                                                IsReadOnly="True"
+                                                MaxWidth="90"
+                                                Binding="{Binding Reservation.Booking.Id}" />
+                            <DataGridTextColumn Header="Ονομα"
+                                                IsReadOnly="True"
+                                                MaxWidth="90"
+                                                Binding="{Binding Name}" />
+                            <DataGridTextColumn Header="Επίθετο"
+                                                IsReadOnly="True"
+                                                MaxWidth="90"
+                                                Binding="{Binding Surename}" />
+                            <DataGridTextColumn Header="Ξενοδοχείο"
+                                                IsReadOnly="True"
+                                                MaxWidth="90"
+                                                Binding="{Binding HotelName}" />
+                            <DataGridTextColumn Header="Αναχώρηση"
+                                                IsReadOnly="True"
+                                                MaxWidth="90"
+                                                Binding="{Binding StartingPlace}" />
+                            <DataGridTextColumn Header="Λεωφορείο"
+                                                IsReadOnly="True"
+                                                MaxWidth="80"
+                                                Binding="{Binding Bus.Vehicle.Name}" />
+                            <DataGridTextColumn Header="Σχόλιο"
+                                                IsReadOnly="True"
+                                                MaxWidth="140"
+                                                Binding="{Binding Reservation.Booking.Comment}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </GroupBox>
+            <!--//Visibility="{Binding HasBus,Converter={StaticResource booleanToVisibilityConverter}}"-->
+            <GroupBox Header="Λεωφορεία"
+                      Margin="5 0 0 0"
+                      VerticalAlignment="Stretch"
+                      VerticalContentAlignment="Stretch">
+                <ItemsControl ItemsSource="{Binding Buses}"
+                              Margin="-1,0,0,0">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"
+                                        VerticalAlignment="Stretch" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <GroupBox Header="{Binding Vehicle.Name}"
+                                      Margin="0 0 5 0"
+                                      BorderThickness="1"
+                                      BorderBrush="Black"
+                                      VerticalAlignment="Stretch">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="{Binding EmptySeats}"
+                                               VerticalAlignment="Center" />
+                                        <RadioButton  Content="Επιλεγμένο"
+                                                      VerticalAlignment="Center"
+                                                      HorizontalAlignment="Center"
+                                                      GroupName="Buses"
+                                                      IsChecked="{Binding Selected}" />
+                                        <Button Content="Empty"
+                                                VerticalAlignment="Center"
+                                                Margin="10 0 0 0"
+                                                Padding="5 0"
+                                                Command="{Binding ClearBusCommand}" />
+                                        <Button Content="Remove"
+                                                VerticalAlignment="Center"
+                                                Margin="10 0 0 0"
+                                                Padding="5 0"
+                                                CommandParameter="{Binding}"
+                                                Command="{Binding DataContext.RemoveBusCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" />
+                                    </StackPanel>
+                                    <TabControl Width="250"
+                                                Grid.Row="1">
+                                        <TabItem Header="Αριθμοί">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="*" />
+                                                    <RowDefinition Height="*" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <DataGrid CanUserSortColumns="True"
+                                                          Grid.Row="0"
+                                                          HorizontalAlignment="Stretch"
+                                                          VerticalAlignment="Stretch"
+                                                          CanUserAddRows="False"
+                                                          CanUserDeleteRows="False"
+                                                          CanUserReorderColumns="False"
+                                                          AutoGenerateColumns="False"
+                                                          ItemsSource="{Binding Cities,UpdateSourceTrigger=PropertyChanged}">
+                                                    <DataGrid.Columns>
+                                                        <DataGridTextColumn Header="Σημείο"
+                                                                            IsReadOnly="True"
+                                                                            Width="100"
+                                                                            Binding="{Binding Name}" />
+                                                        <DataGridTextColumn Header="Χωρίς/Όλοι"
+                                                                            IsReadOnly="True"
+                                                                            CanUserResize="True"
+                                                                            Binding="{Binding Total}" />
+                                                    </DataGrid.Columns>
+                                                </DataGrid>
+                                                <DataGrid CanUserSortColumns="True"
+                                                          Grid.Row="1"
+                                                          HorizontalAlignment="Stretch"
+                                                          VerticalAlignment="Stretch"
+                                                          CanUserAddRows="False"
+                                                          CanUserDeleteRows="False"
+                                                          CanUserReorderColumns="False"
+                                                          AutoGenerateColumns="False"
+                                                          ItemsSource="{Binding Hotels,UpdateSourceTrigger=PropertyChanged}">
+                                                    <DataGrid.Columns>
+                                                        <DataGridTextColumn Header="Ξενοδοχείο"
+                                                                            IsReadOnly="True"
+                                                                            Width="100"
+                                                                            Binding="{Binding Name }" />
+                                                        <DataGridTextColumn Header="Χωρίς/Όλοι"
+                                                                            IsReadOnly="True"
+                                                                            CanUserResize="True"
+                                                                            Binding="{Binding Total}" />
+                                                    </DataGrid.Columns>
+                                                </DataGrid>
+                                                <Label Content="{Binding Drivers}"
+                                                       Grid.Row="2" />
+                                            </Grid>
+                                        </TabItem>
+                                        <TabItem Header="Πελάτες">
+                                            <DataGrid CanUserSortColumns="True"
+                                                      HorizontalAlignment="Stretch"
+                                                      VerticalAlignment="Stretch"
+                                                      CanUserAddRows="False"
+                                                      CanUserDeleteRows="False"
+                                                      CanUserReorderColumns="False"
+                                                      SelectedItem="{Binding SelectedCustomer}"
+                                                      AutoGenerateColumns="False"
+                                                      ItemsSource="{Binding Customers,UpdateSourceTrigger=PropertyChanged}">
+                                                <DataGrid.Resources>
+                                                    <ContextMenu x:Key="reservationContextSubMenu">
+                                                        <MenuItem Header="Αφαίρεση πελάτη"
+                                                                  Command="{Binding DataContext.RemoveCustomerCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}"
+                                                                  CommandParameter="0" />
+                                                        <MenuItem Header="Αφαιρεση Παρέας"
+                                                                  Command="{Binding DataContext.RemoveCustomerCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}"
+                                                                  CommandParameter="1" />
+                                                    </ContextMenu>
+                                                </DataGrid.Resources>
+                                                <DataGrid.RowStyle>
+                                                    <Style TargetType="DataGridRow">
+
+                                                        <Setter Property="Background"
+                                                                Value="{Binding RoomColor}" />
+                                                        <Setter Property="ContextMenu"
+                                                                Value="{StaticResource reservationContextSubMenu}" />
+                                                    </Style>
+                                                </DataGrid.RowStyle>
+                                                <DataGrid.Columns>
+
+                                                    <DataGridTextColumn Header="Επίθετο"
+                                                                        IsReadOnly="True"
+                                                                        MaxWidth="90"
+                                                                        Binding="{Binding Surename}" />
+                                                    <DataGridTextColumn Header="Ξενοδοχείο"
+                                                                        IsReadOnly="True"
+                                                                        MaxWidth="90"
+                                                                        Binding="{Binding HotelName}" />
+                                                    <DataGridTextColumn Header="Αναχώρηση"
+                                                                        IsReadOnly="True"
+                                                                        MaxWidth="90"
+                                                                        Binding="{Binding StartingPlace}" />
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </TabItem>
+                                        <TabItem Header="Λεπτομέρειες">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <Label Content="Συνοδός:" />
+                                                <ComboBox Grid.Column="1"
+                                                          ItemsSource="{Binding DataContext.Leaders,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                                          DisplayMemberPath="Name"
+                                                          SelectedItem="{Binding Leader,UpdateSourceTrigger=PropertyChanged}" />
+                                                <Label Content="Τήλ Συνοδού:"
+                                                       Grid.Row="1" />
+                                                <Label Grid.Column="1"
+                                                       Grid.Row="1"
+                                                       Content="{Binding Leader,UpdateSourceTrigger=PropertyChanged}" />
+                                            </Grid>
+                                        </TabItem>
+                                    </TabControl>
+                                </Grid>
+                            </GroupBox>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </GroupBox>
+        </StackPanel>
     </Grid>
 </UserControl>

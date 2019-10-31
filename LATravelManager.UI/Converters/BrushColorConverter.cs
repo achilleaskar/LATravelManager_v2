@@ -12,8 +12,7 @@ namespace LATravelManager.UI.Converters
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            Payment paym = value as Payment;
-            if (paym != null)
+            if (value is Payment paym)
             {
                 if (paym.Checked == true)
                 {

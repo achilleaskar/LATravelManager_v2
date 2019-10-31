@@ -3,6 +3,7 @@ using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Hotels;
+using LATravelManager.Model.Lists;
 using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Wrapper;
@@ -143,7 +144,7 @@ namespace LATravelManager.UI.Repositories
             }
         }
 
-        public List<TEntity> GetAllAsyncLocal<TEntity>(Expression<Func<TEntity, bool>> filter = null) where TEntity : BaseModel
+        public List<TEntity> GetAllAsyncLocal<TEntity>() where TEntity : BaseModel
         {
             return Context.Set<TEntity>().Local.ToList();
         }
@@ -188,7 +189,7 @@ namespace LATravelManager.UI.Repositories
                 .ToListAsync);
         }
 
-        public async Task<IEnumerable<Booking>> GetAllBookinsFromCustomers(DateTime checkIn, bool canceled = false)
+        public async Task<IEnumerable<Booking>> GetAllBookinsFromCustomers(DateTime checkIn)
         {
             return await RunTask(Context.Bookings.Where(b => b.DifferentDates && b.ReservationsInBooking.Any(r => r.CustomersList.Any(c => c.CheckIn == checkIn)))
            .Include(f => f.Partner)
@@ -206,27 +207,45 @@ namespace LATravelManager.UI.Repositories
                .ToListAsync);
         }
 
-        public async Task<IEnumerable<Booking>> GetAllBookingsForLists(int excursionId)
+        public IEnumerable<Booking> GetAllBookingsForLists(int excursionId, DateTime checkIn, int dep)
         {
-            return await RunTask(Context.Bookings.Where(b => b.Excursion.Id==excursionId && b.Disabled==false)
-               .Include(f => f.ReservationsInBooking.Select(i => i.CustomersList.Select(b1=>b1.Bus)))
+            return Context.Bookings.Where(b => b.Excursion.Id == excursionId && b.Disabled == false && b.CheckIn == checkIn && (dep == 0 || b.User.BaseLocation == dep))
+               .Include(f => f.ReservationsInBooking.Select(i => i.CustomersList))
                .Include(f => f.ReservationsInBooking.Select(i => i.Room).Select(r => r.Hotel))
                .Include(f => f.ReservationsInBooking.Select(i => i.Hotel))
-               .ToListAsync);
+               .Include(f => f.Excursion)
+               .ToList();
         }
 
         public async Task<IEnumerable<City>> GetAllCitiesAsyncSortedByName()
         {
-            return await RunTask(Context.Set<City>().Include(c => c.Country).OrderBy(x => x.Name).ToListAsync);
+            return await RunTask(Context.Set<City>()
+                .Include(c => c.Country)
+                .Include(c => c.ExcursionTimes)
+                .Include(c => c.ExcursionTimes.Select(p => p.StartingPlace))
+                .OrderBy(x => x.Name)
+                .ToListAsync);
+        }
+
+        internal List<Bus> LoadBuses()
+        {
+            return Context.Set<Bus>()
+                 .Include(b => b.Customers)
+                 .Include(b => b.Excursion)
+                 .Include(b => b.Leader)
+                 .Include(b => b.Vehicle)
+                 .ToList();
         }
 
         public async Task<IEnumerable<Excursion>> GetAllExcursionsAsync()
         {
+            DateTime t = DateTime.Today.AddYears(-1);
             return await RunTask(Context.Set<Excursion>()
-            .Include(c => c.Destinations.Select(d => d.Country))
-            .Include(c => c.ExcursionType)
-            .Include(c => c.ExcursionDates)
-            .ToListAsync);
+                .Where(e => e.ExcursionDates.Any(c => c.CheckOut > t))
+                .Include(c => c.Destinations.Select(d => d.Country))
+                .Include(c => c.ExcursionType)
+                .Include(c => c.ExcursionDates)
+                .ToListAsync);
         }
 
         public async Task<IEnumerable<Excursion>> GetAllGroupExcursionsAsync(bool showFinished = false)
@@ -375,6 +394,7 @@ namespace LATravelManager.UI.Repositories
                 .Include(f => f.ExcursionDate)
                 .Include(f => f.Payments.Select(p => p.User))
                 .Include(f => f.ReservationsInBooking.Select(i => i.CustomersList))
+                .Include(f => f.ReservationsInBooking.Select(i => i.CustomersList.Select(j=>j.Bus)))
                 .Include(f => f.ReservationsInBooking.Select(i => i.Room))
                 .Include(f => f.ReservationsInBooking.Select(i => i.Room.RoomType))
                 .Include(f => f.ReservationsInBooking.Select(i => i.Room.Hotel))
@@ -424,6 +444,28 @@ namespace LATravelManager.UI.Repositories
                 }
             }
             RejectNavigationChanges();
+        }
+
+        internal async Task<IEnumerable<Bus>> GetAllBusesAsync(int id = 0, DateTime checkIn = default)
+        {
+            return await RunTask(Context.Set<Bus>().Where(b => (id == 0 && b.TimeGo >= DateTime.Today) || b.Excursion.Id == id)
+              .Include(f => f.Excursion)
+              //.Include(f => f.Customers)
+              .Include(f => f.Leader)
+              .Include(f => f.Vehicle)
+              .ToListAsync);
+
+        }
+
+        internal IEnumerable<Bus> GetAllBuses(int id = 0, DateTime checkIn = default)
+        {
+           
+            return Context.Set<Bus>().Where(b => (id == 0 && b.TimeGo >= DateTime.Today) || (b.Excursion.Id == id && b.TimeGo == checkIn))
+             .Include(f => f.Excursion)
+             .Include(f => f.Customers)
+             .Include(f => f.Leader)
+             .Include(f => f.Vehicle)
+             .ToList();
         }
 
         public async Task SaveAsync()

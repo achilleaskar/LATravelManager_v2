@@ -25,6 +25,48 @@ namespace LaTravelManager.ViewModel.Management
             RemoveCityCommand = new RelayCommand(RemoveCity, CanRemoveCity);
             AddCityCommand = new RelayCommand(AddCity, CanAddCity);
             AddDateCommand = new RelayCommand(AddDate, CanAddDate);
+            AddTimesCommand = new RelayCommand(AddTimes, CanAddTimes);
+            AddHalfHourCommand = new RelayCommand<int>(AddHalfHour);
+        }
+
+        private void AddHalfHour(int obj)
+        {
+            if (SelectedEntity != null && SelectedEntity.Destinations != null && SelectedEntity.Destinations.Count > 0 &&
+                SelectedEntity.Destinations[0].ExcursionTimes != null && SelectedEntity.Destinations[0].ExcursionTimes.Count > 0)
+            {
+                DateTime dt;
+                int m = 30 * obj;
+
+                foreach (var t in SelectedEntity.Destinations[0].ExcursionTimes)
+                {
+                    dt = DateTime.Today.AddTicks(t.Time.Ticks).AddMinutes(m);
+                    t.Time = dt.TimeOfDay;
+                }
+            }
+        }
+
+        private bool CanAddDate()
+        {
+            if (SelectedDate == null)
+            {
+                SelectedDate = new ExcursionDate();
+            }
+            return SelectedDate.CheckIn >= DateTime.Today && SelectedDate.CheckOut >= SelectedDate.CheckIn && SelectedDate.Name.Length > 3;
+        }
+
+        private void AddTimes()
+        {
+            if (SelectedEntity.Destinations != null && SelectedEntity.Destinations.Count > 0)
+            {
+                foreach (var s in StaticResources.StartingPlaces)
+                {
+                    if (!SelectedEntity.Destinations[0].ExcursionTimes.Any(t => t.StartingPlace.Id == s.Id))
+                    {
+                        SelectedEntity.Destinations[0].ExcursionTimes.Add(new ExcursionTime { StartingPlace = s });
+                    }
+                }
+                RaisePropertyChanged(nameof(SelectedEntity));
+            }
         }
 
         #endregion Constructors
@@ -51,6 +93,8 @@ namespace LaTravelManager.ViewModel.Management
         public RelayCommand AddCityCommand { get; }
 
         public RelayCommand AddDateCommand { get; }
+        public RelayCommand AddTimesCommand { get; }
+        public RelayCommand<int> AddHalfHourCommand { get; }
 
         /// <summary>
         /// Sets and gets the Cities property. Changes to that property's value raise the
@@ -191,6 +235,17 @@ namespace LaTravelManager.ViewModel.Management
 
                 Cities = BasicDataManager.Cities;
                 ExcursionCategories = BasicDataManager.ExcursionCategories;
+
+                //foreach (var e in MainCollection)
+                //{
+                //    foreach (var s in StaticResources.StartingPlaces)
+                //    {
+                //        if (!e.ExcursionTimes.Any(t => t.StartingPlace.Id == s.Id))
+                //        {
+                //            e.ExcursionTimes.Add(new ExcursionTime { StartingPlace = BasicDataManager.Context.GetById<StartingPlace>(s.Id) });
+                //        }
+                //    }
+                //}
             }
             catch (Exception ex)
             {
@@ -240,13 +295,9 @@ namespace LaTravelManager.ViewModel.Management
             return _SelectedCityToAdd != null;
         }
 
-        private bool CanAddDate()
+        private bool CanAddTimes()
         {
-            if (SelectedDate == null)
-            {
-                SelectedDate = new ExcursionDate();
-            }
-            return SelectedDate.CheckIn >= DateTime.Today && SelectedDate.CheckOut >= SelectedDate.CheckIn && SelectedDate.Name.Length > 3;
+            return SelectedEntity != null;
         }
 
         private bool CanEditWindows()

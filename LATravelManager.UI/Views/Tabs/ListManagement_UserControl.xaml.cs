@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using LATravelManager.Model.People;
+using LATravelManager.UI.Helpers;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace LATravelManager.UI.Views.Tabs
 {
@@ -23,6 +13,26 @@ namespace LATravelManager.UI.Views.Tabs
         public ListManagement_UserControl()
         {
             InitializeComponent();
+        }
+
+        private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var d = sender as DataGrid;
+            if (d.SelectedItem is Counter c)
+                c.Selected = !c.Selected;
+            if (d.SelectedItem is CustomerWrapper cu)
+                cu.Selected = !cu.Selected;
+        }
+
+        private void b1SetColor(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is DataGridCell dc)
+            {
+                if (dc.DataContext is Counter c)
+                    c.Selected = !c.Selected;
+                else if (dc.DataContext is CustomerWrapper cu)
+                    cu.Selected = !cu.Selected;
+            }
         }
     }
 }

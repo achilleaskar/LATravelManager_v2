@@ -19,7 +19,7 @@ namespace LaTravelManager.BaseTypes
     {
         #region Constructors
 
-        public AddEditBase(BasicDataManager basicDataManager)
+        protected AddEditBase(BasicDataManager basicDataManager)
         {
             AddEntityCommand = new RelayCommand(AddEntity, CanAddEntity);
             UpdateEntitiesCommand = new RelayCommand(async () => { await ReloadEntities(); }, true);

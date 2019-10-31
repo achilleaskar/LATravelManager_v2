@@ -6,10 +6,7 @@ namespace LATravelManager.Model
 {
     public abstract class BaseModel : ObservableObject
     {
-        public BaseModel()
-        {
-        }
-
+       
         #region Properties
 
         /// <summary>

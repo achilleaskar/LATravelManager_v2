@@ -7,7 +7,7 @@ namespace LATravelManager.UI.ViewModel.ServiceViewModels
 {
     public abstract class ServiceViewModel : ViewModelBase
     {
-        public ServiceViewModel(NewReservation_Personal_ViewModel parent)
+        protected ServiceViewModel(NewReservation_Personal_ViewModel parent)
         {
             Parent = parent;
         }

@@ -227,6 +227,7 @@
     <Compile Include="Converters\EnumVisibilityConverter.cs" />
     <Compile Include="Converters\FloadToStringValueConverter.cs" />
     <Compile Include="Converters\IsGroupConverter.cs" />
+    <Compile Include="Converters\RemainingToColorConverter.cs" />
     <Compile Include="Converters\ReservationSelectorVisibilityConverter.cs" />
     <Compile Include="Converters\RoomsLeftMultiBindingConverter.cs" />
     <Compile Include="Converters\RoomsLeftToHotelsConverter.cs" />
@@ -234,12 +235,14 @@
     <Compile Include="Converters\RoomsLeftToVisibiliyConverter.cs" />
     <Compile Include="Converters\RoomToColorConverter.cs" />
     <Compile Include="Converters\RoomTypeToRoomsLeftConverter.cs" />
-    <Compile Include="Converters\TimeSpanToDateTimeConverter.cs" />
+    <Compile Include="Converters\TimeSpanTODateTimeConverter.cs" />
     <Compile Include="Converters\ToolTipVisibilityConverter.cs" />
     <Compile Include="Data\Workers\Lists.cs" />
     <Compile Include="ExcursionCategoryChangedMessage.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Helpers\Actor.cs" />
     <Compile Include="Helpers\BasicDataManager.cs" />
+    <Compile Include="Helpers\BookingsPerDay.cs" />
     <Compile Include="Helpers\DailyDepartureInfo.cs" />
     <Compile Include="Helpers\EnumBindingSourceExtension.cs" />
     <Compile Include="Helpers\ExcursionComparer.cs" />
@@ -253,7 +256,6 @@
     <Compile Include="NotifyTaskCompletion.cs" />
     <Compile Include="ViewModel\BaseViewModels\AddEditBase.cs" />
     <Compile Include="ViewModel\BaseViewModels\FiltersBaseClass.cs" />
-    <Compile Include="ViewModel\BaseViewModels\GroupChilds_BaseViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModels\IViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModels\MyViewModelBase.cs" />
     <Compile Include="ViewModel\BaseViewModels\NewReservationGroup_Base.cs" />
@@ -757,6 +759,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include=".editorconfig" />
     <None Include="LATravelManager.UI_1_TemporaryKey.pfx" />
     <None Include="log4net.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -941,6 +944,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Sources\VoucherImages\sea view.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Sources\VoucherImages\bansko_general.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

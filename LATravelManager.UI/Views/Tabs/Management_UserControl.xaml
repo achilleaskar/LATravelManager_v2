@@ -16,7 +16,7 @@
         <converters:FloadToStringValueConverter x:Key="FtoSConverter" />
     </UserControl.Resources>
     <Grid>
-        <TabControl>
+        <TabControl SelectedIndex="{Binding SelectedIndex}">
             <TabItem Header="Πληροφορίες Αναχωρήσεων">
                 <local:InfoTab_UserControl DataContext="{Binding InfoViewModel}" />
             </TabItem>

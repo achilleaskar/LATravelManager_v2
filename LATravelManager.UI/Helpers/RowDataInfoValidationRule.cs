@@ -16,27 +16,27 @@ namespace LATravelManager.UI.Helpers
             BindingGroup group = (BindingGroup)value;
 
             StringBuilder error = new StringBuilder();
-            foreach (object item in group.Items)
-            {
-                //if (item is Customer cust)
-                //{
-                //    if (!cust.IsOk)
-                //    {
-                //        error.Append("Exume provlima");
-                //    }
-                //}
+            //foreach (object item in group.Items)
+            //{
+            //    //if (item is Customer cust)
+            //    //{
+            //    //    if (!cust.IsOk)
+            //    //    {
+            //    //        error.Append("Exume provlima");
+            //    //    }
+            //    //}
 
-                //// aggregate errors
-                //if (item is IDataErrorInfo info)
-                //{
-                //    if (!string.IsNullOrEmpty(info.Error))
-                //    {
-                //        if (error == null)
-                //            error = new StringBuilder();
-                //        error.Append((error.Length != 0 ? ", " : "") + info.Error);
-                //    }
-                //}
-            }
+            //    //// aggregate errors
+            //    //if (item is IDataErrorInfo info)
+            //    //{
+            //    //    if (!string.IsNullOrEmpty(info.Error))
+            //    //    {
+            //    //        if (error == null)
+            //    //            error = new StringBuilder();
+            //    //        error.Append((error.Length != 0 ? ", " : "") + info.Error);
+            //    //    }
+            //    //}
+            //}
 
             foreach (object item in group.Items)
             {

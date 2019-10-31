@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Text;
 
 namespace LATravelManager.Model.BookingData
@@ -24,6 +26,29 @@ namespace LATravelManager.Model.BookingData
         #endregion Constructors
 
         #region Properties
+
+
+       // public int LeaderDriver => GetHigher(); ReservationsInBooking.OrderByDescending(r=> r.CustomersList.OrderByDescending(c=>c.LeaderDriver).First().LeaderDriver).Select;
+
+
+        public void GetHigher()
+        {
+            int higher = 0;
+            foreach (var r in ReservationsInBooking)
+            {
+                foreach (var c in r.CustomersList)
+                {
+                    if (c.LeaderDriver > higher)
+                    {
+                        higher = c.LeaderDriver;
+                    }
+                }
+            }
+
+        }
+
+        [NotMapped]
+        public int CustomId { get; set; }
 
         public string CancelReason { get; set; }
         public ObservableCollection<ChangeInBooking> ChangesInBooking { get; }

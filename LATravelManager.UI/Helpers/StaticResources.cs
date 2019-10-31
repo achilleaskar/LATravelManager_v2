@@ -51,8 +51,8 @@ namespace LATravelManager.UI.Helpers
         ///<returns>The index of the first matching item, or -1 if no items match.</returns>
         public static int FindIndex<T>(this IEnumerable<T> items, Func<T, bool> predicate)
         {
-            if (items == null) throw new ArgumentNullException("items");
-            if (predicate == null) throw new ArgumentNullException("predicate");
+            if (items == null) throw new ArgumentNullException(nameof(items));
+            if (predicate == null) throw new ArgumentNullException(nameof(predicate));
 
             int retVal = 0;
             foreach (var item in items)
@@ -187,14 +187,14 @@ namespace LATravelManager.UI.Helpers
         }
     }
 
-    public class RequiredIfAttribute : ValidationAttribute
+    public sealed class RequiredIfAttribute : ValidationAttribute
     {
         #region Constructors
 
         public RequiredIfAttribute(string dependentProperty, object targetValue)
         {
-            _dependentProperty = dependentProperty;
-            _targetValue = targetValue;
+            DependentProperty = dependentProperty;
+            TargetValue = targetValue;
         }
 
         #endregion Constructors
@@ -207,8 +207,8 @@ namespace LATravelManager.UI.Helpers
 
         #region Properties
 
-        public string _dependentProperty { get; set; }
-        public object _targetValue { get; set; }
+        public string DependentProperty { get; set; }
+        public object TargetValue { get; set; }
 
         #endregion Properties
 
@@ -216,11 +216,11 @@ namespace LATravelManager.UI.Helpers
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            System.Reflection.PropertyInfo field = validationContext.ObjectType.GetProperty(_dependentProperty);
+            System.Reflection.PropertyInfo field = validationContext.ObjectType.GetProperty(DependentProperty);
             if (field != null)
             {
                 object dependentValue = field.GetValue(validationContext.ObjectInstance, null);
-                if ((dependentValue == null && _targetValue == null) || (dependentValue.Equals(_targetValue)))
+                if ((dependentValue == null && TargetValue == null) || (dependentValue.Equals(TargetValue)))
                 {
                     if (!_innerAttribute.IsValid(value))
                     {
@@ -232,7 +232,7 @@ namespace LATravelManager.UI.Helpers
             }
             else
             {
-                return new ValidationResult(FormatErrorMessage(_dependentProperty));
+                return new ValidationResult(FormatErrorMessage(DependentProperty));
             }
         }
 

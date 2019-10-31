@@ -4,6 +4,7 @@ using LATravelManager.Model.Wrapper;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace LATravelManager.UI.Wrapper
 {
@@ -69,6 +70,12 @@ namespace LATravelManager.UI.Wrapper
             get { return GetValue<ObservableCollection<City>>(); }
             set { SetValue(value); }
         }
+
+        public ObservableCollection<ExcursionTime> ExcursionTimes => Destinations != null && Destinations.Count > 0 ? 
+            new ObservableCollection<ExcursionTime>(Destinations[0].ExcursionTimes.OrderBy(x => x.StartingPlace.Name))
+            : new ObservableCollection<ExcursionTime>();
+
+
 
         public bool DiscountsExist
         {

@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
+using LATravelManager.Model.LocalModels;
 using LATravelManager.UI.ViewModel.CategoriesViewModels;
 using LATravelManager.UI.Wrapper;
 using System.Windows.Controls;
@@ -22,6 +23,16 @@ namespace LATravelManager.UI.Views
         private void Border_MouseDown(object sender, MouseButtonEventArgs e)
         {
             ((Plan_ViewModel)DataContext).RoomClicked(((Border)sender).DataContext as RoomWrapper);
+        }
+
+        private void Button_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var dc = DataContext as Plan_ViewModel;
+            if (sender is Button b && b.DataContext is PlanDailyInfo pd)
+            {
+                dc.AddRoomThisDayCommand.Execute(pd);
+            }
+
         }
     }
 }

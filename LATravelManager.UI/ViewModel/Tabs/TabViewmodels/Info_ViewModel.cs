@@ -111,7 +111,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                     }
                 }
                 ShowDepartureInfoError = "";
-                return true;
+                return SelectedFilterExcursion != null;
             }
         }
 
@@ -242,6 +242,22 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
                 _SelectedFilterExcursion = value;
                 RaisePropertyChanged();
+                if (SelectedFilterExcursion != null && SelectedFilterExcursion.ExcursionDates != null)
+                {
+                    try
+                    {
+                        FromDepartureInfo = SelectedFilterExcursion.ExcursionDates.Where(c => c.CheckIn >= DateTime.Today).Min(e => e.CheckIn);
+                    }
+                    catch
+                    {
+                        FromDepartureInfo = DateTime.Today;
+                    }
+                    if (FromDepartureInfo < DateTime.Today)
+                        FromDepartureInfo = DateTime.Today;
+                    ToDepartureInfo = SelectedFilterExcursion.ExcursionDates.Max(e => e.CheckOut);
+                    if (ToDepartureInfo > FromDepartureInfo.AddDays(15))
+                        ToDepartureInfo = FromDepartureInfo.AddDays(15);
+                }
             }
         }
 
@@ -526,10 +542,10 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             Mouse.OverrideCursor = Cursors.Arrow;
         }
 
-        private bool CanShowDepartureInfoM()
-        {
-            return SelectedFilterExcursion != null;
-        }
+        //private bool CanShowDepartureInfoM()
+        //{
+        //    return SelectedFilterExcursion != null;
+        //}
 
         private string GetDepartureInfoError(string propertyName)
         {

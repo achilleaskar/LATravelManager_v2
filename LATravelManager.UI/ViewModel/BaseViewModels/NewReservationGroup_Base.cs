@@ -98,14 +98,20 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 BookingWr.DisableDate = DateTime.Now;
                 BookingWr.DisabledBy = GenericRepository.GetById<User>(StaticResources.User.Id);
                 BookingWr.Disabled = true;
+                foreach (var c in BookingWr.Customers)
+                {
+                    c.Bus = null;
+                }
             }
         }
 
         private void ShowAlernatives()
         {
             var vm = new Availabilities_ViewModel(AvailableHotels, BookingWr.CheckIn, BookingWr.CheckOut, (SelectedRoomTypeIndex == 0 ? null : RoomTypes[SelectedRoomTypeIndex - 1]), (SelectedHotelIndex == 0 ? null : Hotels[SelectedHotelIndex - 1]));
-            Availabilities_Window window = new Availabilities_Window();
-            window.DataContext = vm;
+            Availabilities_Window window = new Availabilities_Window
+            {
+                DataContext = vm
+            };
             window.ShowDialog();
         }
 
@@ -872,6 +878,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                     if (!customer.Handled)
                     {
                         toRemove.Add(customer);
+                        customer.Bus = null;
                     }
                     else
                     {

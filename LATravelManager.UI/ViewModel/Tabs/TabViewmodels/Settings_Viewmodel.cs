@@ -11,11 +11,11 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         {
         }
 
-        public override Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
+        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
             try
             {
-                throw new NotImplementedException();
+                await Task.Delay(0);
             }
             catch (Exception ex)
             {
@@ -24,7 +24,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             finally
             {
                 IsLoaded = true;
-                throw new NotImplementedException();
             }
         }
 

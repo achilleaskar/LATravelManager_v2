@@ -104,7 +104,6 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
 
         private void SetUp(int minus, ObservableCollection<AvailabilitiesList> lists)
         {
-            int currentcount;
             if (daysCount - minus >= 1)
             {
                 Pairs.Clear();
@@ -187,7 +186,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
                             {
                                 if (RoomTYpesLeft.ContainsKey(room.RoomType.Id))
                                 {
-                                    RoomTYpesLeft.TryGetValue(room.RoomType.Id, out currentcount);
+                                    RoomTYpesLeft.TryGetValue(room.RoomType.Id, out int currentcount);
                                     RoomTYpesLeft[room.RoomType.Id] = currentcount + 1;
                                 }
                                 else
@@ -262,7 +261,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
             }
         }
 
-        private IDictionary<int, string> dict = new Dictionary<int, string>();
+        private readonly IDictionary<int, string> dict = new Dictionary<int, string>();
         public Pair Dates { get; set; }
         public bool IsMain { get; set; }
 

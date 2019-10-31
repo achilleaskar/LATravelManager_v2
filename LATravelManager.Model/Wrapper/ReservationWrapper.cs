@@ -17,6 +17,20 @@ namespace LATravelManager.Model.Wrapper
         {
         }
 
+
+        public int Higher => GetHigher();
+
+        public int GetHigher()
+        {
+            int higher = 0;
+            foreach (var c in CustomersList)
+            {
+                if (c.LeaderDriver > higher)
+                    higher = c.LeaderDriver;
+            }
+            return higher;
+        }
+
         public ReservationWrapper(Reservation model) : base(model)
         {
         }
@@ -160,6 +174,21 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
+        public string GetHotelTel()
+        {
+            string tel = string.Empty;
+            if (Room != null && Room.Hotel != null && !string.IsNullOrEmpty(Room.Hotel.Tel) && !Room.Hotel.Tel.StartsWith("000"))
+            {
+                tel = Room.Hotel.Tel;
+            }
+            else if (Hotel != null && !string.IsNullOrEmpty(Hotel.Tel))
+            {
+                tel = Hotel.Tel;
+            }
+
+            return tel.StartsWith("000") || tel.StartsWith("123") ? "" : tel;
+        }
+
         public string Comment
         {
             get
@@ -263,7 +292,7 @@ namespace LATravelManager.Model.Wrapper
         {
             get
             {
-                if (Booking != null)
+                if (Booking != null && Booking.Excursion != null)
                     if (Booking.Excursion.Id == 2)
                     {
                         return ExcursionTypeEnum.Bansko;
@@ -710,7 +739,6 @@ namespace LATravelManager.Model.Wrapper
         private string GetLocations()
         {
             List<string> locations = new List<string>();
-            StringBuilder sb = new StringBuilder();
             if (PersonalModel != null)
             {
                 foreach (Customer customer in PersonalModel.Customers)
@@ -751,7 +779,7 @@ namespace LATravelManager.Model.Wrapper
             }
             else
             {
-                foreach (Customer customer in CustomersList)
+                foreach (Customer customer in CustomersList.OrderBy(cc => cc.Id).ToList())
                 {
                     sb.Append(customer.Surename + " " + customer.Name + ", ");
                 }
@@ -783,12 +811,12 @@ namespace LATravelManager.Model.Wrapper
                 {
                     if (Room.RoomType != null)
                     {
-                        roomname = Room.RoomType.Name;
+                        roomname = Room.RoomType.Name + (Room.RoomType.Id == 1 ? ("(" + CustomersList.Count + ")") : "");
                     }
                 }
                 else if (NoNameRoomType != null)
                 {
-                    roomname = NoNameRoomType.Name;
+                    roomname = NoNameRoomType.Name + (NoNameRoomType.Id == 1 ? ("(" + CustomersList.Count + ")") : "");
                 }
                 else if (ReservationType == ReservationTypeEnum.Transfer)
                 {

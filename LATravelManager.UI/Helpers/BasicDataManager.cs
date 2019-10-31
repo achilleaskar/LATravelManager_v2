@@ -6,6 +6,7 @@ using LATravelManager.Model.Lists;
 using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
 using LATravelManager.UI.Repositories;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -300,6 +301,29 @@ namespace LATravelManager.UI.Helpers
 
 
 
+        private ObservableCollection<Bus> _Buses;
+
+
+        public ObservableCollection<Bus> Buses
+        {
+            get
+            {
+                return _Buses;
+            }
+
+            set
+            {
+                if (_Buses == value)
+                {
+                    return;
+                }
+
+                _Buses = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
         private ObservableCollection<Leader> _Leaders;
 
 
@@ -333,7 +357,7 @@ namespace LATravelManager.UI.Helpers
             Hotels = new ObservableCollection<Hotel>(await Context.GetAllHotelsAsync<Hotel>());
             Countries = new ObservableCollection<Country>(await Context.GetAllAsyncSortedByName<Country>());
             Cities = new ObservableCollection<City>(await Context.GetAllCitiesAsyncSortedByName());
-            RoomTypes = new ObservableCollection<RoomType>((await Context.GetAllAsync<RoomType>()).OrderBy(r => r.Index));
+            RoomTypes = new ObservableCollection<RoomType>((await Context.GetAllAsync<RoomType>()).OrderBy(r => r.MaxCapacity));
             StartingPlaces = new ObservableCollection<StartingPlace>(await Context.GetAllAsyncSortedByName<StartingPlace>());
             StaticResources.StartingPlaces = StartingPlaces;
             Users = new ObservableCollection<User>(await Context.GetAllUsersAsyncSortedByUserName());
@@ -345,7 +369,23 @@ namespace LATravelManager.UI.Helpers
             Airlines = new ObservableCollection<Airline>(await Context.GetAllAsync<Airline>());
             Vehicles = new ObservableCollection<Vehicle>(await Context.GetAllAsync<Vehicle>());
             Leaders = new ObservableCollection<Leader>(await Context.GetAllAsync<Leader>());
+
+            //foreach (var e in Excursions)
+            //{
+            //    if (e.ExcursionType.Category != ExcursionTypeEnum.Personal && e.ExcursionType.Category != ExcursionTypeEnum.ThirdParty && !e.IncludesPlane && e.ExcursionDates.Any(ed => ed.CheckOut > DateTime.Today))
+            //    {
+            //        foreach (var s in StartingPlaces)
+            //        {
+            //            e.ExcursionTimes.Add(new ExcursionTime { StartingPlace = s });
+            //        }
+            //    }
+            //}
+
+            //await Context.SaveAsync();
+
             Mouse.OverrideCursor = Cursors.Arrow;
+
+
         }
 
         public async Task LoadPersonal()

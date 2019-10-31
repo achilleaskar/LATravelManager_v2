@@ -398,6 +398,7 @@
                                                                         <Button Background="{Binding CellColor, UpdateSourceTrigger=PropertyChanged}"
                                                                                 HorizontalAlignment="Stretch"
                                                                                 Width="22"
+                                                                                MouseDoubleClick="Button_MouseDoubleClick"
                                                                                 Content="{Binding Text}"
                                                                                 ContextMenu="{StaticResource PlanContextMenu}"
                                                                                 ToolTipService.IsEnabled="{Binding Reservation,Converter={StaticResource ToolTipVis}}">

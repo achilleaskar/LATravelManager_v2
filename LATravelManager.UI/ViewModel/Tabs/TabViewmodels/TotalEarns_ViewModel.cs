@@ -286,7 +286,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 _Excursions = value;
                 Excursions.Insert(0, new Excursion { ExcursionDates = new ObservableCollection<ExcursionDate> { new ExcursionDate { CheckIn = new DateTime() } }, Name = "Ολες" });
 
-                ExcursionsIncomeCollectionView = new CollectionViewSource { Source = Excursions }.View;
+                ExcursionsIncomeCollectionView = CollectionViewSource.GetDefaultView(Excursions);
                 ExcursionsIncomeCollectionView.Filter = IncomeExcursionsFilter;
                 ExcursionsIncomeCollectionView.SortDescriptions.Add(new SortDescription("FirstDate", ListSortDirection.Ascending));
 

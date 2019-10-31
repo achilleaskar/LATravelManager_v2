@@ -1,19 +1,127 @@
-﻿using LATravelManager.Model.Excursions;
+﻿using GalaSoft.MvvmLight.CommandWpf;
+using LATravelManager.Model.Excursions;
 using LATravelManager.Model.People;
+using LATravelManager.UI.Helpers;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Windows.Media;
 
 namespace LATravelManager.Model.Lists
 {
     public class Bus : EditTracker
     {
+        #region Constructors
+
+        public Bus()
+        {
+            Manual = true;
+            Cities = new ObservableCollection<Counter>();
+            Hotels = new ObservableCollection<Counter>();
+            Customers = new ObservableCollection<Customer>();
+            ClearBusCommand = new RelayCommand(ClearBus, CanClearBus);
+            RemoveCustomerCommand = new RelayCommand<int>(RemoveCustomer, SelectedCustomer != null);
+            ColorsR = new List<SolidColorBrush>
+                {
+                    new SolidColorBrush(Colors.Aquamarine),
+                    new SolidColorBrush(Colors.LightBlue),
+                    new SolidColorBrush(Colors.Yellow),
+                    new SolidColorBrush(Colors.LightPink),
+                    new SolidColorBrush(Colors.Orange),
+                    new SolidColorBrush(Colors.LightCoral),
+                    new SolidColorBrush(Colors.LightSkyBlue),
+                    new SolidColorBrush(Colors.Khaki),
+                    new SolidColorBrush(Colors.Aqua)
+                };
+            Manual = false;
+            // RecalculateCustomers();
+        }
+
+        private string _drivers;
+
+        [NotMapped]
+        public string Drivers
+        {
+            get
+            {
+                return _drivers;
+            }
+
+            set
+            {
+                if (_drivers == value)
+                {
+                    return;
+                }
+
+                _drivers = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private void RemoveCustomer(int obj)
+        {
+            if (obj == 0)
+            {
+                SelectedCustomer.Bus = null;
+                Customers.Remove(SelectedCustomer);
+            }
+            else if (obj == 1)
+            {
+                var toRemove = Customers.Where(v => v.Reservation.Booking.Id == SelectedCustomer.Reservation.Booking.Id).ToList();
+                foreach (var c in toRemove)
+                {
+                    c.Bus = null;
+                    Customers.Remove(c);
+                }
+            }
+        }
+
+        private Customer _SelectedCustomer;
+
+        [NotMapped]
+        public Customer SelectedCustomer
+        {
+            get
+            {
+                return _SelectedCustomer;
+            }
+
+            set
+            {
+                if (_SelectedCustomer == value)
+                {
+                    return;
+                }
+
+                _SelectedCustomer = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        #endregion Constructors
+
         #region Fields
 
+        private ObservableCollection<Counter> _Cities;
+
+        private string _Comment;
+
         private ObservableCollection<Customer> _Customers = new ObservableCollection<Customer>();
+
         private Excursion _Excursion;
+
+        private ObservableCollection<Counter> _Hotels;
+
         private Leader _Leader;
+
         private bool _OneWay;
+
+        private bool _Selected;
+
         private string _StartingPlace = string.Empty;
 
         private DateTime _TimeGo;
@@ -25,6 +133,54 @@ namespace LATravelManager.Model.Lists
         #endregion Fields
 
         #region Properties
+
+        [NotMapped]
+        public ObservableCollection<Counter> Cities
+        {
+            get
+            {
+                return _Cities;
+            }
+
+            set
+            {
+                if (_Cities == value)
+                {
+                    return;
+                }
+
+                _Cities = value;
+                RaisePropertyChanged();
+                // CollectionViewSource.GetDefaultView(Cities).SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+            }
+        }
+
+        [NotMapped]
+        public RelayCommand ClearBusCommand { get; set; }
+
+        public RelayCommand<int> RemoveCustomerCommand { get; }
+
+        [NotMapped]
+        public List<SolidColorBrush> ColorsR { get; set; }
+
+        public string Comment
+        {
+            get
+            {
+                return _Comment;
+            }
+
+            set
+            {
+                if (_Comment == value)
+                {
+                    return;
+                }
+
+                _Comment = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public ObservableCollection<Customer> Customers
         {
@@ -42,8 +198,11 @@ namespace LATravelManager.Model.Lists
 
                 _Customers = value;
                 RaisePropertyChanged();
+                Customers.CollectionChanged += Customers_CollectionChanged;
             }
         }
+
+        public string EmptySeats => "Κενές: " + (Vehicle.SeatsPassengers - Customers.Where(g => g.LeaderDriver == 0).ToList().Count) + "/" + Vehicle.SeatsPassengers;
 
         public Excursion Excursion
         {
@@ -61,6 +220,27 @@ namespace LATravelManager.Model.Lists
 
                 _Excursion = value;
                 RaisePropertyChanged();
+            }
+        }
+
+        [NotMapped]
+        public ObservableCollection<Counter> Hotels
+        {
+            get
+            {
+                return _Hotels;
+            }
+
+            set
+            {
+                if (_Hotels == value)
+                {
+                    return;
+                }
+
+                _Hotels = value;
+                RaisePropertyChanged();
+                //CollectionViewSource.GetDefaultView(Hotels).SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
             }
         }
 
@@ -83,6 +263,9 @@ namespace LATravelManager.Model.Lists
             }
         }
 
+        [NotMapped]
+        public bool Manual { get; set; }
+
         public bool OneWay
         {
             get
@@ -98,6 +281,28 @@ namespace LATravelManager.Model.Lists
                 }
 
                 _OneWay = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public int RemainingSeats => Vehicle.SeatsPassengers - Customers.Where(y => y.LeaderDriver == 0).ToList().Count;
+
+        [NotMapped]
+        public bool Selected
+        {
+            get
+            {
+                return _Selected;
+            }
+
+            set
+            {
+                if (_Selected == value)
+                {
+                    return;
+                }
+
+                _Selected = value;
                 RaisePropertyChanged();
             }
         }
@@ -180,5 +385,107 @@ namespace LATravelManager.Model.Lists
         }
 
         #endregion Properties
+
+        #region Methods
+
+        public void RecalculateCustomers()
+        {
+            Cities.Clear();
+            Hotels.Clear();
+
+            Counter tmpHotel;
+            Counter tmpCity;
+
+            int dr = 0, le = 0, gu = 0;
+
+            foreach (CustomerWrapper b in Customers.Select(c => new CustomerWrapper(c)))
+            {
+                if (b.LeaderDriver == 0)
+                {
+                    tmpHotel = Hotels.Where(h => h.Name.Equals(b.HotelName)).FirstOrDefault();
+                    if (tmpHotel == null)
+                    {
+                        tmpHotel = new Counter { Name = b.HotelName };
+                        Hotels.Add(tmpHotel);
+                    }
+                    tmpCity = Cities.Where(h => h.Name.Equals(b.StartingPlace)).FirstOrDefault();
+                    if (tmpCity == null)
+                    {
+                        tmpCity = new Counter { Name = b.StartingPlace };
+                        Cities.Add(tmpCity);
+                    }
+                    tmpCity.Total += 1;
+                    tmpHotel.Total += 1;
+                }
+                else
+                {
+                    if (b.LeaderDriver == 1)
+                    {
+                        le += 1;
+                    }
+                    else if (b.LeaderDriver == 2)
+                    {
+                        gu += 1;
+                    }
+                    else if (b.LeaderDriver == 3)
+                    {
+                        dr += 1;
+                    }
+                    Drivers = $"Συνοδοί: {le} - Οδηγόι: {dr} - Ξεν.: {gu}";
+                }
+            }
+
+            SetColors();
+            RaisePropertyChanged(nameof(EmptySeats));
+        }
+
+        public void SetColors()
+        {
+            if (Customers.Count > 0)
+            {
+                int coutner = 0;
+                //customers = customers.OrderBy(c => c.Reservation.Booking.Id);
+                int id = 0;
+                foreach (CustomerWrapper c in Customers.Select(g => new CustomerWrapper(g)))
+                {
+                    if (c.Reservation == null)
+                    {
+                        break;
+                    }
+                    if (c.Reservation.Booking.Id != id)
+                    {
+                        id = c.Reservation.Booking.Id;
+                        coutner++;
+                    }
+                    c.RoomColor = ColorsR[coutner % 9];
+                }
+            }
+        }
+
+        private bool CanClearBus()
+        {
+            return Customers.Count > 0;
+        }
+
+        private void ClearBus()
+        {
+            Manual = true;
+            foreach (var c in Customers)
+            {
+                c.Bus = null;
+            }
+            Customers.Clear();
+            Manual = false;
+            RecalculateCustomers();
+        }
+
+        private void Customers_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (!Manual)
+                RecalculateCustomers();
+            RaisePropertyChanged(nameof(EmptySeats));
+        }
+
+        #endregion Methods
     }
 }

@@ -292,7 +292,7 @@
                                 </DataGridComboBoxColumn.EditingElementStyle>
                             </DataGridComboBoxColumn>
                             <DataGridTextColumn Header="Passport Id"
-                                                MaxWidth="200"
+                                                MaxWidth="200" 
                                                 Binding="{Binding PassportNum,UpdateSourceTrigger=PropertyChanged}"
                                                 Visibility="{Binding DataContext.SelectedExcursion.PassportNeeded, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}" />
 
@@ -305,7 +305,7 @@
                                     <DataTemplate>
                                         <DatePicker VerticalAlignment="Center"
                                                     Width="95"
-                                                    SelectedDate="{Binding PassportPublish}" />
+                                                    SelectedDate="{Binding PassportPublish, UpdateSourceTrigger=PropertyChanged}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -318,7 +318,7 @@
                                     <DataTemplate>
                                         <DatePicker VerticalAlignment="Center"
                                                     Width="95"
-                                                    SelectedDate="{Binding PassportExpiration}" />
+                                                    SelectedDate="{Binding PassportExpiration,UpdateSourceTrigger=PropertyChanged}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>

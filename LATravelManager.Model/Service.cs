@@ -8,15 +8,6 @@ namespace LATravelManager.Model.Services
 {
     public abstract class Service : EditTracker
     {
-        #region Constructors
-
-        public Service()
-        {
-            TimeGo = DateTime.Now;
-        }
-
-        #endregion Constructors
-
         #region Fields
 
         private bool _Allerretour;
@@ -26,7 +17,7 @@ namespace LATravelManager.Model.Services
         private decimal _NetPrice;
         private decimal _Profit;
 
-        private DateTime _TimeGo;
+        private DateTime _TimeGo = DateTime.Now;
 
         private DateTime _TimeReturn;
 

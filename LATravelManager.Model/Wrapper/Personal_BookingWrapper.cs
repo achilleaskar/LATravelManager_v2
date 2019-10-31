@@ -211,7 +211,8 @@ namespace LATravelManager.Model.Wrapper
         internal string GetDestinations()
         {
             StringBuilder sb = new StringBuilder();
-            string hotels = string.Empty, planes = string.Empty, ferrys = string.Empty, guides = string.Empty, transfers = string.Empty, tmp = string.Empty, optionals = string.Empty;
+            string hotels = string.Empty, planes = string.Empty, ferrys = string.Empty, guides = string.Empty, transfers = string.Empty, optionals = string.Empty;
+            string tmp;
             foreach (var s in Services)
             {
                 if (s is HotelService hs)
@@ -318,7 +319,8 @@ namespace LATravelManager.Model.Wrapper
         public string GetPacketDescription()
         {
             StringBuilder sb = new StringBuilder();
-            string hotels = string.Empty, planes = string.Empty, ferrys = string.Empty, guides = string.Empty, transfers = string.Empty, tmp = string.Empty, optionals = string.Empty;
+            string hotels = string.Empty, planes = string.Empty, ferrys = string.Empty, guides = string.Empty, transfers = string.Empty, optionals = string.Empty;
+            string tmp;
             foreach (var s in Services)
             {
                 if (s is HotelService hs)

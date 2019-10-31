@@ -23,14 +23,17 @@ namespace LATravelManager.UI.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            DateTime datet;
             if (value is string date && parameter is string par)
             {
-                if (!DateTime.TryParseExact(date, par, CultureInfo.CurrentUICulture, DateTimeStyles.None, out datet))
+                if (DateTime.TryParseExact(date, par, CultureInfo.CurrentUICulture, DateTimeStyles.None, out DateTime datet))
                 {
-                    return null;
+                    return datet;
                 }
-                return datet;
+                if (par is string s && s != null && s.Length == 1 && DateTime.TryParseExact(date, "HH:mm", CultureInfo.InvariantCulture,
+                                              DateTimeStyles.None, out DateTime datets))
+                {
+                    return datets.TimeOfDay;
+                }
             }
             return null;
         }

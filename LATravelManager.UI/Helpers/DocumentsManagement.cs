@@ -3,6 +3,7 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Lists;
 using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Wrapper;
@@ -25,7 +26,7 @@ using TEST = DocumentFormat.OpenXml.Drawing;
 
 namespace LATravelManager.UI.Helpers
 {
-    public class DocumentsManagement : IDisposable
+    public partial class DocumentsManagement : IDisposable
     {
         #region Constructors
 
@@ -48,13 +49,23 @@ namespace LATravelManager.UI.Helpers
 
         public GenericRepository Context { get; }
 
+        public bool Nonamemess { get; set; }
+
+        public bool Tranmess { get; set; }
+
         #endregion Properties
 
         #region Methods
-        protected virtual void Dispose(bool b)
-        {
 
+        public static string CreateFolder(DateTime date, string folderName, string city)
+        {
+            string folder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + folderName + city + @"\" + date.ToString("MMMM") + @"\" + date.ToString("dd-MM-yy") + @"\";
+
+            Directory.CreateDirectory(folder);
+
+            return folder;
         }
+
         public static string GetPath(string fileName, string folderpath)
         {
             int i = 1;
@@ -72,124 +83,30 @@ namespace LATravelManager.UI.Helpers
             return resultPath;
         }
 
-        internal void PrintPaymentsReciept(Payment selectedPayment, Customer selectedCustomer)
+        public static string GetPath(string fileName)
         {
-            string outputpath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-
-            Directory.CreateDirectory(outputpath + @"\Payments");
-            if (selectedPayment == null)
-            {
-                return;
-            }
-            if (selectedPayment.Booking != null)
-            {
-                string RecieptFilename = string.Format(@"\Πληρωμή {0}_{1}.docx", selectedCustomer.Surename, selectedPayment.Booking.Excursion.Destinations[0].Name);
-
-                CreateWordReciept(outputpath + @"\Payments\" + RecieptFilename, selectedPayment, selectedCustomer);
-            }
-            else if (selectedPayment.Personal_Booking != null)
-            {
-                string RecieptFilename = string.Format(@"\Πληρωμή {0}.docx", selectedCustomer.Surename);
-
-                CreateWordReciept(outputpath + @"\Payments\" + RecieptFilename, selectedPayment, selectedCustomer);
-            }
-            else if (selectedPayment.ThirdParty_Booking != null)
-            {
-                string RecieptFilename = string.Format(@"\Πληρωμή {0}.docx", selectedCustomer.Surename);
-
-                CreateWordReciept(outputpath + @"\Payments\" + RecieptFilename, selectedPayment, selectedCustomer);
-            }
-        }
-
-        private void CreateWordReciept(string saveAs, Payment selectedPayment, Customer SelectedCustomer)
-        {
-            if (SelectedCustomer == null)
-            {
-                SelectedCustomer = selectedPayment.Booking.ReservationsInBooking[0].CustomersList[0];
-            }
-            string fileName = "";
-            if (StaticResources.User.BaseLocation == 1)
-            {
-                fileName = @"Sources\reciept.docx";
-            }
-            else if (StaticResources.User.BaseLocation == 2)
-            {
-                fileName = @"Sources\reciept_larisa.docx";
-            }
-            else
-            {
-                return;
-            }
-
-            File.Copy(fileName, saveAs, true);
-
-            using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(saveAs, true))
-            {
-                try
-                {
-                    string docText = null;
-                    using (StreamReader sr = new StreamReader(wordDoc.MainDocumentPart.GetStream()))
-                    {
-                        docText = sr.ReadToEnd();
-                    }
-
-                    if (true)
-                    {
-                    }
-                    int id = selectedPayment.Booking != null ? selectedPayment.Booking.Id : selectedPayment.Personal_Booking != null ? selectedPayment.Personal_Booking.Id : selectedPayment.ThirdParty_Booking.Id;
-                    decimal remaining = selectedPayment.Booking != null ? new BookingWrapper(selectedPayment.Booking).Remaining : selectedPayment.Personal_Booking != null ? new Personal_BookingWrapper(selectedPayment.Personal_Booking).Remaining : new ThirdParty_Booking_Wrapper(selectedPayment.ThirdParty_Booking).Remaining;
-                    decimal total = selectedPayment.Booking != null ? new BookingWrapper(selectedPayment.Booking).FullPrice : selectedPayment.Personal_Booking != null ? new Personal_BookingWrapper(selectedPayment.Personal_Booking).FullPrice : new ThirdParty_Booking_Wrapper(selectedPayment.ThirdParty_Booking).FullPrice;
-                    string Description = selectedPayment.Booking != null ? new BookingWrapper(selectedPayment.Booking).GetPacketDescription() : selectedPayment.Personal_Booking != null ? new Personal_BookingWrapper(selectedPayment.Personal_Booking).GetPacketDescription() : new ThirdParty_Booking_Wrapper(selectedPayment.ThirdParty_Booking).GetPacketDescription();
-
-                    Regex regexText = new Regex("regexcustomerid");
-                    docText = regexText.Replace(docText, SelectedCustomer.Id.ToString());
-                    regexText = new Regex("regexcustomername");
-                    docText = regexText.Replace(docText, SelectedCustomer.ToString());
-                    regexText = new Regex("regexpaymentmethod");
-                    docText = regexText.Replace(docText, selectedPayment.GetPaymentMethod());
-                    regexText = new Regex("regexpaymentid");
-                    docText = regexText.Replace(docText, selectedPayment.Id.ToString());
-                    regexText = new Regex("regexdatetoday");
-                    docText = regexText.Replace(docText, DateTime.Now.ToString("dd/MM/yyyy HH:mm"));
-                    regexText = new Regex("regexbookingid");
-                    docText = regexText.Replace(docText, id.ToString());
-                    regexText = new Regex("regexremainingamount");
-                    docText = regexText.Replace(docText, remaining.ToString("c2"));
-                    regexText = new Regex("regexdescription");
-                    docText = regexText.Replace(docText, Description);
-                    regexText = new Regex("regexfullwordamount");
-                    docText = regexText.Replace(docText, StaticResources.ConvertAmountToWords(selectedPayment.Amount));
-                    regexText = new Regex("regextotalamount");
-                    docText = regexText.Replace(docText, total.ToString("c2"));
-                    regexText = new Regex("regexamount");
-                    docText = regexText.Replace(docText, selectedPayment.Amount.ToString("c2"));
-                    regexText = new Regex("regexusername");
-                    docText = regexText.Replace(docText, StaticResources.User.FullName.ToUpper());
-
-                    using (StreamWriter sw = new StreamWriter(wordDoc.MainDocumentPart.GetStream(FileMode.Create)))
-                    {
-                        sw.Write(docText);
-                    }
-
-                    wordDoc.Close();
-                    Process.Start(saveAs);
-                }
-                catch (Exception)
-                {
-                }
-            }
-        }
-
-        public string CreateFolder(DateTime date, string folderName, string city)
-        {
-            string folder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + folderName + city + @"\" + date.ToString("MMMM") + @"\" + date.ToString("dd-MM-yy") + @"\";
-
+            int i = 1;
+            string resultPath;
+            string folder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Λίστες";
             Directory.CreateDirectory(folder);
 
-            return folder;
+            resultPath = folder + fileName + ".xlsx";
+            string fileExtension = ".xlsx";
+            while (File.Exists(resultPath))
+            {
+                i++;
+                resultPath = folder + fileName + "(" + i + ")" + fileExtension;
+            }
+            return resultPath;
         }
 
-
+        public void Dispose()
+        {
+            // Dispose of unmanaged resources.
+            Dispose(true);
+            // Suppress finalization.
+            GC.SuppressFinalize(this);
+        }
 
         public async void PrintAllBookings()
         {
@@ -371,11 +288,11 @@ namespace LATravelManager.UI.Helpers
                     string ContractFilename;
                     if (booking.IsPartners)
                     {
-                        ContractFilename = string.Format(@"\{0}_{1}_{2}_{3}_Contract.docx", resWrapper.CustomersList[0].Surename, resWrapper.HotelName, resWrapper.RoomTypeName, booking.Partner.Name);
+                        ContractFilename = string.Format(@"\{0}_{1}_{2}_{3}_Contract.docx", resWrapper.CustomersList[0].Surename, resWrapper.HotelName, resWrapper.RoomTypeNameByNum, booking.Partner.Name);
                     }
                     else
                     {
-                        ContractFilename = string.Format(@"\{0}_{1}_{2}_Contract.docx", resWrapper.CustomersList[0].Surename, resWrapper.HotelName, resWrapper.RoomTypeName);
+                        ContractFilename = string.Format(@"\{0}_{1}_{2}_Contract.docx", resWrapper.CustomersList[0].Surename, resWrapper.HotelName, resWrapper.RoomTypeNameByNum);
                     }
                     Directory.CreateDirectory(outputpath + @"\Vouchers");
                     folderNameContracts = CreateFolder(resWrapper.CheckIn, @"\Contracts\", booking.Excursion.Name);
@@ -416,11 +333,11 @@ namespace LATravelManager.UI.Helpers
 
                 try
                 {
-                    string VoucherFilename = string.Format(@"\{0}_{1}_{2}_{3}_Letter.docx", (resWrapper.CustomersList.OrderBy(cc => cc.Id)).ToList()[0].Surename, resWrapper.HotelName, resWrapper.RoomTypeName, resWrapper.Id);
+                    string LetterFilename = string.Format(@"\{0}_{1}_{2}_{3}_Letter.docx", (resWrapper.CustomersList.OrderBy(cc => cc.Id)).ToList()[0].Surename, resWrapper.HotelName.TrimEnd(new[] { '*' }), resWrapper.RoomTypeNameByNum, resWrapper.Id);
                     Directory.CreateDirectory(outputpath + @"\Letters");
                     folderNameVouchers = CreateFolder(resWrapper.CheckIn, @"\Letters\", booking.Excursion.Name);
 
-                    CreateWordLetter(folderNameVouchers + VoucherFilename, resWrapper, booking);
+                    CreateWordLetter(folderNameVouchers + LetterFilename, resWrapper, booking);
                 }
                 catch (Exception ex)
                 {
@@ -433,10 +350,10 @@ namespace LATravelManager.UI.Helpers
         {
             foreach (Reservation res in booking.ReservationsInBooking)
             {
-                if (res.ReservationType == ReservationTypeEnum.Noname && !nonamemess)
+                if (res.ReservationType == ReservationTypeEnum.Noname && !Nonamemess)
                 {
                     MessageBox.Show("Παρακαλώ τοποθετήστε τα NO NAME");
-                    nonamemess = true;
+                    Nonamemess = true;
                     break;
                 }
                 else if (res.ReservationType == ReservationTypeEnum.NoRoom)
@@ -447,27 +364,24 @@ namespace LATravelManager.UI.Helpers
                 //{
                 //    MessageBox.Show("Παρακαλώ τοποθετήστε τα OVER");
                 //}
-                else if (res.ReservationType == ReservationTypeEnum.Transfer && !tranmess)
+                else if (res.ReservationType == ReservationTypeEnum.Transfer && !Tranmess)
                 {
                     MessageBox.Show("Η κράτηση είναι TRANSFER");
-                    tranmess = true;
+                    Tranmess = true;
                     break;
                 }
             }
             PrintContract(booking);
         }
 
-        public bool nonamemess { get; set; }
-        public bool tranmess { get; set; }
-
         public async Task PrintSingleBookingVoucher(BookingWrapper booking)
         {
             foreach (Reservation res in booking.ReservationsInBooking)
             {
-                if (res.ReservationType == ReservationTypeEnum.Noname && !nonamemess)
+                if (res.ReservationType == ReservationTypeEnum.Noname && !Nonamemess)
                 {
                     MessageBox.Show("Παρακαλώ τοποθετήστε τα NO NAME");
-                    nonamemess = true;
+                    Nonamemess = true;
                 }
                 else if (res.ReservationType == ReservationTypeEnum.NoRoom)
                 {
@@ -477,10 +391,10 @@ namespace LATravelManager.UI.Helpers
                 //{
                 //    MessageBox.Show("Παρακαλώ τοποθετήστε τα OVER");
                 //}
-                else if (res.ReservationType == ReservationTypeEnum.Transfer && !tranmess)
+                else if (res.ReservationType == ReservationTypeEnum.Transfer && !Tranmess)
                 {
                     MessageBox.Show("Η κράτηση είναι TRANSFER");
-                    tranmess = true;
+                    Tranmess = true;
                 }
             }
             await PrintVoucher(booking);
@@ -524,11 +438,11 @@ namespace LATravelManager.UI.Helpers
                     string VoucherFilename;
                     if (booking.IsPartners)
                     {
-                        VoucherFilename = string.Format(@"\{0}_{1}_{2}_{3}_{4}_Voucher.docx", (resWrapper.CustomersList.OrderBy(cc => cc.Id)).ToList()[0].Surename, resWrapper.HotelName, resWrapper.RoomTypeName, booking.Partner.Name, resWrapper.Id);
+                        VoucherFilename = string.Format(@"\{0}_{1}_{2}_{3}_{4}_Voucher.docx", (resWrapper.CustomersList.OrderBy(cc => cc.Id)).ToList()[0].Surename, resWrapper.HotelName, resWrapper.RoomTypeNameByNum, booking.Partner.Name, resWrapper.Id);
                     }
                     else
                     {
-                        VoucherFilename = string.Format(@"\{0}_{1}_{2}_{3}_Voucher.docx", (resWrapper.CustomersList.OrderBy(cc => cc.Id)).ToList()[0].Surename, resWrapper.HotelName, resWrapper.RoomTypeName, resWrapper.Id);
+                        VoucherFilename = string.Format(@"\{0}_{1}_{2}_{3}_Voucher.docx", (resWrapper.CustomersList.OrderBy(cc => cc.Id)).ToList()[0].Surename, resWrapper.HotelName, resWrapper.RoomTypeNameByNum, resWrapper.Id);
                     }
                     Directory.CreateDirectory(outputpath + @"\Vouchers");
                     folderNameVouchers = CreateFolder(resWrapper.CheckIn, @"\Vouchers\", booking.Excursion.Name);
@@ -544,24 +458,7 @@ namespace LATravelManager.UI.Helpers
             }
         }
 
-        public static string GetPath(string fileName)
-        {
-            int i = 1;
-            string resultPath;
-            string folder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Λίστες";
-            Directory.CreateDirectory(folder);
-
-            resultPath = folder + fileName + ".xlsx";
-            string fileExtension = ".xlsx";
-            while (File.Exists(resultPath))
-            {
-                i++;
-                resultPath = folder + fileName + "(" + i + ")" + fileExtension;
-            }
-            return resultPath;
-        }
-
-        internal async Task PrintList(List<Booking> bookings, DateTime checkIn)
+        internal async Task PrintList(List<Booking> bookings, DateTime checkIn, Bus bus = null)
         {
             IEnumerable<Booking> more = await Context.GetAllBookinsFromCustomers(checkIn);
 
@@ -620,13 +517,22 @@ namespace LATravelManager.UI.Helpers
 
             reservationsThisDay = reservationsThisDay.OrderBy(x => x.CustomersList[0].StartingPlace).ToList();
             reservationsThisDay = reservationsThisDay.OrderBy(x => x.HotelName).ToList();
+            if (bus != null)
+            {
+                wbPath = GetPath($"\\Λίστα Λεωφορείου για {reservationsThisDay[0].Booking.Excursion.Destinations[0].Name} " + bus.TimeGo.ToString("dd_MM_yy_") + bus.Vehicle.Name.Trim(new[] { '-' }));
+            }
+            else
+            {
+                wbPath = GetPath($"\\Λίστα Λεωφορείου για {reservationsThisDay[0].Booking.Excursion.Destinations[0].Name} " + checkIn.ToString("dd_MM_yy"));
+            }
 
-            wbPath = GetPath($"\\Λίστα Λεωφορείου για {reservationsThisDay[0].Booking.Excursion.Destinations[0].Name} " + checkIn.ToString("dd_MM_yy"));
-
-            myWorksheet.Cells["A1"].Value = "ΑΝΑΧΩΡΗΣΗ - " + checkIn.ToString("dd/MM/yyyy");
+            myWorksheet.Cells["A1"].Value = "ΑΝΑΧΩΡΗΣΗ - " + bus == null ? checkIn.ToString("dd/MM/yyyy") : bus.TimeGo.ToString("dd/MM/yyyy");
             lineNum = 5;
             myWorksheet.Cells["A2"].Value = "Αρ. Δωματίων:" + reservationsThisDay.Count;
-            myWorksheet.Cells["E2"].Value = "Συνοδός:";
+            myWorksheet.Cells["F2"].Value = "Συνοδός:" + ((bus != null && bus.Leader != null && !string.IsNullOrEmpty(bus.Leader.Name)) ? bus.Leader.Name : "");
+            myWorksheet.Cells["D2"].Value = "Λεωφορείο:" + ((bus != null && bus.Vehicle != null && !string.IsNullOrEmpty(bus.Vehicle.Name)) ? bus.Vehicle.Name : "");
+
+            reservationsThisDay = reservationsThisDay.OrderBy(t => t.Higher).ToList();
 
             if (reservationsThisDay.Count > 0)
             {
@@ -635,7 +541,7 @@ namespace LATravelManager.UI.Helpers
                     customersCount = -1;
                     foreach (Customer customer in reservation.CustomersList)
                     {
-                        if (customer.CustomerHasBusIndex < 2 && (!reservation.Booking.DifferentDates || customer.CheckIn == checkIn))
+                        if ((bus == null || (customer.Bus != null && customer.Bus.Id == bus.Id)) && customer.CustomerHasBusIndex < 2 && (!reservation.Booking.DifferentDates || customer.CheckIn == checkIn))
                         {
                             counter++;
                             myWorksheet.InsertRow(lineNum, 1);
@@ -647,7 +553,7 @@ namespace LATravelManager.UI.Helpers
                             if (customersCount == 0)
                             {
                                 myWorksheet.Cells["B" + lineNum].Value = reservation.CheckIn.Day + "-" + reservation.CheckOut.ToString("dd/MM");
-                                myWorksheet.Cells["E" + lineNum].Value = reservation.HotelName;
+                                myWorksheet.Cells["E" + lineNum].Value = reservation.HotelName.TrimEnd(new[] { '*' });
                                 if (reservation.Booking.IsPartners)
                                     myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Partner.Name.Length > 11) ? reservation.Booking.Partner.Name.Substring(0, 11) : reservation.Booking.Partner.Name;
                                 else if (!string.IsNullOrEmpty(reservation.Booking.Comment))
@@ -666,7 +572,7 @@ namespace LATravelManager.UI.Helpers
                             myWorksheet.Cells["I" + lineNum].Value = customer.PassportNum ?? "";
                             myWorksheet.Cells["J" + lineNum].Value = customer.DOB != null && customer.DOB.Value.Year > 1800 ? customer.DOB.Value.ToString("dd/MM/yy") : "";
                         }
-                        else
+                        else if (bus != null)
                         {
                             myWorksheet.InsertRow(lineNum, 1);
                             customersCount++;
@@ -679,7 +585,7 @@ namespace LATravelManager.UI.Helpers
                             if (customersCount == 0)
                             {
                                 myWorksheet.Cells["B" + lineNum].Value = reservation.CheckIn.Day + "-" + reservation.CheckOut.ToString("dd/MM");
-                                myWorksheet.Cells["E" + lineNum].Value = reservation.HotelName;
+                                myWorksheet.Cells["E" + lineNum].Value = reservation.HotelName.TrimEnd(new[] { '*' });
                                 if (reservation.Booking.IsPartners)
                                     myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Partner.ToString().Length > 11) ? reservation.Booking.Partner.ToString().Substring(0, 11) : reservation.Booking.Partner.ToString();
                                 else if (!string.IsNullOrEmpty(reservation.Booking.Comment))
@@ -757,7 +663,7 @@ namespace LATravelManager.UI.Helpers
                             if (customersCount == 0)
                             {
                                 myWorksheet.Cells["B" + lineNum].Value = reservation.CheckIn.Day + "-" + reservation.CheckOut.ToString("dd/MM");
-                                myWorksheet.Cells["E" + lineNum].Value = reservation.HotelName;
+                                myWorksheet.Cells["E" + lineNum].Value = reservation.HotelName.TrimEnd(new[] { '*' });
                                 if (reservation.Booking.IsPartners)
                                     myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Partner.ToString().Length > 11) ? reservation.Booking.Partner.ToString().Substring(0, 11) : reservation.Booking.Partner.ToString();
                                 //else if (reservation.Booking.Remaining > 0)
@@ -787,21 +693,50 @@ namespace LATravelManager.UI.Helpers
 
                 fileInfo = new FileInfo(wbPath ?? throw new InvalidOperationException());
                 p.SaveAs(fileInfo);
-                Process.Start(wbPath);
+                // Process.Start(wbPath);
                 p.Dispose();
             }
             else
                 MessageBox.Show("Δέν υπάρχουν άτομα που να πηγαίνουν τις συγκεκριμένες ημέρες από τις επιλεγμένες πόλεις", "Σφάλμα");
         }
 
+        internal void PrintPaymentsReciept(Payment selectedPayment, Customer selectedCustomer)
+        {
+            string outputpath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+
+            Directory.CreateDirectory(outputpath + @"\Payments");
+            if (selectedPayment == null)
+            {
+                return;
+            }
+            if (selectedPayment.Booking != null)
+            {
+                string RecieptFilename = string.Format(@"\Πληρωμή {0}_{1}.docx", selectedCustomer.Surename, selectedPayment.Booking.Excursion.Destinations[0].Name);
+
+                CreateWordReciept(outputpath + @"\Payments\" + RecieptFilename, selectedPayment, selectedCustomer);
+            }
+            else if (selectedPayment.Personal_Booking != null)
+            {
+                string RecieptFilename = string.Format(@"\Πληρωμή {0}.docx", selectedCustomer.Surename);
+
+                CreateWordReciept(outputpath + @"\Payments\" + RecieptFilename, selectedPayment, selectedCustomer);
+            }
+            else if (selectedPayment.ThirdParty_Booking != null)
+            {
+                string RecieptFilename = string.Format(@"\Πληρωμή {0}.docx", selectedCustomer.Surename);
+
+                CreateWordReciept(outputpath + @"\Payments\" + RecieptFilename, selectedPayment, selectedCustomer);
+            }
+        }
+
         internal void PrintSingleBookingLetter(BookingWrapper booking)
         {
             foreach (Reservation res in booking.ReservationsInBooking)
             {
-                if (res.ReservationType == ReservationTypeEnum.Noname && !nonamemess)
+                if (res.ReservationType == ReservationTypeEnum.Noname && !Nonamemess)
                 {
                     MessageBox.Show("Παρακαλώ τοποθετήστε τα NO NAME");
-                    nonamemess = true;
+                    Nonamemess = true;
                     return;
                 }
                 else if (res.ReservationType == ReservationTypeEnum.NoRoom)
@@ -812,14 +747,167 @@ namespace LATravelManager.UI.Helpers
                 //{
                 //    MessageBox.Show("Παρακαλώ τοποθετήστε τα OVER");
                 //}
-                else if (res.ReservationType == ReservationTypeEnum.Transfer && !tranmess)
+                else if (res.ReservationType == ReservationTypeEnum.Transfer && !Tranmess)
                 {
                     MessageBox.Show("Η κράτηση είναι TRANSFER");
-                    tranmess = true;
+                    Tranmess = true;
                     return;
                 }
             }
             PrintLetter(booking);
+        }
+
+        protected virtual void Dispose(bool b)
+        {
+        }
+
+        private static void AddImageToBody(WordprocessingDocument wordDoc, string relationshipId)
+        {
+            long LCX = (long)(7.35 * 914400L);
+            long LCY = (long)(4.17 * 914400L);
+            // Define the reference of the image.
+            var element =
+                 new Drawing(
+                     new DW.Inline(
+                        new DW.Extent() { Cx = LCX, Cy = LCY },
+                     new DW.EffectExtent()
+                     {
+                         LeftEdge = 0L,
+                         TopEdge = 0L,
+                         RightEdge = 0L,
+                         BottomEdge = 0L
+                     },
+                         new DW.DocProperties()
+                         {
+                             Id = 1U,
+                             Name = "Picture 1"
+                         },
+                         new DW.NonVisualGraphicFrameDrawingProperties(
+                             new TEST.GraphicFrameLocks() { NoChangeAspect = true }),
+                         new TEST.Graphic(
+                             new TEST.GraphicData(
+                                 new PIC.Picture(
+                                     new PIC.NonVisualPictureProperties(
+                                         new PIC.NonVisualDrawingProperties()
+                                         {
+                                             Id = 0U,
+                                             Name = "New Bitmap Image.jpg"
+                                         },
+                                         new PIC.NonVisualPictureDrawingProperties()),
+                                     new PIC.BlipFill(
+                                         new TEST.Blip(
+                                             new TEST.BlipExtensionList(
+                                                 new TEST.BlipExtension()
+                                                 {
+                                                     Uri = "{28A0092B-C50C-407E-A947-70E740481C1C}"
+                                                 })
+                                         )
+                                         {
+                                             Embed = relationshipId,
+                                             CompressionState = TEST.BlipCompressionValues.Print
+                                         },
+                                         new TEST.Stretch(
+                                             new TEST.FillRectangle())),
+                                     new PIC.ShapeProperties(
+                                         new TEST.Transform2D(
+                                             new TEST.Offset() { X = 0L, Y = 0L },
+                                             new TEST.Extents() { Cx = LCX, Cy = LCY }),
+                                         new TEST.PresetGeometry(
+                                             new TEST.AdjustValueList()
+                                         )
+                                         { Preset = TEST.ShapeTypeValues.Rectangle }))
+                             )
+                             { Uri = "http://schemas.openxmlformats.org/drawingml/2006/picture" })
+                     )
+                     {
+                         DistanceFromTop = 0U,
+                         DistanceFromBottom = 0U,
+                         DistanceFromLeft = 0U,
+                         DistanceFromRight = 0U,
+                         EditId = "50D07946"
+                     });
+
+            // Append the reference to body, the element should be in a Run.
+            wordDoc.MainDocumentPart.Document.Body.AppendChild(new Paragraph(new Run(element)));
+        }
+
+        private static void CreateWordReciept(string saveAs, Payment selectedPayment, Customer SelectedCustomer)
+        {
+            if (SelectedCustomer == null)
+            {
+                SelectedCustomer = selectedPayment.Booking.ReservationsInBooking[0].CustomersList[0];
+            }
+            string fileName;
+            if (StaticResources.User.BaseLocation == 1)
+            {
+                fileName = @"Sources\reciept.docx";
+            }
+            else if (StaticResources.User.BaseLocation == 2)
+            {
+                fileName = @"Sources\reciept_larisa.docx";
+            }
+            else
+            {
+                return;
+            }
+
+            File.Copy(fileName, saveAs, true);
+
+            using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(saveAs, true))
+            {
+                try
+                {
+                    string docText = null;
+                    using (StreamReader sr = new StreamReader(wordDoc.MainDocumentPart.GetStream()))
+                    {
+                        docText = sr.ReadToEnd();
+                    }
+
+                    if (true)
+                    {
+                    }
+                    int id = selectedPayment.Booking != null ? selectedPayment.Booking.Id : selectedPayment.Personal_Booking != null ? selectedPayment.Personal_Booking.Id : selectedPayment.ThirdParty_Booking.Id;
+                    decimal remaining = selectedPayment.Booking != null ? new BookingWrapper(selectedPayment.Booking).Remaining : selectedPayment.Personal_Booking != null ? new Personal_BookingWrapper(selectedPayment.Personal_Booking).Remaining : new ThirdParty_Booking_Wrapper(selectedPayment.ThirdParty_Booking).Remaining;
+                    decimal total = selectedPayment.Booking != null ? new BookingWrapper(selectedPayment.Booking).FullPrice : selectedPayment.Personal_Booking != null ? new Personal_BookingWrapper(selectedPayment.Personal_Booking).FullPrice : new ThirdParty_Booking_Wrapper(selectedPayment.ThirdParty_Booking).FullPrice;
+                    string Description = selectedPayment.Booking != null ? new BookingWrapper(selectedPayment.Booking).GetPacketDescription() : selectedPayment.Personal_Booking != null ? new Personal_BookingWrapper(selectedPayment.Personal_Booking).GetPacketDescription() : new ThirdParty_Booking_Wrapper(selectedPayment.ThirdParty_Booking).GetPacketDescription();
+
+                    Regex regexText = new Regex("regexcustomerid");
+                    docText = regexText.Replace(docText, SelectedCustomer.Id.ToString());
+                    regexText = new Regex("regexcustomername");
+                    docText = regexText.Replace(docText, SelectedCustomer.ToString());
+                    regexText = new Regex("regexpaymentmethod");
+                    docText = regexText.Replace(docText, selectedPayment.GetPaymentMethod());
+                    regexText = new Regex("regexpaymentid");
+                    docText = regexText.Replace(docText, selectedPayment.Id.ToString());
+                    regexText = new Regex("regexdatetoday");
+                    docText = regexText.Replace(docText, DateTime.Now.ToString("dd/MM/yyyy HH:mm"));
+                    regexText = new Regex("regexbookingid");
+                    docText = regexText.Replace(docText, id.ToString());
+                    regexText = new Regex("regexremainingamount");
+                    docText = regexText.Replace(docText, remaining.ToString("c2"));
+                    regexText = new Regex("regexdescription");
+                    docText = regexText.Replace(docText, Description);
+                    regexText = new Regex("regexfullwordamount");
+                    docText = regexText.Replace(docText, StaticResources.ConvertAmountToWords(selectedPayment.Amount));
+                    regexText = new Regex("regextotalamount");
+                    docText = regexText.Replace(docText, total.ToString("c2"));
+                    regexText = new Regex("regexamount");
+                    docText = regexText.Replace(docText, selectedPayment.Amount.ToString("c2"));
+                    regexText = new Regex("regexusername");
+                    docText = regexText.Replace(docText, StaticResources.User.FullName.ToUpper());
+
+                    using (StreamWriter sw = new StreamWriter(wordDoc.MainDocumentPart.GetStream(FileMode.Create)))
+                    {
+                        sw.Write(docText);
+                    }
+
+                    wordDoc.Close();
+                    Process.Start(saveAs);
+                }
+                catch (Exception)
+                {
+                }
+            }
         }
 
         private void CreateWordContract(string saveAs, ReservationWrapper reservationWr, BookingWrapper booking)
@@ -896,8 +984,8 @@ namespace LATravelManager.UI.Helpers
                 regexText = new Regex("destination");
                 docText = regexText.Replace(docText, booking.Excursion.Destinations[0].Name);
                 regexText = new Regex("hotelnroomtype");
-                docText = regexText.Replace(docText, reservationWr.HotelName + "-" + reservationWr.RoomTypeName + "(" +
-                    (reservationWr.Room != null ? reservationWr.Room.Hotel.Tel : reservationWr.Hotel != null && reservationWr.Hotel.Tel != null && (reservationWr.Hotel != null && !reservationWr.Hotel.Tel.StartsWith("000")) ? reservationWr.Hotel.Tel : "") + ")");
+                string tel = reservationWr.GetHotelTel();
+                docText = regexText.Replace(docText, reservationWr.HotelName + "-" + reservationWr.RoomTypeNameByNum + (!string.IsNullOrEmpty(tel) ? "(" + tel + ")" : ""));
 
                 using (StreamWriter sw = new StreamWriter(wordDoc.MainDocumentPart.GetStream(FileMode.Create)))
                 {
@@ -913,36 +1001,38 @@ namespace LATravelManager.UI.Helpers
         {
             string fileName = "";
 
-            if (booking.Excursion.ExcursionType.Category != ExcursionTypeEnum.Bansko)
+            // if (booking.Excursion.Destinations[0].Id != 2)
+            //{
+            if (booking.IsPartners)
             {
-                if (booking.IsPartners)
-                {
-                    if (booking.User.BaseLocation == 2)
-                        fileName = @"Sources\group\Voucher_afirmo_larissa.docx";
-                    else if (booking.User.BaseLocation == 1)
-                        fileName = @"Sources\group\Voucher_afirmo_thess.docx";
-                }
-                else if (booking.User.BaseLocation == 2)
-                    fileName = @"Sources\group\Voucher_enfirmo_larissas.docx";
+                if (booking.User.BaseLocation == 2)
+                    fileName = @"Sources\group\Voucher_afirmo_larissa.docx";
                 else if (booking.User.BaseLocation == 1)
-                    fileName = @"Sources\group\Voucher_enfirmo_thess.docx";
-                else
-                    fileName = @"Sources\group\Voucher_enfirmo_thess.docx";
+                    fileName = @"Sources\group\Voucher_afirmo_thess.docx";
             }
+            else if (booking.User.BaseLocation == 2)
+                fileName = @"Sources\group\Voucher_enfirmo_larissas.docx";
+            else if (booking.User.BaseLocation == 1)
+                fileName = @"Sources\group\Voucher_enfirmo_thess.docx";
             else
-            {
-                if (booking.IsPartners)
-                    fileName = @"Sources\Voucher_afirmo.docx";
-                else if (booking.User.BaseLocation == 2)
-                    fileName = @"Sources\Voucher_enfirmo_larissas.docx";
-                else if (booking.User.BaseLocation == 1)
-                    fileName = @"Sources\Voucher_enfirmo_thess.docx";
-                else
-                    fileName = @"Sources\Voucher_enfirmo_thess.docx";
-            }
+                fileName = @"Sources\group\Voucher_enfirmo_thess.docx";
+            //}
+            //else
+            //{
+            //    if (booking.IsPartners)
+            //        fileName = @"Sources\Voucher_afirmo.docx";
+            //    else if (booking.User.BaseLocation == 2)
+            //        fileName = @"Sources\Voucher_enfirmo_larissas.docx";
+            //    else if (booking.User.BaseLocation == 1)
+            //        fileName = @"Sources\Voucher_enfirmo_thess.docx";
+            //    else
+            //        fileName = @"Sources\Voucher_enfirmo_thess.docx";
+            //}
             File.Copy(fileName, saveAs, true);
             Customer c = reservationWr.CustomersList[0];
             StartingPlace customerStartingPlace = await Context.GetByNameAsync<StartingPlace>(c.StartingPlace);
+            Bus bus;
+            bus = c.Bus ?? new Bus { Leader = new Leader { Name = "", Tel = "" } };
 
             if (customerStartingPlace == null || customerStartingPlace.Id == 19)
             {
@@ -992,16 +1082,15 @@ namespace LATravelManager.UI.Helpers
                     regexText = new Regex("regexcity");
                     docText = regexText.Replace(docText, booking.Excursion.Destinations[0].Name);
                     regexText = new Regex("regextel");
-                    docText = regexText.Replace(docText, (reservationWr.Room == null || reservationWr.Room.Hotel.Tel == null || (reservationWr.Hotel != null && !reservationWr.Hotel.Tel.StartsWith("000"))) ?
-                        reservationWr.Hotel != null && reservationWr.Hotel.Tel != null && !reservationWr.Hotel.Tel.StartsWith("000") ? reservationWr.Hotel.Tel : "" : reservationWr.Room.Hotel.Tel);
+                    docText = regexText.Replace(docText, (reservationWr.GetHotelTel()));
                     regexText = new Regex("regexnames");
                     docText = regexText.Replace(docText, reservationWr.Names);
                     regexText = new Regex("regexcheckin");
-                    docText = regexText.Replace(docText, booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Group ? reservationWr.CheckIn.AddDays(1).ToString("dd/MM/yyyy") : reservationWr.CheckIn.ToString("dd/MM/yyyy"));
+                    docText = regexText.Replace(docText, booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Group && booking.Excursion.NightStart ? reservationWr.CheckIn.AddDays(1).ToString("dd/MM/yyyy") : reservationWr.CheckIn.ToString("dd/MM/yyyy"));
                     regexText = new Regex("regexcheckout");
                     docText = regexText.Replace(docText, reservationWr.CheckOut.ToString("dd/MM/yyyy"));
                     regexText = new Regex("regexroomtype");
-                    docText = regexText.Replace(docText, reservationWr.RoomTypeName);
+                    docText = regexText.Replace(docText, reservationWr.RoomTypeNameByNum);
                     //regexText = new Regex("regexpayment");
                     //docText = regexText.Replace(docText, reservation.HotelName);
                     regexText = new Regex("regexnotes");
@@ -1019,15 +1108,15 @@ namespace LATravelManager.UI.Helpers
                     regexText = new Regex("zlocation");
                     docText = regexText.Replace(docText, reservationWr.CustomersList[0].StartingPlace);
                     regexText = new Regex("ztime");
-                    docText = regexText.Replace(docText, (booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Group) ? ((customerStartingPlace.Id < 0) ? "" : customerStartingPlace.ReturnTime) : ((customerStartingPlace.Id < 0) ? "" : customerStartingPlace.StartTime));
+                    docText = regexText.Replace(docText, booking.Excursion.Destinations[0].ExcursionTimes.Any(s => s.StartingPlace.Id == customerStartingPlace.Id) ? booking.Excursion.Destinations[0].ExcursionTimes.Where(s => s.StartingPlace.Id == customerStartingPlace.Id).FirstOrDefault().Time.ToString(@"hh\:mm") : "");
                     regexText = new Regex("zplace");
                     docText = regexText.Replace(docText, customerStartingPlace.Id == 14 && booking.Excursion.Destinations[0].Id == 5 ? "Εθνική Τράπεζα" : customerStartingPlace.Details);
                     regexText = new Regex("zsynodos");
-                    docText = regexText.Replace(docText, booking.Excursion.Id == 29 ? "Αθανασία 6981189869" : booking.Excursion.Destinations[0].Id == 9 ? "Δημήτρης 6948703686" : "");
+                    docText = regexText.Replace(docText, booking.Excursion.Id == 29 ? "Αθανασία 6981189869" : booking.Excursion.Destinations[0].Id == 2 ? "ΣΤΡΑΤΟΣ: +30 6988558275 ΒΑΣΙΛΗΣ: +30 6980256161" : bus?.Leader.ToString());
                     regexText = new Regex("zcity");
                     docText = regexText.Replace(docText, booking.Excursion.Destinations[0].Name);
                     regexText = new Regex("zgostart");
-                    docText = regexText.Replace(docText, (booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Group) ? ((customerStartingPlace.Id < 0) ? "" : customerStartingPlace.ReturnTime) : ((customerStartingPlace.Id < 0) ? "" : customerStartingPlace.StartTime));
+                    docText = regexText.Replace(docText, booking.Excursion.Destinations[0].ExcursionTimes.Any(s => s.StartingPlace.Id == customerStartingPlace.Id) ? booking.Excursion.Destinations[0].ExcursionTimes.Where(s => s.StartingPlace.Id == customerStartingPlace.Id).FirstOrDefault().Time.ToString(@"hh\:mm") : "");
                     regexText = new Regex("zreturnstart");
                     docText = regexText.Replace(docText, customerStartingPlace.Id == 19 ? "" : (booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Group) ? "10:00" : "15:30");
                     regexText = new Regex("zreturnplacee");
@@ -1035,7 +1124,7 @@ namespace LATravelManager.UI.Helpers
                     regexText = new Regex("regexhotel");
                     docText = regexText.Replace(docText, reservationWr.HotelName);
                     regexText = new Regex("regexroomtype");
-                    docText = regexText.Replace(docText, reservationWr.RoomTypeName);
+                    docText = regexText.Replace(docText, reservationWr.RoomTypeNameByNum);
                     regexText = new Regex("todaydate");
                     docText = regexText.Replace(docText, DateTime.Today.ToString("dd/MM/yyyy"));
                     regexText = new Regex("customername");
@@ -1066,7 +1155,7 @@ namespace LATravelManager.UI.Helpers
                     MainDocumentPart mainPart = wordDoc.MainDocumentPart;
 
                     ImagePart imagePart = mainPart.AddImagePart(ImagePartType.Jpeg);
-                    string imageName = @"Sources\VoucherImages\" + reservationWr.Room.Hotel.Id + ".jpg";
+                    string imageName = @"Sources\VoucherImages\" + (booking.Excursion.Destinations[0].Id == 2 ? "bansko_general" : reservationWr.Room.Hotel.Id.ToString()) + ".jpg";
                     if (File.Exists(imageName))
                     {
                         using (FileStream stream = new FileStream(imageName, FileMode.Open))
@@ -1085,108 +1174,6 @@ namespace LATravelManager.UI.Helpers
             }
         }
 
-        private static void AddImageToBody(WordprocessingDocument wordDoc, string relationshipId)
-        {
-            long LCX = (long)(7.35 * 914400L);
-            long LCY = (long)(4.17 * 914400L);
-            // Define the reference of the image.
-            var element =
-                 new Drawing(
-                     new DW.Inline(
-                        new DW.Extent() { Cx = LCX, Cy = LCY },
-                     new DW.EffectExtent()
-                     {
-                         LeftEdge = 0L,
-                         TopEdge = 0L,
-                         RightEdge = 0L,
-                         BottomEdge = 0L
-                     },
-                         new DW.DocProperties()
-                         {
-                             Id = 1U,
-                             Name = "Picture 1"
-                         },
-                         new DW.NonVisualGraphicFrameDrawingProperties(
-                             new TEST.GraphicFrameLocks() { NoChangeAspect = true }),
-                         new TEST.Graphic(
-                             new TEST.GraphicData(
-                                 new PIC.Picture(
-                                     new PIC.NonVisualPictureProperties(
-                                         new PIC.NonVisualDrawingProperties()
-                                         {
-                                             Id = 0U,
-                                             Name = "New Bitmap Image.jpg"
-                                         },
-                                         new PIC.NonVisualPictureDrawingProperties()),
-                                     new PIC.BlipFill(
-                                         new TEST.Blip(
-                                             new TEST.BlipExtensionList(
-                                                 new TEST.BlipExtension()
-                                                 {
-                                                     Uri = "{28A0092B-C50C-407E-A947-70E740481C1C}"
-                                                 })
-                                         )
-                                         {
-                                             Embed = relationshipId,
-                                             CompressionState = TEST.BlipCompressionValues.Print
-                                         },
-                                         new TEST.Stretch(
-                                             new TEST.FillRectangle())),
-                                     new PIC.ShapeProperties(
-                                         new TEST.Transform2D(
-                                             new TEST.Offset() { X = 0L, Y = 0L },
-                                             new TEST.Extents() { Cx = LCX, Cy = LCY }),
-                                         new TEST.PresetGeometry(
-                                             new TEST.AdjustValueList()
-                                         )
-                                         { Preset = TEST.ShapeTypeValues.Rectangle }))
-                             )
-                             { Uri = "http://schemas.openxmlformats.org/drawingml/2006/picture" })
-                     )
-                     {
-                         DistanceFromTop = 0U,
-                         DistanceFromBottom = 0U,
-                         DistanceFromLeft = 0U,
-                         DistanceFromRight = 0U,
-                         EditId = "50D07946"
-                     });
-
-            // Append the reference to body, the element should be in a Run.
-            wordDoc.MainDocumentPart.Document.Body.AppendChild(new Paragraph(new Run(element)));
-        }
-
-        public void Dispose()
-        {
-            // Dispose of unmanaged resources.
-            Dispose(true);
-            // Suppress finalization.
-            GC.SuppressFinalize(this);
-        }
-
         #endregion Methods
-
-        #region Classes
-
-        public class BookingsPerDay
-        {
-            #region Constructors
-
-            public BookingsPerDay(DateTime dateTime)
-            {
-                Bookings = new List<Booking>();
-                Date = dateTime;
-            }
-
-            #endregion Constructors
-
-            #region Fields
-
-            public List<Booking> Bookings;
-            public DateTime Date;
-
-            #endregion Fields
-        }
-
-        #endregion Classes
     }
 }
