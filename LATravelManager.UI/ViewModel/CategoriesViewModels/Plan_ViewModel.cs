@@ -445,17 +445,21 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
             }
         }
 
-        private static ObservableCollection<HotelWrapper> MergeRooms(ObservableCollection<HotelWrapper> filteredPlanList)
+        private ObservableCollection<HotelWrapper> MergeRooms(ObservableCollection<HotelWrapper> filteredPlanList)
         {
+
+            int counter = 0;
             var mergedList = new ObservableCollection<HotelWrapper>();
+            BookingInfoPerDay vr;
             HotelWrapper tmpHotel;
             foreach (HotelWrapper hotel in filteredPlanList)
             {
-                tmpHotel = new HotelWrapper { Name = hotel.Name };
+                tmpHotel = new HotelWrapper { Name = hotel.Name, Id = hotel.Id };
                 foreach (RoomWrapper room in hotel.RoomWrappers)
+                {
                     if (!room.Handled)
                         foreach (RoomWrapper currentRoom in hotel.RoomWrappers)
-                            if (room.Id != currentRoom.Id && !currentRoom.Handled && currentRoom.RoomType == room.RoomType && room.Note == currentRoom.Note && room.CanMerge(currentRoom.PlanDailyInfo))
+                            if (room.Id != currentRoom.Id && !currentRoom.Handled && currentRoom.RoomType == room.RoomType && (room.Note == currentRoom.Note || (room.Note.Contains("eos") && currentRoom.Note.Contains("eos"))) && room.CanMerge(currentRoom.PlanDailyInfo))
                             {
                                 for (var i = 0; i < currentRoom.PlanDailyInfo.Count; i++)
                                     if (currentRoom.PlanDailyInfo[i].RoomState != RoomStateEnum.NotAvailable)
@@ -467,10 +471,35 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
                                         room.PlanDailyInfo[i].Reservation = currentRoom.PlanDailyInfo[i].Reservation;
                                         room.PlanDailyInfo[i].Room = currentRoom.PlanDailyInfo[i].Room;
                                         room.PlanDailyInfo[i].Id = currentRoom.PlanDailyInfo[i].Id;
+
+                                        // dailyInfos.Add();
+                                        vr = currentRoom.DailyBookingInfo.Where(rt => rt.Date == room.PlanDailyInfo[i].Date).FirstOrDefault();
+                                        currentRoom.DailyBookingInfo.Remove(vr);
+                                        room.DailyBookingInfo.Add(vr);
+                                        counter++;
+                                        if (counter % 100 == 0)
+                                        {
+                                            Context.Save();
+                                        }
+                                        // room.DailyBookingInfo.Add(new BookingInfoPerDay { Date = currentRoom.PlanDailyInfo[i].Date });
+                                        if (currentRoom.PlanDailyInfo[i].Reservation != null && currentRoom.PlanDailyInfo[i].Reservation.Room != null)
+                                            currentRoom.PlanDailyInfo[i].Reservation.Room = room.Model;
+                                        //roomstodelte.Add(currentRoom.Model);
                                     }
                                 currentRoom.Handled = true;
                                 // break;
                             }
+                    //foreach (var item in dailyInfos)
+                    //{
+                    //    room.DailyBookingInfo.Add(item);
+                    //}
+
+                }
+                Context.Save();
+                ////foreach (var item in roomstodelte)
+                ////{
+
+                ////}
                 foreach (RoomWrapper room in hotel.RoomWrappers)
                     if (!room.Handled)
                         tmpHotel.RoomWrappers.Add(room);
@@ -509,6 +538,21 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
             {
                 throw new ArgumentNullException(nameof(obj));
             }
+            //foreach (var h in FilteredPlanList)
+            //{
+            //    if (h.Id==obj.Room.Hotel.Id)
+            //    {
+            //        foreach (var r in h.RoomWrappers)
+            //        {
+            //            if (r.DailyBookingInfo.Any(r1=>r1.Date==obj.Date.AddDays(1))&& !r.DailyBookingInfo.Any(r1 => r1.Date == obj.Date))
+            //            {
+            //                r.DailyBookingInfo.Add(new BookingInfoPerDay { Date = obj.Date });
+            //            }
+            //        }
+            //    }
+
+            //}
+
             (await Context.GetRoomById(obj.Room.Id)).DailyBookingInfo.Add(new BookingInfoPerDay { Date = obj.Date, RoomTypeEnm = RoomTypeEnum.Available });
             //   obj.Room.DailyBookingInfo.Add(new BookingInfoPerDay { Date = obj.Date, RoomTypeEnm = RoomTypeEnum.Available });
             await Context.SaveAsync();
@@ -518,6 +562,14 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
 
         private async Task CancelThisDay(PlanDailyInfo obj)
         {
+            //foreach (var h in FilteredPlanList)
+            //{
+            //    foreach (var r in h.RoomWrappers)
+            //    {
+            //        if (r.DailyBookingInfo.Any(rt => rt.Date == obj.Date))
+            //            r.DailyBookingInfo.Remove(r.DailyBookingInfo.Where(p => p.Date == obj.Date).FirstOrDefault());
+            //    }
+            //}
             if (obj is null)
             {
                 throw new ArgumentNullException(nameof(obj));

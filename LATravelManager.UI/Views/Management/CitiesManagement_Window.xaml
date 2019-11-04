@@ -11,10 +11,7 @@ Closing="Window_Closing"
         Title="{Binding ControlName}"
         Height="450"
         Width="800">
-    <Window.DataContext>
-        <Binding Path="Cities"
-                 Source="{StaticResource Locator}" />
-    </Window.DataContext>
+    
     <Grid Margin="20">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />

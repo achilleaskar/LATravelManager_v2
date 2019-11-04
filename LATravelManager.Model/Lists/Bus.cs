@@ -40,77 +40,14 @@ namespace LATravelManager.Model.Lists
             // RecalculateCustomers();
         }
 
-        private string _drivers;
-
-        [NotMapped]
-        public string Drivers
-        {
-            get
-            {
-                return _drivers;
-            }
-
-            set
-            {
-                if (_drivers == value)
-                {
-                    return;
-                }
-
-                _drivers = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private void RemoveCustomer(int obj)
-        {
-            if (obj == 0)
-            {
-                SelectedCustomer.Bus = null;
-                Customers.Remove(SelectedCustomer);
-            }
-            else if (obj == 1)
-            {
-                var toRemove = Customers.Where(v => v.Reservation.Booking.Id == SelectedCustomer.Reservation.Booking.Id).ToList();
-                foreach (var c in toRemove)
-                {
-                    c.Bus = null;
-                    Customers.Remove(c);
-                }
-            }
-        }
-
-        private Customer _SelectedCustomer;
-
-        [NotMapped]
-        public Customer SelectedCustomer
-        {
-            get
-            {
-                return _SelectedCustomer;
-            }
-
-            set
-            {
-                if (_SelectedCustomer == value)
-                {
-                    return;
-                }
-
-                _SelectedCustomer = value;
-                RaisePropertyChanged();
-            }
-        }
-
         #endregion Constructors
 
         #region Fields
 
         private ObservableCollection<Counter> _Cities;
-
         private string _Comment;
-
         private ObservableCollection<Customer> _Customers = new ObservableCollection<Customer>();
+        private string _drivers;
 
         private Excursion _Excursion;
 
@@ -121,6 +58,8 @@ namespace LATravelManager.Model.Lists
         private bool _OneWay;
 
         private bool _Selected;
+
+        private Customer _SelectedCustomer;
 
         private string _StartingPlace = string.Empty;
 
@@ -157,8 +96,6 @@ namespace LATravelManager.Model.Lists
 
         [NotMapped]
         public RelayCommand ClearBusCommand { get; set; }
-
-        public RelayCommand<int> RemoveCustomerCommand { get; }
 
         [NotMapped]
         public List<SolidColorBrush> ColorsR { get; set; }
@@ -199,6 +136,26 @@ namespace LATravelManager.Model.Lists
                 _Customers = value;
                 RaisePropertyChanged();
                 Customers.CollectionChanged += Customers_CollectionChanged;
+            }
+        }
+
+        [NotMapped]
+        public string Drivers
+        {
+            get
+            {
+                return _drivers;
+            }
+
+            set
+            {
+                if (_drivers == value)
+                {
+                    return;
+                }
+
+                _drivers = value;
+                RaisePropertyChanged();
             }
         }
 
@@ -287,6 +244,8 @@ namespace LATravelManager.Model.Lists
 
         public int RemainingSeats => Vehicle.SeatsPassengers - Customers.Where(y => y.LeaderDriver == 0).ToList().Count;
 
+        public RelayCommand<int> RemoveCustomerCommand { get; }
+
         [NotMapped]
         public bool Selected
         {
@@ -303,6 +262,26 @@ namespace LATravelManager.Model.Lists
                 }
 
                 _Selected = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        [NotMapped]
+        public Customer SelectedCustomer
+        {
+            get
+            {
+                return _SelectedCustomer;
+            }
+
+            set
+            {
+                if (_SelectedCustomer == value)
+                {
+                    return;
+                }
+
+                _SelectedCustomer = value;
                 RaisePropertyChanged();
             }
         }
@@ -484,6 +463,29 @@ namespace LATravelManager.Model.Lists
             if (!Manual)
                 RecalculateCustomers();
             RaisePropertyChanged(nameof(EmptySeats));
+        }
+
+        private void RemoveCustomer(int obj)
+        {
+            if (obj == 0)
+            {
+                SelectedCustomer.Bus = null;
+                Customers.Remove(SelectedCustomer);
+            }
+            else if (obj == 1)
+            {
+                var toRemove = Customers.Where(v => v.Reservation.Booking.Id == SelectedCustomer.Reservation.Booking.Id).ToList();
+                foreach (var c in toRemove)
+                {
+                    c.Bus = null;
+                    Customers.Remove(c);
+                }
+            }
+        }
+
+        public override string ToString()
+        {
+            return Leader.Name + " " + Vehicle.Name;
         }
 
         #endregion Methods

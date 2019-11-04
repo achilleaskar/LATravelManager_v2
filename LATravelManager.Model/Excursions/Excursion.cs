@@ -32,7 +32,6 @@ namespace LATravelManager.Model.Excursions
         public virtual ObservableCollection<City> Destinations { get; set; }
 
         public bool DiscountsExist { get; set; }
-        public bool NightStart { get; set; }
         public bool DOBNeeded { get; set; }
 
         public ObservableCollection<ExcursionDate> ExcursionDates { get; set; }

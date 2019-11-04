@@ -42,8 +42,8 @@
         <CollectionViewSource x:Key="cvs"
                               Source="{Binding FilteredRoomList}">
             <CollectionViewSource.GroupDescriptions>
-                <PropertyGroupDescription PropertyName="RoomType" />
                 <PropertyGroupDescription PropertyName="Hotel" />
+                <PropertyGroupDescription PropertyName="RoomType" />
             </CollectionViewSource.GroupDescriptions>
         </CollectionViewSource>
     </UserControl.Resources>
@@ -138,7 +138,7 @@
                                                                 <!--IsEnabled="{Binding Converter={StaticResource RoomsLeftToVisibilityConverter}}">-->
                                                                 <StackPanel Orientation="Horizontal">
                                                                     <TextBlock Text="{Binding ItemCount}"
-                                                                               FontSize="16"
+                                                                               FontSize="16" MinWidth="18"
                                                                                Foreground="Green"
                                                                                FontWeight="Bold"
                                                                                VerticalAlignment="Top"
@@ -194,6 +194,11 @@
                                                                                FontWeight="Bold"
                                                                                VerticalAlignment="Top"
                                                                                Foreground="Black"
+                                                                               FontSize="14" />
+                                                                    <TextBlock Text="{Binding Name.Capacity,StringFormat='({0} pax)'}"
+                                                                               FontWeight="Bold" Margin=" 10 0 0 0 "
+                                                                               VerticalAlignment="Top"
+                                                                               Foreground="Green"
                                                                                FontSize="14" />
                                                                     <!--<TextBlock Foreground="Blue"
                                                                                Margin="10 0"

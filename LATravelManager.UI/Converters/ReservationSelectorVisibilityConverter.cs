@@ -33,9 +33,10 @@ namespace LATravelManager.UI.Converters
                             return Visibility.Visible;
                         }
                     }
-                    else if (parameter is string bookingselector2 && bookingselector2.Equals("2"))
+                    else if (parameter is string excursionSelect && excursionSelect.Equals("2"))
                     {
-                        if (tr.ExpenseBaseCategory == ExpenseBaseCategories.GroupExpense)
+                        if (tr.ExpenseBaseCategory == ExpenseBaseCategories.GroupExpense ||
+                            (tr.TransactionType == TransactionType.Income && tr.IncomeBaseCategory == IncomeBaseCategories.OptionalActivities))
                         {
                             return Visibility.Visible;
                         }

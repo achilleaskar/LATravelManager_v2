@@ -15,7 +15,7 @@
              d:DataContext="{d:DesignInstance viewmodels:AddIncomeOutcome_ViewModel}"
              d:DesignHeight="550"
              Background="White"
-             d:DesignWidth="1200">
+             d:DesignWidth="1300">
     <UserControl.Resources>
         <converters:EnumVisibilityConverter x:Key="EnumVisibilityConverter" />
         <converters:FloadToStringValueConverter x:Key="FloadToStringValueConverter" />
@@ -140,6 +140,7 @@
               HorizontalAlignment="Left">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition />
             </Grid.RowDefinitions>
             <GroupBox Header="Εκδρομή"
@@ -158,7 +159,23 @@
                               VerticalAlignment="Center" />
                 </StackPanel>
             </GroupBox>
-            <Grid Grid.Row="1"
+            <GroupBox Header="Λεωφορείο"
+                      Grid.Row="1"
+                      Visibility="{Binding Transaction, Converter={StaticResource ReservationSelectorVisibilityConverter},ConverterParameter=2}">
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Λεωφορείο:" />
+                    <ComboBox  Width="105"
+                               Margin="0 0 5 0"
+                               IsSynchronizedWithCurrentItem="True"
+                               VerticalAlignment="Center"
+                               ItemsSource="{Binding BusesCollectionView}"
+                               SelectedItem="{Binding SelectedBus}" />
+                    <Button Content="Ανανέωση"
+                            Command="{Binding UpdateBusesCommand}"
+                            VerticalAlignment="Center" />
+                </StackPanel>
+            </GroupBox>
+            <Grid Grid.Row="2"
                   Visibility="{Binding Transaction, Converter={StaticResource ReservationSelectorVisibilityConverter},ConverterParameter=0}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />

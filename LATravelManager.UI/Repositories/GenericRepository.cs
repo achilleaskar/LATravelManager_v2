@@ -149,6 +149,11 @@ namespace LATravelManager.UI.Repositories
             return Context.Set<TEntity>().Local.ToList();
         }
 
+        public bool IsAnyInRoom(int roomId)
+        {
+            return (Context.Set<Reservation>().Where(re => re.Room.Id == roomId).ToList()).Count > 0;
+        }
+
         public async Task<IEnumerable<TEntity>> GetAllAsyncSortedByName<TEntity>() where TEntity : BaseModel, INamed
         {
             return await RunTask(Context.Set<TEntity>().OrderBy(x => x.Name).ToListAsync);
@@ -385,6 +390,11 @@ namespace LATravelManager.UI.Repositories
             }
         }
 
+        internal void Save()
+        {
+            Context.SaveChanges();
+        }
+
         public virtual async Task<Booking> GetFullBookingByIdAsync(int id)
         {
             return await RunTask(Context.Bookings.Where(b => b.Id == id)
@@ -394,7 +404,7 @@ namespace LATravelManager.UI.Repositories
                 .Include(f => f.ExcursionDate)
                 .Include(f => f.Payments.Select(p => p.User))
                 .Include(f => f.ReservationsInBooking.Select(i => i.CustomersList))
-                .Include(f => f.ReservationsInBooking.Select(i => i.CustomersList.Select(j=>j.Bus)))
+                .Include(f => f.ReservationsInBooking.Select(i => i.CustomersList.Select(j => j.Bus)))
                 .Include(f => f.ReservationsInBooking.Select(i => i.Room))
                 .Include(f => f.ReservationsInBooking.Select(i => i.Room.RoomType))
                 .Include(f => f.ReservationsInBooking.Select(i => i.Room.Hotel))
@@ -459,7 +469,7 @@ namespace LATravelManager.UI.Repositories
 
         internal IEnumerable<Bus> GetAllBuses(int id = 0, DateTime checkIn = default)
         {
-           
+
             return Context.Set<Bus>().Where(b => (id == 0 && b.TimeGo >= DateTime.Today) || (b.Excursion.Id == id && b.TimeGo == checkIn))
              .Include(f => f.Excursion)
              .Include(f => f.Customers)

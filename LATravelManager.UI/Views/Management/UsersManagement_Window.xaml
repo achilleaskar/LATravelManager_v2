@@ -13,10 +13,7 @@
         Title="{Binding ControlName}"
         Height="470"
         Width="800">
-    <Window.DataContext>
-        <Binding Path="Users"
-                 Source="{StaticResource Locator}" />
-    </Window.DataContext>
+   
     <Grid Margin="20">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />

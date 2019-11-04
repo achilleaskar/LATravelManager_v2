@@ -2,6 +2,7 @@
 using LATravelManager.Model;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Hotels;
+using LATravelManager.Model.Lists;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Message;
@@ -35,8 +36,22 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             SearchForReservationsCommand = new RelayCommand(async () => { await SearchForReservations(); }, CanSearchForReservations);
             MainViewModel = mainViewModel;
             SaveTransactionCommand = new RelayCommand(async () => { await SaveTransaction(); }, CanSaveTransaction);
+            UpdateBusesCommand = new RelayCommand(async () => { await UpdateBuses(); }, CanUpdateBuses);
             ClearTransactionCommand = new RelayCommand(ClearTransaction, CanClearTransaction);
             Load();
+        }
+
+        private bool CanUpdateBuses()
+        {
+            return SelectedExcursion != null;
+        }
+
+        private async Task UpdateBuses()
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+            Buses = new ObservableCollection<Bus>(await Context.GetAllBusesAsync(SelectedExcursion != null ? SelectedExcursion.Id : 0));
+            Mouse.OverrideCursor = Cursors.Arrow;
+
         }
 
         private void ClearTransaction()
@@ -72,6 +87,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
                 _SelectedExcursion = value;
                 RaisePropertyChanged();
+                BusesCollectionView.Refresh();
             }
         }
 
@@ -123,6 +139,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         }
 
         public RelayCommand SaveTransactionCommand { get; set; }
+        public RelayCommand UpdateBusesCommand { get; set; }
         public RelayCommand ClearTransactionCommand { get; set; }
 
         #endregion Constructors
@@ -198,6 +215,56 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(ExcursionsCollectionView));
+            }
+        }
+
+        private ObservableCollection<Bus> _Buses;
+
+        public ObservableCollection<Bus> Buses
+        {
+            get
+            {
+                return _Buses;
+            }
+
+            set
+            {
+                if (_Buses == value)
+                {
+                    return;
+                }
+
+                _Buses = value;
+                RaisePropertyChanged();
+                BusesCollectionView = CollectionViewSource.GetDefaultView(Buses);
+                BusesCollectionView.Filter = BusesFilter;
+
+            }
+        }
+
+        private bool BusesFilter(object obj)
+        {
+            return obj is Bus b && SelectedExcursion != null && b.Excursion.Id == SelectedExcursion.Id;
+        }
+
+        private ICollectionView _BusesCollectionView;
+
+        public ICollectionView BusesCollectionView
+        {
+            get
+            {
+                return _BusesCollectionView;
+            }
+
+            set
+            {
+                if (_BusesCollectionView == value)
+                {
+                    return;
+                }
+
+                _BusesCollectionView = value;
+                RaisePropertyChanged();
             }
         }
 
@@ -280,7 +347,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-
         public bool IsOk { get; private set; }
 
         public string Keyword
@@ -355,10 +421,11 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         public override void Load(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
-            Transaction = new Transaction();
+            Transaction = new Transaction { Editing = true };
             Context = new GenericRepository();
             FilteredReservations = new ObservableCollection<ReservationWrapper>();
             Excursions = new ObservableCollection<Excursion>(MainViewModel.BasicDataManager.Excursions.Where(i => i.Id > 0));
+            Buses = new ObservableCollection<Bus>();
         }
 
         public override void Reload()

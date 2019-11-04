@@ -922,7 +922,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 //    BasicDataManager = new GenericRepository();
                 //}
                 RoomsManager = new RoomsManager();
-                if (BookingWr.Excursion.NightStart)
+                if (BookingWr.ExcursionDate != null && BookingWr.ExcursionDate.NightStart)
                     AvailableHotels = new ObservableCollection<HotelWrapper>((await RoomsManager.GetAllAvailableRooms(BookingWr.CheckIn.AddDays(1), BookingWr.CheckOut, SelectedExcursion, false, unSavedBooking: BookingWr.Model)));
                 else
                     AvailableHotels = new ObservableCollection<HotelWrapper>((await RoomsManager.GetAllAvailableRooms(BookingWr.CheckIn, BookingWr.CheckOut, SelectedExcursion, false, unSavedBooking: BookingWr.Model)));
@@ -941,11 +941,11 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
                         foreach (PlanDailyInfo day in room.PlanDailyInfo)
                         {
-                            if (day.Date < BookingWr.CheckIn && !BookingWr.Excursion.NightStart)
+                            if (day.Date < BookingWr.CheckIn && (BookingWr.ExcursionDate == null || !BookingWr.ExcursionDate.NightStart))
                             {
                                 continue;
                             }
-                            if (BookingWr.Excursion.NightStart && day.Date < BookingWr.CheckIn.AddDays(1))
+                            if (BookingWr.ExcursionDate != null && BookingWr.ExcursionDate.NightStart && day.Date < BookingWr.CheckIn.AddDays(1))
                             {
                                 continue;
                             }
@@ -955,8 +955,8 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                             }
                             addThis &= (day.RoomState == RoomStateEnum.Available
                                 || day.RoomState == RoomStateEnum.MovableNoName) &&
-                                ((BookingWr.Excursion.NightStart && (BookingWr.CheckOut - BookingWr.CheckIn).TotalDays - 1 >= day.MinimumStay) ||
-                                (!BookingWr.Excursion.NightStart && (BookingWr.CheckOut - BookingWr.CheckIn).TotalDays >= day.MinimumStay));
+                                ((BookingWr.ExcursionDate != null && BookingWr.ExcursionDate.NightStart && (BookingWr.CheckOut - BookingWr.CheckIn).TotalDays - 1 >= day.MinimumStay) ||
+                                ((BookingWr.ExcursionDate == null || !BookingWr.ExcursionDate.NightStart) && (BookingWr.CheckOut - BookingWr.CheckIn).TotalDays >= day.MinimumStay));
                             //|| pi.RoomState == RoomStateEnum.Allotment;
                             isfree &= day.RoomState == RoomStateEnum.Available;
 
@@ -997,7 +997,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 }
                 //TODO an mporei na fygei
 
-                FilteredRoomList = new ObservableCollection<RoomWrapper>(tmplist.OrderBy(f => f.RoomType.MinCapacity).ToList());
+                FilteredRoomList = new ObservableCollection<RoomWrapper>(tmplist.OrderBy(f => f.Hotel.Name).ThenBy(t=>t.RoomType.MaxCapacity).ToList());
                 CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(FilteredRoomList);
                 //PropertyGroupDescription groupDescription = new PropertyGroupDescription(nameof(RoomType));
                 //PropertyGroupDescription groupDescriptionb = new PropertyGroupDescription(nameof(Hotel));

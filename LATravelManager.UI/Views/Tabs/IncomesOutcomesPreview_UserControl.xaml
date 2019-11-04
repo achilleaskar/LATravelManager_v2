@@ -4,30 +4,221 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:LATravelManager.UI.Views.Tabs"
-             xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
              xmlns:models="clr-namespace:LATravelManager.Model;assembly=LATravelManager.Model"
              mc:Ignorable="d"
+             FontSize="12"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:helpers="clr-namespace:LATravelManager.UI.Helpers"
+             xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
+             xmlns:enum="clr-namespace:LATravelManager.Model;assembly=LATravelManager.Model"
              xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.Tabs.TabViewmodels"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-             Background="LightBlue"
              d:DataContext="{d:DesignInstance viewmodels:PreviewIncomesOutcomes_ViewModel}"
-             d:DesignHeight="450"
-             d:DesignWidth="800">
+             d:DesignHeight="550"
+             Background="White"
+             d:DesignWidth="1300">
     <UserControl.Resources>
+        <converters:EnumVisibilityConverter x:Key="EnumVisibilityConverter" />
+        <converters:FloadToStringValueConverter x:Key="FloadToStringValueConverter" />
+        <converters:EmptyStringToZeroConverter x:Key="EmptyStringToZeroConverter" />
+        <converters:ReservationSelectorVisibilityConverter x:Key="ReservationSelectorVisibilityConverter" />
         <converters:EnumToStringConverter x:Key="EnumToStringConverter" />
         <converters:FloadToStringValueConverter x:Key="FtoSConverter" />
+        <Style TargetType="{x:Type StackPanel}">
+
+            <Setter Property="VerticalAlignment"
+                    Value="Bottom" />
+            <Setter Property="MinWidth"
+                    Value="60" />
+            <Setter Property="Margin"
+                    Value="0 0 5 0" />
+        </Style>
+        <Style TargetType="{x:Type ListBox}">
+            <Setter Property="SnapsToDevicePixels"
+                    Value="true" />
+            <Setter Property="OverridesDefaultStyle"
+                    Value="true" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility"
+                    Value="Auto" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility"
+                    Value="Auto" />
+            <Setter Property="ScrollViewer.CanContentScroll"
+                    Value="true" />
+            <Setter Property="VerticalAlignment"
+                    Value="Top" />
+            <Setter Property="MinWidth"
+                    Value="120" />
+            <Setter Property="FontSize"
+                    Value="14" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBox">
+                        <Border Name="Border"
+                                Background="Transparent"
+                                BorderBrush="Gray"
+                                Margin="0 0 5 0"
+                                BorderThickness="1"
+                                CornerRadius="2">
+                            <ScrollViewer Margin="0"
+                                          Focusable="false">
+                                <StackPanel Margin="2"
+                                            IsItemsHost="True" />
+                            </ScrollViewer>
+                        </Border>
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsGrouping"
+                                     Value="true">
+                                <Setter Property="ScrollViewer.CanContentScroll"
+                                        Value="false" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="Margin"
+                                Value="2" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                    <Border Name="theBorder"
+                                            Background="Transparent">
+                                        <RadioButton Focusable="False"
+                                                     IsHitTestVisible="False"
+                                                     IsChecked="{TemplateBinding IsSelected}">
+                                            <ContentPresenter />
+                                        </RadioButton>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal">
-            <Label Content="Εκδρομή" />
-            <Button Content="Προβολή"
-                    Command="{Binding ShowTransactionsCommand}"
-                    VerticalAlignment="Center" />
+        <StackPanel VerticalAlignment="Top"
+                    Margin="5"
+                    Orientation="Horizontal">
+            <!--<StackPanel>
+                <Label Content="Τύπος:"
+                       HorizontalAlignment="Left" />
+                <ComboBox ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:TransactionType}}}"
+                          SelectedItem="{Binding Transaction.TransactionType}" />
+            </StackPanel>
+            <StackPanel Visibility="{Binding  Transaction.TransactionType,Converter={StaticResource EnumVisibilityConverter},ConverterParameter=0}">
+                <Label Content="Κατηγορία:"
+                       HorizontalAlignment="Left" />
+                <ComboBox ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:IncomeBaseCategories}}}"
+                          SelectedItem="{Binding Transaction.IncomeBaseCategory}" />
+            </StackPanel>
+            <StackPanel Visibility="{Binding Transaction.TransactionType,Converter={StaticResource EnumVisibilityConverter},ConverterParameter=1}">
+                <Label Content="Κατηγορία:"
+                       HorizontalAlignment="Left" />
+                <ComboBox ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:ExpenseBaseCategories}}}"
+                          SelectedItem="{Binding Transaction.ExpenseBaseCategory}" />
+            </StackPanel>
+            <StackPanel Visibility="{Binding Transaction.ExpenseBaseCategory,Converter={StaticResource EnumVisibilityConverter},ConverterParameter=1}">
+                <Label Content="Αιτιολογία:"
+                       HorizontalAlignment="Left" />
+                <ComboBox ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:GroupExpenseCategories}}}"
+                          SelectedItem="{Binding Transaction.GroupExpenseCategory}" />
+            </StackPanel>
+            <StackPanel Visibility="{Binding Transaction.ExpenseBaseCategory,Converter={StaticResource EnumVisibilityConverter},ConverterParameter=3}">
+                <ComboBox ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:StandardExpenseCategories}}}"
+                          SelectedItem="{Binding Transaction.StandardExpenseCategory}" />
+            </StackPanel>
+            <StackPanel Visibility="{Binding Transaction.ExpenseBaseCategory,Converter={StaticResource EnumVisibilityConverter},ConverterParameter=4}">
+                <ComboBox ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:TaxExpenseCategories}}}"
+                          SelectedItem="{Binding Transaction.TaxExpenseCategory}" />
+            </StackPanel>
+            <StackPanel Visibility="{Binding Transaction.ExpenseBaseCategory,Converter={StaticResource EnumVisibilityConverter},ConverterParameter=1}">
+                <ComboBox ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:ExcursionExpenseCategories}}}"
+                          SelectedItem="{Binding Transaction.ExcursionExpenseCategory}" />
+            </StackPanel>
+            <StackPanel Visibility="{Binding Transaction,Converter={StaticResource ReservationSelectorVisibilityConverter},ConverterParameter=3}">
+                <ComboBox ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:GeneralOrDatesExpenseCategories}}}"
+                          SelectedItem="{Binding Transaction.GeneralOrDatesExpenseCategory}" />
+            </StackPanel>-->
+            <ListBox ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:TransactionType}}}"
+                     SelectedItem="{Binding Transaction.TransactionType}" />
+            <ListBox Visibility="{Binding  Transaction.TransactionType,Converter={StaticResource EnumVisibilityConverter},ConverterParameter=0}"
+                     ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:IncomeBaseCategories}}}"
+                     SelectedItem="{Binding Transaction.IncomeBaseCategory}" />
+            <ListBox Visibility="{Binding Transaction.TransactionType,Converter={StaticResource EnumVisibilityConverter},ConverterParameter=1}"
+                     ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:ExpenseBaseCategories}}}"
+                     SelectedItem="{Binding Transaction.ExpenseBaseCategory}" />
+
+            <ListBox Visibility="{Binding Transaction.ExpenseBaseCategory,Converter={StaticResource EnumVisibilityConverter},ConverterParameter=1}"
+                     ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:GroupExpenseCategories}}}"
+                     SelectedItem="{Binding Transaction.GroupExpenseCategory}" />
+
+            <ListBox Visibility="{Binding Transaction.ExpenseBaseCategory,Converter={StaticResource EnumVisibilityConverter},ConverterParameter=3}"
+                     ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:StandardExpenseCategories}}}"
+                     SelectedItem="{Binding Transaction.StandardExpenseCategory}" />
+
+            <ListBox Visibility="{Binding Transaction.ExpenseBaseCategory,Converter={StaticResource EnumVisibilityConverter},ConverterParameter=4}"
+                     ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:TaxExpenseCategories}}}"
+                     SelectedItem="{Binding Transaction.TaxExpenseCategory}" />
+
+            <ListBox Visibility="{Binding Transaction.ExpenseBaseCategory,Converter={StaticResource EnumVisibilityConverter},ConverterParameter=1}"
+                     ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:ExcursionExpenseCategories}}}"
+                     SelectedItem="{Binding Transaction.ExcursionExpenseCategory}" />
+
+            <ListBox Visibility="{Binding Transaction,Converter={StaticResource ReservationSelectorVisibilityConverter},ConverterParameter=3}"
+                     ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:GeneralOrDatesExpenseCategories}}}"
+                     SelectedItem="{Binding Transaction.GeneralOrDatesExpenseCategory}" />
+            <StackPanel VerticalAlignment="Top"
+                        Visibility="{Binding Transaction, Converter={StaticResource ReservationSelectorVisibilityConverter},ConverterParameter=2}">
+                <Label Content="Εκδρομή:"
+                       HorizontalAlignment="Left" />
+                <ComboBox  Width="105"
+                           Margin="0 0 5 0"
+                           IsSynchronizedWithCurrentItem="True"
+                           VerticalAlignment="Center"
+                           ItemsSource="{Binding ExcursionsCollectionView}"
+                           SelectedItem="{Binding SelectedExcursion}" />
+            </StackPanel>
+            <StackPanel VerticalAlignment="Top"
+                        Visibility="{Binding Transaction, Converter={StaticResource ReservationSelectorVisibilityConverter},ConverterParameter=2}">
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Stretch">
+                    <Label Content="Λεωφορείο:"
+                           HorizontalAlignment="Left" />
+                    <Button HorizontalAlignment="Right"
+                            Cursor="Hand"
+                            Command="{Binding UpdateEntitiesCommand}">
+                        <iconPacks:PackIconFontAwesome Kind="SyncSolid"
+                                                       FontSize="10"
+                                                       VerticalAlignment="Center"
+                                                       Spin="{Binding UnitOfWork.IsBusy}" />
+                    </Button>
+                </StackPanel>
+                <ComboBox  Width="105"
+                           Margin="0 0 5 0"
+                           IsSynchronizedWithCurrentItem="True"
+                           VerticalAlignment="Center"
+                           ItemsSource="{Binding BusesCollectionView}"
+                           SelectedItem="{Binding SelectedBus}" />
+            </StackPanel>
+
+            <StackPanel VerticalAlignment="Top">
+                <Button Content="Προβολή"
+                        Margin="0 10"
+                        Command="{Binding ShowTransactionsCommand}"
+                        VerticalAlignment="Center" />
+            </StackPanel>
         </StackPanel>
+
         <DataGrid Grid.Row="1"
                   Grid.ColumnSpan="3"
                   CanUserSortColumns="True"
@@ -72,5 +263,9 @@
                                     Binding="{Binding  Description}" />
             </DataGrid.Columns>
         </DataGrid>
+        <StackPanel Orientation="Horizontal"
+                    Grid.Row="2">
+            <Label Content="{Binding Total}" />
+        </StackPanel>
     </Grid>
 </UserControl>

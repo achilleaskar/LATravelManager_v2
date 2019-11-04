@@ -393,7 +393,7 @@ namespace LATravelManager.UI.Helpers
             Hotels = new ObservableCollection<Hotel>(await Context.GetAllHotelsAsync<Hotel>());
             Countries = new ObservableCollection<Country>(await Context.GetAllAsyncSortedByName<Country>());
             Cities = new ObservableCollection<City>(await Context.GetAllCitiesAsyncSortedByName());
-            RoomTypes = new ObservableCollection<RoomType>((await Context.GetAllAsync<RoomType>()).OrderBy(r => r.Index));
+            RoomTypes = new ObservableCollection<RoomType>((await Context.GetAllAsync<RoomType>()).OrderBy(r => r.MaxCapacity));
             StartingPlaces = new ObservableCollection<StartingPlace>(await Context.GetAllAsyncSortedByName<StartingPlace>());
             StaticResources.StartingPlaces = StartingPlaces;
             Users = new ObservableCollection<User>(await Context.GetAllUsersAsyncSortedByUserName());

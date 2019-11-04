@@ -8,10 +8,7 @@
              Background="White"
              d:DesignHeight="450"
              d:DesignWidth="1000">
-    <UserControl.DataContext>
-        <Binding Path="MoveResBansko"
-                 Source="{StaticResource Locator}" />
-    </UserControl.DataContext>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

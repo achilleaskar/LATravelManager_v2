@@ -1,4 +1,5 @@
 ﻿using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Hotels;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -75,6 +76,33 @@ namespace LATravelManager.Model.Plan
                 RaisePropertyChanged();
             }
         }
+
+
+
+
+
+
+
+        //private Room _Room;
+
+        //public Room Room
+        //{
+        //    get
+        //    {
+        //        return _Room;
+        //    }
+
+        //    set
+        //    {
+        //        if (_Room == value)
+        //        {
+        //            return;
+        //        }
+
+        //        _Room = value;
+        //        RaisePropertyChanged();
+        //    }
+        //}
 
         [NotMapped]
         public Reservation Reservation

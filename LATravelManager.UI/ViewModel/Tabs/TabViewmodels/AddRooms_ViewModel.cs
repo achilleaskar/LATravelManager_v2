@@ -811,6 +811,28 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
             ObservableCollection<RoomWrapper> tmpList = new ObservableCollection<RoomWrapper>((await GenericRepository.GetAllRoomsFiltered(cityId, hotelId, roomtypeId)).Select(x => new RoomWrapper(x)));
 
+            //List<Room> rooms1 = new List<Room>();
+            //int counster = 0;
+            //foreach (var item in tmpList)
+            //{
+            //    if (item.DailyBookingInfo.Count == 0 && !GenericRepository.IsAnyInRoom(item.Id))
+            //    {
+            //        rooms1.Add(item.Model);
+            //    }
+            //}
+            //foreach (var item in rooms1)
+            //{
+            //    if (true)
+            //    {
+
+            //    }
+            //    counster++;
+            //    GenericRepository.Delete(item);
+            //    if (counster % 100 == 0)
+            //    {
+            //        await GenericRepository.SaveAsync();
+            //    }
+            //}
             //foreach (var room in tmpList)
             //{
             //    if ((room.Id >= 3105 && room.Id <= 3124) || (room.Id >= 3145 && room.Id <= 3156))

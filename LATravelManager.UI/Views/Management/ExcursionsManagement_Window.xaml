@@ -107,12 +107,13 @@
                               ItemsSource="{Binding SelectedEntity.ExcursionDates,ValidatesOnDataErrors=True}"
                               SelectedItem="{Binding SelectedDate}"
                               DisplayMemberPath="Name"
-                              Height="150" />
+                              Height="160" />
                     <Grid Grid.Row="5"
                           HorizontalAlignment="Left"
                           Margin="0 0 5 0"
                           Grid.Column="1">
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -144,14 +145,20 @@
                         <TextBox Text="{Binding SelectedDate.Name,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="2"
                                  Grid.Column="1" />
+                        <CheckBox Content="Βραδινή"
+                                  Margin="5"
+                                  HorizontalAlignment="Right"
+                                  IsChecked="{Binding SelectedDate.NightStart}"
+                                  Grid.Row="3"
+                                  Grid.ColumnSpan="2" />
                         <Button Content="Προσθήκη"
-                                Margin="5 5 0 5"
-                                Grid.Row="3"
+                                Margin="5 0 0 5"
+                                Grid.Row="4"
                                 Grid.ColumnSpan="2"
                                 Command="{Binding AddDateCommand}" />
                         <Button Content="Αφαίρεση"
                                 Margin="5 5 0 5"
-                                Grid.Row="4"
+                                Grid.Row="5"
                                 Grid.ColumnSpan="2"
                                 Command="{Binding RemoveDateCommand}" />
                     </Grid>
@@ -167,8 +174,8 @@
                         <Label Content="Πασο:" />
                         <CheckBox IsChecked="{Binding SelectedEntity.DiscountsExist,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                   VerticalAlignment="Center" />
-                        <Label Content="Νυχτερινή:" />
-                        <CheckBox IsChecked="{Binding SelectedEntity.NightStart,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                        <Label Content="Group:" />
+                        <CheckBox IsChecked="{Binding SelectedEntity.FixedDates,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                   VerticalAlignment="Center" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal"
@@ -183,9 +190,7 @@
                         <Label Content="Πλοίο:" />
                         <CheckBox IsChecked="{Binding SelectedEntity.IncludesShip,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                   VerticalAlignment="Center" />
-                        <Label Content="Group:" />
-                        <CheckBox IsChecked="{Binding SelectedEntity.FixedDates,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                  VerticalAlignment="Center" />
+
                     </StackPanel>
 
                 </Grid>

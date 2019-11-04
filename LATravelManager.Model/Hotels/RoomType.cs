@@ -28,26 +28,6 @@ namespace LATravelManager.Model.Hotels
         [NotMapped]
         public int freeRooms { get; set; }
 
-        private int _Index;
-
-        public int Index
-        {
-            get
-            {
-                return _Index;
-            }
-
-            set
-            {
-                if (_Index == value)
-                {
-                    return;
-                }
-
-                _Index = value;
-                RaisePropertyChanged();
-            }
-        }
 
         #region Properties
 

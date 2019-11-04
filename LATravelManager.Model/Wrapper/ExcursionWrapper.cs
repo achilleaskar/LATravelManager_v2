@@ -83,11 +83,6 @@ namespace LATravelManager.UI.Wrapper
             set { SetValue(value); }
         }
 
-        public bool NightStart
-        {
-            get { return GetValue<bool>(); }
-            set { SetValue(value); }
-        }
 
         public bool DOBNeeded
         {

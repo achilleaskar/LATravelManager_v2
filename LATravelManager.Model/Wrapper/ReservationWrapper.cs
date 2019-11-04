@@ -355,7 +355,7 @@ namespace LATravelManager.Model.Wrapper
             get
             {
                 if (Booking != null && Booking.Excursion != null)
-                    return (Booking.Excursion.NightStart ? CheckIn.AddDays(1).ToString("dd.MM") : CheckIn.ToString("dd.MM")) + "-" + CheckOut.ToString("dd.MM");
+                    return (Booking.ExcursionDate != null && Booking.ExcursionDate.NightStart ? CheckIn.AddDays(1).ToString("dd.MM") : CheckIn.ToString("dd.MM")) + "-" + CheckOut.ToString("dd.MM");
                 return "";
             }
         }

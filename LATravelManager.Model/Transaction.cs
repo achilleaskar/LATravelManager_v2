@@ -1,5 +1,6 @@
 ﻿using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Excursions;
+using LATravelManager.Model.Lists;
 using LATravelManager.Model.People;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -34,6 +35,7 @@ namespace LATravelManager.Model
         private IncomeBaseCategories _IncomeBaseCategory;
         private User _PaymentTo;
         private Personal_Booking _PersonalBooking;
+        private Bus _SelectedBus;
         private StandardExpenseCategories _StandardExpenseCategory;
         private TaxExpenseCategories _TaxExpenseCategory;
         private ThirdParty_Booking _ThirdPartyBooking;
@@ -344,6 +346,25 @@ namespace LATravelManager.Model
         }
 
         public bool Saved => Id == 0;
+
+        public Bus SelectedBus
+        {
+            get
+            {
+                return _SelectedBus;
+            }
+
+            set
+            {
+                if (_SelectedBus == value)
+                {
+                    return;
+                }
+
+                _SelectedBus = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public StandardExpenseCategories StandardExpenseCategory
         {

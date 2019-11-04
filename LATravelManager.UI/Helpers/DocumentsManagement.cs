@@ -980,7 +980,7 @@ namespace LATravelManager.UI.Helpers
                 Regex regexText = new Regex("fullname");
                 docText = regexText.Replace(docText, c.Surename + " " + c.Name);
                 regexText = new Regex("fulldate");
-                docText = regexText.Replace(docText, reservationWr.Dates + " " + (reservationWr.Booking.Excursion.NightStart ? reservationWr.DaysCount - 2 : reservationWr.DaysCount - 1) + "νυχτο");
+                docText = regexText.Replace(docText, reservationWr.Dates + " " + (reservationWr.Booking.ExcursionDate != null && reservationWr.Booking.ExcursionDate.NightStart ? reservationWr.DaysCount - 2 : reservationWr.DaysCount - 1) + "νυχτο");
                 regexText = new Regex("destination");
                 docText = regexText.Replace(docText, booking.Excursion.Destinations[0].Name);
                 regexText = new Regex("hotelnroomtype");
@@ -1086,7 +1086,7 @@ namespace LATravelManager.UI.Helpers
                     regexText = new Regex("regexnames");
                     docText = regexText.Replace(docText, reservationWr.Names);
                     regexText = new Regex("regexcheckin");
-                    docText = regexText.Replace(docText, booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Group && booking.Excursion.NightStart ? reservationWr.CheckIn.AddDays(1).ToString("dd/MM/yyyy") : reservationWr.CheckIn.ToString("dd/MM/yyyy"));
+                    docText = regexText.Replace(docText, booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Group && booking.ExcursionDate != null && booking.ExcursionDate.NightStart ? reservationWr.CheckIn.AddDays(1).ToString("dd/MM/yyyy") : reservationWr.CheckIn.ToString("dd/MM/yyyy"));
                     regexText = new Regex("regexcheckout");
                     docText = regexText.Replace(docText, reservationWr.CheckOut.ToString("dd/MM/yyyy"));
                     regexText = new Regex("regexroomtype");

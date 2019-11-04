@@ -18,6 +18,56 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             Load();
         }
 
+
+
+
+
+
+
+        private string _Total;
+
+
+        public string Total
+        {
+            get
+            {
+                return _Total;
+            }
+
+            set
+            {
+                if (_Total == value)
+                {
+                    return;
+                }
+
+                _Total = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
+        private Transaction _Transaction;
+
+
+        public Transaction Transaction
+        {
+            get
+            {
+                return _Transaction;
+            }
+
+            set
+            {
+                if (_Transaction == value)
+                {
+                    return;
+                }
+
+                _Transaction = value;
+                RaisePropertyChanged();
+            }
+        }
         GenericRepository Context { get; set; }
 
         private ObservableCollection<Transaction> _FilteredTransactions;
@@ -64,7 +114,14 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         }
         private async Task ShowTransactions()
         {
+            decimal total = 0;
             FilteredTransactions = new ObservableCollection<Transaction>((await Context.GetAllTransactionsFiltered()));
+            foreach (var tran in FilteredTransactions)
+            {
+                total += tran.Amount;
+            }
+
+            Total = $"Σύνολο: {  total.ToString("C2")}";
         }
 
         private bool CanShowTransactions()
@@ -78,6 +135,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         public override void Load(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
             Context = new GenericRepository();
+            Transaction = new Transaction { Editing = true };
         }
 
         public override void Reload()

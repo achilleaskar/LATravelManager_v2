@@ -299,7 +299,7 @@ namespace LATravelManager.UI.Wrapper
             try
             {
                 DateTime tmpDate;
-                if (reservationWr.Booking.Excursion.NightStart)
+                if (reservationWr.Booking.ExcursionDate!=null&& reservationWr.Booking.ExcursionDate.NightStart)
                     tmpDate = reservationWr.CheckIn.AddDays(1);
                 else
                     tmpDate = reservationWr.CheckIn;
