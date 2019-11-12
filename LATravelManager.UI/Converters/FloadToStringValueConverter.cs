@@ -13,6 +13,12 @@ namespace LATravelManager.UI.Converters
             decimal decimalValue = (decimal)value;
 
             var decimalString = decimalValue.ToString();
+            //if (decimalString.Length > 5)
+            //{
+            //    var t = (decimalString.Length - decimalString.IndexOfAny(new char[] { ',', '.' }));
+            //    if (t >= 3)
+            //        decimalString = decimalString.Replace(".", "").Replace(",", "");
+            //}
             string s = decimalString.IndexOfAny(new char[] { ',', '.' }) >= 0 ? decimalString.TrimEnd('0').TrimEnd('0').TrimEnd('.').TrimEnd(',') : decimalString;
             int indexofcomma = s.IndexOf(',');
             if (indexofcomma <= 0)
@@ -36,10 +42,10 @@ namespace LATravelManager.UI.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string strValue = (value as string).Replace(',', '.').Replace("€", "").Replace(" ", "");
+            string strValue = (value as string).Replace(".", "").Replace(',', '.').Replace("€", "").Replace(" ", "");
             if (!string.IsNullOrEmpty(strValue) && !strValue.EndsWith(".0") && strValue[strValue.Length - 1] != '.' && decimal.TryParse(strValue, NumberStyles.Any, new CultureInfo("en-US"), out var tmpdecimal))
             {
-                return tmpdecimal;
+                return decimal.Round(tmpdecimal,2);
             }
             return DependencyProperty.UnsetValue;
         }

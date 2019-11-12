@@ -122,7 +122,7 @@
                         Command="{Binding UpdateEntitiesCommand}">
                     <iconPacks:PackIconFontAwesome Kind="SyncSolid"
                                                    VerticalAlignment="Center"
-                                                   Spin="{Binding UnitOfWork.IsBusy}"
+                                                  
                                                    Margin="5" />
                 </Button>
                 <DataGrid ItemsSource="{Binding MainCollection}"

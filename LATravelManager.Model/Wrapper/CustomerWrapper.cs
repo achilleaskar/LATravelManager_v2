@@ -45,7 +45,11 @@ namespace LATravelManager.UI.Helpers
             get { return GetValue<int>(); }
             set { SetValue(value); }
         }
-
+        public int Board
+        {
+            get { return GetValue<int>(); }
+            set { SetValue(value); }
+        }
         public Bus Bus
         {
             get { return GetValue<Bus>(); }
@@ -146,17 +150,6 @@ namespace LATravelManager.UI.Helpers
             get { return GetValue<DateTime?>(); }
             set { SetValue(value); }
         }
-        public DateTime PassportExpiration
-        {
-            get { return GetValue<DateTime>(); }
-            set { SetValue(value); }
-        }
-        public DateTime PassportPublish
-        {
-            get { return GetValue<DateTime>(); }
-            set { SetValue(value); }
-        }
-
         public string Email
         {
             get { return GetValue<string>(); }
@@ -164,7 +157,9 @@ namespace LATravelManager.UI.Helpers
         }
 
         public string FullName => Surename + " " + Name;
+
         public bool Handled { get; set; }
+
         public string HotelName
         {
             get
@@ -218,7 +213,7 @@ namespace LATravelManager.UI.Helpers
             get { return GetValue<string>(); }
             set
             {
-                SetValue(value.ToUpper());
+                SetValue(value.TrimStart().ToUpper());
                 RaisePropertyChanged(nameof(FullName));
             }
         }
@@ -233,12 +228,22 @@ namespace LATravelManager.UI.Helpers
             set { SetValue(value); }
         }
 
+        public DateTime PassportExpiration
+        {
+            get { return GetValue<DateTime>(); }
+            set { SetValue(value); }
+        }
         public string PassportNum
         {
             get { return GetValue<string>(); }
-            set { SetValue(value.ToUpper()); }
+            set { SetValue(value.TrimStart().ToUpper()); }
         }
 
+        public DateTime PassportPublish
+        {
+            get { return GetValue<DateTime>(); }
+            set { SetValue(value); }
+        }
         public decimal Price
         {
             get { return GetValue<decimal>(); }
@@ -343,7 +348,7 @@ namespace LATravelManager.UI.Helpers
             get { return GetValue<string>(); }
             set
             {
-                SetValue(value.ToUpper());
+                SetValue(value.TrimStart().ToUpper());
                 RaisePropertyChanged(nameof(FullName));
             }
         }
@@ -437,5 +442,6 @@ namespace LATravelManager.UI.Helpers
         }
 
         #endregion Methods
+
     }
 }

@@ -259,6 +259,18 @@
                                                 FontWeight="DemiBold"
                                                 FontSize="14"
                                                 Binding="{Binding Price,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" />
+                            <DataGridTemplateColumn Header="Διατ.">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox SelectedIndex="{Binding Board,UpdateSourceTrigger=PropertyChanged}"
+                                                  Foreground="{Binding RelativeSource={RelativeSource Self},Path=SelectedIndex,ConverterParameter=0, Converter={StaticResource SelectedIndexToForegroundConverter},UpdateSourceTrigger=PropertyChanged}">
+                                            <ComboBoxItem Content="BB" />
+                                            <ComboBoxItem Content="HB" />
+                                            <ComboBoxItem Content="FB" />
+                                        </ComboBox>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                             <DataGridTemplateColumn Header="Γέννηση"
                                                     CellStyle="{StaticResource DataGridCellStyle}"
                                                     Visibility="{Binding DataContext.SelectedExcursion.DOBNeeded, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">
@@ -292,7 +304,7 @@
                                 </DataGridComboBoxColumn.EditingElementStyle>
                             </DataGridComboBoxColumn>
                             <DataGridTextColumn Header="Passport Id"
-                                                MaxWidth="200" 
+                                                MaxWidth="200"
                                                 Binding="{Binding PassportNum,UpdateSourceTrigger=PropertyChanged}"
                                                 Visibility="{Binding DataContext.SelectedExcursion.PassportNeeded, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}" />
 
@@ -332,7 +344,7 @@
                                                   Foreground="{Binding RelativeSource={RelativeSource Self},Path=SelectedIndex,ConverterParameter=0, Converter={StaticResource SelectedIndexToForegroundConverter},UpdateSourceTrigger=PropertyChanged}">
                                             <ComboBoxItem Content="ΟΧΙ" />
                                             <ComboBoxItem Content="ΦΟΙΤΗΤ." />
-                                            <ComboBoxItem Content="ΠΟΛΥΤΕΚΝ.." />
+                                            <ComboBoxItem Content="ΠΟΛΥΤΕΚΝ." />
                                         </ComboBox>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>

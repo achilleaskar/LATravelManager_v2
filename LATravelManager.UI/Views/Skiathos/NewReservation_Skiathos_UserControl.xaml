@@ -881,7 +881,7 @@
                                                   Foreground="{Binding RelativeSource={RelativeSource Self},Path=SelectedIndex,ConverterParameter=0, Converter={StaticResource SelectedIndexToForegroundConverter},UpdateSourceTrigger=PropertyChanged}">
                                             <ComboBoxItem Content="ΟΧΙ" />
                                             <ComboBoxItem Content="ΦΟΙΤΗΤ." />
-                                            <ComboBoxItem Content="ΠΟΛΥΤΕΚΝ.." />
+                                            <ComboBoxItem Content="ΠΟΛΥΤΕΚΝ." />
                                         </ComboBox>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>

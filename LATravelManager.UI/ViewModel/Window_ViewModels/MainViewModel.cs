@@ -5,12 +5,12 @@ using LATravelManager.Model.People;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
-using LATravelManager.UI.Wrapper;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace LATravelManager.UI.ViewModel.Window_ViewModels
 {
@@ -129,20 +129,43 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             }
         }
 
-        public async Task LoadOptions()
+        public async Task<List<string>> LoadOptions()
         {
             List<Option> options = await StartingRepository.GetAllPendingOptions();
+            List<string> reply = new List<string>();
 
             if (options.Count > 0)
             {
-                var builder = new StringBuilder();
+                HotelOptions HotelOptions;
+                List<HotelOptions> hotelOptions = new List<HotelOptions>();
                 foreach (Option option in options)
                 {
-                    builder.Append("-Η Option για το δωμάτιο στο " + option.Room.Hotel.Name + "," + (new RoomWrapper(option.Room).Dates + " λήγει στις " + option.Date.ToShortDateString() + Environment.NewLine));
+                    if (option.Room?.Hotel != null)
+                    {
+                        HotelOptions = hotelOptions.Where(ho => ho.Hotel == option.Room.Hotel && ho.Date == option.Date).FirstOrDefault();
+                        if (HotelOptions != null)
+                        {
+                            HotelOptions.Counter++;
+                        }
+                        else
+                        {
+                            hotelOptions.Add(new HotelOptions { Counter = 1, Date = option.Date, Hotel = option.Room.Hotel });
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Option Hotel is null error. Inform the Admin");
+                    }
                 }
-                MessageBox.Show(builder.ToString(), "Προσοχή");
+                foreach (var hotel in hotelOptions)
+                {
+                    reply.Add($"Οι Option για { hotel.Counter} δωμάτια στο { hotel.Hotel.Name} λήγουν στις {hotel.Date.ToShortDateString()}");
+                }
             }
+            return reply;
         }
+
+        private DispatcherTimer dispatcherTimer;
 
         public async Task LoadAsync()
         {
@@ -151,6 +174,11 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
             await BasicDataManager.LoadAsync();
 
+            dispatcherTimer = new DispatcherTimer();
+            dispatcherTimer.Tick += new EventHandler(CheckForNotifications);
+            dispatcherTimer.Interval = new TimeSpan(0, 1, 0);
+            dispatcherTimer.Start();
+
 #if DEBUG
             StaticResources.User = new User { BaseLocation = 1, Id = 1, Level = 0, UserName = "admin" };
             RaisePropertyChanged(nameof(MenuVisibility));
@@ -158,6 +186,23 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             await ChangeViewModel().ContinueWith(async (t1) => { await LoadOptions(); });
         }
 
+        private async void CheckForNotifications(object sender, EventArgs e)
+        {
+            if (StartingRepository == null)
+            {
+                BasicDataManager = new BasicDataManager(StartingRepository);
+            }
+
+            List<string> nots = await StartingRepository.GetNotifications();
+        }
+
         #endregion Methods
+    }
+
+    public class HotelOptions
+    {
+        public Hotel Hotel { get; set; }
+        public int Counter { get; set; }
+        public DateTime Date { get; set; }
     }
 }

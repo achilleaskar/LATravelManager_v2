@@ -24,6 +24,7 @@ namespace LATravelManager.Model.Excursions
         public bool FixedDates { get; set; }
 
         public DateTime FirstDate => ExcursionDates != null && ExcursionDates.Count > 0 ? ExcursionDates.OrderBy(e => e.CheckIn).FirstOrDefault().CheckIn : new DateTime(1, 1, 1, 1, 1, 1);
+        public DateTime LastDate => ExcursionDates != null && ExcursionDates.Count > 0 ? ExcursionDates.OrderByDescending(e => e.CheckOut).FirstOrDefault().CheckOut : new DateTime(1, 1, 1, 1, 1, 1);
 
         #endregion Constructors
 

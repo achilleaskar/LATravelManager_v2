@@ -35,7 +35,7 @@ namespace LATravelManager.UI.Converters
                     }
                     else if (parameter is string excursionSelect && excursionSelect.Equals("2"))
                     {
-                        if (tr.ExpenseBaseCategory == ExpenseBaseCategories.GroupExpense ||
+                        if (!tr.FiltersEnabled || tr.ExpenseBaseCategory == ExpenseBaseCategories.GroupExpense ||
                             (tr.TransactionType == TransactionType.Income && tr.IncomeBaseCategory == IncomeBaseCategories.OptionalActivities))
                         {
                             return Visibility.Visible;

@@ -7,6 +7,7 @@ using LATravelManager.Model.Lists;
 using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Plan;
+using System;
 using System.Data.Entity;
 
 namespace LATravelManager.DataAccess
@@ -72,6 +73,7 @@ namespace LATravelManager.DataAccess
             //Database.Connection.Open();
             base.OnModelCreating(modelBuilder);
             // SetExecutionStrategy(MySqlProviderInvariantName.ProviderName, () => new MySqlExecutionStrategy());
+            //modelBuilder.Properties<TimeSpan>().Configure(c => c.HasColumnType("time"));
         }
 
         #endregion Methods

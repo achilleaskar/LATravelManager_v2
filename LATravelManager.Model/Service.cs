@@ -165,7 +165,7 @@ namespace LATravelManager.Model.Services
                 }
 
                 _TimeReturn = value;
-                if (_TimeReturn < TimeGo)
+                if (_TimeReturn < TimeGo && TimeGo.Year > 100 && TimeReturn.Year > 100)
                 {
                     TimeGo = TimeReturn.AddDays(-3);
                 }

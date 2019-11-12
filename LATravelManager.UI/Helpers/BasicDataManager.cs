@@ -16,9 +16,49 @@ namespace LATravelManager.UI.Helpers
 {
     public class BasicDataManager : ViewModelBase
     {
+
         #region Constructors
 
+        public BasicDataManager(GenericRepository genericRepository)
+        {
+            Context = genericRepository;
+        }
+
+        #endregion Constructors
+
+        #region Fields
+
         private ObservableCollection<Airline> _Airlines;
+
+        private ObservableCollection<Bus> _Buses;
+
+        private ObservableCollection<City> _Cities;
+
+        private ObservableCollection<Country> _Countries;
+
+        private ObservableCollection<ExcursionCategory> _ExcursionCategories;
+
+        private ObservableCollection<Excursion> _Excursions;
+
+        private ObservableCollection<HotelCategory> _HotelCategories;
+
+        private ObservableCollection<Hotel> _Hotels;
+
+        private ObservableCollection<Leader> _Leaders;
+
+        private ObservableCollection<Partner> _Partners;
+
+        private ObservableCollection<RoomType> _RoomTypes;
+
+        private ObservableCollection<StartingPlace> _StartingPlaces;
+
+        private ObservableCollection<User> _Users;
+
+        private ObservableCollection<Vehicle> _Vehicles;
+
+        #endregion Fields
+
+        #region Properties
 
         public ObservableCollection<Airline> Airlines
         {
@@ -38,66 +78,24 @@ namespace LATravelManager.UI.Helpers
                 RaisePropertyChanged();
             }
         }
-
-        private ObservableCollection<Vehicle> _Vehicles;
-
-        public ObservableCollection<Vehicle> Vehicles
+        public ObservableCollection<Bus> Buses
         {
             get
             {
-                return _Vehicles;
+                return _Buses;
             }
 
             set
             {
-                if (_Vehicles == value)
+                if (_Buses == value)
                 {
                     return;
                 }
 
-                _Vehicles = value;
+                _Buses = value;
                 RaisePropertyChanged();
             }
         }
-
-        public BasicDataManager(GenericRepository genericRepository)
-        {
-            Context = genericRepository;
-        }
-
-        public async Task Refresh()
-        {
-            Context = new GenericRepository();
-            await LoadAsync();
-        }
-
-        #endregion Constructors
-
-        #region Fields
-
-        private ObservableCollection<City> _Cities;
-        private ObservableCollection<Country> _Countries;
-        private ObservableCollection<ExcursionCategory> _ExcursionCategories;
-        private ObservableCollection<Excursion> _Excursions;
-        private ObservableCollection<HotelCategory> _HotelCategories;
-        private ObservableCollection<Hotel> _Hotels;
-        private ObservableCollection<Partner> _Partners;
-
-        private ObservableCollection<RoomType> _RoomTypes;
-
-        private ObservableCollection<StartingPlace> _StartingPlaces;
-
-        private ObservableCollection<User> _Users;
-
-        public GenericRepository Context
-        {
-            get;
-            set;
-        }
-
-        #endregion Fields
-
-        #region Properties
 
         public ObservableCollection<City> Cities
         {
@@ -116,6 +114,12 @@ namespace LATravelManager.UI.Helpers
                 _Cities = value;
                 RaisePropertyChanged();
             }
+        }
+
+        public GenericRepository Context
+        {
+            get;
+            set;
         }
 
         public ObservableCollection<Country> Countries
@@ -196,6 +200,11 @@ namespace LATravelManager.UI.Helpers
             }
         }
 
+        internal async Task CheckForNotifications(object sender, EventArgs e)
+        {
+           
+        }
+
         public ObservableCollection<Hotel> Hotels
         {
             get
@@ -216,6 +225,25 @@ namespace LATravelManager.UI.Helpers
         }
 
         public bool IsContextAvailable => Context.IsContextAvailable;
+
+        public ObservableCollection<Leader> Leaders
+        {
+            get
+            {
+                return _Leaders;
+            }
+
+            set
+            {
+                if (_Leaders == value)
+                {
+                    return;
+                }
+
+                _Leaders = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public ObservableCollection<Partner> Partners
         {
@@ -293,58 +321,28 @@ namespace LATravelManager.UI.Helpers
             }
         }
 
+        public ObservableCollection<Vehicle> Vehicles
+        {
+            get
+            {
+                return _Vehicles;
+            }
+
+            set
+            {
+                if (_Vehicles == value)
+                {
+                    return;
+                }
+
+                _Vehicles = value;
+                RaisePropertyChanged();
+            }
+        }
+
         #endregion Properties
 
         #region Methods
-
-
-
-
-
-        private ObservableCollection<Bus> _Buses;
-
-
-        public ObservableCollection<Bus> Buses
-        {
-            get
-            {
-                return _Buses;
-            }
-
-            set
-            {
-                if (_Buses == value)
-                {
-                    return;
-                }
-
-                _Buses = value;
-                RaisePropertyChanged();
-            }
-        }
-
-
-        private ObservableCollection<Leader> _Leaders;
-
-
-        public ObservableCollection<Leader> Leaders
-        {
-            get
-            {
-                return _Leaders;
-            }
-
-            set
-            {
-                if (_Leaders == value)
-                {
-                    return;
-                }
-
-                _Leaders = value;
-                RaisePropertyChanged();
-            }
-        }
 
         public bool HasChanges()
         {
@@ -402,6 +400,11 @@ namespace LATravelManager.UI.Helpers
             Airlines = new ObservableCollection<Airline>(await Context.GetAllAsync<Airline>());
         }
 
+        public async Task Refresh()
+        {
+            Context = new GenericRepository();
+            await LoadAsync();
+        }
         internal void Add<TEntity>(TEntity model) where TEntity : BaseModel, new()
         {
             Context.Add(model);
@@ -477,5 +480,6 @@ namespace LATravelManager.UI.Helpers
         }
 
         #endregion Methods
+
     }
 }

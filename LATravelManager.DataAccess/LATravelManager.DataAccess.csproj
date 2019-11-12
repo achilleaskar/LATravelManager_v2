@@ -110,6 +110,22 @@
     <Compile Include="Migrations\201911040858549_114.Designer.cs">
       <DependentUpon>201911040858549_114.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201911051155231_115.cs" />
+    <Compile Include="Migrations\201911051155231_115.Designer.cs">
+      <DependentUpon>201911051155231_115.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911051527591_1151.cs" />
+    <Compile Include="Migrations\201911051527591_1151.Designer.cs">
+      <DependentUpon>201911051527591_1151.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911051537516_1152.cs" />
+    <Compile Include="Migrations\201911051537516_1152.Designer.cs">
+      <DependentUpon>201911051537516_1152.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911051547305_1153.cs" />
+    <Compile Include="Migrations\201911051547305_1153.Designer.cs">
+      <DependentUpon>201911051547305_1153.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\ContextConfiguration.cs" />
     <Compile Include="MainDataBase.cs" />
     <Compile Include="Migrations\Configuration.cs" />
@@ -158,6 +174,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201911040858549_114.resx">
       <DependentUpon>201911040858549_114.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911051155231_115.resx">
+      <DependentUpon>201911051155231_115.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911051527591_1151.resx">
+      <DependentUpon>201911051527591_1151.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911051537516_1152.resx">
+      <DependentUpon>201911051537516_1152.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911051547305_1153.resx">
+      <DependentUpon>201911051547305_1153.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

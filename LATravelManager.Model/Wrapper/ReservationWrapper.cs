@@ -665,7 +665,7 @@ namespace LATravelManager.Model.Wrapper
             }
             foreach (Customer c in CustomersList)
             {
-                if (c.Name.ToUpper().StartsWith(key) || c.Surename.ToUpper().StartsWith(key) || (c.Tel != null && c.Tel.StartsWith(key)) || (!string.IsNullOrEmpty(c.Comment) && c.Comment.ToUpper().Contains(key)) || (c.Email != null && c.Email.ToUpper().StartsWith(key))
+                if (c.Name.ToUpper().StartsWith(key) || c.Surename.ToUpper().StartsWith(key) || (c.Tel != null && c.Tel.StartsWith(key)) || (c.Email != null && c.Email.ToUpper().StartsWith(key))
                     || (!string.IsNullOrEmpty(c.PassportNum) && c.PassportNum.ToUpper().StartsWith(key)) || c.StartingPlace.ToUpper().Contains(key))
                 {
                     return true;

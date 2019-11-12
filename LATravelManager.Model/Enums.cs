@@ -145,6 +145,15 @@ namespace LATravelManager.Model
         Photo = 2
     }
 
+    public enum SeatType
+    {
+        Driver,
+        Leader,
+        Normal,
+        Road,
+        Door
+    }
+
     public enum ReservationTypeEnum
     {
         Normal,

@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LATravelManager.Model
 {
-    public class Transaction : EditTracker
+    public class Transaction : EditTracker, ICloneable
     {
         #region Constructors
 
@@ -45,6 +45,28 @@ namespace LATravelManager.Model
         #endregion Fields
 
         #region Properties
+
+        private bool _FiltersEnabled = true;
+
+        [NotMapped]
+        public bool FiltersEnabled
+        {
+            get
+            {
+                return _FiltersEnabled;
+            }
+
+            set
+            {
+                if (_FiltersEnabled == value)
+                {
+                    return;
+                }
+
+                _FiltersEnabled = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public decimal Amount
         {
@@ -505,28 +527,38 @@ namespace LATravelManager.Model
             return (names.IndexOfAny(new char[] { ',' }) >= 0 ? " των " : " του ") + names;
         }
 
+
+
         private string GetDescription()
         {
             if (TransactionType == TransactionType.Income)
             {
                 if (IncomeBaseCategory == IncomeBaseCategories.OptionalActivities)
                 {
-                    return GetNames();
+                    if (Booking != null)
+                    {
+                        return GetNames();
+                    }
+                    else
+                    {
+                        return "Έσοδο προαιρετικών " + Excursion.Name + "," + SelectedBus ?? "";
+
+                    }
                 }
-                return "Έσοδο";
+                return "Έσοδο " + SelectedBus ?? "";
             }
             else if (TransactionType == TransactionType.Expense)
             {
                 switch (ExpenseBaseCategory)
                 {
                     case ExpenseBaseCategories.None:
-                        return "Έξοδο";
+                        return "Έξοδο " + SelectedBus ?? "";
 
                     case ExpenseBaseCategories.GroupExpense:
                         switch (GroupExpenseCategory)
                         {
                             case GroupExpenseCategories.None:
-                                return "Έξοδο για: " + Excursion.Name;
+                                return ("Έξοδο για: " + Excursion.Name + "," + SelectedBus ?? "").TrimEnd(new[] { ',' });
 
                             case GroupExpenseCategories.Hotel:
                                 switch (ExcursionExpenseCategory)
@@ -756,6 +788,11 @@ namespace LATravelManager.Model
                 }
             }
             return "Error";
+        }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
         }
 
         #endregion Methods

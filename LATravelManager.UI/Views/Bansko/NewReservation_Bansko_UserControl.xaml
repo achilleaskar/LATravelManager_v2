@@ -830,6 +830,18 @@
                                                 FontWeight="DemiBold"
                                                 FontSize="14"
                                                 Binding="{Binding Price, UpdateSourceTrigger=PropertyChanged,Converter={StaticResource FtoSConverter } }" />
+                            <DataGridTemplateColumn Header="Διατ.">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox SelectedIndex="{Binding Board,UpdateSourceTrigger=PropertyChanged}"
+                                                  Foreground="{Binding RelativeSource={RelativeSource Self},Path=SelectedIndex,ConverterParameter=0, Converter={StaticResource SelectedIndexToForegroundConverter},UpdateSourceTrigger=PropertyChanged}">
+                                            <ComboBoxItem Content="BB" />
+                                            <ComboBoxItem Content="HB" />
+                                            <ComboBoxItem Content="FB" />
+                                        </ComboBox>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                             <DataGridComboBoxColumn Header="Ηλικία"
                                                     ItemsSource="{x:Static helpers:StaticResources.AgesList}">
                                 <DataGridComboBoxColumn.ElementStyle>

@@ -151,6 +151,7 @@
                                Margin="0 0 5 0"
                                IsSynchronizedWithCurrentItem="True"
                                VerticalAlignment="Center"
+                               SelectedIndex="0"
                                ItemsSource="{Binding ExcursionsCollectionView}"
                                SelectedItem="{Binding SelectedExcursion}" />
                     <CheckBox Content="Όλοκληρωμένες"
@@ -372,7 +373,30 @@
                 <Button Content="Καθαρισμός"
                         HorizontalAlignment="Left"
                         Command="{Binding ClearTransactionCommand}"
+                        Margin="0 5 5 0" />
+                <Button Content="Αντιγραφή"
+                        HorizontalAlignment="Left"
+                        Command="{Binding CopyTransactionCommand}"
                         Margin="0 5 0 0" />
+                <Label>
+                    <Label.Style>
+                        <Style TargetType="{x:Type Label}">
+                            <Setter Property="Content"
+                                    Value="Μη αποθηκευμένο" />
+                            <Setter Property="Foreground"
+                                    Value="Green" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Transaction.Saved}"
+                                             Value="False">
+                                    <Setter Property="Label.Content"
+                                            Value="Aποθηκευμένο" />
+                                    <Setter Property="Foreground"
+                                            Value="Red" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Label.Style>
+                </Label>
             </StackPanel>
         </StackPanel>
     </Grid>

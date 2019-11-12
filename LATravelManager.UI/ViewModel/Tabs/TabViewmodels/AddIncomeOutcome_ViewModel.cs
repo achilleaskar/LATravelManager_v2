@@ -38,117 +38,38 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             SaveTransactionCommand = new RelayCommand(async () => { await SaveTransaction(); }, CanSaveTransaction);
             UpdateBusesCommand = new RelayCommand(async () => { await UpdateBuses(); }, CanUpdateBuses);
             ClearTransactionCommand = new RelayCommand(ClearTransaction, CanClearTransaction);
+            CopyTransactionCommand = new RelayCommand(CopyTransaction, CanCopyTransaction);
             Load();
         }
 
-        private bool CanUpdateBuses()
+        private bool CanCopyTransaction()
         {
-            return SelectedExcursion != null;
+            return Transaction.Id > 0;
         }
 
-        private async Task UpdateBuses()
+        private void CopyTransaction()
         {
-            Mouse.OverrideCursor = Cursors.Wait;
-            Buses = new ObservableCollection<Bus>(await Context.GetAllBusesAsync(SelectedExcursion != null ? SelectedExcursion.Id : 0));
-            Mouse.OverrideCursor = Cursors.Arrow;
-
-        }
-
-        private void ClearTransaction()
-        {
-            Transaction = new Transaction();
-            Keyword = string.Empty;
-            IdInt = 0;
-            FilteredReservations.Clear();
-            SelectedExcursion = null;
-            SelectedReservation = null;
-        }
-
-        private bool CanClearTransaction()
-        {
-            return true;
-        }
-
-        private Excursion _SelectedExcursion;
-
-        public Excursion SelectedExcursion
-        {
-            get
-            {
-                return _SelectedExcursion;
-            }
-
-            set
-            {
-                if (_SelectedExcursion == value)
-                {
-                    return;
-                }
-
-                _SelectedExcursion = value;
-                RaisePropertyChanged();
-                BusesCollectionView.Refresh();
-            }
-        }
-
-        private bool CanSaveTransaction()
-        {
-            if (Transaction.ExpenseBaseCategory == ExpenseBaseCategories.GroupExpense && SelectedExcursion == null)
-            {
-                return false;
-            }
-            if ((Transaction.ExpenseBaseCategory == ExpenseBaseCategories.PersonelExpense || Transaction.ExcursionExpenseCategory == ExcursionExpenseCategories.Booking) && SelectedReservation == null)
-            {
-                return false;
-            }
-
-            return Transaction != null &&
-                !string.IsNullOrEmpty(Transaction.Description) &&
-                Transaction.Description.Length > 3 &&
-                Transaction.Amount > 0;
-        }
-
-        private async Task SaveTransaction()
-        {
-            if (SelectedReservation != null)
-            {
-                if (SelectedReservation.Booking != null)
-                {
-                    Transaction.Booking = SelectedReservation.Booking;
-                    Transaction.PersonalBooking = null;
-                    Transaction.ThirdPartyBooking = null;
-                }
-                else if (SelectedReservation.PersonalModel != null)
-                {
-                    Transaction.Booking = null;
-                    Transaction.PersonalBooking = SelectedReservation.PersonalModel.Model;
-                    Transaction.ThirdPartyBooking = null;
-                }
-                else if (SelectedReservation.ThirdPartyModel != null)
-                {
-                    Transaction.Booking = null;
-                    Transaction.PersonalBooking = null;
-                    Transaction.ThirdPartyBooking = SelectedReservation.ThirdPartyModel.Model;
-                }
-            }
-            Transaction.User = await Context.GetByIdAsync<User>(Helpers.StaticResources.User.Id);
-            Transaction.Excursion = SelectedExcursion ?? null;
-            Context.Add(Transaction);
-            await Context.SaveAsync();
+            Transaction = (Transaction)Transaction.Clone();
+            Transaction.Id = 0;
             Transaction.RaisePropertyChanged("Saved");
+            Transaction.Amount = 0;
+            Transaction.Description = "";
         }
-
-        public RelayCommand SaveTransactionCommand { get; set; }
-        public RelayCommand UpdateBusesCommand { get; set; }
-        public RelayCommand ClearTransactionCommand { get; set; }
 
         #endregion Constructors
 
         #region Fields
 
+        private ObservableCollection<Bus> _Buses;
+
+        private ICollectionView _BusesCollectionView;
+
         private bool _Completed;
+
         private ObservableCollection<Excursion> _Excursions;
+
         private ICollectionView _ExcursionsCollectionView;
+
         private ObservableCollection<ReservationWrapper> _FilteredReservations;
 
         private int _Grafeio;
@@ -157,6 +78,8 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         private string _Keyword;
 
+        private Excursion _SelectedExcursion;
+
         private ReservationWrapper _SelectedReservation;
 
         private Transaction _Transaction;
@@ -164,6 +87,49 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         #endregion Fields
 
         #region Properties
+
+        public ObservableCollection<Bus> Buses
+        {
+            get
+            {
+                return _Buses;
+            }
+
+            set
+            {
+                if (_Buses == value)
+                {
+                    return;
+                }
+
+                _Buses = value;
+                RaisePropertyChanged();
+                BusesCollectionView = CollectionViewSource.GetDefaultView(Buses);
+                BusesCollectionView.Filter = BusesFilter;
+            }
+        }
+
+        public ICollectionView BusesCollectionView
+        {
+            get
+            {
+                return _BusesCollectionView;
+            }
+
+            set
+            {
+                if (_BusesCollectionView == value)
+                {
+                    return;
+                }
+
+                _BusesCollectionView = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public RelayCommand ClearTransactionCommand { get; set; }
+        public RelayCommand CopyTransactionCommand { get; set; }
 
         public bool Completed
         {
@@ -215,56 +181,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(ExcursionsCollectionView));
-            }
-        }
-
-        private ObservableCollection<Bus> _Buses;
-
-        public ObservableCollection<Bus> Buses
-        {
-            get
-            {
-                return _Buses;
-            }
-
-            set
-            {
-                if (_Buses == value)
-                {
-                    return;
-                }
-
-                _Buses = value;
-                RaisePropertyChanged();
-                BusesCollectionView = CollectionViewSource.GetDefaultView(Buses);
-                BusesCollectionView.Filter = BusesFilter;
-
-            }
-        }
-
-        private bool BusesFilter(object obj)
-        {
-            return obj is Bus b && SelectedExcursion != null && b.Excursion.Id == SelectedExcursion.Id;
-        }
-
-        private ICollectionView _BusesCollectionView;
-
-        public ICollectionView BusesCollectionView
-        {
-            get
-            {
-                return _BusesCollectionView;
-            }
-
-            set
-            {
-                if (_BusesCollectionView == value)
-                {
-                    return;
-                }
-
-                _BusesCollectionView = value;
-                RaisePropertyChanged();
             }
         }
 
@@ -371,7 +287,29 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         public MainViewModel MainViewModel { get; }
 
+        public RelayCommand SaveTransactionCommand { get; set; }
+
         public RelayCommand SearchForReservationsCommand { get; set; }
+
+        public Excursion SelectedExcursion
+        {
+            get
+            {
+                return _SelectedExcursion;
+            }
+
+            set
+            {
+                if (_SelectedExcursion == value)
+                {
+                    return;
+                }
+
+                _SelectedExcursion = value;
+                RaisePropertyChanged();
+                BusesCollectionView.Refresh();
+            }
+        }
 
         public ReservationWrapper SelectedReservation
         {
@@ -413,11 +351,18 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
+
+
+
+
+
+        public RelayCommand UpdateBusesCommand { get; set; }
+
+        public RelayCommand UpdateExcursions { get; set; }
+
         #endregion Properties
 
         #region Methods
-
-        public RelayCommand UpdateExcursions { get; set; }
 
         public override void Load(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
@@ -426,6 +371,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             FilteredReservations = new ObservableCollection<ReservationWrapper>();
             Excursions = new ObservableCollection<Excursion>(MainViewModel.BasicDataManager.Excursions.Where(i => i.Id > 0));
             Buses = new ObservableCollection<Bus>();
+            SelectedExcursion = Excursions.Where(e => e.Id == 0).FirstOrDefault();
         }
 
         public override void Reload()
@@ -433,14 +379,56 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             throw new NotImplementedException();
         }
 
+        private bool BusesFilter(object obj)
+        {
+            return obj is Bus b && SelectedExcursion != null && (b.Id == 0 || b.Excursion.Id == SelectedExcursion.Id);
+        }
+
+        private bool CanClearTransaction()
+        {
+            return true;
+        }
+
         private bool CanEditBooking()
         {
             return SelectedReservation != null;
         }
 
+        private bool CanSaveTransaction()
+        {
+            if ((Transaction.ExpenseBaseCategory == ExpenseBaseCategories.GroupExpense ||Transaction.IncomeBaseCategory == IncomeBaseCategories.OptionalActivities) && SelectedExcursion.Id == 0)
+            {
+                return false;
+            }
+            if ((Transaction.ExpenseBaseCategory == ExpenseBaseCategories.PersonelExpense || Transaction.ExcursionExpenseCategory == ExcursionExpenseCategories.Booking) && SelectedReservation == null)
+            {
+                return false;
+            }
+
+            return Transaction != null &&
+                !string.IsNullOrEmpty(Transaction.Description) &&
+                Transaction.Description.Length > 3 &&
+                Transaction.Amount > 0;
+        }
+
         private bool CanSearchForReservations()
         {
             return (!string.IsNullOrEmpty(Keyword) && Keyword.Length > 2) || IdInt > 0;
+        }
+
+        private bool CanUpdateBuses()
+        {
+            return SelectedExcursion != null && SelectedExcursion.Id > 0;
+        }
+
+        private void ClearTransaction()
+        {
+            Transaction = new Transaction();
+            Keyword = string.Empty;
+            IdInt = 0;
+            FilteredReservations.Clear();
+            SelectedExcursion = null;
+            SelectedReservation = null;
         }
 
         private bool CustomerExcursionsFilter(object item)
@@ -481,6 +469,60 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
+        private async Task SaveTransaction()
+        {
+            if (SelectedReservation != null)
+            {
+                if (SelectedReservation.Booking != null)
+                {
+                    Transaction.Booking = SelectedReservation.Booking;
+                    Transaction.PersonalBooking = null;
+                    Transaction.ThirdPartyBooking = null;
+                }
+                else if (SelectedReservation.PersonalModel != null)
+                {
+                    Transaction.Booking = null;
+                    Transaction.PersonalBooking = SelectedReservation.PersonalModel.Model;
+                    Transaction.ThirdPartyBooking = null;
+                }
+                else if (SelectedReservation.ThirdPartyModel != null)
+                {
+                    Transaction.Booking = null;
+                    Transaction.PersonalBooking = null;
+                    Transaction.ThirdPartyBooking = SelectedReservation.ThirdPartyModel.Model;
+                }
+            }
+
+            Transaction.User = await Context.GetByIdAsync<User>(Helpers.StaticResources.User.Id);
+            Transaction.Excursion = SelectedExcursion != null && SelectedExcursion.Id > 0 ? await Context.GetByIdAsync<Excursion>(SelectedExcursion.Id) : null;
+            Transaction.SelectedBus = SelectedBus != null && SelectedBus.Id > 0 ? await Context.GetByIdAsync<Bus>(SelectedBus.Id) : null;
+            Context.Add(Transaction);
+            await Context.SaveAsync();
+            Transaction.RaisePropertyChanged("Saved");
+        }
+
+
+        private Bus _SelectedBus;
+
+
+        public Bus SelectedBus
+        {
+            get
+            {
+                return _SelectedBus;
+            }
+
+            set
+            {
+                if (_SelectedBus == value)
+                {
+                    return;
+                }
+
+                _SelectedBus = value;
+                RaisePropertyChanged();
+            }
+        }
         private async Task SearchForReservations()
         {
             try
@@ -517,6 +559,15 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         private void Transaction_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             RaisePropertyChanged(nameof(Transaction));
+        }
+
+        private async Task UpdateBuses()
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+            Buses = new ObservableCollection<Bus>(await Context.GetAllBusesAsync(SelectedExcursion != null ? SelectedExcursion.Id : 0));
+            Buses.Insert(0, new Bus { Id = 0, Vehicle = new Vehicle { Name = "Όλα" } });
+            SelectedBus = Buses.First();
+            Mouse.OverrideCursor = Cursors.Arrow;
         }
 
         #endregion Methods

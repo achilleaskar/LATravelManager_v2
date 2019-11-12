@@ -263,6 +263,47 @@ namespace LATravelManager.UI.Helpers
             }
         }
 
+        public async Task PrintAllPhones()
+        {
+            string wbPath = null;
+            string sampleFile = AppDomain.CurrentDomain.BaseDirectory + @"Sources\protypo kratiseon.xlsx";
+            //List<string> selectedCities = new List<string>();
+            int lineNum = 0;
+            Thread.CurrentThread.CurrentCulture = culture;
+
+            using (GenericRepository Context = new GenericRepository())
+            {
+                List<Customer> AllBookings = (await Context.GetAllCustomersWithPhone()).ToList();
+
+                if (AllBookings.Count > 0)
+                {
+                    AllBookings = AllBookings.OrderBy(o => o.StartingPlace).ToList();
+
+                    FileInfo fileInfo = new FileInfo(sampleFile);
+                    ExcelPackage p = new ExcelPackage(fileInfo);
+                    ExcelWorksheet myWorksheet = p.Workbook.Worksheets[1];
+
+                    wbPath = GetPath("Test_Phones", @"\Thlefona\");
+                    lineNum = 4;
+
+                    foreach (Customer customer in AllBookings)
+                    {
+                        myWorksheet.InsertRow(lineNum, 1);
+
+                        myWorksheet.Cells["B" + lineNum].Value = customer.Name;
+                        myWorksheet.Cells["C" + lineNum].Value = customer.Surename;
+                        myWorksheet.Cells["E" + lineNum].Value = string.IsNullOrEmpty(customer.Tel) ? "" : customer.Tel;
+                        myWorksheet.Cells["F" + lineNum].Value = customer.StartingPlace;
+
+                        lineNum++;
+                    }
+
+                    fileInfo = new FileInfo(wbPath ?? throw new InvalidOperationException());
+                    p.SaveAs(fileInfo);
+                }
+            }
+        }
+
         public void PrintContract(BookingWrapper booking)
         {
             string outputpath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);

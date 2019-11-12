@@ -37,6 +37,7 @@ namespace LATravelManager.Model.Lists
                     new SolidColorBrush(Colors.Aqua)
                 };
             Manual = false;
+            BusView = new BusView();
             // RecalculateCustomers();
         }
 
@@ -485,9 +486,91 @@ namespace LATravelManager.Model.Lists
 
         public override string ToString()
         {
-            return Leader.Name + " " + Vehicle.Name;
+            return (Leader != null ? Leader.Name : "" + " " + Vehicle.Name).TrimStart(new[] { ' ' });
+        }
+
+        private BusView _BusView;
+
+        [NotMapped]
+        public BusView BusView
+        {
+            get
+            {
+                return _BusView;
+            }
+
+            set
+            {
+                if (_BusView == value)
+                {
+                    return;
+                }
+
+                _BusView = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public void CreateBusView()
+        {
+            bool normalBackSeat = Vehicle.DoorSeat % 4 > 2;
+            bool doubleDoorPlace = (Vehicle.SeatsPassengers - 5) % 4 == 0;
+            int seires = (Vehicle.SeatsPassengers - 5) / 4 + 1 + (doubleDoorPlace ? 2 : 1);
+            BusView.Seires.AddRange(Enumerable.Repeat(new Seira(), seires));
+            int limit = Vehicle.DoorSeat - (doubleDoorPlace ? 4 : 2);
+
+            int currentseat = 0;
+            int seatInRow = 0;
+            while (currentseat < limit)
+            {
+                currentseat++;
+                seatInRow = currentseat % 4 > 2 ? currentseat % 4 : currentseat % 4 + 1;
+                BusView.Seires[(currentseat - 1) / 4].Seats[seatInRow].Number = currentseat;
+                if ((currentseat + 2) % 4 == 0)
+                {
+                    BusView.Seires[(currentseat - 1) / 4].Seats[seatInRow].Number = currentseat;
+                }
+
+            }
         }
 
         #endregion Methods
+    }
+
+    public class BusView
+    {
+        public BusView()
+        {
+            Seires = new List<Seira>();
+        }
+
+        public Bus Bus { get; set; }
+
+        public List<Seira> Seires { get; set; }
+    }
+
+    public class Seira
+    {
+        public Seira()
+        {
+            Seats = new List<Seat>();
+            for (int i = 0; i < 5; i++)
+            {
+                Seats.Add(new Seat());
+            }
+        }
+
+        public List<Seat> Seats { get; set; }
+    }
+
+    public class Seat
+    {
+        public int Number { get; set; }
+
+        public SeatType SeatType { get; set; }
+
+        public Customer Customer { get; set; }
+
+        public bool Selected { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using LATravelManager.UI.Repositories;
+using Notifications.Wpf;
 using Squirrel;
 using System;
 using System.Net;
@@ -38,7 +39,10 @@ namespace LATravelManager.UI.Views
                     {
                         MessageBoxResult dialogResult = MessageBox.Show("Εγκαταστάθηκε νέα ενημέρωση. Θέλετε να επανεκκινήσετε την εφαρμογή σας τώρα?", "", MessageBoxButton.YesNo, MessageBoxImage.Question);
                         if (dialogResult == MessageBoxResult.Yes)
-                            UpdateManager.RestartApp();
+                        {
+                            await UpdateManager.RestartAppWhenExited();
+                            Application.Current.Shutdown();
+                        }
                     }
                 }
             }
