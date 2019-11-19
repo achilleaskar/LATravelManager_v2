@@ -25,6 +25,33 @@ using System.Windows.Media;
 
 namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {
+    public class CustomSorter : IComparer
+    {
+        #region Methods
+
+        public int Compare(object x, object y)
+        {
+            if (x is CustomerWrapper a && y is CustomerWrapper b)
+            {
+                bool ab = a.Reservation.Booking.ReservationsInBooking.Any(r => r.CustomersList.Any(c => c.Bus == null));
+                bool bb = b.Reservation.Booking.ReservationsInBooking.Any(r => r.CustomersList.Any(c => c.Bus == null));
+
+                if (ab && !bb)
+                {
+                    return -1;
+                }
+                if (bb && !ab)
+                {
+                    return 1;
+                }
+                return a.Reservation.Booking.Id.CompareTo(b.Reservation.Booking.Id);
+            }
+            return 0;
+        }
+
+        #endregion Methods
+    }
+
     public class ListManagement_ViewModel : MyViewModelBase
     {
         #region Constructors
@@ -38,6 +65,10 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             UpdateVehiclesCommand = new RelayCommand(async () => { await UpdateVehicles(); });
             SaveBusesCommand = new RelayCommand(async () => { await SaveBuses(); });
             AddBusCommand = new RelayCommand(AddBus, CanAddBus);
+
+            PutAtSeatsCommand = new RelayCommand<object>(PutAtSeats, CanPutAtSeats);
+            PutAtSeatsReturnCommand = new RelayCommand<object>(PutAtSeatsEp, CanPutAtSeatsEp);
+
             RemoveBusCommand = new RelayCommand<object>(RemoveBus, CanRemoveBus);
             MarkAllCommand = new RelayCommand<int>(MarkAll);
             ClearSelCustomersCommand = new RelayCommand<int>(ClearSelCustomers, CanClearSelCustomers);
@@ -46,84 +77,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             SelectAllCommand = new RelayCommand<int>(SelectAll);
 
             Load();
-        }
-
-        private void LeaderDriver(int obj)
-        {
-            SelectedCustomer.LeaderDriver = obj;
-            RaisePropertyChanged(nameof(Customers));
-        }
-
-        private bool CanRemoveBus(object arg)
-        {
-            return (arg is Bus b) && b.Customers != null && b.Customers.Count == 0;
-        }
-
-        private void RemoveBus(object obj)
-        {
-            Buses.Remove(obj as Bus);
-            Context.Delete(obj as Bus);
-        }
-
-        private bool CanClearSelCustomers(int arg)
-        {
-            return SelectedBus != null;
-        }
-
-        private void ClearSelCustomers(int obj)
-        {
-            foreach (var c in SelectedBus.Customers)
-            {
-                c.Bus = null;
-            }
-            SelectedBus.Customers.Clear();
-        }
-
-        private ExcursionDate _SelectedDates;
-
-        public ExcursionDate SelectedDate
-        {
-            get
-            {
-                return _SelectedDates;
-            }
-
-            set
-            {
-                if (_SelectedDates == value)
-                {
-                    return;
-                }
-
-                _SelectedDates = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private ObservableCollection<Leader> _Leaders;
-
-        public ObservableCollection<Leader> Leaders
-        {
-            get
-            {
-                return _Leaders;
-            }
-
-            set
-            {
-                if (_Leaders == value)
-                {
-                    return;
-                }
-
-                _Leaders = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private async Task SaveBuses()
-        {
-            await Context.SaveAsync();
         }
 
         #endregion Constructors
@@ -146,6 +99,8 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         private ObservableCollection<Counter> _Hotels;
 
+        private ObservableCollection<Leader> _Leaders;
+
         private int _Remaining;
 
         private Bus _SelectedBus;
@@ -154,9 +109,15 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         private int _SelectedCustomers;
 
+        private ExcursionDate _SelectedDates;
+
         private Excursion _SelectedExcursion;
 
         private Vehicle _SelectedVehicle;
+
+        private int _StartSeat;
+
+        private int _StartSeatRet;
 
         private ObservableCollection<Vehicle> _Vehicles;
 
@@ -165,7 +126,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         #region Properties
 
         public RelayCommand AddBusCommand { get; }
-        public RelayCommand<object> RemoveBusCommand { get; }
+
         public RelayCommand AddCustomersToBusCommand { get; }
 
         public List<BookingWrapper> AllBookings
@@ -225,6 +186,8 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 RaisePropertyChanged();
             }
         }
+
+        public RelayCommand<int> ClearSelCustomersCommand { get; }
 
         public List<SolidColorBrush> ColorsR { get; set; }
 
@@ -329,6 +292,27 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
+        public RelayCommand<int> LeaderDriverCommand { get; }
+
+        public ObservableCollection<Leader> Leaders
+        {
+            get
+            {
+                return _Leaders;
+            }
+
+            set
+            {
+                if (_Leaders == value)
+                {
+                    return;
+                }
+
+                _Leaders = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public MainViewModel MainViewModel { get; }
 
         public bool Manual { get; set; }
@@ -336,8 +320,10 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         public bool ManualAll { get; set; } = false;
 
         public RelayCommand<int> MarkAllCommand { get; }
-        public RelayCommand<int> ClearSelCustomersCommand { get; }
-        public RelayCommand<int> LeaderDriverCommand { get; }
+
+        public RelayCommand<object> PutAtSeatsCommand { get; }
+
+        public RelayCommand<object> PutAtSeatsReturnCommand { get; }
 
         public int Remaining
         {
@@ -357,6 +343,10 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 RaisePropertyChanged();
             }
         }
+
+        public RelayCommand<object> RemoveBusCommand { get; }
+
+        public RelayCommand SaveBusesCommand { get; }
 
         public RelayCommand<int> SelectAllCommand { get; }
 
@@ -417,6 +407,25 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
+        public ExcursionDate SelectedDate
+        {
+            get
+            {
+                return _SelectedDates;
+            }
+
+            set
+            {
+                if (_SelectedDates == value)
+                {
+                    return;
+                }
+
+                _SelectedDates = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public Excursion SelectedExcursion
         {
             get
@@ -457,8 +466,45 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         public RelayCommand ShowCustomersCommand { get; set; }
 
+        public int StartSeat
+        {
+            get
+            {
+                return _StartSeat;
+            }
+
+            set
+            {
+                if (_StartSeat == value)
+                {
+                    return;
+                }
+
+                _StartSeat = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public int StartSeatRet
+        {
+            get
+            {
+                return _StartSeatRet;
+            }
+
+            set
+            {
+                if (_StartSeatRet == value)
+                {
+                    return;
+                }
+
+                _StartSeatRet = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public RelayCommand UpdateVehiclesCommand { get; }
-        public RelayCommand SaveBusesCommand { get; }
 
         public ObservableCollection<Vehicle> Vehicles
         {
@@ -482,6 +528,41 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         #endregion Properties
 
         #region Methods
+
+        public void CountBoth()
+        {
+            Counter tmpHotel;
+            Counter tmpCity;
+
+            foreach (var h in Hotels)
+            {
+                h.Both = 0;
+            }
+            foreach (var c in Cities)
+            {
+                c.Both = 0;
+            }
+
+            foreach (BookingWrapper b in AllBookings)
+            {
+                foreach (ReservationWrapper r in b.ReservationsInBooking.Select(r => new ReservationWrapper(r)))
+                {
+                    tmpHotel = Hotels.Where(h => h.Name.Equals(r.HotelName.TrimEnd(new[] { '*' }))).FirstOrDefault();
+                    foreach (Customer c in r.CustomersList)
+                    {
+                        tmpCity = Cities.Where(h => h.Name.Equals(c.StartingPlace)).FirstOrDefault();
+                        if (Cities.Where(ci => ci.Name == c.StartingPlace).FirstOrDefault().Selected)
+                        {
+                            tmpHotel.Both += 1;
+                        }
+                        if (Hotels.Where(ho => ho.Name == c.HotelName).FirstOrDefault().Selected)
+                        {
+                            tmpCity.Both += 1;
+                        }
+                    }
+                }
+            }
+        }
 
         public void CountSelected()
         {
@@ -548,6 +629,25 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             throw new NotImplementedException();
         }
 
+        public void SetColors(ICollectionView customers)
+        {
+            int coutner = 0;
+            //customers = customers.OrderBy(c => c.Reservation.Booking.Id);
+            int id = 0;
+            foreach (object c1 in customers)
+            {
+                if (c1 is CustomerWrapper c && c.NoBus)
+                {
+                    if (c.Reservation.Booking.Id != id)
+                    {
+                        id = c.Reservation.Booking.Id;
+                        coutner++;
+                    }
+                    c.RoomColor = ColorsR[coutner % 9];
+                }
+            }
+        }
+
         private void AddBus()
         {
             var b = new Bus
@@ -599,6 +699,11 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
             CollectionViewSource.GetDefaultView(Customers).Refresh();
             SetColors(CollectionViewSource.GetDefaultView(Customers));
+        }
+
+        private void B_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private void BusChanged(object sender, PropertyChangedEventArgs e)
@@ -667,9 +772,38 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             return SelectedBus != null && (SelectedBus.RemainingSeats >= SelectedCustomers);
         }
 
+        private bool CanClearSelCustomers(int arg)
+        {
+            return SelectedBus != null;
+        }
+
         private bool CanEditBooking()
         {
             return true;
+        }
+
+        private bool CanPutAtSeats(object customer)
+        {
+            return StartSeat > 0 && SelectedBus != null && SelectedBus.BusView != null && SelectedBus.BusView.Seires.Count > 0;
+        }
+
+        private bool CanPutAtSeatsEp(object arg)
+        {
+            return StartSeatRet > 0 && SelectedBus != null && SelectedBus.BusViewReturn != null && SelectedBus.BusViewReturn.Seires.Count > 0;
+        }
+
+        private bool CanRemoveBus(object arg)
+        {
+            return (arg is Bus b) && b.Customers != null && b.Customers.Count == 0;
+        }
+
+        private void ClearSelCustomers(int obj)
+        {
+            foreach (var c in SelectedBus.Customers)
+            {
+                c.Bus = null;
+            }
+            SelectedBus.Customers.Clear();
         }
 
         private void Counter_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -719,6 +853,40 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
+        private Seat GetSeat(int num, bool retur)
+        {
+            if (!retur)
+                foreach (var row in SelectedBus.BusView.Seires)
+                {
+                    foreach (var seat in row.Seats)
+                    {
+                        if (seat.Number == num)
+                        {
+                            return seat;
+                        }
+                    }
+                }
+            else
+                foreach (var row in SelectedBus.BusViewReturn.Seires)
+                {
+                    foreach (var seat in row.Seats)
+                    {
+                        if (seat.Number == num)
+                        {
+                            return seat;
+                        }
+                    }
+                }
+
+            return null;
+        }
+
+        private void LeaderDriver(int obj)
+        {
+            SelectedCustomer.LeaderDriver = obj;
+            RaisePropertyChanged(nameof(Customers));
+        }
+
         private void MarkAll(int obj)
         {
             if (SelectedCustomer != null)
@@ -736,23 +904,69 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             CountSelected();
         }
 
-        public void SetColors(ICollectionView customers)
+        private void PutAtSeats(object cust)
         {
-            int coutner = 0;
-            //customers = customers.OrderBy(c => c.Reservation.Booking.Id);
-            int id = 0;
-            foreach (object c1 in customers)
+            if (cust is CustomerWrapper customer)
             {
-                if (c1 is CustomerWrapper c && c.NoBus)
+                List<Seat> seats = new List<Seat>();
+                for (int i = 0; i < (new BookingWrapper(customer.Reservation.Booking)).Customers.Count; i++)
                 {
-                    if (c.Reservation.Booking.Id != id)
+                    Seat seat = GetSeat(StartSeat + i, false);
+                    if (seat != null && seat.Customer == null)
                     {
-                        id = c.Reservation.Booking.Id;
-                        coutner++;
+                        seats.Add(seat);
                     }
-                    c.RoomColor = ColorsR[coutner % 9];
+                    else
+                    {
+                        MessageBox.Show("Den xwrane");
+                        return;
+                    }
                 }
+                int counter = 0;
+                foreach (var c in (new BookingWrapper(customer.Reservation.Booking)).Customers)
+                {
+                    seats[counter].Customer = c;
+                    Customers.Where(v => v.Id == c.Id).FirstOrDefault().SeatNum = seats[counter].Number;
+                    counter++;
+                }
+
+                SelectedBus.RaisePropertyChanged();
+                SelectedBus.update();
             }
+            RaisePropertyChanged(nameof(Customers));
+        }
+
+        private void PutAtSeatsEp(object cust)
+        {
+            if (cust is CustomerWrapper customer)
+            {
+                List<Seat> seats = new List<Seat>();
+                for (int i = 0; i < (new BookingWrapper(customer.Reservation.Booking)).Customers.Count; i++)
+                {
+                    Seat seat = GetSeat(StartSeatRet + i, true);
+                    if (seat != null && seat.Customer == null)
+                    {
+                        seats.Add(seat);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Den xwrane");
+                        return;
+                    }
+                }
+                int counter = 0;
+                foreach (var c in (new BookingWrapper(customer.Reservation.Booking)).Customers)
+                {
+                    seats[counter].Customer = c;
+                   // c.SeatNumRet = seats[counter].Number;
+                    Customers.Where(v => v.Id == c.Id).FirstOrDefault().SeatNumRet = seats[counter].Number;
+                    counter++;
+                }
+
+                SelectedBus.RaisePropertyChanged();
+                SelectedBus.update();
+            }
+            RaisePropertyChanged(nameof(Customers));
         }
 
         private void RecalculateCustomers()
@@ -784,39 +998,15 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             SetColors(CollectionViewSource.GetDefaultView(Customers));
         }
 
-        public void CountBoth()
+        private void RemoveBus(object obj)
         {
-            Counter tmpHotel;
-            Counter tmpCity;
+            Buses.Remove(obj as Bus);
+            Context.Delete(obj as Bus);
+        }
 
-            foreach (var h in Hotels)
-            {
-                h.Both = 0;
-            }
-            foreach (var c in Cities)
-            {
-                c.Both = 0;
-            }
-
-            foreach (BookingWrapper b in AllBookings)
-            {
-                foreach (ReservationWrapper r in b.ReservationsInBooking.Select(r => new ReservationWrapper(r)))
-                {
-                    tmpHotel = Hotels.Where(h => h.Name.Equals(r.HotelName.TrimEnd(new[] { '*' }))).FirstOrDefault();
-                    foreach (Customer c in r.CustomersList)
-                    {
-                        tmpCity = Cities.Where(h => h.Name.Equals(c.StartingPlace)).FirstOrDefault();
-                        if (Cities.Where(ci => ci.Name == c.StartingPlace).FirstOrDefault().Selected)
-                        {
-                            tmpHotel.Both += 1;
-                        }
-                        if (Hotels.Where(ho => ho.Name == c.HotelName).FirstOrDefault().Selected)
-                        {
-                            tmpCity.Both += 1;
-                        }
-                    }
-                }
-            }
+        private async Task SaveBuses()
+        {
+            await Context.SaveAsync();
         }
 
         private void SelectAll(int par)
@@ -950,39 +1140,11 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-        private void B_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
         private async Task UpdateVehicles()
         {
             Vehicles = new ObservableCollection<Vehicle>((await Context.GetAllAsync<Vehicle>()).OrderBy(b => b.Name));
         }
 
         #endregion Methods
-    }
-
-    public class CustomSorter : IComparer
-    {
-        public int Compare(object x, object y)
-        {
-            if (x is CustomerWrapper a && y is CustomerWrapper b)
-            {
-                bool ab = a.Reservation.Booking.ReservationsInBooking.Any(r => r.CustomersList.Any(c => c.Bus == null));
-                bool bb = b.Reservation.Booking.ReservationsInBooking.Any(r => r.CustomersList.Any(c => c.Bus == null));
-
-                if (ab && !bb)
-                {
-                    return -1;
-                }
-                if (bb && !ab)
-                {
-                    return 1;
-                }
-                return a.Reservation.Booking.Id.CompareTo(b.Reservation.Booking.Id);
-            }
-            return 0;
-        }
     }
 }

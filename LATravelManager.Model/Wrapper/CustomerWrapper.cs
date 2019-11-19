@@ -50,6 +50,18 @@ namespace LATravelManager.UI.Helpers
             get { return GetValue<int>(); }
             set { SetValue(value); }
         }
+
+        public int SeatNum
+        {
+            get { return GetValue<int>(); }
+            set { SetValue(value); }
+        }
+         public int SeatNumRet
+        {
+            get { return GetValue<int>(); }
+            set { SetValue(value); }
+        }
+
         public Bus Bus
         {
             get { return GetValue<Bus>(); }

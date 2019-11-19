@@ -6,6 +6,7 @@ using LATravelManager.Model.Hotels;
 using LATravelManager.Model.Lists;
 using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
+using LATravelManager.Model.Services;
 using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
@@ -291,14 +292,31 @@ namespace LATravelManager.UI.Repositories
 
         public async Task<List<Option>> GetAllPendingOptions()
         {
-            var limit = DateTime.Today.AddDays(2);
-            return await RunTask(Context.Options//.Where(ο => ο.Date <= limit)
+            return await RunTask(Context.Options.Where(o => o.Date >= DateTime.Today && o.Date <= limit && (o.Room.User.Level < 3 || o.Room.User.Id == StaticResources.User.Id) && o.Room.User.BaseLocation == StaticResources.User.BaseLocation)
                 .Include(x => x.Room.Hotel)
+                .ToListAsync);
+        }
+
+        readonly DateTime limit = DateTime.Today.AddDays(2000);
+
+        public async Task<List<HotelService>> GetAllPersonalOptions()
+        {
+            return await RunTask(Context.HotelServices.Where(s => s.Option.Date >= DateTime.Today && s.Option.Date <= limit && (s.Personal_Booking.User.Level < 2 || s.Personal_Booking.User.Id == StaticResources.User.Id) && s.Personal_Booking.User.BaseLocation == StaticResources.User.BaseLocation)
+                .Include(x => x.Personal_Booking.Customers)
+                .ToListAsync);
+        }
+
+        public async Task<List<PlaneService>> GetAllPlaneOptions()
+        {
+            var planelimit = DateTime.Today.AddDays(4);
+            return await RunTask(Context.PlaneServices.Where(s => s.TimeGo >= DateTime.Today && s.TimeGo.Date <= planelimit && (s.Personal_Booking.User.Level < 2 || s.Personal_Booking.User.Id == StaticResources.User.Id) && s.Personal_Booking.User.BaseLocation == StaticResources.User.BaseLocation)
+                .Include(x => x.Personal_Booking.Customers)
                 .ToListAsync);
         }
 
         public async Task<IEnumerable<Reservation>> GetAllReservationsByCreationDate(DateTime afterThisDay, int excursionId, bool canceled = false)
         {
+            var limit = DateTime.Today.AddDays(2);
             return await RunTask(Context.Reservations.Where(c => c.Booking.Excursion.Id == excursionId && c.CreatedDate >= afterThisDay)
                 .Include(f => f.Booking)
                 .Include(f => f.Booking.User)

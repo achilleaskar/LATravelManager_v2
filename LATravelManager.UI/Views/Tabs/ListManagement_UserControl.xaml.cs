@@ -1,5 +1,7 @@
-﻿using LATravelManager.Model.People;
+﻿using LATravelManager.Model.Lists;
+using LATravelManager.Model.People;
 using LATravelManager.UI.Helpers;
+using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -33,6 +35,26 @@ namespace LATravelManager.UI.Views.Tabs
                 else if (dc.DataContext is CustomerWrapper cu)
                     cu.Selected = !cu.Selected;
             }
+        }
+
+        private void RadioButton_Checked(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (!(sender is RadioButton radioButton) || !(radioButton.DataContext is Seat seat))
+            {
+                return;
+            }
+            ((ListManagement_ViewModel)DataContext).StartSeat = seat.Number;
+            // int intIndex = Convert.ToInt32(radioButton.Content.ToString());
+        }
+
+        private void RadioButtonRet_Checked(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (!(sender is RadioButton radioButton) || !(radioButton.DataContext is Seat seat))
+            {
+                return;
+            }
+            ((ListManagement_ViewModel)DataContext).StartSeatRet = seat.Number;
+            // int intIndex = Convert.ToInt32(radioButton.Content.ToString());
         }
     }
 }

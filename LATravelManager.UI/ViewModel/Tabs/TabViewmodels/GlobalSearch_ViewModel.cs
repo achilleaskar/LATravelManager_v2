@@ -71,109 +71,104 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
             foreach (var bus in buses)
             {
-                PrintTheseisBus(bus);
+              //  PrintTheseisBus(bus);
             }
         }
 
-        private static void PrintTheseisBus(Bus bus)
-        {
-            List<Parea> parees = new List<Parea>();
-            Parea tmpparea;
-            int counter = 0;
-            foreach (var c in bus.Customers.Where(y => y.LeaderDriver == 0))
-            {
-                if (parees.Any(r => r.BookingId == c.Reservation.Booking.Id))
-                {
-                    parees.Where(o => o.BookingId == c.Reservation.Booking.Id).FirstOrDefault().Customers.Add(new CustomerWrapper(c));
-                }
-                else
-                {
-                    counter++;
-                    tmpparea = new Parea { Counter = counter, BookingId = c.Reservation.Booking.Id };
-                    tmpparea.Customers.Add(new CustomerWrapper(c));
-                    parees.Add(tmpparea);
-                }
-            }
+        //private static void PrintTheseisBus(Bus bus)
+        //{
+        //    List<Parea> parees = new List<Parea>();
+        //    Parea tmpparea;
+        //    int counter = 0;
+        //    foreach (var c in bus.Customers.Where(y => y.LeaderDriver == 0))
+        //    {
+        //        if (parees.Any(r => r.BookingId == c.Reservation.Booking.Id))
+        //        {
+        //            parees.Where(o => o.BookingId == c.Reservation.Booking.Id).FirstOrDefault().Customers.Add(new CustomerWrapper(c));
+        //        }
+        //        else
+        //        {
+        //            counter++;
+        //            tmpparea = new Parea { Counter = counter, BookingId = c.Reservation.Booking.Id };
+        //            tmpparea.Customers.Add(new CustomerWrapper(c));
+        //            parees.Add(tmpparea);
+        //        }
+        //    }
 
-            parees = parees.OrderByDescending(p1 => p1.Customers.Count).ToList();
+        //    parees = parees.OrderByDescending(p1 => p1.Customers.Count).ToList();
 
-            var fullbus = new List<Thesi>();
+           
+            
+        //    int arithmos = 1;
+        //    int ypoloipo = 0;
+        //    int aasd = 0;
+        //    while (parees.Any(t => !t.Done))
+        //    {
+        //        aasd++;
+        //        if (aasd > 100)
+        //        {
+        //            break;
+        //        }
+        //        counter++;
+        //        arithmos = Getnextfree(fullbus, arithmos);
+        //        //if (first && parees[0].Customers.Count % 2 == 1)
+        //        //{
+        //        //    arithmos = 5;
+        //        //}
+        //        if (arithmos > 1)
+        //            ypoloipo = arithmos % 2;
+        //        foreach (var parea in parees)
+        //        {
+        //            if ((arithmos % 2 == 1 || parea.Customers.Count % 2 == ((arithmos + 1) % 2)) && !parea.Done && Fits(parea.Customers.Count, fullbus, arithmos))
+        //            {
+        //                foreach (var c in parea.Customers)
+        //                {
+        //                    if (fullbus[arithmos].Customer == null)
+        //                    {
+        //                        fullbus[arithmos].Customer = c;
+        //                        arithmos++;
+        //                    }
+        //                }
+        //                parea.Done = true;
+        //                ypoloipo = arithmos % 2;
+        //            }
+        //            //if (!perase && parea.Customers.Count % 2 != ypoloipo)
+        //            //{
+        //            //    arithmos += 3;
+        //            //    ypoloipo += 1 % 2;
+        //            //    break;
+        //            //}
+        //        }
+        //    }
 
-            for (int i = 1; i < bus.Vehicle.SeatsPassengers; i++)
-            {
-                fullbus.Add(new Thesi());
-            }
+        //    int lineNum;
+        //    Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\RoomingLists");
+        //    string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + $"{bus.Vehicle.Name}.xlsx";
 
-            int arithmos = 1;
-            int ypoloipo = 0;
-            int aasd = 0;
-            while (parees.Any(t => !t.Done))
-            {
-                aasd++;
-                if (aasd > 100)
-                {
-                    break;
-                }
-                counter++;
-                arithmos = Getnextfree(fullbus, arithmos);
-                //if (first && parees[0].Customers.Count % 2 == 1)
-                //{
-                //    arithmos = 5;
-                //}
-                if (arithmos > 1)
-                    ypoloipo = arithmos % 2;
-                foreach (var parea in parees)
-                {
-                    if ((arithmos % 2 == 1 || parea.Customers.Count % 2 == ((arithmos + 1) % 2)) && !parea.Done && Fits(parea.Customers.Count, fullbus, arithmos))
-                    {
-                        foreach (var c in parea.Customers)
-                        {
-                            if (fullbus[arithmos].Customer == null)
-                            {
-                                fullbus[arithmos].Customer = c;
-                                arithmos++;
-                            }
-                        }
-                        parea.Done = true;
-                        ypoloipo = arithmos % 2;
-                    }
-                    //if (!perase && parea.Customers.Count % 2 != ypoloipo)
-                    //{
-                    //    arithmos += 3;
-                    //    ypoloipo += 1 % 2;
-                    //    break;
-                    //}
-                }
-            }
+        //    FileInfo fileInfo = new FileInfo(path);
+        //    ExcelPackage p = new ExcelPackage();
+        //    p.Workbook.Worksheets.Add($"1");
+        //    ExcelWorksheet myWorksheet = p.Workbook.Worksheets[1];
+        //    //  myWorksheet.Cells["A1"].Value = roomingList.Hotel.Name;
+        //    myWorksheet.Cells["A1:B1"].Merge = true;
+        //    lineNum = 2;
+        //    int thesi = 1;
+        //    foreach (var rt in fullbus)
+        //    {
+        //        if (rt.Customer != null)
+        //        {
+        //            myWorksheet.Cells["A" + lineNum].Value = rt.Customer.Name;
+        //            myWorksheet.Cells["B" + lineNum].Value = rt.Customer.Surename;
+        //            myWorksheet.Cells["D" + lineNum].Value = thesi;
+        //        }
+        //        lineNum++;
+        //        thesi += 1;
+        //    }
 
-            int lineNum;
-            Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\RoomingLists");
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + $"{bus.Vehicle.Name}.xlsx";
-
-            FileInfo fileInfo = new FileInfo(path);
-            ExcelPackage p = new ExcelPackage();
-            p.Workbook.Worksheets.Add($"1");
-            ExcelWorksheet myWorksheet = p.Workbook.Worksheets[1];
-            //  myWorksheet.Cells["A1"].Value = roomingList.Hotel.Name;
-            myWorksheet.Cells["A1:B1"].Merge = true;
-            lineNum = 2;
-            int thesi = 1;
-            foreach (var rt in fullbus)
-            {
-                if (rt.Customer != null)
-                {
-                    myWorksheet.Cells["A" + lineNum].Value = rt.Customer.Name;
-                    myWorksheet.Cells["B" + lineNum].Value = rt.Customer.Surename;
-                    myWorksheet.Cells["D" + lineNum].Value = thesi;
-                }
-                lineNum++;
-                thesi += 1;
-            }
-
-            //fileInfo = new FileInfo(wbPath ?? throw new InvalidOperationException());
-            p.SaveAs(fileInfo);
-            // Process.Start(path);
-        }
+        //    //fileInfo = new FileInfo(wbPath ?? throw new InvalidOperationException());
+        //    p.SaveAs(fileInfo);
+        //    // Process.Start(path);
+        //}
 
         private static int Getnextfree(List<Thesi> fullbus, int thesi)
         {
@@ -1075,6 +1070,10 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
                 using (DocumentsManagement vm = new DocumentsManagement(new GenericRepository()))
                 {
+                    if (bookings.Any(b => b.ReservationsInBooking.Any(r => r.CustomersList.Any(c => c.Bus == null))));
+                    {
+
+                    }
                     foreach (Booking b in bookings)
                     {
                         await vm.PrintSingleBookingVoucher(new BookingWrapper(b));
@@ -1115,7 +1114,8 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
                 using (DocumentsManagement vm = new DocumentsManagement(new GenericRepository()))
                 {
-                    await vm.PrintList(bookings, CheckIn, b);
+                    await vm.PrintList(bookings, CheckIn, b,true);
+                    await vm.PrintList(bookings, CheckIn, b,false);
                 }
             }
         }

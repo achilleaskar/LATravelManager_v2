@@ -23,7 +23,7 @@ namespace LATravelManager.Model.Hotels
             set;
         }
 
-        [StringLength(30, MinimumLength = 0)]
+        [StringLength(60, MinimumLength = 0)]
         [DataType(DataType.EmailAddress, ErrorMessage = "Το Email δεν έχει τη σωστή μορφή")]
         [EmailAddress(ErrorMessage = "Το Email δεν έχει τη σωστή μορφή")]
         public string Email { get; set; }

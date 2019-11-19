@@ -5,9 +5,12 @@ using LATravelManager.UI.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Windows;
 using System.Windows.Media;
 
 namespace LATravelManager.Model.Lists
@@ -24,6 +27,7 @@ namespace LATravelManager.Model.Lists
             Customers = new ObservableCollection<Customer>();
             ClearBusCommand = new RelayCommand(ClearBus, CanClearBus);
             RemoveCustomerCommand = new RelayCommand<int>(RemoveCustomer, SelectedCustomer != null);
+            SetSeatsCommand = new RelayCommand(() => { CreateBusView(false); });
             ColorsR = new List<SolidColorBrush>
                 {
                     new SolidColorBrush(Colors.Aquamarine),
@@ -246,6 +250,7 @@ namespace LATravelManager.Model.Lists
         public int RemainingSeats => Vehicle.SeatsPassengers - Customers.Where(y => y.LeaderDriver == 0).ToList().Count;
 
         public RelayCommand<int> RemoveCustomerCommand { get; }
+        public RelayCommand SetSeatsCommand { get; }
 
         [NotMapped]
         public bool Selected
@@ -511,66 +516,417 @@ namespace LATravelManager.Model.Lists
             }
         }
 
-        public void CreateBusView()
-        {
-            bool normalBackSeat = Vehicle.DoorSeat % 4 > 2;
-            bool doubleDoorPlace = (Vehicle.SeatsPassengers - 5) % 4 == 0;
-            int seires = (Vehicle.SeatsPassengers - 5) / 4 + 1 + (doubleDoorPlace ? 2 : 1);
-            BusView.Seires.AddRange(Enumerable.Repeat(new Seira(), seires));
-            int limit = Vehicle.DoorSeat - (doubleDoorPlace ? 4 : 2);
+        private BusView _BusViewReturn;
 
-            int currentseat = 0;
-            int seatInRow = 0;
-            while (currentseat < limit)
+        [NotMapped]
+        public BusView BusViewReturn
+        {
+            get
             {
-                currentseat++;
-                seatInRow = currentseat % 4 > 2 ? currentseat % 4 : currentseat % 4 + 1;
-                BusView.Seires[(currentseat - 1) / 4].Seats[seatInRow].Number = currentseat;
-                if ((currentseat + 2) % 4 == 0)
+                return _BusViewReturn;
+            }
+
+            set
+            {
+                if (_BusViewReturn == value)
                 {
-                    BusView.Seires[(currentseat - 1) / 4].Seats[seatInRow].Number = currentseat;
+                    return;
                 }
 
+                _BusViewReturn = value;
+                RaisePropertyChanged();
             }
+        }
+
+        public void CreateBusView(bool ret = false)
+        {
+            if (!ret)
+            {
+                CreateBusView(true);
+            }
+            if (ret)
+            {
+                BusViewReturn = new BusView();
+                bool normalBackSeat = Vehicle.DoorSeat % 4 > 2;
+                bool doubleDoorPlace = (Vehicle.SeatsPassengers - 5) % 4 == 0;
+                int seires = (Vehicle.SeatsPassengers - 5) / 4 + 1 + (doubleDoorPlace ? 1 : 0);
+                for (int i = 0; i < seires; i++)
+                {
+                    BusViewReturn.Seires.Add(new Seira());
+                }
+                int limit = Vehicle.DoorSeat - (doubleDoorPlace ? 4 : 2) - 1;
+
+                int currentseat = 0;
+                int row = 0;
+                int counter = 0;
+                while (currentseat < limit)
+                {
+                    if (counter == 5)
+                    {
+                        row++;
+                        counter = 0;
+                    }
+                    currentseat++;
+                    BusViewReturn.Seires[row].Seats[counter].Number = currentseat;
+                    BusViewReturn.Seires[row].Seats[counter].Thickness = new Thickness(0, 0, 1, 1);
+                    counter++;
+                    if ((currentseat + 2) % 4 == 0)
+                    {
+                        counter++;
+                        BusViewReturn.Seires[row].Seats[2].SeatType = SeatType.Road;
+                        BusViewReturn.Seires[row].Seats[2].Thickness = new Thickness(0, 0, 1, 0);
+                    }
+                }
+                if (doubleDoorPlace)
+                {
+                    row++;
+                    BusViewReturn.Seires[row].Seats[0].Number = ++currentseat;
+                    BusViewReturn.Seires[row].Seats[0].Thickness = new Thickness(0, 0, 1, 1);
+                    BusViewReturn.Seires[row].Seats[1].Number = ++currentseat;
+                    BusViewReturn.Seires[row].Seats[1].Thickness = new Thickness(0, 0, 1, 1);
+                    BusViewReturn.Seires[row].Seats[2].SeatType = SeatType.Road;
+                    BusViewReturn.Seires[row].Seats[2].Thickness = new Thickness(0, 0, 1, 0);
+                    BusViewReturn.Seires[row].Seats[3].SeatType = SeatType.Door;
+                    BusViewReturn.Seires[row].Seats[3].Thickness = new Thickness(0);
+                    BusViewReturn.Seires[row].Seats[4].SeatType = SeatType.Door;
+                    BusViewReturn.Seires[row].Seats[4].Thickness = new Thickness(0);
+                    row++;
+                    BusViewReturn.Seires[row].Seats[0].Number = ++currentseat;
+                    BusViewReturn.Seires[row].Seats[0].Thickness = new Thickness(0, 0, 1, 1);
+                    BusViewReturn.Seires[row].Seats[1].Number = ++currentseat;
+                    BusViewReturn.Seires[row].Seats[1].Thickness = new Thickness(0, 0, 1, 1);
+                    BusViewReturn.Seires[row].Seats[2].SeatType = SeatType.Road;
+                    BusViewReturn.Seires[row].Seats[2].Thickness = new Thickness(0, 0, 1, 0);
+                    BusViewReturn.Seires[row].Seats[3].SeatType = SeatType.Door;
+                    BusViewReturn.Seires[row].Seats[3].Thickness = new Thickness(0);
+                    BusViewReturn.Seires[row].Seats[4].SeatType = SeatType.Door;
+                    BusViewReturn.Seires[row].Seats[4].Thickness = new Thickness(0);
+                }
+                limit = Vehicle.SeatsPassengers - 5;
+                row++;
+                counter = 0;
+                while (currentseat < limit)
+                {
+                    if (counter == 5)
+                    {
+                        row++;
+                        counter = 0;
+                    }
+                    currentseat++;
+                    BusViewReturn.Seires[row].Seats[counter].Number = currentseat;
+                    BusViewReturn.Seires[row].Seats[counter].Thickness = new Thickness(0, 0, 1, 1);
+                    counter++;
+                    if ((currentseat + 2) % 4 == 0)
+                    {
+                        counter++;
+
+                        BusViewReturn.Seires[row].Seats[2].SeatType = SeatType.Road;
+                        BusViewReturn.Seires[row].Seats[2].Thickness = new Thickness(0, 0, 1, 0);
+                    }
+                }
+                BusViewReturn.Seires[row].Seats[2].Thickness = new Thickness(0, 0, 1, 1);
+                row++;
+                counter = 0;
+                while (currentseat < Vehicle.SeatsPassengers)
+                {
+                    currentseat++;
+                    BusViewReturn.Seires[row].Seats[counter].Number = currentseat;
+                    BusViewReturn.Seires[row].Seats[counter].Thickness = new Thickness(0, 0, 1, 1);
+                    counter++;
+                }
+                RaisePropertyChanged(nameof(BusViewReturn));
+            }
+            else
+            {
+                BusView = new BusView();
+                bool normalBackSeat = Vehicle.DoorSeat % 4 > 2;
+                bool doubleDoorPlace = (Vehicle.SeatsPassengers - 5) % 4 == 0;
+                int seires = (Vehicle.SeatsPassengers - 5) / 4 + 1 + (doubleDoorPlace ? 1 : 0);
+                for (int i = 0; i < seires; i++)
+                {
+                    BusView.Seires.Add(new Seira());
+                }
+                int limit = Vehicle.DoorSeat - (doubleDoorPlace ? 4 : 2) - 1;
+
+                int currentseat = 0;
+                int row = 0;
+                int counter = 0;
+                while (currentseat < limit)
+                {
+                    if (counter == 5)
+                    {
+                        row++;
+                        counter = 0;
+                    }
+                    currentseat++;
+                    BusView.Seires[row].Seats[counter].Number = currentseat;
+                    BusView.Seires[row].Seats[counter].Thickness = new Thickness(0, 0, 1, 1);
+                    counter++;
+                    if ((currentseat + 2) % 4 == 0)
+                    {
+                        counter++;
+                        BusView.Seires[row].Seats[2].SeatType = SeatType.Road;
+                        BusView.Seires[row].Seats[2].Thickness = new Thickness(0, 0, 1, 0);
+                    }
+                }
+                if (doubleDoorPlace)
+                {
+                    row++;
+                    BusView.Seires[row].Seats[0].Number = ++currentseat;
+                    BusView.Seires[row].Seats[0].Thickness = new Thickness(0, 0, 1, 1);
+                    BusView.Seires[row].Seats[1].Number = ++currentseat;
+                    BusView.Seires[row].Seats[1].Thickness = new Thickness(0, 0, 1, 1);
+                    BusView.Seires[row].Seats[2].SeatType = SeatType.Road;
+                    BusView.Seires[row].Seats[2].Thickness = new Thickness(0, 0, 1, 0);
+                    BusView.Seires[row].Seats[3].SeatType = SeatType.Door;
+                    BusView.Seires[row].Seats[3].Thickness = new Thickness(0);
+                    BusView.Seires[row].Seats[4].SeatType = SeatType.Door;
+                    BusView.Seires[row].Seats[4].Thickness = new Thickness(0);
+                    row++;
+                    BusView.Seires[row].Seats[0].Number = ++currentseat;
+                    BusView.Seires[row].Seats[0].Thickness = new Thickness(0, 0, 1, 1);
+                    BusView.Seires[row].Seats[1].Number = ++currentseat;
+                    BusView.Seires[row].Seats[1].Thickness = new Thickness(0, 0, 1, 1);
+                    BusView.Seires[row].Seats[2].SeatType = SeatType.Road;
+                    BusView.Seires[row].Seats[2].Thickness = new Thickness(0, 0, 1, 0);
+                    BusView.Seires[row].Seats[3].SeatType = SeatType.Door;
+                    BusView.Seires[row].Seats[3].Thickness = new Thickness(0);
+                    BusView.Seires[row].Seats[4].SeatType = SeatType.Door;
+                    BusView.Seires[row].Seats[4].Thickness = new Thickness(0);
+                }
+                limit = Vehicle.SeatsPassengers - 5;
+                row++;
+                counter = 0;
+                while (currentseat < limit)
+                {
+                    if (counter == 5)
+                    {
+                        row++;
+                        counter = 0;
+                    }
+                    currentseat++;
+                    BusView.Seires[row].Seats[counter].Number = currentseat;
+                    BusView.Seires[row].Seats[counter].Thickness = new Thickness(0, 0, 1, 1);
+                    counter++;
+                    if ((currentseat + 2) % 4 == 0)
+                    {
+                        counter++;
+
+                        BusView.Seires[row].Seats[2].SeatType = SeatType.Road;
+                        BusView.Seires[row].Seats[2].Thickness = new Thickness(0, 0, 1, 0);
+                    }
+                }
+                BusView.Seires[row].Seats[2].Thickness = new Thickness(0, 0, 1, 1);
+                row++;
+                counter = 0;
+                while (currentseat < Vehicle.SeatsPassengers)
+                {
+                    currentseat++;
+                    BusView.Seires[row].Seats[counter].Number = currentseat;
+                    BusView.Seires[row].Seats[counter].Thickness = new Thickness(0, 0, 1, 1);
+                    counter++;
+                }
+                RaisePropertyChanged(nameof(BusView));
+            }
+        }
+
+        public void update()
+        {
+            RaisePropertyChanged(nameof(BusView));
         }
 
         #endregion Methods
     }
 
-    public class BusView
+    public class BusView : BaseModel
     {
         public BusView()
         {
-            Seires = new List<Seira>();
+            Seires = new ObservableCollection<Seira>();
         }
 
         public Bus Bus { get; set; }
 
-        public List<Seira> Seires { get; set; }
+        private ObservableCollection<Seira> _Seires;
+
+        public ObservableCollection<Seira> Seires
+        {
+            get
+            {
+                return _Seires;
+            }
+
+            set
+            {
+                if (_Seires == value)
+                {
+                    return;
+                }
+
+                _Seires = value;
+                RaisePropertyChanged();
+            }
+        }
     }
 
-    public class Seira
+    public class Seira : BaseModel
     {
         public Seira()
         {
-            Seats = new List<Seat>();
+            Seats = new ObservableCollection<Seat>();
             for (int i = 0; i < 5; i++)
             {
                 Seats.Add(new Seat());
             }
         }
 
-        public List<Seat> Seats { get; set; }
+        private ObservableCollection<Seat> _Seats;
+
+        public ObservableCollection<Seat> Seats
+        {
+            get
+            {
+                return _Seats;
+            }
+
+            set
+            {
+                if (_Seats == value)
+                {
+                    return;
+                }
+
+                _Seats = value;
+                Seats.CollectionChanged += Seats_CollectionChanged;
+                RaisePropertyChanged();
+            }
+        }
+
+        private void Seats_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                foreach (Seat c in e.OldItems)
+                {
+                    //Removed items
+                    c.PropertyChanged -= SeatChanged;
+                }
+            }
+            else if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (Seat c in e.NewItems)
+                {
+                    c.PropertyChanged += SeatChanged;
+                }
+            }
+        }
+
+        private void SeatChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Customer")
+            {
+                if (sender is Seat s)
+                {
+                    s.RaisePropertyChanged();
+                    RaisePropertyChanged("Seats");
+                }
+            }
+        }
+
+        public override string ToString()
+        {
+            string reply = string.Empty;
+
+            foreach (var seat in Seats)
+            {
+                reply += seat.Number + " ";
+            }
+
+            return reply.Trim();
+        }
     }
 
-    public class Seat
+    public class Seat : BaseModel
     {
+        public Thickness Thickness { get; set; }
+
+        public Seat()
+        {
+            SeatType = SeatType.Normal;
+        }
+
         public int Number { get; set; }
 
         public SeatType SeatType { get; set; }
 
-        public Customer Customer { get; set; }
+        public Brush Color => GetColor();
 
-        public bool Selected { get; set; }
+        private Brush GetColor()
+        {
+            if (SeatType == SeatType.Normal)
+            {
+                if (Customer != null)
+                {
+                    return Customer.RoomColor;
+                }
+                return new SolidColorBrush(Colors.White);
+            }
+            if (SeatType == SeatType.Leader || SeatType == SeatType.Driver)
+            {
+                return new SolidColorBrush(Colors.LightYellow);
+            }
+            if (SeatType == SeatType.Road)
+            {
+                return new SolidColorBrush(Colors.LightGray);
+            }
+            if (SeatType == SeatType.Door)
+            {
+                return new SolidColorBrush(Colors.DarkGray);
+            }
+            return new SolidColorBrush(Colors.Red);
+        }
+
+        private CustomerWrapper _Customer;
+
+        public CustomerWrapper Customer
+        {
+            get
+            {
+                return _Customer;
+            }
+
+            set
+            {
+                if (_Customer == value)
+                {
+                    return;
+                }
+
+                _Customer = value;
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(Color));
+            }
+        }
+
+        private bool _Selected;
+
+        public bool Selected
+        {
+            get
+            {
+                return _Selected;
+            }
+
+            set
+            {
+                if (_Selected == value)
+                {
+                    return;
+                }
+
+                _Selected = value;
+                RaisePropertyChanged();
+            }
+        }
     }
 }

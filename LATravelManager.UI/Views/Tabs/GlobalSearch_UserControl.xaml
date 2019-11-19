@@ -250,7 +250,7 @@
                         VerticalAlignment="Bottom"
                         Margin="5,0"
                         Command="{Binding PrintListCommand}" />
-                <Button Content="PrintListB"
+                <Button Content="Bus Lists"
                         VerticalAlignment="Bottom"
                         Margin="5,0"
                         Command="{Binding PrintBusListsCommand}" />

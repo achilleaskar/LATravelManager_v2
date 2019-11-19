@@ -239,6 +239,8 @@
     <Compile Include="Converters\RoomsLeftToVisibiliyConverter.cs" />
     <Compile Include="Converters\RoomToColorConverter.cs" />
     <Compile Include="Converters\RoomTypeToRoomsLeftConverter.cs" />
+    <Compile Include="Converters\SeatAvailableConverter.cs" />
+    <Compile Include="Converters\SeatToColorConverter.cs" />
     <Compile Include="Converters\TimeSpanTODateTimeConverter.cs" />
     <Compile Include="Converters\ToolTipVisibilityConverter.cs" />
     <Compile Include="Data\Workers\Lists.cs" />
@@ -790,6 +792,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Sources\protypo kratiseon.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\protypo_theseis.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Sources\protypo_leoforeia.xlsx">

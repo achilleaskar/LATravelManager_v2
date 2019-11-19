@@ -943,6 +943,16 @@ namespace LATravelManager.Model.Wrapper
             return sb.ToString().TrimEnd(',', ' ');
         }
 
+        public string GetSurnames()
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var c in CustomersList)
+            {
+                sb.Append(c.Surename + " - ");
+            }
+            return sb.ToString().TrimEnd(new[] { ' ', '-' }).TrimEnd();
+        }
+
         #endregion Methods
     }
 }

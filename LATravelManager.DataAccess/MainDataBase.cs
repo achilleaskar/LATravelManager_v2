@@ -7,6 +7,7 @@ using LATravelManager.Model.Lists;
 using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Plan;
+using LATravelManager.Model.Services;
 using System;
 using System.Data.Entity;
 
@@ -43,6 +44,8 @@ namespace LATravelManager.DataAccess
         public DbSet<Bus> Buses { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<Country> Countries { get; set; }
+        public DbSet<HotelService> HotelServices { get; set; }
+        public DbSet<PlaneService> PlaneServices { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<ExcursionCategory> ExcursionCategories { get; set; }
         public DbSet<Excursion> Excursions { get; set; }

@@ -13,6 +13,32 @@
              d:DesignWidth="800">
     <UserControl.Resources>
         <converters:RemainingToColorConverter x:Key="RemainingToColorConverter" />
+        <converters:SeatToColorConverter x:Key="SeatToColorConverter" />
+        <converters:SeatAvailableConverter x:Key="SeatAvailableConverter" />
+        <Style x:Key="DropDownStyle"
+               TargetType="TextBlock">
+            <Setter Property="Visibility"
+                    Value="Visible" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Number}"
+                             Value="0">
+                    <Setter Property="Visibility"
+                            Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="RadioButtonStyle"
+               TargetType="RadioButton">
+            <Setter Property="Visibility"
+                    Value="Visible" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Number}"
+                             Value="0">
+                    <Setter Property="Visibility"
+                            Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
         <Style x:Key="ForegroundStyle"
                TargetType="TextBlock">
             <Setter Property="Foreground"
@@ -71,7 +97,6 @@
                     Command="{Binding UpdateVehiclesCommand}">
                 <iconPacks:PackIconFontAwesome Kind="SyncSolid"
                                                VerticalAlignment="Center"
-                                               
                                                Margin="5" />
             </Button>
             <Button Content="ClearSelected"
@@ -303,6 +328,20 @@
                                         <iconPacks:PackIconMaterial Kind="CheckboxMultipleBlankOutline" />
                                     </MenuItem.Icon>
                                 </MenuItem>
+                                <MenuItem Command="{Binding DataContext.PutAtSeatsCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}"
+                                          CommandParameter="{Binding}"
+                                          Header="Στην θέση">
+                                    <MenuItem.Icon>
+                                        <iconPacks:PackIconMaterial Kind="CheckboxMultipleBlankOutline" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Command="{Binding DataContext.PutAtSeatsReturnCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}"
+                                          CommandParameter="{Binding}"
+                                          Header="Στην θέση επισ.">
+                                    <MenuItem.Icon>
+                                        <iconPacks:PackIconMaterial Kind="CheckboxMultipleBlankOutline" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
                                 <MenuItem Header="Πελάτης"
                                           Command="{Binding DataContext.LeaderDriverCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}"
                                           CommandParameter="0" />
@@ -319,8 +358,8 @@
                         </DataGrid.Resources>
                         <DataGrid.RowStyle>
                             <Style TargetType="DataGridRow">
-                                <Setter Property="IsEnabled"
-                                        Value="{Binding NoBus}" />
+                                <!--<Setter Property="IsEnabled"
+                                        Value="{Binding NoBus}" />-->
                                 <Setter Property="Background"
                                         Value="{Binding RoomColor}" />
                                 <Setter Property="ContextMenu"
@@ -336,6 +375,15 @@
                                     <Style TargetType="DataGridCell">
                                         <EventSetter Event="PreviewMouseDown"
                                                      Handler="b1SetColor" />
+                                        <Setter Property="IsEnabled"
+                                                Value="False" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding NoBus}"
+                                                         Value="true">
+                                                <Setter Property="IsEnabled"
+                                                        Value="True" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
                                     </Style>
                                 </DataGridCheckBoxColumn.CellStyle>
                             </DataGridCheckBoxColumn>
@@ -367,6 +415,14 @@
                                                 IsReadOnly="True"
                                                 MaxWidth="140"
                                                 Binding="{Binding Reservation.Booking.Comment}" />
+                            <DataGridTextColumn Header="Θέση"
+                                                IsReadOnly="True"
+                                                MaxWidth="30"
+                                                Binding="{Binding SeatNum}" />
+                            <DataGridTextColumn Header="Θέση"
+                                                IsReadOnly="True"
+                                                MaxWidth="30"
+                                                Binding="{Binding SeatNumRet}" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>
@@ -404,17 +460,28 @@
                                                       HorizontalAlignment="Center"
                                                       GroupName="Buses"
                                                       IsChecked="{Binding Selected}" />
-                                        <Button Content="Empty"
-                                                VerticalAlignment="Center"
+                                        <Button VerticalAlignment="Center"
                                                 Margin="10 0 0 0"
-                                                Padding="5 0"
-                                                Command="{Binding ClearBusCommand}" />
-                                        <Button Content="Remove"
-                                                VerticalAlignment="Center"
+                                                Padding="1 0 2 0"
+                                                Height="22"
+                                                Command="{Binding ClearBusCommand}">
+                                            <iconPacks:PackIconModern Kind="ClearReflectHorizontal" />
+                                        </Button>
+                                        <Button VerticalAlignment="Center"
                                                 Margin="10 0 0 0"
-                                                Padding="5 0"
+                                                Padding="1 2 2 2"
+                                                Height="22"
                                                 CommandParameter="{Binding}"
-                                                Command="{Binding DataContext.RemoveBusCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" />
+                                                Command="{Binding DataContext.RemoveBusCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}">
+                                            <iconPacks:PackIconModern Kind="Delete" />
+                                        </Button>
+                                        <Button VerticalAlignment="Center"
+                                                Margin="10 0 0 0"
+                                                Padding="1 2 2 2"
+                                                Height="22"
+                                                Command="{Binding SetSeatsCommand}">
+                                            <iconPacks:PackIconMaterial Kind="SeatLegroomNormal" />
+                                        </Button>
                                     </StackPanel>
                                     <TabControl Width="250"
                                                 Grid.Row="1">
@@ -541,6 +608,140 @@
                                                        Grid.Row="1"
                                                        Content="{Binding Leader,UpdateSourceTrigger=PropertyChanged}" />
                                             </Grid>
+                                        </TabItem>
+                                        <TabItem Header="Θέσεις">
+                                            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                                          HorizontalScrollBarVisibility="Disabled">
+                                                <Border BorderBrush="Gray"
+                                                        BorderThickness="1 1 0 0">
+                                                    <ItemsControl ItemsSource="{Binding BusView.Seires}"
+                                                                  Margin="-1,0,0,0">
+                                                        <ItemsControl.ItemsPanel>
+                                                            <ItemsPanelTemplate>
+                                                                <StackPanel Orientation="Vertical"
+                                                                            VerticalAlignment="Stretch" />
+                                                            </ItemsPanelTemplate>
+                                                        </ItemsControl.ItemsPanel>
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <ItemsControl ItemsSource="{Binding Seats}"
+                                                                              Margin="-1,0,0,0">
+                                                                    <ItemsControl.ItemsPanel>
+                                                                        <ItemsPanelTemplate>
+                                                                            <StackPanel Orientation="Horizontal"
+                                                                                        VerticalAlignment="Stretch" />
+                                                                        </ItemsPanelTemplate>
+                                                                    </ItemsControl.ItemsPanel>
+                                                                    <ItemsControl.ItemTemplate>
+                                                                        <DataTemplate>
+                                                                            <Border HorizontalAlignment="Stretch"
+                                                                                    Width="46"
+                                                                                    BorderBrush="Gray"
+                                                                                    Height="46"
+                                                                                    BorderThickness="{Binding Thickness}"
+                                                                                    Background="{Binding Color}">
+                                                                                <Border.ToolTip>
+                                                                                    <Label Content="{Binding Customer}" />
+                                                                                </Border.ToolTip>
+                                                                                <Grid>
+                                                                                    <Grid.RowDefinitions>
+                                                                                        <RowDefinition />
+                                                                                        <RowDefinition Height="Auto" />
+                                                                                        <RowDefinition />
+                                                                                    </Grid.RowDefinitions>
+                                                                                    <Grid.ColumnDefinitions>
+                                                                                        <ColumnDefinition />
+                                                                                        <ColumnDefinition Width="Auto" />
+                                                                                        <ColumnDefinition />
+                                                                                    </Grid.ColumnDefinitions>
+                                                                                    <RadioButton IsChecked="{Binding Selected}"
+                                                                                                 Checked="RadioButton_Checked"
+                                                                                                 IsEnabled="{Binding Converter={StaticResource SeatAvailableConverter}}"
+                                                                                                 Style="{StaticResource RadioButtonStyle}"
+                                                                                                 GroupName="{Binding DataContext.Vehicle.Name,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TabControl}}" />
+                                                                                    <TextBlock Text="{Binding Number}"
+                                                                                               Grid.Row="1"
+                                                                                               Grid.Column="1"
+                                                                                               VerticalAlignment="Center"
+                                                                                               Style="{StaticResource DropDownStyle}"
+                                                                                               HorizontalAlignment="Center" />
+                                                                                </Grid>
+                                                                            </Border>
+                                                                        </DataTemplate>
+                                                                    </ItemsControl.ItemTemplate>
+                                                                </ItemsControl>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </Border>
+                                            </ScrollViewer>
+                                        </TabItem>
+                                        <TabItem Header="Επιστροφή">
+                                            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                                          HorizontalScrollBarVisibility="Disabled">
+                                                <Border BorderBrush="Gray"
+                                                        BorderThickness="1 1 0 0">
+                                                    <ItemsControl ItemsSource="{Binding BusViewReturn.Seires}"
+                                                                  Margin="-1,0,0,0">
+                                                        <ItemsControl.ItemsPanel>
+                                                            <ItemsPanelTemplate>
+                                                                <StackPanel Orientation="Vertical"
+                                                                            VerticalAlignment="Stretch" />
+                                                            </ItemsPanelTemplate>
+                                                        </ItemsControl.ItemsPanel>
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <ItemsControl ItemsSource="{Binding Seats}"
+                                                                              Margin="-1,0,0,0">
+                                                                    <ItemsControl.ItemsPanel>
+                                                                        <ItemsPanelTemplate>
+                                                                            <StackPanel Orientation="Horizontal"
+                                                                                        VerticalAlignment="Stretch" />
+                                                                        </ItemsPanelTemplate>
+                                                                    </ItemsControl.ItemsPanel>
+                                                                    <ItemsControl.ItemTemplate>
+                                                                        <DataTemplate>
+                                                                            <Border HorizontalAlignment="Stretch"
+                                                                                    Width="46"
+                                                                                    BorderBrush="Gray"
+                                                                                    Height="46"
+                                                                                    BorderThickness="{Binding Thickness}"
+                                                                                    Background="{Binding Color}">
+                                                                                <Border.ToolTip>
+                                                                                    <Label Content="{Binding Customer}" />
+                                                                                </Border.ToolTip>
+                                                                                <Grid>
+                                                                                    <Grid.RowDefinitions>
+                                                                                        <RowDefinition />
+                                                                                        <RowDefinition Height="Auto" />
+                                                                                        <RowDefinition />
+                                                                                    </Grid.RowDefinitions>
+                                                                                    <Grid.ColumnDefinitions>
+                                                                                        <ColumnDefinition />
+                                                                                        <ColumnDefinition Width="Auto" />
+                                                                                        <ColumnDefinition />
+                                                                                    </Grid.ColumnDefinitions>
+                                                                                    <RadioButton IsChecked="{Binding Selected}"
+                                                                                                 Checked="RadioButtonRet_Checked"
+                                                                                                 IsEnabled="{Binding Converter={StaticResource SeatAvailableConverter}}"
+                                                                                                 Style="{StaticResource RadioButtonStyle}"
+                                                                                                 GroupName="{Binding DataContext.Vehicle.Name,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TabControl}}" />
+                                                                                    <TextBlock Text="{Binding Number}"
+                                                                                               Grid.Row="1"
+                                                                                               Grid.Column="1"
+                                                                                               VerticalAlignment="Center"
+                                                                                               Style="{StaticResource DropDownStyle}"
+                                                                                               HorizontalAlignment="Center" />
+                                                                                </Grid>
+                                                                            </Border>
+                                                                        </DataTemplate>
+                                                                    </ItemsControl.ItemTemplate>
+                                                                </ItemsControl>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </Border>
+                                            </ScrollViewer>
                                         </TabItem>
                                     </TabControl>
                                 </Grid>

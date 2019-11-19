@@ -29,6 +29,54 @@ namespace LATravelManager.Model.People
 
         private int _Board;
 
+
+
+
+        private int _SeatNumRet;
+
+
+        public int SeatNumRet
+        {
+            get
+            {
+                return _SeatNumRet;
+            }
+
+            set
+            {
+                if (_SeatNumRet == value)
+                {
+                    return;
+                }
+
+                _SeatNumRet = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
+        private int _SeatNum;
+
+
+        public int SeatNum
+        {
+            get
+            {
+                return _SeatNum;
+            }
+
+            set
+            {
+                if (_SeatNum == value)
+                {
+                    return;
+                }
+
+                _SeatNum = value;
+                RaisePropertyChanged();
+            }
+        }
+
         private string _HotelName;
 
         private DateTime _PassportExpiration;
