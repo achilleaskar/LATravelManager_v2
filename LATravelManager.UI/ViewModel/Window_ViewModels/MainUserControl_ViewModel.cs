@@ -1,16 +1,22 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
 using LaTravelManager.ViewModel.Management;
 using LATravelManager.Model.Excursions;
+using LATravelManager.Model.Hotels;
+using LATravelManager.Model.Services;
+using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
+using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.Management;
 using LATravelManager.UI.ViewModel.Parents;
 using LATravelManager.UI.Views;
 using LATravelManager.UI.Views.Management;
+using Notifications.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -41,13 +47,204 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             SelectedTemplateChangedCommand = new RelayCommand(SetProperViewModel);
 
             MainViewModel = mainViewModel;
+            var x = GetaAllNotifications().ConfigureAwait(false);
+
 
             // MessengerInstance.Register<ChangeChildViewModelMessage>(this, async vm => { await SelectedExcursionType.SetProperChildViewModel(vm.ViewModelindex); });
 
             //  MessengerInstance.Register<ExcursionCategoryChangedMessage>(this, async index => { await SetProperViewModel(); });
         }
+        private async Task<IEnumerable<string>> GetNonPayersPersonal(GenericRepository repository)
+        {
+            List<Personal_BookingWrapper> options = (await repository.GetAllNonPayersPersonal()).Select(b => new Personal_BookingWrapper(b)).ToList();
+            List<string> reply = new List<string>();
 
-        #endregion Constructors
+            if (options.Count > 0)
+            {
+                Parallel.ForEach(options, o => o.CalculateRemainingAmount());
+                foreach (var booking in options)
+                {
+                    if ((DateTime.Today - booking.CreatedDate).TotalDays <= 5 || booking.Services.Any(a => (a.TimeGo - DateTime.Today).TotalDays <= 5) && booking.Recieved < 1)
+                    {
+                        reply.Add($"Το ατομικό πακέτο στο όνομα { booking.Customers[0] } δέν έχει δώσει προκαταβολή");
+
+                    }
+                    else if (booking.Services.Any(a => (a.TimeGo - DateTime.Today).TotalDays <= 5) && booking.Remaining > 1)
+                    {
+                        reply.Add($"Το ατομικό πακέτο στο όνομα { booking.Customers[0] } δέν έχει δώσει προκαταβολή");
+                    }
+                }
+            }
+            return reply;
+        }
+        private async Task<IEnumerable<string>> GetNonPayersThirdParty(GenericRepository repository)
+        {
+            List<ThirdParty_Booking_Wrapper> options = (await repository.GetAllNonPayersThirdparty()).Select(b => new ThirdParty_Booking_Wrapper(b)).ToList();
+            List<string> reply = new List<string>();
+
+            if (options.Count > 0)
+            {
+                Parallel.ForEach(options, o => o.CalculateRemainingAmount());
+                foreach (var booking in options)
+                {
+                    if (((DateTime.Today - booking.CreatedDate).TotalDays <= 5 || (booking.CheckIn - DateTime.Today).TotalDays <= 5) && booking.Recieved < 1)
+                    {
+                        reply.Add($"Το πακέτο συνεργάτη για { booking.City} " +
+                            $"στο όνομα { booking.Customers[0]} δέν έχει δώσει προκαταβολή");
+
+                    }
+                    else if ((booking.CheckIn - DateTime.Today).TotalDays <= 5 && booking.Remaining > 1)
+                    {
+                        reply.Add($"Το πακέτο συνεργάτη για { booking.City} " +
+                            $"στο όνομα { booking.Customers[0]} δέν έχει κάνει εξόφληση");
+                    }
+                }
+            }
+            return reply;
+        }
+        private async Task<IEnumerable<string>> GetNonPayersGroup(GenericRepository repository)
+        {
+            List<BookingWrapper> options = (await repository.GetAllNonPayersGroup()).Select(b => new BookingWrapper(b)).ToList();
+            List<string> reply = new List<string>();
+
+            if (options.Count > 0)
+            {
+                Parallel.ForEach(options, o => o.CalculateRemainingAmount());
+                foreach (var booking in options)
+                {
+                    if (((DateTime.Today - booking.CreatedDate).TotalDays <= 5 || (booking.CheckIn - DateTime.Today).TotalDays <= 5) && booking.Recieved < 1)
+                    {
+                        reply.Add($"Η κράτηση για { booking.Excursion.Destinations[0]}  " +
+                            $"στο όνομα { booking.ReservationsInBooking[0].CustomersList[0] } δέν έχει δώσει προκαταβολή");
+
+                    }
+                    else if ((booking.CheckIn - DateTime.Today).TotalDays <= 5 && booking.Remaining > 1)
+                    {
+                        reply.Add($"Η κράτηση για { booking.Excursion.Destinations[0]}  " +
+                            $"στο όνομα { booking.ReservationsInBooking[0].CustomersList[0] } δέν έχει κάνει εξόφληση");
+                    }
+                }
+            }
+            return reply;
+        }
+
+        private async Task<IEnumerable<string>> GetPersonalCheckIns(GenericRepository repository)
+        {
+            List<PlaneService> options = await repository.GetAllPlaneOptions();
+            List<string> reply = new List<string>();
+
+            if (options.Count > 0)
+            {
+                foreach (var option in options)
+                {
+                    if (option.Personal_Booking == null)
+                    {
+                        continue;
+                    }
+                    if (option.Airline != null)
+                    {
+                        if (option.Airline.Checkin != 0 && option.TimeGo > DateTime.Now &&
+                            (option.TimeGo - DateTime.Now).TotalHours <= option.Airline.Checkin)
+                        {
+
+                            reply.Add($"Ανοιξε το CheckIn {option.From}-{option.To} του {(option.Personal_Booking.Customers.Count > 0 ? option.Personal_Booking.Customers.ToList()[0].ToString() : option.Id.ToString())}");
+                        }
+                        if (option.Airline.Checkin != 0 && option.TimeReturn > DateTime.Now && option.Allerretour &&
+                            (option.TimeReturn - DateTime.Now).TotalHours <= option.Airline.Checkin)
+                        {
+
+                            reply.Add($"Ανοιξε το το CheckIn {option.To}-{option.From} του {(option.Personal_Booking.Customers.Count > 0 ? option.Personal_Booking.Customers.ToList()[0].ToString() : option.Id.ToString())}");
+                        }
+                    }
+                }
+            }
+            return reply;
+        }
+        private async Task<IEnumerable<string>> GetPersonalOptions(GenericRepository repository)
+        {
+            List<HotelService> options = await repository.GetAllPersonalOptions();
+            List<string> reply = new List<string>();
+
+            if (options.Count > 0)
+            {
+                foreach (var option in options)
+                {
+                    if (option.Personal_Booking == null)
+                    {
+                        continue;
+                    }
+                    reply.Add($"Η Option για το ατομικό {(option.Personal_Booking.Customers.Count > 0 ? option.Personal_Booking.Customers.ToList()[0].ToString() : option.Id.ToString())} στο {(option.Hotel != null ? option.Hotel.Name : "Αγνωστο Ξενοδοχείο")} λήγει στις {option.Option.ToShortDateString()}");
+                }
+            }
+            return reply;
+        }
+        #endregion Methods
+
+        private async Task GetaAllNotifications()
+        {
+            var notificationManager = new NotificationManager();
+
+
+            var Repository = new GenericRepository();
+            List<string> nots = new List<string>();
+
+            nots.AddRange(await LoadOptions(Repository));
+            //nots.AddRange(await Repository.GetNotifications());
+            nots.AddRange(await GetPersonalOptions(Repository));
+            nots.AddRange(await GetPersonalCheckIns(Repository));
+            nots.AddRange(await GetNonPayersGroup(Repository));
+            nots.AddRange(await GetNonPayersPersonal(Repository));
+            nots.AddRange(await GetNonPayersThirdParty(Repository));
+            Repository.Dispose();
+
+            foreach (var not in nots)
+            {
+                notificationManager.Show(new NotificationContent
+                {
+                    Message = not,
+                    Type = NotificationType.Warning
+                });
+            }
+            Nots = nots;
+        }
+
+
+        public async Task<List<string>> LoadOptions(GenericRepository repository)
+        {
+            List<Option> options = await repository.GetAllPendingOptions();
+            List<string> reply = new List<string>();
+
+            if (options.Count > 0)
+            {
+                HotelOptions HotelOptions;
+                List<HotelOptions> hotelOptionsLis = new List<HotelOptions>();
+                foreach (Option option in options)
+                {
+                    if (option.Room?.Hotel != null)
+                    {
+                        HotelOptions = hotelOptionsLis.Where(ho => ho.Hotel == option.Room.Hotel && ho.Date == option.Date).FirstOrDefault();
+                        if (HotelOptions != null)
+                        {
+                            HotelOptions.Counter++;
+                        }
+                        else
+                        {
+                            hotelOptionsLis.Add(new HotelOptions { Counter = 1, Date = option.Date, Hotel = option.Room.Hotel });
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Option Hotel is null error. Inform the Admin");
+                    }
+                }
+                foreach (var hotel in hotelOptionsLis)
+                {
+                    reply.Add($"Οι Option για { hotel.Counter} δωμάτια στο { hotel.Hotel.Name} λήγουν στις {hotel.Date.ToShortDateString()}");
+                }
+            }
+            return reply;
+        }
+
 
         #region Fields
 
@@ -60,6 +257,8 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
         private int _SelectedTemplateIndex;
 
         private ObservableCollection<ExcursionCategory> _Templates;
+        private bool _HasNots;
+        private List<string> _Nots;
 
         #endregion Fields
 
@@ -112,6 +311,47 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                 }
 
                 _NavigationViewModel = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public List<string> Nots
+        {
+            get
+            {
+                return _Nots;
+            }
+
+            set
+            {
+                if (_Nots == value)
+                {
+                    return;
+                }
+
+                _Nots = value;
+                HasNots = Nots.Count > 0;
+                RaisePropertyChanged();
+            }
+        }
+
+
+
+        public bool HasNots
+        {
+            get
+            {
+                return _HasNots;
+            }
+
+            set
+            {
+                if (_HasNots == value)
+                {
+                    return;
+                }
+
+                _HasNots = value;
                 RaisePropertyChanged();
             }
         }

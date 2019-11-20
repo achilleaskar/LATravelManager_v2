@@ -292,16 +292,66 @@ namespace LATravelManager.UI.Repositories
 
         public async Task<List<Option>> GetAllPendingOptions()
         {
-            return await RunTask(Context.Options.Where(o => o.Date >= DateTime.Today && o.Date <= limit && (o.Room.User.Level < 3 || o.Room.User.Id == StaticResources.User.Id) && o.Room.User.BaseLocation == StaticResources.User.BaseLocation)
+            return await RunTask(Context.Options.Where(o => o.Room.User.BaseLocation == StaticResources.User.BaseLocation && (o.Room.User.Level < 3 || o.Room.User.Id == StaticResources.User.Id) && o.Date >= DateTime.Today && o.Date <= limit)
                 .Include(x => x.Room.Hotel)
                 .ToListAsync);
         }
 
-        readonly DateTime limit = DateTime.Today.AddDays(2000);
+        public async Task<List<Booking>> GetAllNonPayersGroup()
+        {
+            try
+            {
+                return await RunTask(Context.Bookings
+                    .Where(o => (o.CheckIn > DateTime.Today && (o.User.Level < 3 || o.User.Id == StaticResources.User.Id) &&
+                    o.User.BaseLocation == StaticResources.User.BaseLocation &&
+                    ((DbFunctions.DiffDays(DateTime.Today, o.CreatedDate) >= 5 && !o.Payments.Any(p => p.Amount > 0)) ||
+                       DbFunctions.DiffDays(o.CheckIn, o.CreatedDate) <= 5)))
+                           .Include(x => x.ReservationsInBooking.Select(t => t.CustomersList))
+                           .Include(x => x.Payments)
+                           .Include(x => x.Excursion.Destinations)
+                           .ToListAsync);
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+
+        }
+        public async Task<List<Personal_Booking>> GetAllNonPayersPersonal()
+        {
+            return await RunTask(Context.Personal_Bookings
+                .Where(o => (o.Services.Any(y => y.TimeGo >= DateTime.Today) &&
+                o.User.BaseLocation == StaticResources.User.BaseLocation &&
+                (o.User.Level < 3 || o.User.Id == StaticResources.User.Id)&&
+                (DbFunctions.DiffDays(DateTime.Today, o.CreatedDate) >= 5 && !o.Payments.Any(p => p.Amount > 0)) ||
+                 o.Services.Any(r => DbFunctions.DiffDays(r.TimeGo, o.CreatedDate) <= 5)))
+                .Include(x => x.Customers)
+                .Include(x => x.Payments)
+                .ToListAsync);
+        }
+        public async Task<List<ThirdParty_Booking>> GetAllNonPayersThirdparty()
+        {
+            return await RunTask(Context.ThirdParty_Bookings
+                .Where(o => (o.User.Level < 3 || o.User.Id == StaticResources.User.Id) &&
+                o.User.BaseLocation == StaticResources.User.BaseLocation &&
+                o.CheckIn > DateTime.Today &&
+                ((DbFunctions.DiffDays(DateTime.Today, o.CreatedDate) >= 5 && !o.Payments.Any(p => p.Amount > 0))
+                || DbFunctions.DiffDays(o.CheckIn, o.CreatedDate) <= 5))
+                .Include(x => x.Customers)
+                .Include(x => x.Payments)
+                .ToListAsync);
+        }
+
+        readonly DateTime limit = DateTime.Today.AddDays(2);
 
         public async Task<List<HotelService>> GetAllPersonalOptions()
         {
-            return await RunTask(Context.HotelServices.Where(s => s.Option.Date >= DateTime.Today && s.Option.Date <= limit && (s.Personal_Booking.User.Level < 2 || s.Personal_Booking.User.Id == StaticResources.User.Id) && s.Personal_Booking.User.BaseLocation == StaticResources.User.BaseLocation)
+
+            return await RunTask(Context.HotelServices
+                .Where(s => s.Personal_Booking.User.BaseLocation == StaticResources.User.BaseLocation &&
+                (s.Personal_Booking.User.Level < 2 || s.Personal_Booking.User.Id == StaticResources.User.Id) &&
+                s.Option >= DateTime.Today && s.Option <= limit)
                 .Include(x => x.Personal_Booking.Customers)
                 .ToListAsync);
         }
@@ -309,8 +359,13 @@ namespace LATravelManager.UI.Repositories
         public async Task<List<PlaneService>> GetAllPlaneOptions()
         {
             var planelimit = DateTime.Today.AddDays(4);
-            return await RunTask(Context.PlaneServices.Where(s => s.TimeGo >= DateTime.Today && s.TimeGo.Date <= planelimit && (s.Personal_Booking.User.Level < 2 || s.Personal_Booking.User.Id == StaticResources.User.Id) && s.Personal_Booking.User.BaseLocation == StaticResources.User.BaseLocation)
+            return await RunTask(Context.PlaneServices
+                .Where(s => s.Personal_Booking.User.BaseLocation == StaticResources.User.BaseLocation &&
+                (s.Personal_Booking.User.Level < 2 || s.Personal_Booking.User.Id == StaticResources.User.Id) &&
+                (s.TimeGo >= DateTime.Today || s.TimeReturn >= DateTime.Today) &&
+                (s.TimeGo <= planelimit || s.TimeReturn <= planelimit))
                 .Include(x => x.Personal_Booking.Customers)
+                .Include(x=>x.Airline)
                 .ToListAsync);
         }
 

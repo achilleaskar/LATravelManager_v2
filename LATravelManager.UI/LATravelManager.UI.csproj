@@ -256,6 +256,7 @@
     <Compile Include="Message\ChangeChildViewModelMessage.cs" />
     <Compile Include="Helpers\DocumentsManagement.cs" />
     <Compile Include="Message\LoginLogOutMessage.cs" />
+    <Compile Include="Message\NotsChangedMessage.cs" />
     <Compile Include="Message\PersonalCityChanged.cs" />
     <Compile Include="Message\ReservationChanged_Message.cs" />
     <Compile Include="Message\SelectedExcursionChangedMessage.cs" />
@@ -316,7 +317,6 @@
     <Compile Include="ViewModel\Tabs\TabViewmodels\Info_ViewModel.cs" />
     <Compile Include="ViewModel\Tabs\TabViewmodels\PreviewIncomesOutcomes_ViewModel.cs" />
     <Compile Include="ViewModel\Tabs\TabViewmodels\TotalEarns_ViewModel.cs" />
-    <Compile Include="ViewModel\Window_ViewModels\Datetime.cs" />
     <Compile Include="ViewModel\Window_ViewModels\MainUserControl_ViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModels\MyViewModelBaseAsync.cs" />
     <Compile Include="ViewModel\BaseViewModels\TabsBaseViewModel.cs" />

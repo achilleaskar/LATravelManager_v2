@@ -1,11 +1,14 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
+using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Services;
+using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
+using Notifications.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,41 +28,6 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             Messenger.Default.Register<ChangeVisibilityMessage>(this, msg => { Visibility = msg.Visible ? Visibility.Visible : Visibility.Collapsed; });
         }
 
-        public async Task<List<string>> LoadOptions(GenericRepository repository)
-        {
-            List<Option> options = await repository.GetAllPendingOptions();
-            List<string> reply = new List<string>();
-
-            if (options.Count > 0)
-            {
-                HotelOptions HotelOptions;
-                List<HotelOptions> hotelOptionsLis = new List<HotelOptions>();
-                foreach (Option option in options)
-                {
-                    if (option.Room?.Hotel != null)
-                    {
-                        HotelOptions = hotelOptionsLis.Where(ho => ho.Hotel == option.Room.Hotel && ho.Date == option.Date).FirstOrDefault();
-                        if (HotelOptions != null)
-                        {
-                            HotelOptions.Counter++;
-                        }
-                        else
-                        {
-                            hotelOptionsLis.Add(new HotelOptions { Counter = 1, Date = option.Date, Hotel = option.Room.Hotel });
-                        }
-                    }
-                    else
-                    {
-                        MessageBox.Show("Option Hotel is null error. Inform the Admin");
-                    }
-                }
-                foreach (var hotel in hotelOptionsLis)
-                {
-                    reply.Add($"Οι Option για { hotel.Counter} δωμάτια στο { hotel.Hotel.Name} λήγουν στις {hotel.Date.ToShortDateString()}");
-                }
-            }
-            return reply;
-        }
 
         public async Task ChangeViewModel()
         {
@@ -142,7 +110,6 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
         #endregion Properties
 
-        #region Methods
 
         public BasicDataManager BasicDataManager { get; set; }
 
@@ -168,7 +135,6 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
         }
 
 
-        private DispatcherTimer dispatcherTimer;
 
         public async Task LoadAsync()
         {
@@ -181,7 +147,6 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             //dispatcherTimer.Tick += new EventHandler(CheckForNotifications);
             //dispatcherTimer.Interval = new TimeSpan(0, 1, 0);
             //dispatcherTimer.Start();
-            var x = GetaAllNotifications().ConfigureAwait(false);
 
 #if DEBUG
             StaticResources.User = new User { BaseLocation = 1, Id = 1, Level = 0, UserName = "admin" };
@@ -190,109 +155,10 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             await ChangeViewModel();
         }
 
-        private async Task GetaAllNotifications()
-        {
-            var Repository = new GenericRepository();
-            List<string> nots = new List<string>();
 
-            nots.AddRange(await LoadOptions(Repository));
-            //nots.AddRange(await Repository.GetNotifications());
-            nots.AddRange(await GetPersonalOptios(Repository));
-            nots.AddRange(await GetPersonalCheckIns(Repository));
-            nots.AddRange(await GetNonPayers(Repository));
-        }
 
-        private async Task<IEnumerable<string>> GetNonPayers(GenericRepository repository)
-        {
-            List<Option> options = await repository.GetAllPendingOptions();
-            List<string> reply = new List<string>();
 
-            if (options.Count > 0)
-            {
-                HotelOptions HotelOptions;
-                List<HotelOptions> hotelOptionsLis = new List<HotelOptions>();
-                foreach (Option option in options)
-                {
-                    if (option.Room?.Hotel != null)
-                    {
-                        HotelOptions = hotelOptionsLis.Where(ho => ho.Hotel == option.Room.Hotel && ho.Date == option.Date).FirstOrDefault();
-                        if (HotelOptions != null)
-                        {
-                            HotelOptions.Counter++;
-                        }
-                        else
-                        {
-                            hotelOptionsLis.Add(new HotelOptions { Counter = 1, Date = option.Date, Hotel = option.Room.Hotel });
-                        }
-                    }
-                    else
-                    {
-                        MessageBox.Show("Option Hotel is null error. Inform the Admin");
-                    }
-                }
-                foreach (var hotel in hotelOptionsLis)
-                {
-                    reply.Add($"Οι Option για { hotel.Counter} δωμάτια στο { hotel.Hotel.Name} λήγουν στις {hotel.Date.ToShortDateString()}");
-                }
-            }
-            return reply;
-        }
 
-        private Task<IEnumerable<string>> GetPersonalCheckIns(GenericRepository repository)
-        {
-            List<Option> options = await repository.GetAllPendingOptions();
-            List<string> reply = new List<string>();
-
-            if (options.Count > 0)
-            {
-                HotelOptions HotelOptions;
-                List<HotelOptions> hotelOptionsLis = new List<HotelOptions>();
-                foreach (Option option in options)
-                {
-                    if (option.Room?.Hotel != null)
-                    {
-                        HotelOptions = hotelOptionsLis.Where(ho => ho.Hotel == option.Room.Hotel && ho.Date == option.Date).FirstOrDefault();
-                        if (HotelOptions != null)
-                        {
-                            HotelOptions.Counter++;
-                        }
-                        else
-                        {
-                            hotelOptionsLis.Add(new HotelOptions { Counter = 1, Date = option.Date, Hotel = option.Room.Hotel });
-                        }
-                    }
-                    else
-                    {
-                        MessageBox.Show("Option Hotel is null error. Inform the Admin");
-                    }
-                }
-                foreach (var hotel in hotelOptionsLis)
-                {
-                    reply.Add($"Οι Option για { hotel.Counter} δωμάτια στο { hotel.Hotel.Name} λήγουν στις {hotel.Date.ToShortDateString()}");
-                }
-            }
-            return reply;
-        }
-
-        private async Task<IEnumerable<string>> GetPersonalOptios(GenericRepository repository)
-        {
-            List<HotelService> options = await repository.GetAllPersonalOptions();
-            List<string> reply = new List<string>();
-
-            if (options.Count > 0)
-            {
-                foreach (var option in options)
-                {
-                    if (option.Personal_Booking==null)
-                    {
-                        continue;
-                    }
-                    reply.Add($"Η Option για το ατομικό {(option.Personal_Booking.Customers.Count > 0 ? option.Personal_Booking.Customers.ToList()[0].ToString() : option.Id.ToString())} στο {(option.Hotel!=null? option.Hotel.Name:"Αγνωστο Ξενοδοχείο")} λήγει στις {option.Option.ToShortDateString()}");
-                }
-            }
-            return reply;
-        }
-        #endregion Methods
     }
 
 

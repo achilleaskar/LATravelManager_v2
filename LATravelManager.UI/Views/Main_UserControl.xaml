@@ -109,6 +109,34 @@
                                                    Margin="5" />
                 </Border>
                 <Label Content="{Binding UserName}" />
+                <StackPanel VerticalAlignment="Center"
+                            Visibility="{Binding HasNots,Converter={StaticResource booleanToVisibilityConverter}}">
+                    <ToggleButton  Name="button">
+                        <Grid>
+                            <iconPacks:PackIconMaterial Kind="BellRing"
+                                                        Height="25"
+                                                        Width="25"
+                                                        Foreground="Red" />
+                            <TextBlock Text="{Binding Nots.Count}"
+                                       FontWeight="Bold"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center" />
+                        </Grid>
+                    </ToggleButton>
+                    <Popup IsOpen="{Binding IsChecked, ElementName=button}"
+                           StaysOpen="False">
+                        <StackPanel>
+                            <ListView ItemsSource="{Binding Nots}">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock TextWrapping="Wrap"
+                                                   Width="250"  Text="{Binding}"/>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackPanel>
+                    </Popup>
+                </StackPanel>
                 <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
                 <Button Content="Αποσύνδεση"
                         Margin="5,0"

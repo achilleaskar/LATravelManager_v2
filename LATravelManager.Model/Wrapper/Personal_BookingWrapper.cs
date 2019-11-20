@@ -34,6 +34,8 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
+        public bool CanShowDirections => Partner != null && !string.IsNullOrEmpty(Partner.Note);
+
         public string CancelReason
         {
             get { return GetValue<string>(); }
@@ -474,7 +476,11 @@ namespace LATravelManager.Model.Wrapper
         public Partner Partner
         {
             get { return GetValue<Partner>(); }
-            set { SetValue(value); }
+            set
+            {
+                SetValue(value);
+                RaisePropertyChanged("CanShowDirections");
+            }
         }
 
         public ObservableCollection<Payment> Payments

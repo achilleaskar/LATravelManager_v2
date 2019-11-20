@@ -17,6 +17,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <GroupBox Header="Επεξεργασία"
                   Grid.Column="0"
@@ -91,7 +92,7 @@
             </Grid>
         </GroupBox>
         <GroupBox Header="Καταχωρημένοι Συνεργάτες"
-                  Grid.Column="1"
+                  Grid.Column="2"
                   HorizontalAlignment="Center">
             <Grid>
                 <Grid.RowDefinitions>
@@ -133,5 +134,16 @@
                         Command="{Binding RemoveEntityCommand}" />
             </Grid>
         </GroupBox>
+        <StackPanel 
+                  Grid.Column="1" 
+            >
+            <TextBlock Text="Ειδικές οδηγίες" />
+            <TextBox  VerticalAlignment="Stretch"
+                      TextWrapping="Wrap" Height="325"
+                  Margin="0 0 0 0"
+                  AcceptsReturn="True"
+                  Text="{Binding SelectedEntity.Note,UpdateSourceTrigger=PropertyChanged}"
+                     HorizontalAlignment="Stretch" />
+        </StackPanel>
     </Grid>
 </Window>

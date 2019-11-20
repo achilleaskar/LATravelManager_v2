@@ -739,8 +739,6 @@
                         </GroupBox>
                     </Grid>
                     <GroupBox Header="Υπηρεσίες"
-                              Grid.Column="2"
-                              Grid.Row="1"
                               VerticalAlignment="Top"
                               Height="265">
                         <ListView MinWidth="469"
@@ -799,6 +797,20 @@
                             </ListView.ItemContainerStyle>
                         </ListView>
                     </GroupBox>
+                    <Border BorderBrush="Red"
+                    Margin="5 10 0 0"
+                            BorderThickness="1"
+                            VerticalAlignment="Top">
+                        
+                    <TextBlock  VerticalAlignment="Top"
+                                Visibility="{Binding PersonalWr.CanShowDirectionsCanShowDirections,Converter={StaticResource booleanToVisibilityConverter}}"
+                                Grid.Column="1"
+                                Width="215"
+                                TextWrapping="Wrap"
+                                Text="{Binding PersonalWr.Partner.Note}"
+                                FontSize="13"
+                                HorizontalAlignment="Stretch" />
+                    </Border>
                 </StackPanel>
             </Grid>
         </Grid>

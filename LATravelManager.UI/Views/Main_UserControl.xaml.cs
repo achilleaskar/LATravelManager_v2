@@ -20,5 +20,7 @@ namespace LATravelManager.UI.Views
                 (DataContext as MainUserControl_ViewModel).SelectedTemplateChangedCommand.Execute(null);
             }
         }
+
+
     }
 }

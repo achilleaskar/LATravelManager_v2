@@ -315,33 +315,30 @@
             <DataGrid.Columns>
                 <DataGridCheckBoxColumn Header="Απ."
                                         Binding="{Binding Reciept,Mode=OneWay}"
-                                        Width="29"
                                         Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
                                         IsReadOnly="True" />
                 <DataGridTextColumn Header="Αναχ."
-                                    Width="45"
                                     Binding="{Binding CheckIn ,StringFormat='{}{0:dd/MM}'}" />
                 <DataGridTextColumn Header="Επιστ."
-                                    Width="45"
                                     Binding="{Binding CheckOut ,StringFormat='{}{0:dd/MM}'}" />
                 <DataGridTextColumn Header="Ονόματα"
-                                    Width="250"
+                                    Width="240"
                                     CanUserResize="True"
                                     Binding="{Binding Names}" />
                 <DataGridTextColumn Header="Προορισμός"
-                                    Width="100"
+                                    Width="77"
                                     Binding="{Binding To}" />
                 <DataGridTextColumn Header="Ξενοδοχείο"
-                                    Width="115"
+                                    Width="90"
                                     Binding="{Binding HotelName}" />
                 <DataGridTextColumn Header="Τύπος Δωμ."
                                     Width="70"
                                     Binding="{Binding RoomTypeName}" />
                 <DataGridTextColumn Header="Αναχώρηση"
-                                    Width="100"
+                                    Width="80"
                                     CanUserResize="True"
                                     Binding="{Binding Locations}" />
-                <DataGridTextColumn Header="Έδωσε"
+                <DataGridTextColumn Header="Eδωσε"
                                     Width="45"
                                     Binding="{Binding Recieved,Converter={StaticResource FtoSConverter } }" />
                 <DataGridTextColumn Header="Υπόλοιπο"
@@ -352,8 +349,7 @@
                                     MinWidth="85"
                                     Binding="{Binding Tel}" />
                 <DataGridTextColumn Header="Γραφείο"
-                                    Width="115"
-                                    MinWidth="85"
+                                    Width="85"
                                     Binding="{Binding Partner}" />
                 <DataGridTextColumn Header="Σημείωση"
                                     Width="190"
