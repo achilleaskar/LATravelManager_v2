@@ -9,7 +9,6 @@ using LATravelManager.Model.People;
 using LATravelManager.Model.Services;
 using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Helpers;
-using LATravelManager.UI.Message;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -18,7 +17,6 @@ using System.Data.Entity.Core.Objects;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -71,6 +69,16 @@ namespace LATravelManager.UI.Repositories
 
     public class GenericRepository : IGenericRepository, IDisposable
     {
+        #region Fields
+
+        protected readonly MainDatabase Context;
+
+        private readonly DateTime limit = DateTime.Today.AddDays(2);
+
+        private volatile Task lastTask;
+
+        #endregion Fields
+
         #region Constructors
 
         public GenericRepository()
@@ -81,13 +89,6 @@ namespace LATravelManager.UI.Repositories
         }
 
         #endregion Constructors
-
-        #region Fields
-
-        protected readonly MainDatabase Context;
-        private volatile Task lastTask;
-
-        #endregion Fields
 
         #region Properties
 
@@ -163,24 +164,6 @@ namespace LATravelManager.UI.Repositories
                 .ToListAsync);
         }
 
-        internal async Task<List<string>> GetNotifications()
-        {
-            //DateTime limit = DateTime.Today;
-            //return await RunTask(Context.Customers.Where(c => c.Tel.Length > 9 && !c.Tel.StartsWith("000") && c.Reservation != null && c.Reservation.Booking.Partner == null && c.Reservation.Booking.User.BaseLocation == 1 && c.Reservation.Booking.CreatedDate > limit)
-            //     .Where(r => r.Reservation.Booking.Disabled == false)
-            //     .ToListAsync);
-            return null;
-        }
-
-        public async Task<IEnumerable<Customer>> GetAllCustomersWithPhone()
-        {
-            DateTime limit = new DateTime(2019, 10, 1);
-            return await RunTask(Context.Customers.Where(c => c.Tel.Length > 9 && !c.Tel.StartsWith("000") && c.Reservation != null && c.Reservation.Booking.Partner == null && c.Reservation.Booking.User.BaseLocation == 1 && c.Reservation.Booking.CreatedDate > limit)
-                .Where(r => r.Reservation.Booking.Disabled == false)
-                .ToListAsync);
-        }
-
-
         //public async Task<User> FindUserAsync(string userName)
         //{
         //    return await RunTask(Context.Users.Where(u => u.UserName.Equals(userName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefaultAsync);
@@ -238,6 +221,14 @@ namespace LATravelManager.UI.Repositories
                 .ToListAsync);
         }
 
+        public async Task<IEnumerable<Customer>> GetAllCustomersWithPhone()
+        {
+            DateTime limit = new DateTime(2019, 10, 1);
+            return await RunTask(Context.Customers.Where(c => c.Tel.Length > 9 && !c.Tel.StartsWith("000") && c.Reservation != null && c.Reservation.Booking.Partner == null && c.Reservation.Booking.User.BaseLocation == 1 && c.Reservation.Booking.CreatedDate > limit)
+                .Where(r => r.Reservation.Booking.Disabled == false)
+                .ToListAsync);
+        }
+
         public async Task<IEnumerable<Excursion>> GetAllExcursionsAsync()
         {
             DateTime t = DateTime.Today.AddYears(-1);
@@ -290,52 +281,46 @@ namespace LATravelManager.UI.Repositories
             return await RunTask(Context.Hotels.Where(x => x.City.Id == cityId).OrderBy(h => h.Name).ToListAsync);
         }
 
-        public async Task<List<Option>> GetAllPendingOptions()
-        {
-            return await RunTask(Context.Options.Where(o => o.Room.User.BaseLocation == StaticResources.User.BaseLocation && (o.Room.User.Level < 3 || o.Room.User.Id == StaticResources.User.Id) && o.Date >= DateTime.Today && o.Date <= limit)
-                .Include(x => x.Room.Hotel)
-                .ToListAsync);
-        }
-
         public async Task<List<Booking>> GetAllNonPayersGroup()
         {
             try
             {
                 return await RunTask(Context.Bookings
-                    .Where(o => (o.CheckIn > DateTime.Today && (o.User.Level < 3 || o.User.Id == StaticResources.User.Id) &&
+                    .Where(o => (o.CheckIn >= DateTime.Today && (StaticResources.User.Level < 3 || o.User.Id == StaticResources.User.Id) &&
                     o.User.BaseLocation == StaticResources.User.BaseLocation &&
                     ((DbFunctions.DiffDays(DateTime.Today, o.CreatedDate) >= 5 && !o.Payments.Any(p => p.Amount > 0)) ||
                        DbFunctions.DiffDays(o.CheckIn, o.CreatedDate) <= 5)))
                            .Include(x => x.ReservationsInBooking.Select(t => t.CustomersList))
                            .Include(x => x.Payments)
+                           .Include(x => x.User)
                            .Include(x => x.Excursion.Destinations)
                            .ToListAsync);
             }
             catch (Exception e)
             {
-
                 throw;
             }
-
         }
+
         public async Task<List<Personal_Booking>> GetAllNonPayersPersonal()
         {
             return await RunTask(Context.Personal_Bookings
-                .Where(o => (o.Services.Any(y => y.TimeGo >= DateTime.Today) &&
+                .Where(o => o.Services.Any(y => y.TimeGo >= DateTime.Today) &&
                 o.User.BaseLocation == StaticResources.User.BaseLocation &&
-                (o.User.Level < 3 || o.User.Id == StaticResources.User.Id)&&
-                (DbFunctions.DiffDays(DateTime.Today, o.CreatedDate) >= 5 && !o.Payments.Any(p => p.Amount > 0)) ||
+                (StaticResources.User.Level < 3 || o.User.Id == StaticResources.User.Id) &&
+                ((DbFunctions.DiffDays(DateTime.Today, o.CreatedDate) >= 5 && !o.Payments.Any(p => p.Amount > 0)) ||
                  o.Services.Any(r => DbFunctions.DiffDays(r.TimeGo, o.CreatedDate) <= 5)))
                 .Include(x => x.Customers)
                 .Include(x => x.Payments)
                 .ToListAsync);
         }
+
         public async Task<List<ThirdParty_Booking>> GetAllNonPayersThirdparty()
         {
             return await RunTask(Context.ThirdParty_Bookings
-                .Where(o => (o.User.Level < 3 || o.User.Id == StaticResources.User.Id) &&
+                .Where(o => (StaticResources.User.Level < 3 || o.User.Id == StaticResources.User.Id) &&
                 o.User.BaseLocation == StaticResources.User.BaseLocation &&
-                o.CheckIn > DateTime.Today &&
+                o.CheckIn >= DateTime.Today &&
                 ((DbFunctions.DiffDays(DateTime.Today, o.CreatedDate) >= 5 && !o.Payments.Any(p => p.Amount > 0))
                 || DbFunctions.DiffDays(o.CheckIn, o.CreatedDate) <= 5))
                 .Include(x => x.Customers)
@@ -343,14 +328,20 @@ namespace LATravelManager.UI.Repositories
                 .ToListAsync);
         }
 
-        readonly DateTime limit = DateTime.Today.AddDays(2);
+        public async Task<List<Option>> GetAllPendingOptions()
+        {
+            return await RunTask(Context.Options.Where(o => o.Room.User.BaseLocation == StaticResources.User.BaseLocation &&
+            (StaticResources.User.Level < 3 || o.Room.User.Id == StaticResources.User.Id) &&
+            o.Date >= DateTime.Today && o.Date <= limit)
+                .Include(x => x.Room.Hotel)
+                .ToListAsync);
+        }
 
         public async Task<List<HotelService>> GetAllPersonalOptions()
         {
-
             return await RunTask(Context.HotelServices
                 .Where(s => s.Personal_Booking.User.BaseLocation == StaticResources.User.BaseLocation &&
-                (s.Personal_Booking.User.Level < 2 || s.Personal_Booking.User.Id == StaticResources.User.Id) &&
+                (StaticResources.User.Level < 2 || s.Personal_Booking.User.Id == StaticResources.User.Id) &&
                 s.Option >= DateTime.Today && s.Option <= limit)
                 .Include(x => x.Personal_Booking.Customers)
                 .ToListAsync);
@@ -361,11 +352,11 @@ namespace LATravelManager.UI.Repositories
             var planelimit = DateTime.Today.AddDays(4);
             return await RunTask(Context.PlaneServices
                 .Where(s => s.Personal_Booking.User.BaseLocation == StaticResources.User.BaseLocation &&
-                (s.Personal_Booking.User.Level < 2 || s.Personal_Booking.User.Id == StaticResources.User.Id) &&
+                (StaticResources.User.Level < 2 || s.Personal_Booking.User.Id == StaticResources.User.Id) &&
                 (s.TimeGo >= DateTime.Today || s.TimeReturn >= DateTime.Today) &&
                 (s.TimeGo <= planelimit || s.TimeReturn <= planelimit))
                 .Include(x => x.Personal_Booking.Customers)
-                .Include(x=>x.Airline)
+                .Include(x => x.Airline)
                 .ToListAsync);
         }
 
@@ -947,10 +938,8 @@ namespace LATravelManager.UI.Repositories
             int excid = excursion != null ? excursion.Id : 0;
             int userid = user != null ? user.Id : 0;
 
-
             try
             {
-
                 if (tranfilter)
                 {
                     return await RunTask(Context.Transactions
@@ -1007,8 +996,6 @@ namespace LATravelManager.UI.Repositories
             }
             catch (Exception ex)
             {
-
-
                 // MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
             }
             return null;
@@ -1024,6 +1011,15 @@ namespace LATravelManager.UI.Repositories
                .Include(f => f.Partner)
                .Include(f => f.File)
                .FirstOrDefaultAsync);
+        }
+
+        internal async Task<List<string>> GetNotifications()
+        {
+            //DateTime limit = DateTime.Today;
+            //return await RunTask(Context.Customers.Where(c => c.Tel.Length > 9 && !c.Tel.StartsWith("000") && c.Reservation != null && c.Reservation.Booking.Partner == null && c.Reservation.Booking.User.BaseLocation == 1 && c.Reservation.Booking.CreatedDate > limit)
+            //     .Where(r => r.Reservation.Booking.Disabled == false)
+            //     .ToListAsync);
+            return null;
         }
 
         internal async Task<Room> GetRoomById(int roomId)

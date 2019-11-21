@@ -125,7 +125,6 @@
                     </ToggleButton>
                     <Popup IsOpen="{Binding IsChecked, ElementName=button}"
                            StaysOpen="False">
-                        <StackPanel>
                             <ListView ItemsSource="{Binding Nots}">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
@@ -134,7 +133,6 @@
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                             </ListView>
-                        </StackPanel>
                     </Popup>
                 </StackPanel>
                 <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />

@@ -1,20 +1,13 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
-using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.People;
-using LATravelManager.Model.Services;
-using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
-using Notifications.Wpf;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Threading;
 
 namespace LATravelManager.UI.ViewModel.Window_ViewModels
 {
@@ -27,7 +20,6 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             Visibility = Visibility.Hidden;
             Messenger.Default.Register<ChangeVisibilityMessage>(this, msg => { Visibility = msg.Visible ? Visibility.Visible : Visibility.Collapsed; });
         }
-
 
         public async Task ChangeViewModel()
         {
@@ -110,7 +102,6 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
         #endregion Properties
 
-
         public BasicDataManager BasicDataManager { get; set; }
 
         private GenericRepository _StartingRepository;
@@ -134,8 +125,6 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             }
         }
 
-
-
         public async Task LoadAsync()
         {
             StartingRepository = new GenericRepository();
@@ -154,13 +143,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 #endif
             await ChangeViewModel();
         }
-
-
-
-
-
     }
-
 
     public class HotelOptions
     {
