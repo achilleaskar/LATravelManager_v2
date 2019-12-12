@@ -14,7 +14,6 @@ namespace LATravelManager.UI.Helpers
 {
     public class CustomerWrapper : ModelWrapper<Customer>
     {
-
         #region Constructors
 
         public CustomerWrapper() : this(new Customer())
@@ -38,6 +37,11 @@ namespace LATravelManager.UI.Helpers
 
         #endregion Fields
 
+
+
+
+        public string IfBus =>Bus!=null?Bus.Vehicle.Name:"";
+
         #region Properties
 
         public int Age
@@ -45,18 +49,8 @@ namespace LATravelManager.UI.Helpers
             get { return GetValue<int>(); }
             set { SetValue(value); }
         }
-        public int Board
-        {
-            get { return GetValue<int>(); }
-            set { SetValue(value); }
-        }
 
-        public int SeatNum
-        {
-            get { return GetValue<int>(); }
-            set { SetValue(value); }
-        }
-         public int SeatNumRet
+        public int Board
         {
             get { return GetValue<int>(); }
             set { SetValue(value); }
@@ -162,6 +156,7 @@ namespace LATravelManager.UI.Helpers
             get { return GetValue<DateTime?>(); }
             set { SetValue(value); }
         }
+
         public string Email
         {
             get { return GetValue<string>(); }
@@ -234,17 +229,12 @@ namespace LATravelManager.UI.Helpers
 
         public int NumOfServices => Services.Count;
 
-        public OptionalExcursion OptionalExcursion
-        {
-            get { return GetValue<OptionalExcursion>(); }
-            set { SetValue(value); }
-        }
-
         public DateTime PassportExpiration
         {
             get { return GetValue<DateTime>(); }
             set { SetValue(value); }
         }
+
         public string PassportNum
         {
             get { return GetValue<string>(); }
@@ -256,6 +246,7 @@ namespace LATravelManager.UI.Helpers
             get { return GetValue<DateTime>(); }
             set { SetValue(value); }
         }
+
         public decimal Price
         {
             get { return GetValue<decimal>(); }
@@ -273,13 +264,12 @@ namespace LATravelManager.UI.Helpers
             get { return GetValue<string>(); }
             set { SetValue(value); }
         }
+
         public Brush RoomColor
         {
             get { return GetValue<Brush>(); }
             set { SetValue(value); }
         }
-
-
 
         public string RoomNumber
         {
@@ -322,6 +312,18 @@ namespace LATravelManager.UI.Helpers
             }
         }
 
+        public int SeatNum
+        {
+            get { return GetValue<int>(); }
+            set { SetValue(value); }
+        }
+
+        public int SeatNumRet
+        {
+            get { return GetValue<int>(); }
+            set { SetValue(value); }
+        }
+
         public bool Selected
         {
             get
@@ -340,6 +342,7 @@ namespace LATravelManager.UI.Helpers
                 RaisePropertyChanged();
             }
         }
+
         public ObservableCollection<Service> Services
         {
             get { return GetValue<ObservableCollection<Service>>(); }
@@ -351,6 +354,8 @@ namespace LATravelManager.UI.Helpers
             set
             {
                 value = (value != null) ? value.ToUpper() : value;
+                if (string.IsNullOrEmpty(ReturningPlace))
+                    ReturningPlace = value;
                 SetValue(value);
             }
         }
@@ -406,7 +411,7 @@ namespace LATravelManager.UI.Helpers
             switch (Reservation.ReservationType)
             {
                 case ReservationTypeEnum.Noname:
-                    return Reservation.NoNameRoomType.Name;
+                    return new ReservationWrapper(Reservation).GetNoNameType();
 
                 case ReservationTypeEnum.Normal:
                     return (Reservation.Room != null && Reservation.Room.RoomType != null) ? Reservation.Room.RoomType.Name : "ERROR";
@@ -421,7 +426,7 @@ namespace LATravelManager.UI.Helpers
                     return "ONEDAY";
 
                 case ReservationTypeEnum.Overbooked:
-                    return (Reservation.NoNameRoomType != null) ? Reservation.NoNameRoomType.Name : "ERROR";
+                    return new ReservationWrapper(Reservation).GetNoNameType(); ;
             }
             return "ERROR";
         }
@@ -454,6 +459,5 @@ namespace LATravelManager.UI.Helpers
         }
 
         #endregion Methods
-
     }
 }

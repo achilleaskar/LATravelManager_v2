@@ -35,30 +35,31 @@
                 <StackPanel VerticalAlignment="Stretch"
                             Orientation="Vertical">
                     <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Center">
+
+                        <RadioButton Content="CheckIn-Out"
+                                     IsChecked="{Binding CheckInOut}"
+                                     GroupName="aa"
+                                     Margin="5" />
+                        <RadioButton Content="Από-Έως"
+                                     IsChecked="{Binding FromTo}"
+                                     GroupName="aa"
+                                     Margin="5" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal"
                                 Margin="0 0 0 5"
                                 HorizontalAlignment="Center">
-                        <StackPanel Margin="0,0,5,0">
-                            <StackPanel Orientation="Horizontal">
-                                <Label Content="CheckIn"
-                                       Padding="0"
-                                       HorizontalAlignment="Center" />
-                                <CheckBox Margin="5,0"
-                                          IsChecked="{Binding EnableCheckInFilter}" />
-                            </StackPanel>
-                            <DatePicker SelectedDate="{Binding CheckIn}"
-                                        Width="118" />
-                        </StackPanel>
-                        <StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <Label Content="CheckOut"
-                                       Padding="0"
-                                       HorizontalAlignment="Center" />
-                                <CheckBox Margin="5,0"
-                                          IsChecked="{Binding EnableCheckOutFilter}" />
-                            </StackPanel>
-                            <DatePicker SelectedDate="{Binding CheckOut}"
-                                        Width="118" />
-                        </StackPanel>
+                        <DatePicker SelectedDate="{Binding CheckIn}"
+                                    Width="118" />
+                        <CheckBox Margin="5,0"
+                                  VerticalAlignment="Center"
+                                  IsChecked="{Binding EnableCheckInFilter}" />
+
+                        <DatePicker SelectedDate="{Binding CheckOut}"
+                                    Width="118" />
+                        <CheckBox Margin="5,0"
+                                  VerticalAlignment="Center"
+                                  IsChecked="{Binding EnableCheckOutFilter}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Border BorderBrush="Gray"
@@ -79,14 +80,15 @@
                                         CommandParameter="7"
                                         Command="{Binding ShowReservationsCommand}"
                                         Padding="5,2" />
-                                <Button Content="Μήνα"
-                                        Click="Button_Click_1"
-                                        Margin="5"
-                                        CommandParameter="30"
-                                        Command="{Binding ShowReservationsCommand}"
-                                        Padding="5,2" />
+                               
                                 <Border BorderBrush="Gray"
                                         BorderThickness="1,0,0,0" />
+                                <Button Content="Με όνομα"
+                                        Click="Button_Click_1"
+                                        Margin="5"
+                                        CommandParameter="40"
+                                        Command="{Binding ShowReservationsCommand}"
+                                        Padding="5,2" />
                                 <Button Content="Όλες"
                                         Click="Button_Click_1"
                                         IsDefault="True"
@@ -209,20 +211,162 @@
                                 </ComboBox.ItemsSource>
                             </ComboBox>
                         </StackPanel>
+                        <StackPanel Margin="5 0 0 0">
+                            <Label Content="Γκρούπ:"
+                                   VerticalAlignment="Center" />
+                            <ComboBox  Width="85"
+                                       VerticalAlignment="Center"
+                                       SelectedIndex="{Binding GroupIndexBookingFilter}">
+                                <ComboBox.ItemsSource>
+                                    <CompositeCollection>
+                                        <ComboBoxItem Content="Όλα" />
+                                        <ComboBoxItem Content="Ναί" />
+                                        <ComboBoxItem Content="Όχι" />
+                                    </CompositeCollection>
+                                </ComboBox.ItemsSource>
+                            </ComboBox>
+                        </StackPanel>
                     </StackPanel>
                 </StackPanel>
             </StackPanel>
         </StackPanel>
 
-        <StackPanel   Grid.Row="0"
-                      Grid.Column="1"
-                      VerticalAlignment="Bottom">
+        <Grid   Grid.Row="0"
+                Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal"
+                        VerticalAlignment="Top">
 
-            <TextBlock Text="{Binding People}"
-                       VerticalAlignment="Top"
-                       TextWrapping="Wrap"
-                       Margin="0 0 0 25" />
-            <StackPanel Orientation="Horizontal">
+                <StackPanel Margin="5"
+                            Visibility="{Binding HasPeople,Converter={StaticResource booleanToVisibilityConverter}}">
+                    <ToggleButton  Name="button"
+                                   VerticalAlignment="Top"
+                                   HorizontalAlignment="Left">
+                        <Grid>
+                            <iconPacks:PackIconMaterial Kind="Account"
+                                                        Height="20"
+                                                        Width="20" />
+                        </Grid>
+                    </ToggleButton>
+                    <Popup IsOpen="{Binding IsChecked, ElementName=button}"
+                           StaysOpen="False">
+                        <ListView ItemsSource="{Binding People}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock TextWrapping="Wrap"
+                                               Width="250"
+                                               Text="{Binding}" />
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Popup>
+                </StackPanel>
+                <StackPanel Margin=" 0 5"
+                            Visibility="{Binding HasPeople,Converter={StaticResource booleanToVisibilityConverter}}">
+                    <ToggleButton  Name="button1"
+                                   VerticalAlignment="Top"
+                                   HorizontalAlignment="Left">
+                        <Grid>
+                            <iconPacks:PackIconMaterial Kind="SeatLegroomNormal"
+                                                        Height="20"
+                                                        Width="20" />
+                        </Grid>
+                    </ToggleButton>
+                    <Popup IsOpen="{Binding IsChecked, ElementName=button1}"
+                           StaysOpen="False">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      Background="LightCyan"
+                                      Grid.Row="1"
+                                      HorizontalScrollBarVisibility="Auto">
+                            <ItemsControl ItemsSource="{Binding AllDaysDeparturesList}"
+                                          Margin="5">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Vertical"
+                                                    Margin="5">
+                                            <TextBlock Text="{Binding Dates}" />
+                                            <ListView Name="PerDayInfo"
+                                                      Focusable="False"
+                                                      VerticalAlignment="Stretch"
+                                                      HorizontalAlignment="Left"
+                                                      ItemsSource="{Binding PerCityDepartureList}">
+                                                <ListView.ItemContainerStyle>
+                                                    <Style TargetType="{x:Type ListViewItem}">
+                                                        <Setter Property="BorderBrush"
+                                                                Value="Gray" />
+                                                        <Setter Property="BorderThickness"
+                                                                Value="0,0,0,1" />
+                                                    </Style>
+                                                </ListView.ItemContainerStyle>
+                                                <ListView.View>
+                                                    <GridView>
+                                                        <GridViewColumn>
+                                                            <GridViewColumn.CellTemplate>
+                                                                <DataTemplate>
+                                                                    <CheckBox IsChecked="{Binding IsChecked,UpdateSourceTrigger=PropertyChanged}"
+                                                                              HorizontalAlignment="Left" />
+                                                                </DataTemplate>
+                                                            </GridViewColumn.CellTemplate>
+                                                        </GridViewColumn>
+                                                        <GridViewColumn Header="Πόλη">
+                                                            <GridViewColumn.CellTemplate>
+                                                                <DataTemplate>
+                                                                    <TextBlock Text="{Binding City}"
+                                                                               TextWrapping="Wrap"
+                                                                               Width="115" />
+                                                                </DataTemplate>
+                                                            </GridViewColumn.CellTemplate>
+                                                        </GridViewColumn>
+                                                        <GridViewColumn Header="Πηγαίνουν"
+                                                                        Width="80">
+                                                            <GridViewColumn.CellTemplate>
+                                                                <DataTemplate>
+                                                                    <TextBlock Text="{Binding GoingText}"
+                                                                               HorizontalAlignment="Center" />
+                                                                </DataTemplate>
+                                                            </GridViewColumn.CellTemplate>
+                                                        </GridViewColumn>
+                                                        <GridViewColumn Header="Επιστρέφουν"
+                                                                        Width="80">
+                                                            <GridViewColumn.CellTemplate>
+                                                                <DataTemplate>
+                                                                    <TextBlock Text="{Binding ReturningText}"
+                                                                               HorizontalAlignment="Center" />
+                                                                </DataTemplate>
+                                                            </GridViewColumn.CellTemplate>
+                                                        </GridViewColumn>
+                                                    </GridView>
+                                                </ListView.View>
+                                            </ListView>
+                                            <StackPanel Orientation="Horizontal"
+                                                        HorizontalAlignment="Right"
+                                                        Margin="6 0">
+                                                <TextBlock Width="80"
+                                                           Text="{Binding GoTotals}" />
+                                                <TextBlock Width="80"
+                                                           Text="{Binding ReturnTotals}" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Popup>
+                </StackPanel>
+            </StackPanel>
+
+
+            <StackPanel Orientation="Horizontal"
+                        Grid.Row="1"
+                        VerticalAlignment="Bottom">
 
                 <StackPanel VerticalAlignment="Bottom">
                     <CheckBox Content="Τράπεζα"
@@ -264,7 +408,7 @@
                         Click="Button_Click"
                         Command="{Binding ShowCanceled}" />
             </StackPanel>
-        </StackPanel>
+        </Grid>
 
         <DataGrid Grid.Row="1"
                   Grid.ColumnSpan="2"
@@ -274,6 +418,7 @@
                   HorizontalAlignment="Stretch"
                   VerticalAlignment="Stretch"
                   CanUserAddRows="False"
+                  LoadingRow="DataGrid_LoadingRow"
                   CanUserDeleteRows="False"
                   IsReadOnly="True"
                   CanUserReorderColumns="False"
@@ -295,12 +440,14 @@
                             <iconPacks:PackIconFontAwesome Kind="TrashAltRegular" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <!--<MenuItem Header="Διαγραφή Παρέας"
-                              Command="{Binding DataContext.DeleteBookingCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}">
-                        <MenuItem.Icon>
-                            <iconPacks:PackIconFontAwesome Kind="TrashAltRegular" />
-                        </MenuItem.Icon>
-                    </MenuItem>-->
+                    <MenuItem Header="Έστειλα Voucher"
+                              Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
+                              Command="{Binding DataContext.VouchersSentCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}">
+                    </MenuItem>
+                    <MenuItem Header="Έστειλα Rooming List"
+                              Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
+                              Command="{Binding DataContext.ListSentCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}">
+                    </MenuItem>
                 </ContextMenu>
             </DataGrid.Resources>
             <DataGrid.RowStyle>
@@ -363,6 +510,9 @@
                 <DataGridTextColumn Header="Λόγος"
                                     Width="190"
                                     Binding="{Binding DisableReason}" />
+                <DataGridTextColumn Header="Ημερομηνία Κρ."
+                                    Width="190"
+                                    Binding="{Binding Booking.CreatedDate,StringFormat='{}{0:dd/MM/yy}'}" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

@@ -1,0 +1,233 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\EntityFramework.6.3.0\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{55666D1D-EEC1-481A-AB05-5EE49C7E29AB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>LATravelManager.DataAccess</RootNamespace>
+    <AssemblyName>LATravelManager.DataAccess</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.5.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
+      <HintPath>..\packages\BouncyCastle.1.8.5\lib\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.3.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.3.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Protobuf, Version=3.10.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Protobuf.3.10.1\lib\net45\Google.Protobuf.dll</HintPath>
+    </Reference>
+    <Reference Include="InteractivePreGeneratedViews, Version=1.1.0.0, Culture=neutral, PublicKeyToken=46c4868af4307d2c, processorArchitecture=MSIL">
+      <HintPath>..\packages\EFInteractiveViews.1.1.0\lib\net45\InteractivePreGeneratedViews.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data, Version=8.0.18.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.8.0.18\lib\net452\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data.EntityFramework, Version=8.0.18.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.EntityFramework.8.0.18\lib\net452\MySql.Data.EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Renci.SshNet, Version=2016.1.0.0, Culture=neutral, PublicKeyToken=1cee9f8bde3db106, processorArchitecture=MSIL">
+      <HintPath>..\packages\SSH.NET.2016.1.0\lib\net40\Renci.SshNet.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Design" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Migrations\201910201407025_10201.cs" />
+    <Compile Include="Migrations\201910201407025_10201.Designer.cs">
+      <DependentUpon>201910201407025_10201.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201910201503343_10202.cs" />
+    <Compile Include="Migrations\201910201503343_10202.Designer.cs">
+      <DependentUpon>201910201503343_10202.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201910201941316_10203.cs" />
+    <Compile Include="Migrations\201910201941316_10203.Designer.cs">
+      <DependentUpon>201910201941316_10203.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201910220756348_1022.cs" />
+    <Compile Include="Migrations\201910220756348_1022.Designer.cs">
+      <DependentUpon>201910220756348_1022.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201910220826326_10221.cs" />
+    <Compile Include="Migrations\201910220826326_10221.Designer.cs">
+      <DependentUpon>201910220826326_10221.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201910221157240_10222.cs" />
+    <Compile Include="Migrations\201910221157240_10222.Designer.cs">
+      <DependentUpon>201910221157240_10222.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201910221216570_10223.cs" />
+    <Compile Include="Migrations\201910221216570_10223.Designer.cs">
+      <DependentUpon>201910221216570_10223.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201910221249524_10224.cs" />
+    <Compile Include="Migrations\201910221249524_10224.Designer.cs">
+      <DependentUpon>201910221249524_10224.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201910221253413_10225.cs" />
+    <Compile Include="Migrations\201910221253413_10225.Designer.cs">
+      <DependentUpon>201910221253413_10225.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911011043091_111.cs" />
+    <Compile Include="Migrations\201911011043091_111.Designer.cs">
+      <DependentUpon>201911011043091_111.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911040858549_114.cs" />
+    <Compile Include="Migrations\201911040858549_114.Designer.cs">
+      <DependentUpon>201911040858549_114.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911051155231_115.cs" />
+    <Compile Include="Migrations\201911051155231_115.Designer.cs">
+      <DependentUpon>201911051155231_115.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911051527591_1151.cs" />
+    <Compile Include="Migrations\201911051527591_1151.Designer.cs">
+      <DependentUpon>201911051527591_1151.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911051537516_1152.cs" />
+    <Compile Include="Migrations\201911051537516_1152.Designer.cs">
+      <DependentUpon>201911051537516_1152.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911051547305_1153.cs" />
+    <Compile Include="Migrations\201911051547305_1153.Designer.cs">
+      <DependentUpon>201911051547305_1153.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911140932021_1114.cs" />
+    <Compile Include="Migrations\201911140932021_1114.Designer.cs">
+      <DependentUpon>201911140932021_1114.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911141544095_11141.cs" />
+    <Compile Include="Migrations\201911141544095_11141.Designer.cs">
+      <DependentUpon>201911141544095_11141.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911141659308_11142.cs" />
+    <Compile Include="Migrations\201911141659308_11142.Designer.cs">
+      <DependentUpon>201911141659308_11142.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\ContextConfiguration.cs" />
+    <Compile Include="MainDataBase.cs" />
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LATravelManager.Model\LATravelManager.Model.csproj">
+      <Project>{C98AFCAD-18B7-4072-999F-E285382BAFC1}</Project>
+      <Name>LATravelManager.Model</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201910201407025_10201.resx">
+      <DependentUpon>201910201407025_10201.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910201503343_10202.resx">
+      <DependentUpon>201910201503343_10202.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910201941316_10203.resx">
+      <DependentUpon>201910201941316_10203.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910220756348_1022.resx">
+      <DependentUpon>201910220756348_1022.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910220826326_10221.resx">
+      <DependentUpon>201910220826326_10221.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910221157240_10222.resx">
+      <DependentUpon>201910221157240_10222.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910221216570_10223.resx">
+      <DependentUpon>201910221216570_10223.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910221249524_10224.resx">
+      <DependentUpon>201910221249524_10224.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910221253413_10225.resx">
+      <DependentUpon>201910221253413_10225.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911011043091_111.resx">
+      <DependentUpon>201911011043091_111.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911040858549_114.resx">
+      <DependentUpon>201911040858549_114.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911051155231_115.resx">
+      <DependentUpon>201911051155231_115.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911051527591_1151.resx">
+      <DependentUpon>201911051527591_1151.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911051537516_1152.resx">
+      <DependentUpon>201911051537516_1152.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911051547305_1153.resx">
+      <DependentUpon>201911051547305_1153.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911140932021_1114.resx">
+      <DependentUpon>201911140932021_1114.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911141544095_11141.resx">
+      <DependentUpon>201911141544095_11141.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911141659308_11142.resx">
+      <DependentUpon>201911141659308_11142.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.3.0\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.3.0\build\EntityFramework.targets'))" />
+  </Target>
+  <Import Project="..\packages\EntityFramework.6.3.0\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.targets')" />
+</Project>

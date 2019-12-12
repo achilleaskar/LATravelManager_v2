@@ -246,7 +246,18 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 {
                     try
                     {
-                        FromDepartureInfo = SelectedFilterExcursion.ExcursionDates.Where(c => c.CheckIn >= DateTime.Today).Min(e => e.CheckIn);
+                        if (SelectedFilterExcursion.ExcursionDates != null && SelectedFilterExcursion.ExcursionDates.Count > 0)
+                        {
+                            var x = SelectedFilterExcursion.ExcursionDates.Where(c => c.CheckIn >= DateTime.Today);
+                            if (x != null && x.Count() > 0)
+                            {
+                                FromDepartureInfo = x.Min(e => e.CheckIn);
+
+                            }
+                            else
+                                FromDepartureInfo = DateTime.Today;
+
+                        }
                     }
                     catch
                     {

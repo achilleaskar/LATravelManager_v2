@@ -362,31 +362,43 @@ namespace LATravelManager.UI.Data.Workers
                 myWorksheet.Cells["A1:B1"].Merge = true;
                 lineNum = 5;
                 int counter = 0;
+                myWorksheet.Cells["A4"].Value = "#";
+                myWorksheet.Cells["B4"].Value = "Dates";
+                myWorksheet.Cells["C4"].Value = "RoomType";
+                myWorksheet.Cells["D4"].Value = "Name";
+                myWorksheet.Cells["E4"].Value = "Surename";
+                myWorksheet.Cells["F4"].Value = "Age";
+                myWorksheet.Cells["G4"].Value = "Board";
                 foreach (ReservationWrapper reservation in roomingList.Reservations)
                 {
                     myWorksheet.Column(1).Width = 3;
                     myWorksheet.Column(2).Width = 12;
-                    myWorksheet.Column(3).Width = 16;
+                    myWorksheet.Column(3).Width = 8;
                     myWorksheet.Column(4).Width = 16;
-                    myWorksheet.Column(5).Width = 6;
+                    myWorksheet.Column(5).Width = 16;
+                    myWorksheet.Column(6).Width = 6;
+                    myWorksheet.Column(7).Width = 6;
                     counter++;
                     myWorksheet.Cells["A" + lineNum].Value = counter;
                     myWorksheet.Cells["A" + lineNum + ":A" + (lineNum + reservation.CustomersList.Count - 1)].Merge = true;
+
                     myWorksheet.Cells["B" + lineNum].Value = reservation.HotelDates;
                     myWorksheet.Cells["B" + lineNum + ":B" + (lineNum + reservation.CustomersList.Count - 1)].Merge = true;
-                    myWorksheet.Cells["G" + lineNum].Value = reservation.HB ? "HB" : "BB";
-                    myWorksheet.Cells["G" + lineNum + ":G" + (lineNum + reservation.CustomersList.Count - 1)].Merge = true;
-                    myWorksheet.Cells["F" + lineNum].Value = reservation.RoomTypeNameByNum;
-                    myWorksheet.Cells["F" + lineNum + ":F" + (lineNum + reservation.CustomersList.Count - 1)].Merge = true;
+
+                    myWorksheet.Cells["C" + lineNum].Value = counter;
+                    myWorksheet.Cells["C" + lineNum + ":C" + (lineNum + reservation.CustomersList.Count - 1)].Merge = true;
+                    myWorksheet.Cells["C" + lineNum].Value = reservation.RoomTypeName;
+
                     foreach (Customer customer in reservation.CustomersList)
                     {
-                        myWorksheet.Cells["C" + lineNum].Value = customer.Name;
-                        myWorksheet.Cells["D" + lineNum].Value = customer.Surename;
-                        myWorksheet.Cells["E" + lineNum].Value = customer.Age < 18 ? customer.Age.ToString() + "yo" : "";
+                        myWorksheet.Cells["D" + lineNum].Value = customer.Name;
+                        myWorksheet.Cells["E" + lineNum].Value = customer.Surename;
+                        myWorksheet.Cells["F" + lineNum].Value = customer.Age < 18 ? customer.Age.ToString() + "yo" : "";
+                        myWorksheet.Cells["G" + lineNum].Value = customer.Board==1?"HB":customer.Board==2?"FB":"";
                         lineNum++;
                     }
                 }
-                myWorksheet.Cells["A4:G" + lineNum].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                myWorksheet.Cells["A4:G" + lineNum].Style.VerticalAlignment = ExcelVerticalAlignment.Top;
             }
 
             //fileInfo = new FileInfo(wbPath ?? throw new InvalidOperationException());

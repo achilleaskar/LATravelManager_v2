@@ -17,16 +17,6 @@ namespace LATravelManager.UI.Views.Skiathos
             InitializeComponent();
         }
 
-        private void IsPartnerCheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            CustomersDataGrid.Columns[5].Visibility = Visibility.Collapsed;
-        }
-
-        private void IsPartnerCheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            CustomersDataGrid.Columns[5].Visibility = Visibility.Visible;
-        }
-
         public static T GetVisualChild<T>(Visual parent) where T : Visual
         {
             T child = default;

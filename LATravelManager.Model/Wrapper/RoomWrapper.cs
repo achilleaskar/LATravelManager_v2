@@ -8,14 +8,94 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Text;
 using System.Windows;
+using System.Windows.Media;
 
 namespace LATravelManager.UI.Wrapper
 {
+    public class Period
+    {
+        public DateTime From { get; set; }
+        public DateTime To { get; set; }
+
+        public override string ToString()
+        {
+            if (From.Month != To.Month)
+            {
+                return From.ToString("dd/MM") + "-" + To.ToString("dd/MM");
+            }
+            return From.ToString("dd") + "-" + To.ToString("dd/MM");
+        }
+    }
+
+
+
+
+
     public class RoomWrapper : ModelWrapper<Room>
     {
         #region Constructors
+        private int _Rating;
 
+
+
+
+
+
+
+        private SolidColorBrush _Color = new SolidColorBrush(Colors.Black);
+
+
+        public SolidColorBrush Color
+        {
+            get
+            {
+                return _Color;
+            }
+
+            set
+            {
+                if (_Color == value)
+                {
+                    return;
+                }
+
+                _Color = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public int Rating
+        {
+            get
+            {
+                return _Rating;
+            }
+
+            set
+            {
+                if (_Rating == value)
+                {
+                    return;
+                }
+
+                _Rating = value;
+                RaisePropertyChanged();
+                switch (value)
+                {
+                    case 1:
+                        Color = new SolidColorBrush(Colors.Blue);
+                        break;
+                    case 2:
+                        Color = new SolidColorBrush(Colors.Green);
+                        break;
+                    default:
+                        Color = new SolidColorBrush(Colors.Black);
+                        break;
+                };
+            }
+        }
         public RoomWrapper(Room model) : base(model)
         {
             PlanDailyInfo = new List<PlanDailyInfo>();
@@ -24,6 +104,9 @@ namespace LATravelManager.UI.Wrapper
         public RoomWrapper() : this(new Room())
         {
         }
+
+
+        public List<Period> Periods { get; set; }
 
         #endregion Constructors
 
@@ -237,17 +320,8 @@ namespace LATravelManager.UI.Wrapper
 
         public bool CanFit(ReservationWrapper reservationWr)
         {
-            return reservationWr.NoNameRoomType.Id == RoomType.Id;
-            //if (reservationWr.CustomersList.Count >= RoomType.MinCapacity && reservationWr.CustomersList.Count <= RoomType.MaxCapacity)
-            //{
-            //    return true;
-            //}
-            //if (reservationWr.CustomersList.Count==1 && RoomType.MinCapacity==2)
-            //{
-            //    return true;
-
-            //}
-            //return false;
+            int NumOfSelectedCustomers = reservationWr.CustomersList.Count;
+            return ((RoomType.MinCapacity <= NumOfSelectedCustomers && RoomType.MaxCapacity >= NumOfSelectedCustomers) || (NumOfSelectedCustomers == 1 && RoomType.MaxCapacity == 2));
         }
 
         public bool MakeNoNameReservation(ReservationWrapper reservationWr)
@@ -299,7 +373,7 @@ namespace LATravelManager.UI.Wrapper
             try
             {
                 DateTime tmpDate;
-                if (reservationWr.Booking.ExcursionDate!=null&& reservationWr.Booking.ExcursionDate.NightStart)
+                if (reservationWr.Booking.ExcursionDate != null && reservationWr.Booking.ExcursionDate.NightStart)
                     tmpDate = reservationWr.CheckIn.AddDays(1);
                 else
                     tmpDate = reservationWr.CheckIn;
@@ -326,7 +400,10 @@ namespace LATravelManager.UI.Wrapper
                         }
                     }
                     else
+                    {
                         tmpPlanInfo.RoomState = RoomStateEnum.OverBookedByMistake;
+                        MessageBox.Show($"Η κράτηση {reservationWr.CustomersList[0].Surename} στις {reservationWr.Dates} είναι overbook από Λάθος");
+                    }
                     tmpDate = tmpDate.AddDays(1);
                 }
                 //if (tmpBookedInfo != null)
@@ -353,8 +430,9 @@ namespace LATravelManager.UI.Wrapper
             return true;
         }
 
-        private string GetDates()
+        public string GetDates()
         {
+            Periods = new List<Period>();
             string dates = "";
             DailyBookingInfo = DailyBookingInfo.OrderBy(o => o.Date).ToList();
 
@@ -362,20 +440,27 @@ namespace LATravelManager.UI.Wrapper
             {
                 int i = 0;
                 bool started = false;
-                System.Text.StringBuilder builder = new System.Text.StringBuilder();
+                StringBuilder builder = new StringBuilder();
                 builder.Append(dates);
+                var tmpPeriod = new Period();
                 for (i = 0; i < DailyBookingInfo.Count - 1; i++)
                 {
                     if (!started)
                     {
                         builder.Append(DailyBookingInfo[i].Date.ToString("dd/MM"));
+                        tmpPeriod.From = DailyBookingInfo[i].Date;
                         if (DailyBookingInfo[i].Date.AddDays(1) == DailyBookingInfo[i + 1].Date)
                         {
                             started = true;
                             builder.Append("-");
                         }
                         else
+                        {
                             builder.Append(", ");
+                            tmpPeriod.To = tmpPeriod.From.AddDays(1);
+                            Periods.Add(tmpPeriod);
+                            tmpPeriod = new Period();
+                        }
                     }
                     else
                     {
@@ -383,12 +468,21 @@ namespace LATravelManager.UI.Wrapper
                         {
                             builder.Append(DailyBookingInfo[i].Date.AddDays(1).ToString("dd/MM") + ", ");
                             started = false;
+                            tmpPeriod.To = DailyBookingInfo[i].Date.AddDays(1);
+                            Periods.Add(tmpPeriod);
+                            tmpPeriod = new Period();
                         }
                     }
                 }
                 builder.Append(DailyBookingInfo[i].Date.AddDays(1).ToString("dd/MM"));
+                if (tmpPeriod.From.Year > 1980)
+                {
+                    tmpPeriod.To = DailyBookingInfo[i].Date.AddDays(1);
+                    Periods.Add(tmpPeriod);
+                }
                 dates = builder.ToString();
             }
+            string tmp = string.Join(",", Periods.Select(r => r.ToString()));
             return dates;
         }
 
@@ -402,6 +496,11 @@ namespace LATravelManager.UI.Wrapper
             {
                 return "ΟΧΙ";
             }
+        }
+
+        public override string ToString()
+        {
+            return Hotel.Name;
         }
 
         #endregion Methods

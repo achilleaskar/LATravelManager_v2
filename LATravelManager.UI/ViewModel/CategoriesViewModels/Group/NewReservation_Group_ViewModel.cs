@@ -63,6 +63,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Group
                          ? await GenericRepository.GetFullBookingByIdAsync(id)
                          : await CreateNewBooking();
 
+
                     InitializeBooking(booking);
 
                     await ResetAllRefreshableDataASync();

@@ -28,8 +28,11 @@ namespace LATravelManager.Model.BookingData
         #region Properties
 
 
-       // public int LeaderDriver => GetHigher(); ReservationsInBooking.OrderByDescending(r=> r.CustomersList.OrderByDescending(c=>c.LeaderDriver).First().LeaderDriver).Select;
+        // public int LeaderDriver => GetHigher(); ReservationsInBooking.OrderByDescending(r=> r.CustomersList.OrderByDescending(c=>c.LeaderDriver).First().LeaderDriver).Select;
 
+        public bool GroupBooking { get; set; }
+        public bool VoucherSent { get; set; }
+        public bool RoomingListIncluded { get; set; }
 
         public void GetHigher()
         {
@@ -54,6 +57,7 @@ namespace LATravelManager.Model.BookingData
         public ObservableCollection<ChangeInBooking> ChangesInBooking { get; }
         public DateTime CheckIn { get; set; }
         public DateTime CheckOut { get; set; }
+
 
         //    Customers.CollectionChanged += Customers_CollectionChanged;
         //    foreach (Customer customer in tmpBooking.Customers)
@@ -112,6 +116,7 @@ namespace LATravelManager.Model.BookingData
         //    //this.booking = booking;
         //    //this.uOW = uOW;
         //}
+        [NotMapped]
         public string PartnerEmail { get; set; }
 
         //public Booking()

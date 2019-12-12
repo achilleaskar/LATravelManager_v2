@@ -4,8 +4,10 @@ using LATravelManager.Model.People;
 using LATravelManager.Model.Services;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Windows.Data;
 
 namespace LATravelManager.Model.Wrapper
 {
@@ -33,6 +35,7 @@ namespace LATravelManager.Model.Wrapper
 
         public ReservationWrapper(Reservation model) : base(model)
         {
+
         }
 
         #endregion Constructors
@@ -215,7 +218,12 @@ namespace LATravelManager.Model.Wrapper
         public List<Customer> CustomersList
         {
             get { return GetValue<List<Customer>>(); }
-            set { SetValue(value); }
+            set
+            {
+                SetValue(value);
+
+
+            }
         }
 
         public DateTime DateOfCreate
@@ -388,11 +396,11 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
-        public RoomType NoNameRoomType
-        {
-            get { return GetValue<RoomType>(); }
-            set { SetValue(value); }
-        }
+        //public RoomType NoNameRoomType
+        //{
+        //    get { return GetValue<RoomType>(); }
+        //    set { SetValue(value); }
+        //}
 
         public int Number { get; set; }
 
@@ -811,12 +819,46 @@ namespace LATravelManager.Model.Wrapper
                 {
                     if (Room.RoomType != null)
                     {
+                        if (Room.RoomType.Id!=1)
+                        {
                         roomname = Room.RoomType.Name + (Room.RoomType.Id == 1 ? ("(" + CustomersList.Count + ")") : "");
+
+                        }
+                        else
+                        {
+                            switch (CustomersList.Count)
+                            {
+                                case 1:
+                                    roomname = "SINGLE";
+                                    break;
+
+                                case 2:
+                                    roomname = "TWIN";
+                                    break;
+
+                                case 3:
+                                    roomname = "TRIPLE";
+                                    break;
+
+                                case 4:
+                                    roomname = "QUAD";
+                                    break;
+
+                                case 5:
+                                    roomname = "5BED";
+                                    break;
+
+                                case 6:
+                                    roomname = "6BED";
+                                    break;
+                            }
+                        }
                     }
                 }
-                else if (NoNameRoomType != null)
+                else if (ReservationType == ReservationTypeEnum.Noname)
                 {
-                    roomname = NoNameRoomType.Name + (NoNameRoomType.Id == 1 ? ("(" + CustomersList.Count + ")") : "");
+                    return GetNoNameType();
+
                 }
                 else if (ReservationType == ReservationTypeEnum.Transfer)
                 {
@@ -876,13 +918,9 @@ namespace LATravelManager.Model.Wrapper
                     handled = true;
                 }
             }
-            else if (NoNameRoomType != null)
+            else if (ReservationType == ReservationTypeEnum.Noname)
             {
-                if (CustomersList.Count == 2 && (NoNameRoomType.Id == 2 || NoNameRoomType.Id == 3))
-                {
-                    roomname = NoNameRoomType.Name;
-                    handled = true;
-                }
+                return GetNoNameType();
             }
             else if (ReservationType == ReservationTypeEnum.Transfer)
             {
@@ -927,6 +965,41 @@ namespace LATravelManager.Model.Wrapper
                 roomname += "-HB";
             }
 
+            return roomname;
+        }
+
+        public string GetNoNameType()
+        {
+            string roomname = string.Empty;
+            switch (CustomersList.Count())
+            {
+                case 1:
+                    roomname = "SINGLE(NN)";
+                    break;
+
+                case 2:
+                    roomname = "DOUBLE(NN)";
+                    break;
+
+                case 3:
+                    roomname = "TRIPLE(NN)";
+                    break;
+
+                case 4:
+                    roomname = "QUAD(NN)";
+                    break;
+
+                case 5:
+                    roomname = "5BED(NN)";
+                    break;
+
+                case 6:
+                    roomname = "6BED(NN)";
+                    break;
+                default:
+                    roomname = "VERY BIG";
+                    break;
+            }
             return roomname;
         }
 

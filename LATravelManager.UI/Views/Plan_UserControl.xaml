@@ -393,6 +393,12 @@
                                                                                 <MenuItem Header="Booking"
                                                                                           CommandParameter="{Binding }"
                                                                                           Command="{Binding Source={StaticResource Proxy}, Path=Data.AddBookingRoomThisDayCommand}" />
+                                                                                <MenuItem Header="Μεταφορά από"
+                                                                                          CommandParameter="{Binding }"
+                                                                                          Command="{Binding Source={StaticResource Proxy}, Path=Data.MoveFromCommand}" />
+                                                                                <MenuItem Header="Τοποθέτηση"
+                                                                                          CommandParameter="{Binding }"
+                                                                                          Command="{Binding Source={StaticResource Proxy}, Path=Data.MoveToCommand}" />
                                                                             </ContextMenu>
                                                                         </DataTemplate.Resources>
                                                                         <Button Background="{Binding CellColor, UpdateSourceTrigger=PropertyChanged}"

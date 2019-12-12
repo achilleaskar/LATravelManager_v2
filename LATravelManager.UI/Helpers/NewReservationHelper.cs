@@ -45,7 +45,7 @@ public class NewReservationHelper : ViewModelBase
         return new CustomerWrapper() { Age = 12, Name = name, Surename = surename, Price = 35, Tel = "6981001676", StartingPlace = "Αθήνα", PassportNum = passport };
     }
 
-    public void MakeNonameReservation(BookingWrapper booking, RoomType roomType, bool hb, bool all, bool onlystay)
+    public void MakeNonameReservation(BookingWrapper booking, bool hb, bool all, bool onlystay)
     {
         bool hasCustomers = false;
         Reservation newRes = new Reservation
@@ -54,7 +54,6 @@ public class NewReservationHelper : ViewModelBase
             FirstHotel = "ΝΟ ΝΑΜΕ",
             HB = hb,
             Booking = booking.Model,
-            NoNameRoomType = roomType,
             OnlyStay = onlystay
         };
         foreach (CustomerWrapper customer in booking.Customers)
@@ -70,7 +69,6 @@ public class NewReservationHelper : ViewModelBase
                 customer.Handled = true;
                 customer.RoomNumber = "NN" + (booking.ReservationsInBooking.Count + 1).ToString();
                 customer.HotelName = "NO NAME";
-                customer.RoomTypeName = roomType.Name;
                 if (booking.ReservationsInBooking.Count() % 2 == 0)
                     customer.RoomColor = new SolidColorBrush(Colors.LightPink);
                 else
@@ -158,7 +156,6 @@ public class NewReservationHelper : ViewModelBase
             FirstHotel = hotel.Name,
             Hotel = hotel,
             Booking = bookingWr.Model,
-            NoNameRoomType = roomType,
             OnlyStay = onlyStay,
             HB = hb
         };
@@ -174,7 +171,6 @@ public class NewReservationHelper : ViewModelBase
                 hasCustomers = true;
                 customer.Handled = true;
                 customer.HotelName = newRes.Hotel.Name;
-                customer.RoomTypeName = newRes.NoNameRoomType.Name;
                 customer.RoomNumber = "OB" + (bookingWr.ReservationsInBooking.Count + 1).ToString();
                 if (bookingWr.ReservationsInBooking.Count() % 2 == 0)
                     customer.RoomColor = new SolidColorBrush(Colors.LightPink);

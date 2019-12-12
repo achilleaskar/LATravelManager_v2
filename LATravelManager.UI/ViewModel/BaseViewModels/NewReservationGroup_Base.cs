@@ -82,6 +82,8 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             return BookingWr.Customers.Any(c => c.IsSelected);
         }
 
+        public bool CanEditDates => BookingWr != null && BookingWr.ReservationsInBooking != null && BookingWr.ReservationsInBooking.Count == 0;
+
         private bool CanToggleDisability()
         {
             return BookingWr != null && !string.IsNullOrEmpty(BookingWr.CancelReason);
@@ -845,6 +847,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         public RelayCommand DeleteSelectedCustomersCommand { get; set; }
         public RelayCommand ShowAltairnativesCommand { get; set; }
 
+
         public ObservableCollection<User> Users
         {
             get => _Users;
@@ -913,14 +916,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                     return;
                 }
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
-                //if (reset)
-                //{
-                //    if (BasicDataManager != null && !BasicDataManager.IsTaskOk)
-                //    {
-                //        await BasicDataManager.LastTask;
-                //    }
-                //    BasicDataManager = new GenericRepository();
-                //}
                 RoomsManager = new RoomsManager();
                 if (BookingWr.ExcursionDate != null && BookingWr.ExcursionDate.NightStart)
                     AvailableHotels = new ObservableCollection<HotelWrapper>((await RoomsManager.GetAllAvailableRooms(BookingWr.CheckIn.AddDays(1), BookingWr.CheckOut, SelectedExcursion, false, unSavedBooking: BookingWr.Model)));
@@ -992,12 +987,17 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                             }
 
                             tmplist.Add(room);
+                            ValidateRoom(room);
+                            if (room.Hotel.HotelCategory.Id == 8)
+                            {
+                                NoNames++;
+                            }
                         }
                     }
                 }
                 //TODO an mporei na fygei
 
-                FilteredRoomList = new ObservableCollection<RoomWrapper>(tmplist.OrderBy(f => f.Hotel.Name).ThenBy(t=>t.RoomType.MaxCapacity).ToList());
+                FilteredRoomList = new ObservableCollection<RoomWrapper>(tmplist.OrderBy(f => f.Hotel.Name).ThenBy(t => t.RoomType.MaxCapacity).ThenByDescending(r=>r.Rating).ToList());
                 CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(FilteredRoomList);
                 //PropertyGroupDescription groupDescription = new PropertyGroupDescription(nameof(RoomType));
                 //PropertyGroupDescription groupDescriptionb = new PropertyGroupDescription(nameof(Hotel));
@@ -1104,6 +1104,13 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
+        private void ValidateRoom(RoomWrapper room)
+        {
+            var before = room.PlanDailyInfo.FirstOrDefault(d => d.Date == BookingWr.CheckIn.AddDays(-1));
+            var after = room.PlanDailyInfo.FirstOrDefault(d => d.Date == BookingWr.CheckOut.AddDays(1));
+            room.Rating = ((before != null && before.RoomState != RoomStateEnum.Available) ? 1 : 0) + ((after != null && after.RoomState != RoomStateEnum.Available) ? 1 : 0);
+        }
+
         protected async Task<Booking> CreateNewBooking()
         {
             var booki = new Booking { CheckIn = BookingWr != null ? BookingWr.CheckIn : DateTime.Today, CheckOut = BookingWr != null ? BookingWr.CheckOut : DateTime.Today.AddDays(3) };
@@ -1118,7 +1125,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         protected void InitializeBooking(Booking booking)
         {
-            BookingWr = new BookingWrapper(booking);
+            BookingWr = new BookingWrapper(booking, true);
 
             BookingWr.PropertyChanged += (s, e) =>
             {
@@ -1265,7 +1272,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                                         if ((c.DataType != null) && (c.DataType == CellValues.SharedString))
                                         {
                                             int ssid = int.Parse(c.CellValue.Text);
-                                            tmpCustomer.Name = sst.ChildElements[ssid].InnerText;
+                                            tmpCustomer.Name = ToLatin(sst.ChildElements[ssid].InnerText);
                                         }
                                         else if (c.CellValue != null)
                                         {
@@ -1277,7 +1284,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                                         if ((c.DataType != null) && (c.DataType == CellValues.SharedString))
                                         {
                                             int ssid = int.Parse(c.CellValue.Text);
-                                            tmpCustomer.Surename = sst.ChildElements[ssid].InnerText;
+                                            tmpCustomer.Surename = ToLatin(sst.ChildElements[ssid].InnerText);
                                         }
                                         else if (c.CellValue != null)
                                         {
@@ -1307,6 +1314,18 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                                         {
                                             int ssid = int.Parse(c.CellValue.Text);
                                             tmpCustomer.PassportNum = sst.ChildElements[ssid].InnerText;
+                                        }
+                                        else if (c.CellValue != null)
+                                        {
+                                            Console.WriteLine("Faulty data on row {0} - {1}", rowNum, c.CellValue.Text);
+                                        }
+                                        break;
+
+                                    case 5:
+                                        if ((c.DataType != null) && (c.DataType == CellValues.SharedString))
+                                        {
+                                            int ssid = int.Parse(c.CellValue.Text);
+                                            tmpCustomer.Tel = sst.ChildElements[ssid].InnerText;
                                         }
                                         else if (c.CellValue != null)
                                         {
@@ -1343,6 +1362,138 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                     }
                 }
             }
+        }
+
+        private string ToLatin(string innerText)
+        {
+            string toReturn = string.Empty;
+            string str = innerText.ToUpper();
+            for (int i = 0; i < str.Length; i++)
+            {
+                char c = str[i];
+                if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == ' ')
+                    toReturn += c;
+                else
+                {
+                    switch ((int)c)
+                    {
+                        case '-':
+                        case '_':
+                            toReturn += ' ';
+                            break;
+
+                        case 'Α':
+                        case 902:
+                            toReturn += 'A';
+                            break;
+
+                        case 'Β':
+                            toReturn += 'V';
+                            break;
+
+                        case 'Γ':
+                            toReturn += 'G';
+                            break;
+
+                        case 'Δ':
+                            toReturn += 'D';
+                            break;
+
+                        case 'Ε':
+                        case 'Έ':
+                            toReturn += 'E';
+                            break;
+
+                        case 'Ζ':
+                            toReturn += 'Z';
+                            break;
+
+                        case 'Η':
+                        case 'Ή':
+                        case 'Ι':
+                        case 'Ί':
+                            toReturn += 'I';
+                            break;
+
+                        case 'Υ':
+                        case 'Ύ':
+                            if (i > 0 && (str[i - 1] == 'Ο' || str[i - 1] == 'Ό'))
+                                toReturn += 'Y';
+                            else
+                                toReturn += 'I';
+                            break;
+
+                        case 'Θ':
+                            toReturn += 'T';
+                            toReturn += 'H';
+                            break;
+
+                        case 'Κ':
+                            toReturn += 'K';
+                            break;
+
+                        case 'Λ':
+                            toReturn += 'L';
+                            break;
+
+                        case 'Μ':
+                            toReturn += 'M';
+                            break;
+
+                        case 'Ν':
+                            toReturn += 'N';
+                            break;
+
+                        case 'Ξ':
+                            toReturn += 'K';
+                            toReturn += 'S';
+                            break;
+
+                        case 'Ο':
+                        case 'Ό':
+                        case 'Ω':
+                        case 'Ώ':
+                            toReturn += 'O';
+                            break;
+
+                        case 'Π':
+                            toReturn += 'P';
+                            break;
+
+                        case 'Ρ':
+                            toReturn += 'R';
+                            break;
+
+                        case 'Σ':
+                            toReturn += 'S';
+                            break;
+
+                        case 'Τ':
+                            toReturn += 'T';
+                            break;
+
+                        case 'Φ':
+                            toReturn += 'F';
+                            break;
+
+                        case 'Χ':
+                            toReturn += 'X';
+                            break;
+
+                        case 'Ψ':
+                            toReturn += 'P';
+                            toReturn += 'S';
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+                if (toReturn.Any(c1 => (c1 < 'A' && c1 > 'Z') && c1 != ' ' && c1 != '_' && c1 != '-'))
+                {
+                }
+            }
+            return toReturn.Trim();
         }
 
         private void AddRandomCustomer()
@@ -1424,19 +1575,35 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         }
 
         private bool CanMakeNoNameReservation(RoomType roomType)
-        {//TODO tsekare to opws kai ola ta TODO
-            if (roomType == null || (NumOfSelectedCustomers > 1 && !(roomType.MinCapacity <= NumOfSelectedCustomers && roomType.MaxCapacity >= NumOfSelectedCustomers))
-                || (NumOfSelectedCustomers == 1 && roomType.MinCapacity != 2))
-            {
-                return false;
-            }
-
-            if ((SelectedCustomer == null && !All) || !AreBookingDataValid || !AreContexesFree)
+        {
+            if (BookingWr == null || FilteredRoomList == null || (SelectedCustomer == null && !All) || !AreBookingDataValid || !AreContexesFree ||
+                !FilteredRoomList.Any(o => o.Hotel.HotelCategory.Id == 8 && ((o.RoomType.MinCapacity >= NumOfSelectedCustomers && o.RoomType.MaxCapacity >= NumOfSelectedCustomers) || (NumOfSelectedCustomers == 1 && o.RoomType.MaxCapacity == 2))))
             {
                 return false;
             }
 
             return true;
+        }
+
+        private int _NoNames;
+
+        public int NoNames
+        {
+            get
+            {
+                return _NoNames;
+            }
+
+            set
+            {
+                if (_NoNames == value)
+                {
+                    return;
+                }
+
+                _NoNames = value;
+                RaisePropertyChanged();
+            }
         }
 
         private bool CanOverBookHotel()
@@ -1505,6 +1672,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         private bool CanSave()
         {
+            RaisePropertyChanged(nameof(CanEditDates));
             if (BookingWr == null || (!HasChanges && Payment.Amount == 0) || !AreContexesFree)
             {
                 return false;
@@ -1627,6 +1795,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 RaisePropertyChanged(nameof(IsPartners));
                 GenericRepository.RollBack();
             }
+            RaisePropertyChanged(nameof(CanEditDates));
         }
 
         private void DeletePayment()
@@ -1658,7 +1827,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
 
-                NewReservationHelper.MakeNonameReservation(BookingWr, await GenericRepository.GetByIdAsync<RoomType>(roomtype.Id), HB, All, OnlyStay);
+                NewReservationHelper.MakeNonameReservation(BookingWr, HB, All, OnlyStay);
 
                 if (All)
                 {
@@ -1821,7 +1990,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                                         if ((c.DataType != null) && (c.DataType == CellValues.SharedString))
                                         {
                                             int ssid = int.Parse(c.CellValue.Text);
-                                            tmpCustomerWr.Name = sst.ChildElements[ssid].InnerText;
+                                            tmpCustomerWr.Name = ToLatin(sst.ChildElements[ssid].InnerText);
                                         }
                                         else if (c.CellValue != null)
                                         {
@@ -1833,7 +2002,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                                         if ((c.DataType != null) && (c.DataType == CellValues.SharedString))
                                         {
                                             int ssid = int.Parse(c.CellValue.Text);
-                                            tmpCustomerWr.Surename = sst.ChildElements[ssid].InnerText;
+                                            tmpCustomerWr.Surename = ToLatin(sst.ChildElements[ssid].InnerText);
                                         }
                                         else if (c.CellValue != null)
                                         {
@@ -1845,7 +2014,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                                         if (c.CellValue != null)
                                         {
                                             tmpCustomerWr.Tel = c.CellValue.Text.ToString();
-                                            if (tmpCustomerWr.Tel.Length != 10)
+                                            if (tmpCustomerWr.Tel.Length < 10)
                                             {
                                                 int ssid = int.Parse(c.CellValue.Text);
                                                 if (ssid < sst.ChildElements.Count)

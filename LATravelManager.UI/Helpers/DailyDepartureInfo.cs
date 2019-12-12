@@ -235,10 +235,10 @@ namespace LATravelManager.UI.Helpers
             }
         }
 
-        public Repositories.GenericRepository Context { get; }
+        public GenericRepository Context { get; }
         public int ExcursionId { get; }
 
-        private void PerCityDepartureList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void PerCityDepartureList_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Remove)
             {

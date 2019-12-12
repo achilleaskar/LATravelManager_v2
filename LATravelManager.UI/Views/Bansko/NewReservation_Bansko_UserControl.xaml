@@ -85,6 +85,8 @@
                                 <Style TargetType="{x:Type ListViewItem}">
                                     <Setter Property="IsSelected"
                                             Value="{Binding IsSelected}" />
+                                    <Setter Property="Foreground"
+                                            Value="{Binding Color}" />
                                     <EventSetter Event="Control.MouseDoubleClick"
                                                  Handler="ListView_MouseDoubleClick" />
                                     <!--<Setter Property="Foreground"
@@ -138,7 +140,8 @@
                                                                 <!--IsEnabled="{Binding Converter={StaticResource RoomsLeftToVisibilityConverter}}">-->
                                                                 <StackPanel Orientation="Horizontal">
                                                                     <TextBlock Text="{Binding ItemCount}"
-                                                                               FontSize="16" MinWidth="18"
+                                                                               FontSize="16"
+                                                                               MinWidth="18"
                                                                                Foreground="Green"
                                                                                FontWeight="Bold"
                                                                                VerticalAlignment="Top"
@@ -149,12 +152,27 @@
                                                                                VerticalAlignment="Top"
                                                                                Foreground="Black"
                                                                                FontSize="16" />
-                                                                    <TextBlock Foreground="Black"
-                                                                               Margin="10 0"
-                                                                               FontSize="14"
-                                                                               TextWrapping="Wrap"
-                                                                               Width="310"
-                                                                               VerticalAlignment="Center" />
+                                                                    <TextBlock Foreground="Blue"
+                                                                               Text="(NN)" VerticalAlignment="Bottom"
+                                                                               FontSize="12"
+                                                                               FontWeight="Bold"
+                                                                               Margin=" 1 0 0 1"
+>
+                                                                        <TextBlock.Style>
+                                                                            <Style TargetType="TextBlock">
+                                                                                <Setter  Property="Visibility"
+                                                                                         Value="Collapsed" />
+                                                                                <Style.Triggers>
+                                                                                    <DataTrigger Binding="{Binding Name.HotelCategory.Id}"
+                                                                                                 Value="8">
+                                                                                        <Setter Property="Visibility"
+                                                                                                Value="Visible" />
+                                                                                    </DataTrigger>
+                                                                                </Style.Triggers>
+                                                                            </Style>
+
+                                                                        </TextBlock.Style>
+                                                                    </TextBlock>
                                                                     <!--Text="{Binding Converter={StaticResource RoomsLeftToHotelsConverter}}"-->
                                                                     <!--Visibility="{Binding Converter={StaticResource RoomsHotelsToVisibilityConverter}}"-->
                                                                     <!--
@@ -196,7 +214,8 @@
                                                                                Foreground="Black"
                                                                                FontSize="14" />
                                                                     <TextBlock Text="{Binding Name.Capacity,StringFormat='({0} pax)'}"
-                                                                               FontWeight="Bold" Margin=" 10 0 0 0 "
+                                                                               FontWeight="Bold"
+                                                                               Margin=" 10 0 0 0 "
                                                                                VerticalAlignment="Top"
                                                                                Foreground="Green"
                                                                                FontSize="14" />
@@ -241,12 +260,14 @@
                                     <Label Content="Check In:"
                                            Padding="0" />
                                     <DatePicker SelectedDate="{Binding BookingWr.CheckIn}"
+                                                IsEnabled="{Binding CanEditDates}"
                                                 Margin="0,0,5,0" />
                                 </StackPanel>
                                 <StackPanel>
                                     <Label Content="Check Out:"
                                            Padding="0" />
-                                    <DatePicker SelectedDate="{Binding BookingWr.CheckOut}" />
+                                    <DatePicker SelectedDate="{Binding BookingWr.CheckOut}"
+                                                IsEnabled="{Binding CanEditDates}" />
                                 </StackPanel>
                                 <!--<CheckBox IsChecked="{Binding BookingWr.DateChanged}"
                                           VerticalAlignment="Center" />-->
@@ -352,8 +373,6 @@
                                            HorizontalAlignment="Left"
                                            Text="Γραφείο?" />
                                 <CheckBox Name="IsPartnerCheckBox"
-                                          Checked="IsPartnerCheckBox_Checked"
-                                          Unchecked="IsPartnerCheckBox_Unchecked"
                                           IsChecked="{Binding IsPartners,UpdateSourceTrigger=PropertyChanged}"
                                           HorizontalAlignment="Left"
                                           VerticalAlignment="Center" />
@@ -403,7 +422,7 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Text="Σύνολο:"
                                            HorizontalAlignment="Left" />
-                                <TextBox Text="{Binding BookingWr.FullPrice,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                <TextBlock Text="{Binding BookingWr.FullPrice,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                          Margin="5,0,5,5"
                                          VerticalAlignment="Center"
                                          MinWidth="40"
@@ -420,8 +439,8 @@
                                              Margin="0,0,5,5"
                                              VerticalAlignment="Center"
                                              HorizontalAlignment="Left"
-                                             Width="50" />
-                                    <TextBox Width="30"
+                                             Width="30" />
+                                    <TextBox Width="50"
                                              VerticalAlignment="Center"
                                              HorizontalAlignment="Left"
                                              Margin="0,0,0,5"
@@ -515,8 +534,7 @@
                                         HorizontalAlignment="Center">
                                 <CheckBox Content="Onlystay"
                                           IsChecked="{Binding OnlyStay}" />
-                                <CheckBox Content="HB"
-                                          IsChecked="{Binding HB }" />
+                            
                             </StackPanel>
                             <ComboBox ItemsSource="{Binding Users}"
                                       SelectedIndex="{Binding SelectedUserIndex}"
@@ -744,15 +762,7 @@
                               SelectedItem="{Binding SelectedCustomer}"
                               CanUserAddRows="True">
                         <DataGrid.Resources>
-                            <ContextMenu x:Key="ItemContextMenu">
-                                <MenuItem Header="Διαγραφη"
-                                          Command="{Binding DataContext.DeleteSelectedCustomersCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}">
-                                    <MenuItem.Icon>
-                                        <Image MaxHeight="20"
-                                               Stretch="Fill" />
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                            </ContextMenu>
+                            
                             <Style TargetType="{x:Type ComboBox}">
                                 <Setter Property="Margin"
                                         Value="0" />
@@ -767,6 +777,17 @@
                                 </Style.Triggers>
                             </Style>
                         </DataGrid.Resources>
+                        <DataGrid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Διαγραφη"
+                                          Command="{Binding DeleteSelectedCustomersCommand}">
+                                    <MenuItem.Icon>
+                                        <Image MaxHeight="20"
+                                               Stretch="Fill" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
                         <DataGrid.RowHeaderStyle>
                             <Style TargetType="{x:Type DataGridRowHeader}">
                                 <Setter Property="Width"
@@ -819,6 +840,20 @@
                                                   MinWidth="60"
                                                   Text="{Binding StartingPlace, UpdateSourceTrigger=PropertyChanged}"
                                                   ItemsSource="{x:Static helpers:StaticResources.StartingPlaces}"
+                                                  DisplayMemberPath="Name" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Επιστροφή"
+                                                    Width="90"
+                                                    CellStyle="{StaticResource DataGridCellStyle}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox IsEditable="True"
+                                                  Width="Auto"
+                                                  VerticalAlignment="Top"
+                                                  ItemsSource="{x:Static helpers:StaticResources.StartingPlaces}"
+                                                  Text="{Binding ReturningPlace, UpdateSourceTrigger=PropertyChanged}"
                                                   DisplayMemberPath="Name" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>

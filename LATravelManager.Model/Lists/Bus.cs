@@ -464,7 +464,7 @@ namespace LATravelManager.Model.Lists
             RecalculateCustomers();
         }
 
-        private void Customers_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void Customers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (!Manual)
                 RecalculateCustomers();
@@ -802,7 +802,7 @@ namespace LATravelManager.Model.Lists
             }
         }
 
-        private void Seats_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void Seats_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Remove)
             {

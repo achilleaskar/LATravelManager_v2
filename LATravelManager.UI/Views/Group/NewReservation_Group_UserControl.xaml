@@ -253,12 +253,14 @@
                                         <Label Content="Check In:"
                                                Padding="0" />
                                         <DatePicker SelectedDate="{Binding BookingWr.CheckIn}"
+                                                    IsEnabled="{Binding CanEditDates}"
                                                     Margin="0,0,5,0" />
                                     </StackPanel>
                                     <StackPanel>
                                         <Label Content="Check Out:"
                                                Padding="0" />
-                                        <DatePicker SelectedDate="{Binding BookingWr.CheckOut}" />
+                                        <DatePicker SelectedDate="{Binding BookingWr.CheckOut}"
+                                                    IsEnabled="{Binding CanEditDates}" />
                                     </StackPanel>
                                 </StackPanel>
                                 <StackPanel Visibility="{Binding BookingWr.IsGroup,Converter={StaticResource booleanToVisibilityConverter}}">
@@ -381,8 +383,7 @@
                                            HorizontalAlignment="Left"
                                            Text="Γραφείο?" />
                                 <CheckBox Name="IsPartnerCheckBox"
-                                          Checked="IsPartnerCheckBox_Checked"
-                                          Unchecked="IsPartnerCheckBox_Unchecked"
+                                          
                                           IsChecked="{Binding IsPartners,UpdateSourceTrigger=PropertyChanged}"
                                           HorizontalAlignment="Left"
                                           VerticalAlignment="Center" />
@@ -432,7 +433,7 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Text="Σύνολο:"
                                            HorizontalAlignment="Left" />
-                                <TextBox Text="{Binding BookingWr.FullPrice,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                <TextBlock Text="{Binding BookingWr.FullPrice,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                          Margin="0,0,5,5"
                                          VerticalAlignment="Center"
                                          HorizontalAlignment="Left"
@@ -450,8 +451,8 @@
                                              Margin="0,0,5,5"
                                              VerticalAlignment="Center"
                                              HorizontalAlignment="Left"
-                                             Width="50" />
-                                    <TextBox Width="30"
+                                             Width="30" />
+                                    <TextBox Width="50"
                                              VerticalAlignment="Center"
                                              HorizontalAlignment="Left"
                                              Margin="0,0,0,5"
@@ -545,8 +546,7 @@
                                         HorizontalAlignment="Center">
                                 <CheckBox Content="Onlystay"
                                           IsChecked="{Binding OnlyStay}" />
-                                <CheckBox Content="HB"
-                                          IsChecked="{Binding HB }" />
+                              
                                 <CheckBox Content="Διαφ. Ημ."
                                           IsChecked="{Binding BookingWr.DifferentDates }" />
                             </StackPanel>

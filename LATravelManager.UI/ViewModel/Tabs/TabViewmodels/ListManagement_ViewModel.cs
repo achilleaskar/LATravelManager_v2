@@ -56,14 +56,41 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
     {
         #region Constructors
 
+
+
+
+        private bool _NoBus;
+
+
+        public bool NoBus
+        {
+            get
+            {
+                return _NoBus;
+            }
+
+            set
+            {
+                if (_NoBus == value)
+                {
+                    return;
+                }
+
+                _NoBus = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public ListManagement_ViewModel(MainViewModel mainViewModel)
         {
             MainViewModel = mainViewModel;
-            ShowCustomersCommand = new RelayCommand(async () => { await ShowCustomers(); }, () => SelectedExcursion != null && SelectedDate != null);
-            EditBookingCommand = new RelayCommand(async () => { await EditBooking(); }, CanEditBooking);
+            //ShowCustomersCommand = new RelayCommand(async () => { await ShowCustomers(); }, () => SelectedExcursion != null && SelectedDate != null);
+            ShowCustomersCommand = new RelayCommand(async () => await ShowCustomers());
+            EditBookingCommand = new RelayCommand(async () => await EditBooking(), CanEditBooking);
             AddCustomersToBusCommand = new RelayCommand(AddCustomersToBus, CanAddCustomersToBus);
-            UpdateVehiclesCommand = new RelayCommand(async () => { await UpdateVehicles(); });
-            SaveBusesCommand = new RelayCommand(async () => { await SaveBuses(); });
+            UpdateVehiclesCommand = new RelayCommand(async () => await UpdateVehicles());
+
+            SaveBusesCommand = new RelayCommand(async () => await SaveBuses(), Context != null && Context.HasChanges());
             AddBusCommand = new RelayCommand(AddBus, CanAddBus);
 
             PutAtSeatsCommand = new RelayCommand<object>(PutAtSeats, CanPutAtSeats);
@@ -84,8 +111,8 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         #region Fields
 
         private List<BookingWrapper> _AllBookings;
-
         private ObservableCollection<Bus> _Buses;
+        private DateTime _CheckInDate;
 
         private ObservableCollection<Counter> _Cities;
 
@@ -165,6 +192,25 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 _Buses = value;
                 RaisePropertyChanged();
                 Buses.CollectionChanged += Buses_CollectionChanged;
+            }
+        }
+
+        public DateTime CheckInDate
+        {
+            get
+            {
+                return _CheckInDate;
+            }
+
+            set
+            {
+                if (_CheckInDate == value)
+                {
+                    return;
+                }
+
+                _CheckInDate = value;
+                RaisePropertyChanged();
             }
         }
 
@@ -587,11 +633,10 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         {
             try
             {
-                Context = new GenericRepository();
 
                 Excursions = new ObservableCollection<Excursion>(MainViewModel.BasicDataManager.Excursions.Where(c => c.Id > 0 && c.ExcursionDates.Any(e => e.CheckOut > DateTime.Now)).OrderBy(e => e.FirstDate));
-                Vehicles = new ObservableCollection<Vehicle>(MainViewModel.BasicDataManager.Vehicles);
-                Leaders = new ObservableCollection<Leader>(MainViewModel.BasicDataManager.Leaders);
+                Vehicles = new ObservableCollection<Vehicle>(MainViewModel.BasicDataManager.Vehicles.OrderBy(b => b.Name));
+                Leaders = new ObservableCollection<Leader>(MainViewModel.BasicDataManager.Leaders.OrderBy(o => o.Name));
                 Buses = new ObservableCollection<Bus>();
 
                 Hotels = new ObservableCollection<Counter>();
@@ -613,6 +658,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                     new SolidColorBrush(Colors.Khaki),
                     new SolidColorBrush(Colors.Aqua)
                 };
+                CheckInDate = DateTime.Today;
             }
             catch (Exception ex)
             {
@@ -655,7 +701,8 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 Customers = new ObservableCollection<Customer>(),
                 Excursion = Context.GetById<Excursion>(SelectedExcursion.Id),
                 Vehicle = Context.GetById<Vehicle>(SelectedVehicle.Id),
-                TimeGo = SelectedDate.CheckIn
+                TimeGo = CheckInDate
+                // TimeGo = SelectedDate.CheckIn
             };
             Context.Add(b);
             Buses.Add(b);
@@ -806,7 +853,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             SelectedBus.Customers.Clear();
         }
 
-        private void Counter_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void Counter_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Remove)
             {
@@ -958,7 +1005,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 foreach (var c in (new BookingWrapper(customer.Reservation.Booking)).Customers)
                 {
                     seats[counter].Customer = c;
-                   // c.SeatNumRet = seats[counter].Number;
+                    // c.SeatNumRet = seats[counter].Number;
                     Customers.Where(v => v.Id == c.Id).FirstOrDefault().SeatNumRet = seats[counter].Number;
                     counter++;
                 }
@@ -979,7 +1026,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 {
                     foreach (var c in r.CustomersList.Select(k => new CustomerWrapper(k)))
                     {
-                        if (Hotels.Where(h => h.Name == r.HotelName.TrimEnd(new[] { '*' })).FirstOrDefault().Selected && Cities.Where(s => s.Name == c.StartingPlace).FirstOrDefault().Selected)
+                        if (Hotels.Where(h => h.Name == r.HotelName.TrimEnd(new[] { '*' })).FirstOrDefault().Selected && Cities.Where(s => s.Name == c.StartingPlace).FirstOrDefault().Selected && (!b.DifferentDates || c.CheckIn == CheckInDate) && (!NoBus || c.Bus == null))
                         {
                             Customers.Add(c);
                             c.PropertyChanged += C_PropertyChanged;
@@ -1073,9 +1120,11 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             await Task.Delay(0);
             Mouse.OverrideCursor = Cursors.Wait;
             Context = new GenericRepository();
-            AllBookings = (Context.GetAllBookingsForLists(SelectedExcursion.Id, SelectedDate.CheckIn, DepartmentIndexBookingFilter)).Select(b => new BookingWrapper(b)).ToList();
-            Buses = new ObservableCollection<Bus>((Context.GetAllBuses(SelectedExcursion.Id, SelectedDate.CheckIn)));
-            Leaders = new ObservableCollection<Leader>(await Context.GetAllAsync<Leader>());
+            // AllBookings = (Context.GetAllBookingsForLists(SelectedExcursion.Id, SelectedDate.CheckIn, DepartmentIndexBookingFilter)).Select(b => new BookingWrapper(b)).ToList();
+            AllBookings = (Context.GetAllBookingsForLists(SelectedExcursion.Id, CheckInDate, DepartmentIndexBookingFilter)).Select(b => new BookingWrapper(b)).ToList();
+            Buses = new ObservableCollection<Bus>((Context.GetAllBuses(SelectedExcursion.Id, CheckInDate)));
+            //Buses = new ObservableCollection<Bus>((Context.GetAllBuses(SelectedExcursion.Id, SelectedDate.CheckIn)));
+            Leaders = new ObservableCollection<Leader>((await Context.GetAllAsync<Leader>()).OrderBy(o => o.Name));
             Hotels.Clear();
             Cities.Clear();
             Customers.Clear();
@@ -1087,9 +1136,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             {
                 foreach (ReservationWrapper r in b.ReservationsInBooking.Select(r => new ReservationWrapper(r)))
                 {
-                    if (b.Id == 3472)
-                    {
-                    }
                     try
                     {
                         tmpHotel = Hotels.Where(h => h.Name.Equals(r.HotelName.TrimEnd(new[] { '*' }))).FirstOrDefault();

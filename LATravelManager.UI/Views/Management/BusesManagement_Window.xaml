@@ -36,6 +36,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Label Content="Όνομα:"
                        Grid.Row="0"
@@ -102,7 +103,7 @@
                             Command="{Binding ClearEntityCommand}" />
                 </StackPanel>
                 <TextBlock Text="{Binding ResultMessage}"
-                           Grid.Row="5"
+                           Grid.Row="8"
                            Grid.ColumnSpan="2"
                            TextWrapping="Wrap"
                            HorizontalAlignment="Left" />

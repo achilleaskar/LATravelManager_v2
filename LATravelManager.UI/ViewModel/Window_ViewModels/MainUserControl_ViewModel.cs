@@ -12,6 +12,7 @@ using LATravelManager.UI.ViewModel.Management;
 using LATravelManager.UI.ViewModel.Parents;
 using LATravelManager.UI.Views;
 using LATravelManager.UI.Views.Management;
+using LATravelManager.UI.Views.Services;
 using Notifications.Wpf;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,45 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 {
     public class MainUserControl_ViewModel : MyViewModelBaseAsync
     {
+        #region Constructors
+
+        public MainUserControl_ViewModel(MainViewModel mainViewModel)
+        {
+            LogOutCommand = new RelayCommand(async () => { await TryLogOut(); });
+
+            OpenHotelEditCommand = new RelayCommand(OpenHotelsWindow, CanEditWindows);
+            OpenCitiesEditCommand = new RelayCommand(OpenCitiesWindow, CanEditWindows);
+            OpenCountriesEditCommand = new RelayCommand(OpenCountriesWindow, CanEditWindows);
+            OpenExcursionsEditCommand = new RelayCommand(OpenExcursionsWindow, CanEditWindows);
+            OpenUsersEditCommand = new RelayCommand(OpenUsersWindow, CanEditWindows);
+            OpenPartnersEditCommand = new RelayCommand(OpenPartnersWindow, CanEditWindows);
+            OpenLeadersEditCommand = new RelayCommand(OpenLeadersWindow, CanEditWindows);
+            OpenVehiclesEditCommand = new RelayCommand(OpenVehiclesWindow, CanEditWindows);
+            OpenOptionalsEditCommand = new RelayCommand(OpenOpionalsWindow, CanEditWindows);
+
+            TemplateViewmodels = new List<ExcursionCategory_ViewModelBase>();
+
+            MessengerInstance.Register<IsBusyChangedMessage>(this, msg => { ManageIsBusy(msg.IsBusy); });
+
+            SelectedTemplateChangedCommand = new RelayCommand(SetProperViewModel);
+
+            MainViewModel = mainViewModel;
+            var x = GetaAllNotifications().ConfigureAwait(false);
+
+            // MessengerInstance.Register<ChangeChildViewModelMessage>(this, async vm => { await SelectedExcursionType.SetProperChildViewModel(vm.ViewModelindex); });
+
+            //  MessengerInstance.Register<ExcursionCategoryChangedMessage>(this, async index => { await SetProperViewModel(); });
+        }
+
+        private void OpenOpionalsWindow()
+        {
+            OptionalExcursions_Management_ViewModel vm = new OptionalExcursions_Management_ViewModel(MainViewModel.BasicDataManager);
+            vm.ReLoad();
+            MessengerInstance.Send(new OpenChildWindowCommand(new OptionalExcursionsManagement_Window { DataContext = vm }));
+        }
+
+        #endregion Constructors
+
         #region Fields
 
         private bool _HasNots;
@@ -42,37 +82,6 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
         private ObservableCollection<ExcursionCategory> _Templates;
 
         #endregion Fields
-
-        #region Constructors
-
-        public MainUserControl_ViewModel(MainViewModel mainViewModel)
-        {
-            LogOutCommand = new RelayCommand(async () => { await TryLogOut(); });
-
-            OpenHotelEditCommand = new RelayCommand(OpenHotelsWindow, CanEditWindows);
-            OpenCitiesEditCommand = new RelayCommand(OpenCitiesWindow, CanEditWindows);
-            OpenCountriesEditCommand = new RelayCommand(OpenCountriesWindow, CanEditWindows);
-            OpenExcursionsEditCommand = new RelayCommand(OpenExcursionsWindow, CanEditWindows);
-            OpenUsersEditCommand = new RelayCommand(OpenUsersWindow, CanEditWindows);
-            OpenPartnersEditCommand = new RelayCommand(OpenPartnersWindow, CanEditWindows);
-            OpenLeadersEditCommand = new RelayCommand(OpenLeadersWindow, CanEditWindows);
-            OpenVehiclesEditCommand = new RelayCommand(OpenVehiclesWindow, CanEditWindows);
-
-            TemplateViewmodels = new List<ExcursionCategory_ViewModelBase>();
-
-            MessengerInstance.Register<IsBusyChangedMessage>(this, msg => { ManageIsBusy(msg.IsBusy); });
-
-            SelectedTemplateChangedCommand = new RelayCommand(SetProperViewModel);
-
-            MainViewModel = mainViewModel;
-            var x = GetaAllNotifications().ConfigureAwait(false);
-
-            // MessengerInstance.Register<ChangeChildViewModelMessage>(this, async vm => { await SelectedExcursionType.SetProperChildViewModel(vm.ViewModelindex); });
-
-            //  MessengerInstance.Register<ExcursionCategoryChangedMessage>(this, async index => { await SetProperViewModel(); });
-        }
-
-        #endregion Constructors
 
         #region Properties
 
@@ -171,6 +180,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
         public RelayCommand OpenCountriesEditCommand { get; }
 
         public RelayCommand OpenExcursionsEditCommand { get; }
+        public RelayCommand OpenOptionalsEditCommand { get; }
 
         public RelayCommand OpenHotelEditCommand { get; }
 
@@ -375,7 +385,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                 Parallel.ForEach(options, o => o.CalculateRemainingAmount());
                 foreach (var booking in options)
                 {
-                    if (((DateTime.Today - booking.CreatedDate).TotalDays >= 5 || (booking.CheckIn - DateTime.Today).TotalDays <= 5) && booking.FullPrice>booking.Customers.Count&& booking.Recieved < 1)
+                    if (((DateTime.Today - booking.CreatedDate).TotalDays >= 5 || (booking.CheckIn - DateTime.Today).TotalDays <= 5) && booking.FullPrice > booking.Customers.Count && booking.Recieved < 1)
                     {
                         reply.Add($"Η κράτηση για { booking.Excursion.Destinations[0]}  " +
                             $"στο όνομα { booking.ReservationsInBooking[0].CustomersList[0] } δέν έχει δώσει προκαταβολή");

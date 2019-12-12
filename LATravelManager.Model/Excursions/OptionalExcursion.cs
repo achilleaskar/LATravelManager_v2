@@ -2,6 +2,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LATravelManager.Model.Excursions
 {
@@ -9,77 +10,47 @@ namespace LATravelManager.Model.Excursions
     {
         #region Fields + Constructors
 
-        private ObservableCollection<Customer> _Customers;
 
-        private DateTime _Date;
+        private DateTime _Date = DateTime.Today;
 
         private Excursion _Excursion;
 
         private string _Name = string.Empty;
 
+
+
+
+        private int _Cost;
+
+        public int Cost
+        {
+            get
+            {
+                return _Cost;
+            }
+
+            set
+            {
+                if (_Cost == value)
+                {
+                    return;
+                }
+
+                _Cost = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public OptionalExcursion()
         {
         }
-
-        public const string CustomersPropertyName = nameof(Customers);
-        public const string DatePropertyName = nameof(Date);
-        public const string ExcursionPropertyName = nameof(Excursion);
-        public const string NamePropertyName = nameof(Name);
 
         #endregion Fields + Constructors
 
         #region Properties
 
-        /// <summary>
-        /// Sets and gets the Customers property.
-        /// Changes to that property's value raise the PropertyChanged event.
-        /// </summary>
-        public ObservableCollection<Customer> Customers
-        {
-            get
-            {
-                return _Customers;
-            }
+      
 
-            set
-            {
-                if (_Customers == value)
-                {
-                    return;
-                }
-
-                _Customers = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        /// <summary>
-        /// Sets and gets the Date property.
-        /// Changes to that property's value raise the PropertyChanged event.
-        /// </summary>
-        public DateTime Date
-        {
-            get
-            {
-                return _Date;
-            }
-
-            set
-            {
-                if (_Date == value)
-                {
-                    return;
-                }
-
-                _Date = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        /// <summary>
-        /// Sets and gets the Excursion property.
-        /// Changes to that property's value raise the PropertyChanged event.
-        /// </summary>
         public Excursion Excursion
         {
             get
@@ -99,10 +70,29 @@ namespace LATravelManager.Model.Excursions
             }
         }
 
-        /// <summary>
-        /// Sets and gets the Name property.
-        /// Changes to that property's value raise the PropertyChanged event.
-        /// </summary>
+
+
+
+
+        public DateTime Date
+        {
+            get
+            {
+                return _Date;
+            }
+
+            set
+            {
+                if (_Date == value)
+                {
+                    return;
+                }
+
+                _Date = value;
+                RaisePropertyChanged();
+            }
+        }
+
         [StringLength(20)]
         public string Name
         {

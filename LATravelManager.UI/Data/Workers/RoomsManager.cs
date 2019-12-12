@@ -4,6 +4,7 @@ using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.LocalModels;
+using LATravelManager.Model.Plan;
 using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.Wrapper;
@@ -207,6 +208,8 @@ namespace LATravelManager.UI.Data.Workers
                     }
                 }
 
+                List<BookingInfoPerDay> bi = new List<BookingInfoPerDay>();
+
                 List<Room> rooms = (await GenericRepository.GetAllRoomsInCityAsync(MinDay, MaxDay, excursionfilter.Destinations[0].Id));
                 foreach (var r in rooms)
                 {
@@ -219,6 +222,7 @@ namespace LATravelManager.UI.Data.Workers
                         Hotels.Add(r.Hotel);
                     }
                 }
+
                 Hotels = Hotels.OrderBy(h => h.Name).ToList();
 
                 HotelWrapper tmpHotelWr;//-------------
@@ -306,11 +310,23 @@ namespace LATravelManager.UI.Data.Workers
                         //  }
                         ////  else
                         //{
+                        HotelWrapper hw;
+                        RoomWrapper rw;
                         foreach (Reservation reservation in booking.ReservationsInBooking)
                         {
                             if (reservation.ReservationType == ReservationTypeEnum.Normal)
                             {
-                                Plan.Where(h => h.Id == reservation.Room.Hotel.Id).FirstOrDefault().RoomWrappers.Where(r => r.Id == reservation.Room.Id).FirstOrDefault().MakeReservation(new ReservationWrapper(reservation));
+                                if (reservation.Room != null)
+                                {
+
+                                hw = Plan.FirstOrDefault(h => h.Id == reservation.Room.Hotel.Id);
+                                rw = hw.RoomWrappers.FirstOrDefault(r => r.Id == reservation.Room.Id);
+                                rw.MakeReservation(new ReservationWrapper(reservation));
+                                }
+                                else
+                                {
+                                    MessageBox.Show($"Πρόβλημα με την κρατηση {reservation.Id}");
+                                }
                             }
                         }
                         //}
@@ -755,13 +771,10 @@ namespace LATravelManager.UI.Data.Workers
 
         private static bool IsOtherFree(ReservationWrapper reservation, List<HotelWrapper> plan)
         {
-            if (reservation.Id == 2898)
-            {
-            }
             foreach (HotelWrapper hotel in plan)
                 // if (hotel.Id != 21 && hotel.Id != 22 && hotel.Id != 23 && hotel.Id != 42)
                 foreach (RoomWrapper roomWr in hotel.RoomWrappers)
-                    if (reservation.NoNameRoomType.Id == roomWr.RoomType.Id)
+                    if (roomWr.CanFit(reservation))
                         if (roomWr.CanAddReservationToRoom(reservation, false, false))
                             return true;
             return false;
@@ -777,9 +790,6 @@ namespace LATravelManager.UI.Data.Workers
                     for (int i = 0; i < room.PlanDailyInfo.Count; i++)
                     {
                         PlanDailyInfo day = room.PlanDailyInfo[i];
-                        if (day.Reservation != null && day.Reservation.Id == 2898)
-                        {
-                        }
                         if (day.DayState == DayStateEnum.FirstDay && day.RoomState == RoomStateEnum.MovableNoName)
                         {
                             if (!IsOtherFree(day.Reservation, plan))
@@ -942,20 +952,20 @@ namespace LATravelManager.UI.Data.Workers
             Parallel.ForEach(NonamesList, noName =>
             {
                 noName.AvailableRooms.Clear();
-                Parallel.ForEach(Plan, hotel =>
-                  {
-                      Parallel.ForEach(hotel.RoomWrappers, room =>
+                Parallel.ForEach(Plan.Where(y => y.HotelCategory.Id == 8), hotel =>
                       {
-                          if (room.CanFit(noName.Reservation) && noName.AvailableRooms.Count < NonamesList.Count + 10)
-                              if (room.CanAddReservationToRoom(noName.Reservation))
-                              {
-                                  lock (lockMe)
+                          Parallel.ForEach(hotel.RoomWrappers, room =>
+                          {
+                              if (room.CanFit(noName.Reservation) && noName.AvailableRooms.Count < NonamesList.Count + 10)
+                                  if (room.CanAddReservationToRoom(noName.Reservation))
                                   {
-                                      noName.AvailableRooms.Add(room);
+                                      lock (lockMe)
+                                      {
+                                          noName.AvailableRooms.Add(room);
+                                      }
                                   }
-                              }
+                          });
                       });
-                  });
             });
         }
 

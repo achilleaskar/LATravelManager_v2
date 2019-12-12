@@ -369,7 +369,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-        public Window_ViewModels.MainViewModel MainViewModel { get; }
+        public MainViewModel MainViewModel { get; }
 
         public decimal Net
         {
@@ -591,10 +591,21 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 DepartmentIndexBookingFilter,
                 UserIndexBookingFilter == 0 ? -1 : Users[UserIndexBookingFilter - 1].Id,
                 PartnerIndexBookingFilter == 0 ? -1 : Partners[PartnerIndexBookingFilter - 1].Id,
-                EnableFromFilter ? From : DateTime.MinValue,
+                EnableFromFilter ? From : CompletedIncomeFilter ? DateTime.MinValue : DateTime.Today,
                 EnableToFilter ? To : DateTime.MaxValue)).Select(b => new BookingWrapper(b)).ToList();
 
             // decimal pel = 0, chara = 0, plat = 0;
+
+            //foreach (var b in bookings)
+            //{
+            //    b.CalculateRemainingAmount();
+            //    if (IncomesContext.HasChanges())
+            //    {
+            //        await IncomesContext.SaveAsync();
+            //    }
+            //}
+
+            //await IncomesContext.SaveAsync();
 
             foreach (var b in bookings)
             {

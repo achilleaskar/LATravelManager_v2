@@ -66,10 +66,6 @@
             </Grid.ColumnDefinitions>
             <Menu DockPanel.Dock="Top"
                   Height="30">
-                <MenuItem Header="Tools">
-                    <MenuItem Header="Open Child" />
-                    <MenuItem Header="Add Person" />
-                </MenuItem>
                 <MenuItem Header="Διαχείριση">
                     <MenuItem Command="{Binding OpenHotelEditCommand}"
                               Header="Ξενοδοχεία" />
@@ -91,6 +87,9 @@
                               Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}" />
                     <MenuItem Command="{Binding OpenVehiclesEditCommand}"
                               Header="Λεωφορεία"
+                              Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}" />
+                    <MenuItem Command="{Binding OpenOptionalsEditCommand}"
+                              Header="Προαιρετικές"
                               Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}" />
                 </MenuItem>
             </Menu>

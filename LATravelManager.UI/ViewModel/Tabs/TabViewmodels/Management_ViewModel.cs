@@ -13,6 +13,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             InfoViewModel = new Info_ViewModel(MainViewModel);
             InfoViewModel.Load();
             ListManagement = new ListManagement_ViewModel(MainViewModel);
+            OptionalsManagement = new OptionalsManagement_ViewModel(MainViewModel);
         }
 
         private int _SelectedIndex;
@@ -74,6 +75,31 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 }
 
                 _ListManagementViewModel = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
+
+
+        private OptionalsManagement_ViewModel _OptionalsManagement;
+
+
+        public OptionalsManagement_ViewModel OptionalsManagement
+        {
+            get
+            {
+                return _OptionalsManagement;
+            }
+
+            set
+            {
+                if (_OptionalsManagement == value)
+                {
+                    return;
+                }
+
+                _OptionalsManagement = value;
                 RaisePropertyChanged();
             }
         }

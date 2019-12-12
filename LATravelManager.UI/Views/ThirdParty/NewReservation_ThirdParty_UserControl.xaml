@@ -213,7 +213,7 @@
                                         <DatePicker Width="Auto"
                                                     VerticalAlignment="Center"
                                                     MinWidth="60"
-                                                    SelectedDate="{Binding DOB}" />
+                                                    SelectedDate="{Binding DOB,UpdateSourceTrigger=PropertyChanged}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -613,21 +613,21 @@
                                            Grid.Column="1"
                                            Text="{Binding ThirdPartyWr.Recieved,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource FtoSConverter}}"
                                            Margin="0,0,5,0" />
-                                <Label Content="Υπόλοιπο Πελ.:"
-                                       Grid.Row="4"
-                                       Grid.Column="0"
-                                       Margin="0,0,5,0" />
-                                <TextBlock Grid.Row="4"
-                                           Width="50"
-                                           Text="{Binding ThirdPartyWr.Remaining,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource FtoSConverter}}"
-                                           VerticalAlignment="Center"
-                                           Grid.Column="1"
-                                           Margin="0,0,5,0" />
-                                <Label Content="Οφειλή"
+                                <Label Content="Υπόλ. Πελάτη:"
                                        Grid.Row="5"
                                        Grid.Column="0"
                                        Margin="0,0,5,0" />
                                 <TextBlock Grid.Row="5"
+                                           Width="50" Background="LightGreen"
+                                           Text="{Binding ThirdPartyWr.Remaining,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource FtoSConverter}}"
+                                           VerticalAlignment="Center"
+                                           Grid.Column="1"
+                                           Margin="0,0,5,0" />
+                                <Label Content="Οφειλή μας:"
+                                       Grid.Row="4"
+                                       Grid.Column="0"
+                                       Margin="0,0,5,0" />
+                                <TextBlock Grid.Row="4"
                                            Width="50"
                                            Text="{Binding ThirdPartyWr.NetRemaining,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource FtoSConverter}}"
                                            VerticalAlignment="Center"

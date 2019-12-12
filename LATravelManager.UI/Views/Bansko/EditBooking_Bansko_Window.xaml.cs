@@ -39,15 +39,15 @@ namespace LATravelManager.UI.Views.Bansko
             return child;
         }
 
-        private void IsPartnerCheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            CustomersDataGrid.Columns[5].Visibility = Visibility.Collapsed;
-        }
+        //private void IsPartnerCheckBox_Checked(object sender, RoutedEventArgs e)
+        //{
+        //    CustomersDataGrid.Columns[5].Visibility = Visibility.Collapsed;
+        //}
 
-        private void IsPartnerCheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            CustomersDataGrid.Columns[5].Visibility = Visibility.Visible;
-        }
+        //private void IsPartnerCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        //{
+        //    CustomersDataGrid.Columns[5].Visibility = Visibility.Visible;
+        //}
 
         private void CustomersDataGrid_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
         {

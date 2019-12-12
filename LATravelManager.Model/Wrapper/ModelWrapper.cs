@@ -9,6 +9,8 @@ namespace LATravelManager.Model.Wrapper
 {
     public class ModelWrapper<T> : NotifyDataErrorInfoBase where T : BaseModel
     {
+        #region Constructors
+
         public ModelWrapper(T model)
         {
             try
@@ -23,6 +25,32 @@ namespace LATravelManager.Model.Wrapper
             {
             }
         }
+
+        #endregion Constructors
+
+        #region Properties
+
+        public DateTime CreatedDate
+        {
+            get { return GetValue<DateTime>(); }
+            set { SetValue(value); }
+        }
+
+        public int Id
+        {
+            get { return Model.Id; }
+            set { SetValue(value); }
+        }
+
+        public T Model { get; }
+
+       
+
+        public string Title { get; set; }
+
+        #endregion Properties
+
+        #region Methods
 
         public bool HasValues()
         {
@@ -55,34 +83,14 @@ namespace LATravelManager.Model.Wrapper
             }
             return false;
         }
-
-        public DateTime? ModifiedDate
-        {
-            get { return GetValue<DateTime?>(); }
-            set { SetValue(value); }
-        }
-
-        public T Model { get; }
-
-        public int Id
-        {
-            get { return Model.Id; }
-            set { SetValue(value); }
-        }
-
-        protected virtual void SetValue<TValue>(TValue value,
-          [CallerMemberName]string propertyName = null)
-        {
-            typeof(T).GetProperty(propertyName).SetValue(Model, value);
-            RaisePropertyChanged(propertyName);
-            ValidatePropertyInternal(propertyName, value);
-        }
-
         public void ValidateAllProperties()
         {
             foreach (PropertyInfo pi in Model.GetType().GetProperties())
             {
-                ValidatePropertyInternal(pi.Name, pi.GetValue(Model));
+                if (pi.CanWrite)
+                {
+                    ValidatePropertyInternal(pi.Name, pi.GetValue(Model));
+                }
             }
         }
 
@@ -91,10 +99,16 @@ namespace LATravelManager.Model.Wrapper
             return (TValue)typeof(T).GetProperty(propertyName).GetValue(Model);
         }
 
-        public DateTime CreatedDate
+        protected virtual void SetValue<TValue>(TValue value,
+                          [CallerMemberName]string propertyName = null)
         {
-            get { return GetValue<DateTime>(); }
-            set { SetValue(value); }
+            typeof(T).GetProperty(propertyName).SetValue(Model, value);
+            RaisePropertyChanged(propertyName);
+            ValidatePropertyInternal(propertyName, value);
+        }
+        protected virtual IEnumerable<string> ValidateProperty(string propertyName)
+        {
+            return null;
         }
 
         protected void ValidatePropertyInternal(string propertyName, object currentValue)
@@ -105,8 +119,17 @@ namespace LATravelManager.Model.Wrapper
 
             ValidateCustomErrors(propertyName);
         }
-
-        public string Title { get; set; }
+        private void ValidateCustomErrors(string propertyName)
+        {
+            IEnumerable<string> errors = ValidateProperty(propertyName);
+            if (errors != null)
+            {
+                foreach (string error in errors)
+                {
+                    AddError(propertyName, error);
+                }
+            }
+        }
 
         private void ValidateDataAnnotations(string propertyName, object currentValue)
         {
@@ -120,21 +143,6 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
-        private void ValidateCustomErrors(string propertyName)
-        {
-            IEnumerable<string> errors = ValidateProperty(propertyName);
-            if (errors != null)
-            {
-                foreach (string error in errors)
-                {
-                    AddError(propertyName, error);
-                }
-            }
-        }
-
-        protected virtual IEnumerable<string> ValidateProperty(string propertyName)
-        {
-            return null;
-        }
+        #endregion Methods
     }
 }

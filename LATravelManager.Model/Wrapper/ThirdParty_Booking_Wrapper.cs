@@ -22,7 +22,12 @@ namespace LATravelManager.Model.Wrapper
             CustomerWrappers = new ObservableCollection<CustomerWrapper>(Customers.Select(c => new CustomerWrapper(c)));
             CustomerWrappers.CollectionChanged += Customers_CollectionChanged;
             Payments.CollectionChanged += Payments_CollectionChanged;
+            foreach (var c in CustomerWrappers)
+            {
+                c.PropertyChanged += EntityViewModelPropertyChanged;
+            }
             InitializeBookingWrapper();
+            CalculateRemainingAmount();
         }
 
         public ObservableCollection<CustomerWrapper> CustomerWrappers
@@ -331,6 +336,7 @@ namespace LATravelManager.Model.Wrapper
 
         public void CalculateRemainingAmount()
         {
+            FullPrice = NetPrice + Commision;
             _Recieved = 0;
             _NetRemaining = NetPrice;
             foreach (Payment payment in Payments)
@@ -388,7 +394,7 @@ namespace LATravelManager.Model.Wrapper
                         }
                     }
                 }
-            RaisePropertyChanged(nameof(Customers));
+            RaisePropertyChanged(nameof(CustomerWrappers));
         }
 
         public string GetPacketDescription()

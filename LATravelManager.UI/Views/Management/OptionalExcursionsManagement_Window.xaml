@@ -1,0 +1,140 @@
+﻿<Window x:Class="LATravelManager.UI.Views.Management.OptionalExcursionsManagement_Window"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        FontSize="14"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterOwner"
+        Closing="Window_Closing"
+        Title="{Binding ControlName}"
+        Height="450"
+        Width="800">
+
+    <Grid Margin="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <GroupBox Header="Επεξεργασία"
+                  Grid.Column="0"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center">
+            <Grid VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="200" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Label Content="Όνομα:"
+                       Grid.Row="0"
+                       Grid.Column="0" />
+                <TextBox Text="{Binding SelectedEntity.Name,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                         VerticalAlignment="Center"
+                         TextWrapping="Wrap"
+                         Height="60"
+                         Grid.Row="0"
+                         Grid.Column="1" />
+                <Label Content="Εκδρομή:"
+                       Grid.Row="1"
+                       Grid.Column="0" />
+                <ComboBox ItemsSource="{Binding Excursions}"
+                          SelectedItem="{Binding SelectedEntity.Excursion,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                          VerticalAlignment="Center"
+                          Grid.Row="1"
+                          Grid.Column="1" />
+                <Label Content="Ημερομηνία:"
+                       Grid.Row="2"
+                       Grid.Column="0" />
+                <DatePicker SelectedDate="{Binding SelectedEntity.Date,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                         VerticalAlignment="Center"
+                         Grid.Row="2"
+                         Grid.Column="1" />
+                <Label Content="Κόστος"
+                       Grid.Row="3"
+                       Grid.Column="0" />
+                <TextBox Text="{Binding SelectedEntity.Cost,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                         VerticalAlignment="Center"
+                         Grid.Row="3"
+                         Grid.Column="1" />
+                <StackPanel Orientation="Vertical"
+                            Grid.Row="4"
+                            Grid.ColumnSpan="2">
+                    <Button Content="Προσθήκη"
+                            Margin="5,5,5,0"
+                            Command="{Binding AddEntityCommand}" />
+                    <Button Content="Αποθήκευση Αλλαγών"
+                            Margin="5,5,5,0"
+                            Command="{Binding SaveChangesCommand}" />
+                    <Button Content="Καθαρισμός"
+                            Margin="5,5,5,0"
+                            Command="{Binding ClearEntityCommand}" />
+                </StackPanel>
+                <TextBlock Text="{Binding ResultMessage}"
+                           Grid.Row="5"
+                           Grid.ColumnSpan="2"
+                           TextWrapping="Wrap"
+                           HorizontalAlignment="Left" />
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="Καταχωρημένες Προαιρετικές"
+                  Grid.Column="1"
+                  HorizontalAlignment="Center">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Button HorizontalAlignment="Right"
+                        Cursor="Hand"
+                        Command="{Binding UpdateEntitiesCommand}">
+                    <iconPacks:PackIconFontAwesome Kind="SyncSolid"
+                                                   VerticalAlignment="Center"
+                                                   Margin="5" />
+                </Button>
+                <DataGrid ItemsSource="{Binding MainCollection}"
+                          Width="310"
+                          Grid.Row="1"
+                          VerticalAlignment="Stretch"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          SelectedItem="{Binding SelectedEntity}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Όνομα"
+                                            Width="150"
+                                            IsReadOnly="True"
+                                            Binding="{Binding Name}" />
+                        <DataGridTextColumn Header="Ημερομ"
+                                            Width="100"
+                                            IsReadOnly="True"
+                                            Binding="{Binding Date,StringFormat='{}{0:dd/MM}'}" />
+                        <DataGridTextColumn Header="Κόστος"
+                                            Width="100"
+                                            IsReadOnly="True"
+                                            Binding="{Binding Cost}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+                <Button Content="Διαγραφη"
+                        Grid.Row="2"
+                        HorizontalAlignment="Right"
+                        Margin="5"
+                        VerticalAlignment="Bottom"
+                        Command="{Binding RemoveEntityCommand}" />
+            </Grid>
+        </GroupBox>
+    </Grid>
+</Window>

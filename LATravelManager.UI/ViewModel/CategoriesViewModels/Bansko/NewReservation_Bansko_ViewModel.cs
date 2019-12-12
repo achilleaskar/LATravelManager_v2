@@ -13,6 +13,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
     {
         public NewReservation_Bansko_ViewModel(MainViewModel mainViewModel) : base(mainViewModel)
         {
+
         }
 
         #region Methods

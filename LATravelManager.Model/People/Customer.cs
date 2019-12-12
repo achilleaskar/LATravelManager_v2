@@ -89,6 +89,31 @@ namespace LATravelManager.Model.People
 
         #endregion Fields
 
+
+
+
+        private ObservableCollection<CustomerOptional> _OptionalExcursions;
+
+
+        public ObservableCollection<CustomerOptional> OptionalExcursions
+        {
+            get
+            {
+                return _OptionalExcursions;
+            }
+
+            set
+            {
+                if (_OptionalExcursions == value)
+                {
+                    return;
+                }
+
+                _OptionalExcursions = value;
+                RaisePropertyChanged();
+            }
+        }
+
         #region Properties
 
         [Range(0, 18)]
@@ -130,9 +155,15 @@ namespace LATravelManager.Model.People
 
         public int DeserveDiscount { get; set; }
 
-        public DateTime? DOB { get; set; }
+        [NotMapped]
+        public int ReservationId => Reservation != null ? Reservation.Id : 0;
+        public DateTime? DOB
+        {
+            get;
+            set;
+        }
 
-        [StringLength(30, MinimumLength = 0)]
+        [StringLength(50, MinimumLength = 0)]
         [DataType(DataType.EmailAddress, ErrorMessage = "Το Email δεν έχει τη σωστή μορφή")]
         [EmailAddress(ErrorMessage = "Το Email δεν έχει τη σωστή μορφή")]
         public string Email { get; set; }
@@ -165,10 +196,8 @@ namespace LATravelManager.Model.People
 
         [Required(ErrorMessage = "Το όνομα είναι υποχρεωτικό")]
         [RegularExpression(@"^[a-z- A-Z]+$", ErrorMessage = "Παρακαλώ χρησιμοποιήστε μόνο λατινικούς χαρακτήρες")]
-        [StringLength(20, MinimumLength = 3, ErrorMessage = "Το Όνομα μπορεί να είναι από 3 έως 20 χαρακτήρες")]
+        [StringLength(30, MinimumLength = 3, ErrorMessage = "Το Όνομα μπορεί να είναι από 3 έως 20 χαρακτήρες")]
         public string Name { get; set; }
-
-        public OptionalExcursion OptionalExcursion { get; set; }
 
         public DateTime PassportExpiration
         {
@@ -246,7 +275,7 @@ namespace LATravelManager.Model.People
 
         [Required(ErrorMessage = "Το επίθετο είναι υποχρεωτικό.")]
         [RegularExpression(@"^[a-z- A-Z]+$", ErrorMessage = "Παρακαλώ χρησιμοπποιήστε μόνο λατινικούς χαρακτήρες")]
-        [StringLength(20, MinimumLength = 3, ErrorMessage = "Το Επίθετο μπορεί να είναι από 3 έως 20 χαρακτήρες")]
+        [StringLength(30, MinimumLength = 3, ErrorMessage = "Το Επίθετο μπορεί να είναι από 3 έως 20 χαρακτήρες")]
         public string Surename
         {
             get

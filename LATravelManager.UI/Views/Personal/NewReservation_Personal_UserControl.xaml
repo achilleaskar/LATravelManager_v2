@@ -803,7 +803,7 @@
                             VerticalAlignment="Top">
                         
                     <TextBlock  VerticalAlignment="Top"
-                                Visibility="{Binding PersonalWr.CanShowDirectionsCanShowDirections,Converter={StaticResource booleanToVisibilityConverter}}"
+                                Visibility="{Binding PersonalWr.CanShowDirections,Converter={StaticResource booleanToVisibilityConverter}}"
                                 Grid.Column="1"
                                 Width="215"
                                 TextWrapping="Wrap"

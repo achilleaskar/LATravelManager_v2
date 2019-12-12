@@ -238,12 +238,14 @@
                                     <Label Content="Check In:"
                                            Padding="0" />
                                     <DatePicker SelectedDate="{Binding BookingWr.CheckIn}"
+                                                IsEnabled="{Binding CanEditDates}"
                                                 Margin="0,0,5,0" />
                                 </StackPanel>
-                                <StackPanel Margin="0,0,5,0">
+                                <StackPanel>
                                     <Label Content="Check Out:"
                                            Padding="0" />
-                                    <DatePicker SelectedDate="{Binding BookingWr.CheckOut}" />
+                                    <DatePicker SelectedDate="{Binding BookingWr.CheckOut}"
+                                                IsEnabled="{Binding CanEditDates}" />
                                 </StackPanel>
                                 <Button Cursor="Hand"
                                         VerticalAlignment="Bottom"
@@ -373,8 +375,6 @@
                                            HorizontalAlignment="Left"
                                            Text="Γραφείο?" />
                                 <CheckBox Name="IsPartnerCheckBox"
-                                          Checked="IsPartnerCheckBox_Checked"
-                                          Unchecked="IsPartnerCheckBox_Unchecked"
                                           IsChecked="{Binding IsPartners,UpdateSourceTrigger=PropertyChanged}"
                                           HorizontalAlignment="Left"
                                           VerticalAlignment="Center" />
@@ -423,7 +423,7 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Text="Σύνολο:"
                                            HorizontalAlignment="Left" />
-                                <TextBox Text="{Binding BookingWr.FullPrice,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                <TextBlock Text="{Binding BookingWr.FullPrice,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                          Margin="5,0,5,5"
                                          VerticalAlignment="Center"
                                          MinWidth="40"
@@ -440,8 +440,8 @@
                                              Margin="0,0,5,5"
                                              VerticalAlignment="Center"
                                              HorizontalAlignment="Left"
-                                             Width="50" />
-                                    <TextBox Width="30"
+                                             Width="30" />
+                                    <TextBox Width="50"
                                              VerticalAlignment="Center"
                                              HorizontalAlignment="Left"
                                              Margin="0,0,0,5"
@@ -535,8 +535,6 @@
                                         HorizontalAlignment="Center">
                                 <CheckBox Content="Onlystay"
                                           IsChecked="{Binding OnlyStay}" />
-                                <CheckBox Content="HB"
-                                          IsChecked="{Binding HB }" />
                                 <CheckBox Content="Διαφ. Ημ."
                                           IsChecked="{Binding BookingWr.DifferentDates }" />
                             </StackPanel>
@@ -825,6 +823,20 @@
                                                   MinWidth="60"
                                                   Text="{Binding StartingPlace, UpdateSourceTrigger=PropertyChanged}"
                                                   ItemsSource="{x:Static helpers:StaticResources.StartingPlaces}"
+                                                  DisplayMemberPath="Name" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Επιστροφή"
+                                                    Width="90"
+                                                    CellStyle="{StaticResource DataGridCellStyle}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox IsEditable="True"
+                                                  Width="Auto"
+                                                  VerticalAlignment="Top"
+                                                  ItemsSource="{x:Static helpers:StaticResources.StartingPlaces}"
+                                                  Text="{Binding ReturningPlace, UpdateSourceTrigger=PropertyChanged}"
                                                   DisplayMemberPath="Name" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>

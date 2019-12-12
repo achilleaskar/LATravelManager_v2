@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>LaTravelManager</id>
-    <version>0.0.0.0</version>
+    <version>0.1.2.0</version>
     <authors>Karagiannis Achilleas</authors>
     <owners>LAtravel</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -10,9 +10,7 @@
     <copyright>Copyright 2019</copyright>
   </metadata>
   <files>
-    <files>
       <file src="*.*" target="lib\net45\" exclude="*.pdb;*.nupkg;*.vshost.*"/>
-      <!--<file src="**\*.*" target="lib\net45\" exclude="*.pdb;*.nupkg;*.vshost.*"/>-->
-    </files>
+      <file src="**\*.*" target="lib\net45\" exclude="*.pdb;*.nupkg;*.vshost.*"/>
   </files>
 </package>

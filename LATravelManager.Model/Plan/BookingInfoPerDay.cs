@@ -18,6 +18,7 @@ namespace LATravelManager.Model.Plan
 
         private int _MinimunStay;
 
+        public Room Room { get; set; }
         public int MinimunStay
         {
             get

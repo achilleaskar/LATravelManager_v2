@@ -5,6 +5,7 @@ using LATravelManager.Model.Hotels;
 using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Plan;
+using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
@@ -796,6 +797,31 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
+
+
+
+        private ObservableCollection<roomDetail> _Periods;
+
+
+        public ObservableCollection<roomDetail> Periods
+        {
+            get
+            {
+                return _Periods;
+            }
+
+            set
+            {
+                if (_Periods == value)
+                {
+                    return;
+                }
+
+                _Periods = value;
+                RaisePropertyChanged();
+            }
+        }
+
         private async Task ShowRooms()
         {
             GenericRepository = new GenericRepository();
@@ -809,38 +835,68 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             if (SelectedRoomTypeIndex > 0)
                 roomtypeId = RoomTypes[SelectedRoomTypeIndex - 1].Id;
 
-            ObservableCollection<RoomWrapper> tmpList = new ObservableCollection<RoomWrapper>((await GenericRepository.GetAllRoomsFiltered(cityId, hotelId, roomtypeId)).Select(x => new RoomWrapper(x)));
+            ObservableCollection<RoomWrapper> tmpList = new ObservableCollection<RoomWrapper>((await GenericRepository.GetAllRoomsFiltered(cityId, hotelId, roomtypeId, CheckIn, CheckOut)).Select(x => new RoomWrapper(x)));
+            Periods = new ObservableCollection<roomDetail>();
 
-            //List<Room> rooms1 = new List<Room>();
-            //int counster = 0;
-            //foreach (var item in tmpList)
-            //{
-            //    if (item.DailyBookingInfo.Count == 0 && !GenericRepository.IsAnyInRoom(item.Id))
-            //    {
-            //        rooms1.Add(item.Model);
-            //    }
-            //}
-            //foreach (var item in rooms1)
-            //{
-            //    if (true)
-            //    {
+            Parallel.ForEach(tmpList, (t2) => t2.GetDates());
 
-            //    }
-            //    counster++;
-            //    GenericRepository.Delete(item);
-            //    if (counster % 100 == 0)
-            //    {
-            //        await GenericRepository.SaveAsync();
-            //    }
-            //}
-            //foreach (var room in tmpList)
-            //{
-            //    if ((room.Id >= 3105 && room.Id <= 3124) || (room.Id >= 3145 && room.Id <= 3156))
-            //    {
-            //        GenericRepository.Add(new Option { Date = new DateTime(2019, 10, 21), Room = room.Model });
-            //    }
-            //}
-            //await GenericRepository.SaveAsync();
+            roomDetail tmp;
+            foreach (var r in tmpList)
+            {
+                foreach (var t in r.Periods)
+                {
+                    tmp = Periods.FirstOrDefault(p => p.Hotel.Id == r.Hotel.Id && p.Rommtype.Id == r.RoomType.Id && p.Period.From == t.From && p.Period.To == t.To);
+                    if (tmp != null)
+                    {
+                        tmp.Count++;
+                    }
+                    else
+                        Periods.Add(new roomDetail { Count = 1, Hotel = r.Hotel, Period = t, Rommtype = r.RoomType });
+                }
+            }
+
+            //CollectionViewSource.GetDefaultView(Periods).SortDescriptions.Add(new SortDescription)
+            Periods = new ObservableCollection<roomDetail>(Periods.OrderBy(p => p.Period.From));
+
+            //var t3 = Periods.GroupBy(o => o.Hotel).Select(g => new { g.Key, new RoomType g.GroupBy(x => x.Rommtype).Select(cd => new { cd.Key, T = cd.GroupBy(rt => rt.Period).Select(u => new { u.Key }).ToList() }) });
+
+            List<HotelContainer> HotelContainers = new List<HotelContainer>();
+
+            HotelContainer hotel;
+            PeriodContainer period;
+            roomDetail roomdetail;
+            foreach (var room in tmpList)
+            {
+                foreach (var t2 in room.Periods)
+                {
+                    hotel = HotelContainers.FirstOrDefault(p => p.Hotel.Id == room.Hotel.Id);
+                    if (hotel == null)
+                    {
+                        hotel = new HotelContainer { Hotel = room.Hotel,Periods=new List<PeriodContainer>()};
+                        HotelContainers.Add(hotel);
+                    }
+                   
+                    period = hotel.Periods.FirstOrDefault(b => b.Period.From == t2.From && b.Period.To == t2.To);
+                    if (period == null)
+                    {
+                        period = new PeriodContainer { Period = new Period { From = t2.From, To = t2.To } ,Roomtypes=new List<roomDetail>() };
+                        hotel.Periods.Add(period);
+                    }
+
+                    roomdetail = period.Roomtypes.FirstOrDefault(tr => tr.Rommtype.Id == room.RoomType.Id);
+                    if (roomdetail == null)
+                    {
+                        roomdetail = new roomDetail { Rommtype = room.RoomType } ;
+                        period.Roomtypes.Add(roomdetail);
+                    }
+                    roomdetail.Count++;
+                }
+            }
+
+            DocumentsManagement dm = new DocumentsManagement(GenericRepository);
+
+            dm.PrintAllRooms(HotelContainers);
+
             if (DatesFilter)
             {
                 foreach (RoomWrapper room in tmpList)
@@ -855,4 +911,27 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         #endregion Methods
     }
+
+    public class roomDetail
+    {
+        public Hotel Hotel { get; set; }
+        public RoomType Rommtype { get; set; }
+
+        public Period Period { get; set; }
+
+        public int Count { get; set; }
+    }
+
+    public class HotelContainer
+    {
+        public Hotel Hotel { get; set; }
+        public List<PeriodContainer> Periods { get; set; }
+
+    }
+    public class PeriodContainer
+    {
+        public Period Period { get; set; }
+        public List<roomDetail> Roomtypes { get; set; }
+    }
+
 }

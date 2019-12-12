@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C98AFCAD-18B7-4072-999F-E285382BAFC1}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>LATravelManager.Model</RootNamespace>
+    <AssemblyName>LATravelManager.Model</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CommonServiceLocator, Version=2.0.5.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.2.0.5\lib\net45\CommonServiceLocator.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus, Version=4.5.3.2, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.4.5.3.2\lib\net40\EPPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight, Version=5.4.1.0, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.Extras, Version=5.4.1.0, Culture=neutral, PublicKeyToken=669f0b5e8f868abf, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Extras.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.4.1.0, Culture=neutral, PublicKeyToken=5f873c45e98af8a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Airline.cs" />
+    <Compile Include="BaseModel.cs" />
+    <Compile Include="BookingData\Booking.cs" />
+    <Compile Include="BookingData\Personal_Booking.cs" />
+    <Compile Include="BookingData\ThirdParty_Booking.cs" />
+    <Compile Include="Parea.cs" />
+    <Compile Include="Thesi.cs" />
+    <Compile Include="CustomFile.cs" />
+    <Compile Include="EnumDescriptionTypeConverter.cs" />
+    <Compile Include="Excursions\ExcursionDate.cs" />
+    <Compile Include="Excursions\ExcursionTime.cs" />
+    <Compile Include="Lists\Vehicle.cs" />
+    <Compile Include="LocalModels\CityDepartureInfo.cs" />
+    <Compile Include="LocalModels\Email.cs" />
+    <Compile Include="LocalModels\NoName.cs" />
+    <Compile Include="LocalModels\PlanDailyInfo.cs" />
+    <Compile Include="LocalModels\RoomingList.cs" />
+    <Compile Include="Locations\Airport.cs" />
+    <Compile Include="ChangeLog.cs" />
+    <Compile Include="Definitions.cs" />
+    <Compile Include="EditTracker.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="INamed.cs" />
+    <Compile Include="LookUpItem.cs" />
+    <Compile Include="People\Counter.cs" />
+    <Compile Include="Plan\BookingInfoPerDay.cs" />
+    <Compile Include="Lists\Bus.cs" />
+    <Compile Include="BookingData\ChangeInBooking.cs" />
+    <Compile Include="Locations\City.cs" />
+    <Compile Include="Locations\Country.cs" />
+    <Compile Include="People\Customer.cs" />
+    <Compile Include="Lists\Department.cs" />
+    <Compile Include="Excursions\Excursion.cs" />
+    <Compile Include="Excursions\ExcursionCategory.cs" />
+    <Compile Include="Hotels\Hotel.cs" />
+    <Compile Include="Hotels\HotelCategory.cs" />
+    <Compile Include="Hotels\HotelInfo.cs" />
+    <Compile Include="Lists\Leader.cs" />
+    <Compile Include="Hotels\Option.cs" />
+    <Compile Include="Excursions\OptionalExcursion.cs" />
+    <Compile Include="People\Partner.cs" />
+    <Compile Include="BookingData\Payment.cs" />
+    <Compile Include="Plan\Month.cs" />
+    <Compile Include="Plan\PlanDatetInfo.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="BookingData\Reservation.cs" />
+    <Compile Include="Hotels\Room.cs" />
+    <Compile Include="Hotels\RoomOption.cs" />
+    <Compile Include="Hotels\RoomType.cs" />
+    <Compile Include="Locations\StartingPlace.cs" />
+    <Compile Include="People\User.cs" />
+    <Compile Include="Service.cs" />
+    <Compile Include="Services\FerryService.cs" />
+    <Compile Include="Services\GuideService.cs" />
+    <Compile Include="Services\HotelService.cs" />
+    <Compile Include="Services\OptionalService.cs" />
+    <Compile Include="Services\PlaneService.cs" />
+    <Compile Include="Services\TransferService.cs" />
+    <Compile Include="Transaction.cs" />
+    <Compile Include="Wrapper\BookingWrapper.cs" />
+    <Compile Include="Wrapper\VehicleWrapper.cs" />
+    <Compile Include="Wrapper\CityWrapper.cs" />
+    <Compile Include="Wrapper\CountryWrapper.cs" />
+    <Compile Include="Wrapper\CustomerWrapper.cs" />
+    <Compile Include="Wrapper\ExcursionWrapper.cs" />
+    <Compile Include="Wrapper\HotelWrapper.cs" />
+    <Compile Include="Wrapper\LeaderWrapper.cs" />
+    <Compile Include="Wrapper\ModelWrapper.cs" />
+    <Compile Include="Wrapper\NotifyDataErrorInfoBase.cs" />
+    <Compile Include="Wrapper\PartnerWrapper.cs" />
+    <Compile Include="Wrapper\Personal_BookingWrapper.cs" />
+    <Compile Include="Wrapper\ReservationWrapper.cs" />
+    <Compile Include="Wrapper\RoomWrapper.cs" />
+    <Compile Include="Wrapper\ThirdParty_Booking_Wrapper.cs" />
+    <Compile Include="Wrapper\TransactionWrapper.cs" />
+    <Compile Include="Wrapper\UserWrapper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".editorconfig" />
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

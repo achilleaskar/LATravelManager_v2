@@ -23,6 +23,9 @@
             <TabItem Header="Λίστες">
                 <local:ListManagement_UserControl DataContext="{Binding ListManagement}" />
             </TabItem>
+            <TabItem Header="Προαιρετικά">
+                <local:OptionalsManagement_UserControl DataContext="{Binding OptionalsManagement}" />
+            </TabItem>
         </TabControl>
     </Grid>
 </UserControl>

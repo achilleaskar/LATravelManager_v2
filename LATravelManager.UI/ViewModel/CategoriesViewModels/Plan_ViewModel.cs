@@ -1,5 +1,7 @@
-﻿using GalaSoft.MvvmLight.CommandWpf;
+﻿using DocumentFormat.OpenXml.Wordprocessing;
+using GalaSoft.MvvmLight.CommandWpf;
 using LATravelManager.Model;
+using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.LocalModels;
 using LATravelManager.Model.Plan;
@@ -17,7 +19,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -43,9 +47,97 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
 
             CancelRoomThisDayCommand = new RelayCommand<PlanDailyInfo>(async (obj) => { await CancelThisDay(obj); }, CanCancelThisDay);
             AddRoomThisDayCommand = new RelayCommand<PlanDailyInfo>(async (obj) => { await AddThisDay(obj); }, CanAddThisDay);
+            MoveFromCommand = new RelayCommand<PlanDailyInfo>((obj) => { MoveFrom(obj); }, CanMoveFrom);
+            MoveToCommand = new RelayCommand<PlanDailyInfo>(async (obj) => await MoveTo(obj));
             AddAllotmentRoomThisDayCommand = new RelayCommand<PlanDailyInfo>(async (obj) => { await AddAllotmentThisDay(obj); }, CanAddAllotmentRoomThisDay);
             AddBookingRoomThisDayCommand = new RelayCommand<PlanDailyInfo>(async (obj) => { await AddBookingThisDay(obj); }, CanAddBookingRoomThisDay);
             MessengerInstance.Register<SelectedExcursionChangedMessage>(this, exc => { SelectedExcursionChanged(exc.SelectedExcursion); });
+        }
+
+
+
+
+
+
+        private ReservationWrapper _TmpReservation;
+
+
+        public ReservationWrapper TmpReservation
+        {
+            get
+            {
+                return _TmpReservation;
+            }
+
+            set
+            {
+                if (_TmpReservation == value)
+                {
+                    return;
+                }
+
+                _TmpReservation = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
+
+
+        private PlanDailyInfo _TmpDailyInfo;
+
+
+        public PlanDailyInfo TmpDailyInfo
+        {
+            get
+            {
+                return _TmpDailyInfo;
+            }
+
+            set
+            {
+                if (_TmpDailyInfo == value)
+                {
+                    return;
+                }
+
+                _TmpDailyInfo = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
+
+
+        private async Task MoveTo(PlanDailyInfo obj)
+        {
+            if (obj == null || TmpReservation == null || TmpDailyInfo == null || !obj.Room.CanFit(TmpReservation) || !obj.Room.CanAddReservationToRoom(TmpReservation))
+            {
+                MessageBox.Show("Δεν Γίνεται");
+                return;
+            }
+            obj.Room.MakeReservation(TmpReservation);
+            TmpReservation.Model.Room = obj.Room.Model;
+            await Context.SaveAsync();
+            foreach (var d in TmpDailyInfo.Room.PlanDailyInfo.Where(t => t.Reservation != null && t.Reservation.Id == TmpReservation.Id))
+            {
+                d.Reservation = null;
+                d.RoomState = RoomStateEnum.Available;
+            }
+
+        }
+
+        private void MoveFrom(PlanDailyInfo obj)
+        {
+            TmpReservation = obj.Reservation;
+            TmpDailyInfo = obj;
+        }
+
+        private bool CanMoveFrom(PlanDailyInfo arg)
+        {
+            if (arg != null && arg.Reservation != null && arg.Reservation.ReservationType == ReservationTypeEnum.Normal)
+                return true;
+            return false;
         }
 
         private void SelectedExcursionChanged(ExcursionWrapper selectedExcursion)
@@ -99,6 +191,8 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
         public RelayCommand<PlanDailyInfo> AddBookingRoomThisDayCommand { get; set; }
 
         public RelayCommand<PlanDailyInfo> AddRoomThisDayCommand { get; set; }
+        public RelayCommand<PlanDailyInfo> MoveFromCommand { get; set; }
+        public RelayCommand<PlanDailyInfo> MoveToCommand { get; set; }
 
         public RelayCommand<PlanDailyInfo> CancelRoomThisDayCommand { get; set; }
 
@@ -459,7 +553,10 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
                 {
                     if (!room.Handled)
                         foreach (RoomWrapper currentRoom in hotel.RoomWrappers)
-                            if (room.Id != currentRoom.Id && !currentRoom.Handled && currentRoom.RoomType == room.RoomType && (room.Note == currentRoom.Note || (room.Note.Contains("eos") && currentRoom.Note.Contains("eos"))) && room.CanMerge(currentRoom.PlanDailyInfo))
+                            if (room.Id != currentRoom.Id && !currentRoom.Handled && currentRoom.RoomType == room.RoomType &&
+                                ((string.IsNullOrEmpty(room.Note) && string.IsNullOrEmpty(currentRoom.Note)) || room.Note == currentRoom.Note ||
+                                (!string.IsNullOrEmpty(room.Note) && !string.IsNullOrEmpty(currentRoom.Note) && room.Note.Contains("eos") && currentRoom.Note.Contains("eos")))
+                                && room.CanMerge(currentRoom.PlanDailyInfo))
                             {
                                 for (var i = 0; i < currentRoom.PlanDailyInfo.Count; i++)
                                     if (currentRoom.PlanDailyInfo[i].RoomState != RoomStateEnum.NotAvailable)
@@ -503,6 +600,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
                 foreach (RoomWrapper room in hotel.RoomWrappers)
                     if (!room.Handled)
                         tmpHotel.RoomWrappers.Add(room);
+                tmpHotel.RoomWrappers = tmpHotel.RoomWrappers.OrderBy(w => w.RoomType.Id).ToList();
                 mergedList.Add(tmpHotel);
             }
             return mergedList;

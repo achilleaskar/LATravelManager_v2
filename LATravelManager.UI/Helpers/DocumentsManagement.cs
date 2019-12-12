@@ -3,11 +3,13 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Hotels;
 using LATravelManager.Model.Lists;
 using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Repositories;
+using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System;
@@ -159,7 +161,7 @@ namespace LATravelManager.UI.Helpers
                         foreach (Booking booking in day.Bookings)
                         {
                             first = true;
-                            foreach (Reservation reservation in booking.ReservationsInBooking)
+                            foreach (ReservationWrapper reservation in booking.ReservationsInBooking.Select(r => new ReservationWrapper(r)))
                             {
                                 customersCount = -1;
                                 foreach (Customer customer in reservation.CustomersList)
@@ -187,7 +189,7 @@ namespace LATravelManager.UI.Helpers
                                         }
                                         if (reservation.ReservationType == ReservationTypeEnum.Noname)
                                         {
-                                            myWorksheet.Cells["D" + lineNum].Value = reservation.NoNameRoomType.Name;
+                                            myWorksheet.Cells["D" + lineNum].Value = reservation.GetNoNameType();
                                             myWorksheet.Cells["F" + lineNum].Value = "NO NAME";
                                         }
                                         else if (reservation.ReservationType == ReservationTypeEnum.Normal)
@@ -197,7 +199,7 @@ namespace LATravelManager.UI.Helpers
                                         }
                                         else if (reservation.ReservationType == ReservationTypeEnum.Overbooked)
                                         {
-                                            myWorksheet.Cells["D" + lineNum].Value = reservation.NoNameRoomType.Name;
+                                            myWorksheet.Cells["D" + lineNum].Value = reservation.GetNoNameType();
                                             myWorksheet.Cells["F" + lineNum].Value = reservation.Hotel.Name;
                                         }
                                         else if (reservation.ReservationType == ReservationTypeEnum.Transfer)
@@ -561,8 +563,7 @@ namespace LATravelManager.UI.Helpers
                 }
             }
 
-            reservationsThisDay = reservationsThisDay.OrderBy(x => x.CustomersList[0].StartingPlace).ToList();
-            reservationsThisDay = reservationsThisDay.OrderBy(x => x.HotelName).ToList();
+            reservationsThisDay = reservationsThisDay.OrderBy(x1 => x1.CustomersList[0].StartingPlace).ThenBy(x => x.HotelName).ToList();
             if (bus != null)
             {
                 if (!borderonly)
@@ -647,54 +648,55 @@ namespace LATravelManager.UI.Helpers
                                 myWorksheet.Cells["E" + lineNum].Value = customer.PassportNum ?? "";
                                 myWorksheet.Cells["F" + lineNum].Value = customer.DOB != null && customer.DOB.Value.Year > 1800 ? customer.DOB.Value.ToString("dd/MM/yy") : "";
                             }
-                        }
-                        else if (bus != null)
-                        {
-                            myWorksheet.InsertRow(lineNum, 1);
-                            customersCount++;
+                            lineNum++;
 
-                            myWorksheet.Cells["A" + lineNum].Value = "X";
-                            myWorksheet.Cells["C" + lineNum].Value = customer.Name;
-                            myWorksheet.Cells["C" + lineNum].Style.Font.Strike = true;
-                            myWorksheet.Cells["D" + lineNum].Value = customer.Surename;
-                            myWorksheet.Cells["D" + lineNum].Style.Font.Strike = true;
-                            if (customersCount == 0)
-                            {
-                                myWorksheet.Cells["B" + lineNum].Value = reservation.CheckIn.Day + "-" + reservation.CheckOut.ToString("dd/MM");
-                                if (!borderonly)
-                                {
-                                    myWorksheet.Cells["E" + lineNum].Value = reservation.HotelName.TrimEnd(new[] { '*' });
-                                    if (reservation.Booking.IsPartners)
-                                        myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Partner.ToString().Length > 11) ? reservation.Booking.Partner.ToString().Substring(0, 11) : reservation.Booking.Partner.ToString();
-                                    else if (!string.IsNullOrEmpty(reservation.Booking.Comment))
-                                        myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Comment.Length > 12) ? reservation.Booking.Comment.Substring(0, 11) : reservation.Booking.Comment;
-                                }
-                            }
-                            //else if (customersCount == 1)
-                            //    myWorksheet.Cells["E" + lineNum].Value = reservation.Room.RoomType;
-
-                            if (!borderonly)
-                            {
-                                myWorksheet.Cells["F" + lineNum].Value = customer.StartingPlace;
-                                myWorksheet.Cells["F" + lineNum].Style.Font.Strike = true;
-                                if (customer.Tel != null && (customer.Tel.StartsWith("69", StringComparison.Ordinal) || customer.Tel.StartsWith("+", StringComparison.Ordinal) || (customer.Tel.StartsWith("00", StringComparison.Ordinal) && customer.Tel.Length > 10 && customer.Tel.Length < 16)))
-                                {
-                                    myWorksheet.Cells["G" + lineNum].Value = customer.Tel;
-                                    myWorksheet.Cells["G" + lineNum].Style.Font.Strike = true;
-                                    PhoneNumbers += customer.Tel + ",";
-                                }
-                                else
-                                    myWorksheet.Cells["G" + lineNum].Value = " ";
-                            }
-                            if (borderonly)
-                            {
-                                myWorksheet.Cells["I" + lineNum].Value = customer.PassportNum ?? "";
-                                myWorksheet.Cells["J" + lineNum].Value = customer.DOB != null && customer.DOB.Value.Year > 1800 ? customer.DOB.Value.ToString("dd/MM/yy") : "";
-                                myWorksheet.Cells["I" + lineNum].Style.Font.Strike = true;
-                                myWorksheet.Cells["J" + lineNum].Style.Font.Strike = true;
-                            }
                         }
-                        lineNum++;
+                        //else if (bus != null)
+                        //{
+                        //    myWorksheet.InsertRow(lineNum, 1);
+                        //    customersCount++;
+
+                        //    myWorksheet.Cells["A" + lineNum].Value = "X";
+                        //    myWorksheet.Cells["C" + lineNum].Value = customer.Name;
+                        //    myWorksheet.Cells["C" + lineNum].Style.Font.Strike = true;
+                        //    myWorksheet.Cells["D" + lineNum].Value = customer.Surename;
+                        //    myWorksheet.Cells["D" + lineNum].Style.Font.Strike = true;
+                        //    if (customersCount == 0)
+                        //    {
+                        //        myWorksheet.Cells["B" + lineNum].Value = reservation.CheckIn.Day + "-" + reservation.CheckOut.ToString("dd/MM");
+                        //        if (!borderonly)
+                        //        {
+                        //            myWorksheet.Cells["E" + lineNum].Value = reservation.HotelName.TrimEnd(new[] { '*' });
+                        //            if (reservation.Booking.IsPartners)
+                        //                myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Partner.ToString().Length > 11) ? reservation.Booking.Partner.ToString().Substring(0, 11) : reservation.Booking.Partner.ToString();
+                        //            else if (!string.IsNullOrEmpty(reservation.Booking.Comment))
+                        //                myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Comment.Length > 12) ? reservation.Booking.Comment.Substring(0, 11) : reservation.Booking.Comment;
+                        //        }
+                        //    }
+                        //    //else if (customersCount == 1)
+                        //    //    myWorksheet.Cells["E" + lineNum].Value = reservation.Room.RoomType;
+
+                        //    if (!borderonly)
+                        //    {
+                        //        myWorksheet.Cells["F" + lineNum].Value = customer.StartingPlace;
+                        //        myWorksheet.Cells["F" + lineNum].Style.Font.Strike = true;
+                        //        if (customer.Tel != null && (customer.Tel.StartsWith("69", StringComparison.Ordinal) || customer.Tel.StartsWith("+", StringComparison.Ordinal) || (customer.Tel.StartsWith("00", StringComparison.Ordinal) && customer.Tel.Length > 10 && customer.Tel.Length < 16)))
+                        //        {
+                        //            myWorksheet.Cells["G" + lineNum].Value = customer.Tel;
+                        //            myWorksheet.Cells["G" + lineNum].Style.Font.Strike = true;
+                        //            PhoneNumbers += customer.Tel + ",";
+                        //        }
+                        //        else
+                        //            myWorksheet.Cells["G" + lineNum].Value = " ";
+                        //    }
+                        //    if (borderonly)
+                        //    {
+                        //        myWorksheet.Cells["I" + lineNum].Value = customer.PassportNum ?? "";
+                        //        myWorksheet.Cells["J" + lineNum].Value = customer.DOB != null && customer.DOB.Value.Year > 1800 ? customer.DOB.Value.ToString("dd/MM/yy") : "";
+                        //        myWorksheet.Cells["I" + lineNum].Style.Font.Strike = true;
+                        //        myWorksheet.Cells["J" + lineNum].Style.Font.Strike = true;
+                        //    }
+                        //}
                     }
                     myWorksheet.Cells["E" + (lineNum - 1)].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
                     myWorksheet.Cells["B" + (lineNum - 1)].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
@@ -734,60 +736,60 @@ namespace LATravelManager.UI.Helpers
                     modelTable.Style.Border.Right.Style = ExcelBorderStyle.Thin;
                     modelTable.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
                 }
-                if (RestReservations.Count > 0)
-                {
-                    int secondCounter = 1;
-                    lineNum += 3;
-                    myWorksheet.Cells["A" + lineNum + ":H" + lineNum].Merge = true;
-                    myWorksheet.Cells["A" + lineNum].Value = "Εκτός Λεωφορείου";
-                    myWorksheet.Cells["A" + lineNum].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                    lineNum += 2;
-                    secondline = lineNum;
-                    foreach (ReservationWrapper reservation in RestReservations)
-                    {
-                        customersCount = -1;
-                        foreach (Customer customer in reservation.CustomersList)
-                        {
-                            myWorksheet.InsertRow(lineNum, 1);
-                            customersCount++;
+                //if (RestReservations.Count > 0)
+                //{
+                //    int secondCounter = 1;
+                //    lineNum += 3;
+                //    myWorksheet.Cells["A" + lineNum + ":H" + lineNum].Merge = true;
+                //    myWorksheet.Cells["A" + lineNum].Value = "Εκτός Λεωφορείου";
+                //    myWorksheet.Cells["A" + lineNum].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                //    lineNum += 2;
+                //    secondline = lineNum;
+                //    foreach (ReservationWrapper reservation in RestReservations)
+                //    {
+                //        customersCount = -1;
+                //        foreach (Customer customer in reservation.CustomersList)
+                //        {
+                //            myWorksheet.InsertRow(lineNum, 1);
+                //            customersCount++;
 
-                            myWorksheet.Cells["A" + lineNum].Value = secondCounter;
-                            myWorksheet.Cells["C" + lineNum].Value = customer.Name;
-                            myWorksheet.Cells["D" + lineNum].Value = customer.Surename;
-                            if (customersCount == 0)
-                            {
-                                myWorksheet.Cells["B" + lineNum].Value = reservation.CheckIn.Day + "-" + reservation.CheckOut.ToString("dd/MM");
-                                myWorksheet.Cells["E" + lineNum].Value = reservation.HotelName.TrimEnd(new[] { '*' });
-                                if (!borderonly)
-                                {
-                                    if (reservation.Booking.IsPartners)
-                                        myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Partner.ToString().Length > 11) ? reservation.Booking.Partner.ToString().Substring(0, 11) : reservation.Booking.Partner.ToString();
-                                }
-                                //else if (reservation.Booking.Remaining > 0)
-                                //    myWorksheet.Cells["H" + lineNum].Value = reservation.Booking.Remaining + "€";
-                            }
-                            //else if (customersCount == 1)
-                            //    myWorksheet.Cells["E" + lineNum].Value = reservation.RoomTypeName;
-                            if (!borderonly)
-                            {
-                                myWorksheet.Cells["F" + lineNum].Value = customer.StartingPlace;
-                                if (customer.Tel != null && (customer.Tel.StartsWith("69", StringComparison.Ordinal) || customer.Tel.StartsWith("+", StringComparison.Ordinal) || (customer.Tel.StartsWith("00", StringComparison.Ordinal) && customer.Tel.Length > 10 && customer.Tel.Length < 16)))
-                                    myWorksheet.Cells["G" + lineNum].Value = customer.Tel;
-                                else
-                                    myWorksheet.Cells["G" + lineNum].Value = " ";
-                            }
-                            lineNum++;
-                            secondCounter++;
-                        }
-                        myWorksheet.Cells["E" + (lineNum - 1)].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
-                    }
-                    lineNum--;
-                    modelTable = myWorksheet.Cells["A" + secondline + ":H" + (lineNum)];
-                    modelTable.Style.Border.Top.Style = ExcelBorderStyle.Thin;
-                    modelTable.Style.Border.Left.Style = ExcelBorderStyle.Thin;
-                    modelTable.Style.Border.Right.Style = ExcelBorderStyle.Thin;
-                    modelTable.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
-                }
+                //            myWorksheet.Cells["A" + lineNum].Value = secondCounter;
+                //            myWorksheet.Cells["C" + lineNum].Value = customer.Name;
+                //            myWorksheet.Cells["D" + lineNum].Value = customer.Surename;
+                //            if (customersCount == 0)
+                //            {
+                //                myWorksheet.Cells["B" + lineNum].Value = reservation.CheckIn.Day + "-" + reservation.CheckOut.ToString("dd/MM");
+                //                myWorksheet.Cells["E" + lineNum].Value = reservation.HotelName.TrimEnd(new[] { '*' });
+                //                if (!borderonly)
+                //                {
+                //                    if (reservation.Booking.IsPartners)
+                //                        myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Partner.ToString().Length > 11) ? reservation.Booking.Partner.ToString().Substring(0, 11) : reservation.Booking.Partner.ToString();
+                //                }
+                //                //else if (reservation.Booking.Remaining > 0)
+                //                //    myWorksheet.Cells["H" + lineNum].Value = reservation.Booking.Remaining + "€";
+                //            }
+                //            //else if (customersCount == 1)
+                //            //    myWorksheet.Cells["E" + lineNum].Value = reservation.RoomTypeName;
+                //            if (!borderonly)
+                //            {
+                //                myWorksheet.Cells["F" + lineNum].Value = customer.StartingPlace;
+                //                if (customer.Tel != null && (customer.Tel.StartsWith("69", StringComparison.Ordinal) || customer.Tel.StartsWith("+", StringComparison.Ordinal) || (customer.Tel.StartsWith("00", StringComparison.Ordinal) && customer.Tel.Length > 10 && customer.Tel.Length < 16)))
+                //                    myWorksheet.Cells["G" + lineNum].Value = customer.Tel;
+                //                else
+                //                    myWorksheet.Cells["G" + lineNum].Value = " ";
+                //            }
+                //            lineNum++;
+                //            secondCounter++;
+                //        }
+                //        myWorksheet.Cells["E" + (lineNum - 1)].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                //    }
+                //    lineNum--;
+                //    modelTable = myWorksheet.Cells["A" + secondline + ":H" + (lineNum)];
+                //    modelTable.Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                //    modelTable.Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                //    modelTable.Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                //    modelTable.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                //}
 
                 fileInfo = new FileInfo(wbPath ?? throw new InvalidOperationException());
                 p.SaveAs(fileInfo);
@@ -796,95 +798,130 @@ namespace LATravelManager.UI.Helpers
             }
             else
                 MessageBox.Show("Δέν υπάρχουν άτομα που να πηγαίνουν τις συγκεκριμένες ημέρες από τις επιλεγμένες πόλεις", "Σφάλμα");
-            if (!borderonly && bus != null)
+            //if (!borderonly && bus != null)
+            //{
+            //    sampleFile = AppDomain.CurrentDomain.BaseDirectory + @"Sources\protypo_theseis.xlsx";
+            //    //List<string> selectedCities = new List<string>();
+            //    lineNum = 2;
+            //    fileInfo = new FileInfo(sampleFile);
+            //    p = new ExcelPackage(fileInfo);
+            //    myWorksheet = p.Workbook.Worksheets[1];
+            //    counter = 0;
+
+            //    if (reservationsThisDay.Count > 0)
+            //    {
+
+            //        foreach (ReservationWrapper reservation in reservationsThisDay)
+            //        {
+            //            if (50 - ((lineNum - 1) % 50) < 4)
+            //            {
+            //                lineNum += 50 - ((lineNum - 1) % 50);
+            //            }
+
+            //            foreach (var c in reservation.CustomersList)
+            //            {
+            //                if (c.SeatNum == 0 || c.SeatNumRet == 0)
+            //                {
+            //                    //  MessageBox.Show($"O pelatis {c} den exei thesi");
+            //                }
+            //            }
+
+            //            myWorksheet.Cells["A" + lineNum].Value = "Επώνυμα: " + reservation.GetSurnames();
+            //            myWorksheet.Cells["A" + lineNum].Style.Font.Bold = true;
+
+            //            myWorksheet.Cells["A" + ++lineNum].Value = "Αναχώρηση : Ταξίδι προς " + reservation.Booking.Excursion.Destinations[0].Name + ":";
+            //            myWorksheet.Cells["A" + ++lineNum].Value = "Επιστροφή : Ταξίδι από " + reservation.Booking.Excursion.Destinations[0].Name + ":";
+
+            //            lineNum--;
+
+            //            if (reservation.CustomersList.Count > 0)
+            //            {
+            //                myWorksheet.Cells["B" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNum).ToList()[0].SeatNum;
+            //            }
+            //            if (reservation.CustomersList.Count > 1)
+            //            {
+            //                myWorksheet.Cells["C" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNum).ToList()[1].SeatNum;
+            //            }
+            //            if (reservation.CustomersList.Count > 2)
+            //            {
+            //                myWorksheet.Cells["D" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNum).ToList()[2].SeatNum;
+            //            }
+            //            if (reservation.CustomersList.Count > 3)
+            //            {
+            //                myWorksheet.Cells["E" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNum).ToList()[3].SeatNum;
+            //            }
+            //            if (reservation.CustomersList.Count > 4)
+            //            {
+            //                myWorksheet.Cells["F" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNum).ToList()[4].SeatNum;
+            //            }
+            //            lineNum++;
+            //            if (reservation.CustomersList.Count > 0)
+            //            {
+            //                myWorksheet.Cells["B" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNumRet).ToList()[0].SeatNumRet;
+            //            }
+            //            if (reservation.CustomersList.Count > 1)
+            //            {
+            //                myWorksheet.Cells["C" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNumRet).ToList()[1].SeatNumRet;
+            //            }
+            //            if (reservation.CustomersList.Count > 2)
+            //            {
+            //                myWorksheet.Cells["D" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNumRet).ToList()[2].SeatNumRet;
+            //            }
+            //            if (reservation.CustomersList.Count > 3)
+            //            {
+            //                myWorksheet.Cells["E" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNumRet).ToList()[3].SeatNumRet;
+            //            }
+            //            if (reservation.CustomersList.Count > 4)
+            //            {
+            //                myWorksheet.Cells["F" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNumRet).ToList()[4].SeatNumRet;
+            //            }
+            //            lineNum++;
+            //            lineNum++;
+            //        }
+
+            //        wbPath = GetPath($"\\Θέσεις Λεωφορείου για {reservationsThisDay[0].Booking.Excursion.Destinations[0].Name} " + bus.TimeGo.ToString("dd_MM_yy"));
+
+            //        fileInfo = new FileInfo(wbPath ?? throw new InvalidOperationException());
+            //        p.SaveAs(fileInfo);
+            //        // Process.Start(wbPath);
+            //        p.Dispose();
+            //    }
+            //}
+        }
+
+        internal void PrintAllRooms(List<HotelContainer> hotelContainers)
+        {
+            string wbPath = null;
+            string sampleFile = AppDomain.CurrentDomain.BaseDirectory + @"Sources\protypo kratiseon.xlsx";
+            //List<string> selectedCities = new List<string>();
+            int lineNum = 0;
+            Thread.CurrentThread.CurrentCulture = culture;
+            FileInfo fileInfo = new FileInfo(sampleFile);
+            ExcelPackage p = new ExcelPackage(fileInfo);
+            ExcelWorksheet myWorksheet = p.Workbook.Worksheets[1];
+
+            wbPath = GetPath("Rooms", @"\Λίστες Δωματίων\");
+            lineNum = 4;
+
+            foreach (var hotel in hotelContainers)
             {
-                sampleFile = AppDomain.CurrentDomain.BaseDirectory + @"Sources\protypo_theseis.xlsx";
-                //List<string> selectedCities = new List<string>();
-                lineNum = 2;
-                fileInfo = new FileInfo(sampleFile);
-                p = new ExcelPackage(fileInfo);
-                myWorksheet = p.Workbook.Worksheets[1];
-                counter = 0;
-
-                if (reservationsThisDay.Count > 0)
+                myWorksheet.Cells["A" + lineNum].Value = hotel.Hotel.Name;
+                lineNum++;
+                foreach (var period in hotel.Periods)
                 {
-
-                    foreach (ReservationWrapper reservation in reservationsThisDay)
+                    myWorksheet.Cells["B" + lineNum].Value = period.Period.ToString();
+                    lineNum++;
+                    foreach (var roomtype in period.Roomtypes)
                     {
-                        if (50 - ((lineNum-1) % 50) < 4)
-                        {
-                            lineNum += 50 - ((lineNum - 1) % 50);
-                        }
-
-                        foreach (var c in reservation.CustomersList)
-                        {
-                            if (c.SeatNum == 0 || c.SeatNumRet == 0)
-                            {
-                                //  MessageBox.Show($"O pelatis {c} den exei thesi");
-                            }
-                        }
-
-                        myWorksheet.Cells["A" + lineNum].Value = "Επώνυμα: " + reservation.GetSurnames();
-                        myWorksheet.Cells["A" + lineNum].Style.Font.Bold = true;
-
-                        myWorksheet.Cells["A" + ++lineNum].Value = "Αναχώρηση : Ταξίδι προς " + reservation.Booking.Excursion.Destinations[0].Name + ":";
-                        myWorksheet.Cells["A" + ++lineNum].Value = "Επιστροφή : Ταξίδι από " + reservation.Booking.Excursion.Destinations[0].Name + ":";
-
-                        lineNum--;
-
-                        if (reservation.CustomersList.Count > 0)
-                        {
-                            myWorksheet.Cells["B" + lineNum].Value = reservation.CustomersList.OrderBy(t=>t.SeatNum).ToList()[0].SeatNum;
-                        }
-                        if (reservation.CustomersList.Count > 1)
-                        {
-                            myWorksheet.Cells["C" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNum).ToList()[1].SeatNum;
-                        }
-                        if (reservation.CustomersList.Count > 2)
-                        {
-                            myWorksheet.Cells["D" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNum).ToList()[2].SeatNum;
-                        }
-                        if (reservation.CustomersList.Count > 3)
-                        {
-                            myWorksheet.Cells["E" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNum).ToList()[3].SeatNum;
-                        }
-                        if (reservation.CustomersList.Count > 4)
-                        {
-                            myWorksheet.Cells["F" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNum).ToList()[4].SeatNum;
-                        }
-                        lineNum++;
-                        if (reservation.CustomersList.Count > 0)
-                        {
-                            myWorksheet.Cells["B" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNumRet).ToList()[0].SeatNumRet;
-                        }
-                        if (reservation.CustomersList.Count > 1)
-                        {
-                            myWorksheet.Cells["C" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNumRet).ToList()[1].SeatNumRet;
-                        }
-                        if (reservation.CustomersList.Count > 2)
-                        {
-                            myWorksheet.Cells["D" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNumRet).ToList()[2].SeatNumRet;
-                        }
-                        if (reservation.CustomersList.Count > 3)
-                        {
-                            myWorksheet.Cells["E" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNumRet).ToList()[3].SeatNumRet;
-                        }
-                        if (reservation.CustomersList.Count > 4)
-                        {
-                            myWorksheet.Cells["F" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNumRet).ToList()[4].SeatNumRet;
-                        }
-                        lineNum++;
+                        myWorksheet.Cells["C" + lineNum].Value = roomtype.Rommtype.Name;
+                        myWorksheet.Cells["E" + lineNum].Value = roomtype.Count.ToString();
                         lineNum++;
                     }
-
-                    wbPath = GetPath($"\\Θέσεις Λεωφορείου για {reservationsThisDay[0].Booking.Excursion.Destinations[0].Name} " + bus.TimeGo.ToString("dd_MM_yy"));
-
-                    fileInfo = new FileInfo(wbPath ?? throw new InvalidOperationException());
-                    p.SaveAs(fileInfo);
-                    // Process.Start(wbPath);
-                    p.Dispose();
                 }
             }
+
+            fileInfo = new FileInfo(wbPath ?? throw new InvalidOperationException());
+            p.SaveAs(fileInfo);
         }
 
         internal void PrintPaymentsReciept(Payment selectedPayment, Customer selectedCustomer)
@@ -1215,20 +1252,31 @@ namespace LATravelManager.UI.Helpers
             //    else
             //        fileName = @"Sources\Voucher_enfirmo_thess.docx";
             //}
+            StartingPlace customerStartingPlace = null;
             File.Copy(fileName, saveAs, true);
             Customer c = reservationWr.CustomersList[0];
-            StartingPlace customerStartingPlace = await Context.GetByNameAsync<StartingPlace>(c.StartingPlace);
+            var place = booking.Excursion.Destinations[0].ExcursionTimes.FirstOrDefault(e => e.StartingPlace.Name == c.StartingPlace);
+            if (place != null)
+            {
+                customerStartingPlace = place.StartingPlace;
+
+            }
             Bus bus;
             bus = c.Bus ?? new Bus { Leader = new Leader { Name = "", Tel = "" } };
 
             if (customerStartingPlace == null || customerStartingPlace.Id == 19)
             {
+
                 customerStartingPlace = new StartingPlace
                 {
                     Details = reservationWr.CustomersList[0].StartingPlace,
                     Name = reservationWr.CustomersList[0].StartingPlace,
                     Id = -1
                 };
+                if (customerStartingPlace == null)
+                {
+                    MessageBox.Show($"Το σημείο {customerStartingPlace.Details} δεν είναι καταχωρημένο");
+                }
             }
             if (string.IsNullOrEmpty(customerStartingPlace.Details))
             {
@@ -1251,6 +1299,15 @@ namespace LATravelManager.UI.Helpers
                     using (StreamReader sr = new StreamReader(wordDoc.MainDocumentPart.GetStream()))
                     {
                         docText = sr.ReadToEnd();
+                    }
+                    DateTime startDate = reservationWr.CheckIn;
+                    if (booking.Excursion.Id == 2)
+                    {
+                        List<int> athinaika = new List<int> { 1, 4, 9, 20, 29 };
+                        if (athinaika.Any(a => a == customerStartingPlace.Id))
+                        {
+                            startDate = startDate.AddDays(-1);
+                        }
                     }
                     var time = booking.Excursion.Destinations[0].ExcursionTimes.Any(s => s.StartingPlace.Id == customerStartingPlace.Id) ? booking.Excursion.Destinations[0].ExcursionTimes.Where(s => s.StartingPlace.Id == customerStartingPlace.Id).FirstOrDefault().Time : new TimeSpan(999);
                     bool after12 = time.Ticks != 999 && booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Group && booking.ExcursionDate != null && booking.ExcursionDate.NightStart && time.Hours < 5;
@@ -1286,11 +1343,11 @@ namespace LATravelManager.UI.Helpers
                     regexText = new Regex("zdates");
                     docText = regexText.Replace(docText, reservationWr.Dates);
                     regexText = new Regex("regexstart");//
-                    docText = regexText.Replace(docText, after12 ? reservationWr.CheckIn.AddDays(1).ToString("dd/MM/yyyy") : reservationWr.CheckIn.ToString("dd/MM/yyyy"));
+                    docText = regexText.Replace(docText, after12 ? reservationWr.CheckIn.AddDays(1).ToString("dd/MM/yyyy") : startDate.ToString("dd/MM/yyyy"));
                     regexText = new Regex("zreturntime");
                     docText = regexText.Replace(docText, reservationWr.ExcursionType == ExcursionTypeEnum.Skiathos ? "16:00" : booking.Excursion.Destinations[0].Id == 9 ? "09:00" : "11:00");
                     regexText = new Regex("zdate");//
-                    docText = regexText.Replace(docText, after12 ? reservationWr.CheckIn.AddDays(1).ToString("dd/MM") : reservationWr.CheckIn.ToString("dd/MM"));
+                    docText = regexText.Replace(docText, after12 ? reservationWr.CheckIn.AddDays(1).ToString("dd/MM") : startDate.ToString("dd/MM"));
                     regexText = new Regex("zlocation");
                     docText = regexText.Replace(docText, reservationWr.CustomersList[0].StartingPlace);
                     regexText = new Regex("ztime");
@@ -1298,7 +1355,7 @@ namespace LATravelManager.UI.Helpers
                     regexText = new Regex("zplace");
                     docText = regexText.Replace(docText, customerStartingPlace.Id == 14 && booking.Excursion.Destinations[0].Id == 5 ? "Εθνική Τράπεζα" : customerStartingPlace.Details);
                     regexText = new Regex("zsynodos");
-                    docText = regexText.Replace(docText, booking.Excursion.Id == 29 ? "Αθανασία 6981189869" : booking.Excursion.Destinations[0].Id == 2 ? "ΣΤΡΑΤΟΣ: +30 6988558275" : bus?.Leader.ToString());
+                    docText = regexText.Replace(docText, booking.Excursion.Id == 29 ? "Αθανασία 6981189869" :bus!=null&&bus.Leader!=null? bus?.Leader.ToString() : booking.Excursion.Destinations[0].Id == 2 ? "ΣΤΡΑΤΟΣ: +30 6988558275" :"");
                     regexText = new Regex("zcity");
                     docText = regexText.Replace(docText, booking.Excursion.Destinations[0].Name);
                     regexText = new Regex("zgostart");
@@ -1316,11 +1373,11 @@ namespace LATravelManager.UI.Helpers
                     regexText = new Regex("customername");
                     docText = regexText.Replace(docText, c.Surename + " " + c.Name);
                     regexText = new Regex("excursion");
-                    docText = regexText.Replace(docText, $"{reservationWr.DaysCount}ήμερη εκδρομή για {booking.Excursion.Destinations[0].Name}");
+                    docText = regexText.Replace(docText, $"Eκδρομή για {booking.Excursion.Destinations[0].Name}");
                     regexText = new Regex("duration");
                     docText = regexText.Replace(docText, reservationWr.DaysCount > 1 ? reservationWr.DaysCount + " ημέρες" : "1 ημέρα ");
                     regexText = new Regex("startdate");
-                    docText = regexText.Replace(docText, reservationWr.CheckIn.ToString("dd/MM/yyyy"));
+                    docText = regexText.Replace(docText, startDate.ToString("dd/MM/yyyy"));
                     regexText = new Regex("allcustomers");
                     docText = regexText.Replace(docText, reservationWr.Names);
                     regexText = new Regex("minyes");
