@@ -1,6 +1,5 @@
 ﻿using LATravelManager.Model.Lists;
 using LATravelManager.Model.People;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LATravelManager.Model.Excursions
 {
@@ -17,31 +16,9 @@ namespace LATravelManager.Model.Excursions
 
         private OptionalExcursion _OptionalExcursion;
 
-        #endregion Fields
-
-
-
-
         private PaymentType _PaymentType;
 
-        public PaymentType PaymentType
-        {
-            get
-            {
-                return _PaymentType;
-            }
-
-            set
-            {
-                if (_PaymentType == value)
-                {
-                    return;
-                }
-
-                _PaymentType = value;
-                RaisePropertyChanged();
-            }
-        }
+        #endregion Fields
 
         #region Properties
 
@@ -140,6 +117,53 @@ namespace LATravelManager.Model.Excursions
             }
         }
 
+        public string PaidString => GetPaymentState();
+
+        public PaymentType PaymentType
+        {
+            get
+            {
+                return _PaymentType;
+            }
+
+            set
+            {
+                if (_PaymentType == value)
+                {
+                    return;
+                }
+
+                _PaymentType = value;
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(PaidString));
+            }
+        }
+
         #endregion Properties
+
+        #region Methods
+
+        private string GetPaymentState()
+        {
+            switch (PaymentType)
+            {
+                case PaymentType.Recieved:
+                    return "Πληρώθηκε";
+
+                case PaymentType.NotRecieved:
+                    return "Δεν εισέπραξα";
+
+                case PaymentType.NotPaid:
+                    return "Δεν πλήρωσε";
+
+                case PaymentType.Canceled:
+                    return "Ακύρωσε";
+
+                default:
+                    return "Σφάλμα";
+            };
+        }
+
+        #endregion Methods
     }
 }

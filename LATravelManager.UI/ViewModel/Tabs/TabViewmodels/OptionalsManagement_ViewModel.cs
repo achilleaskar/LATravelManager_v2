@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
+using LATravelManager.Model;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Lists;
 using LATravelManager.Model.People;
@@ -18,6 +19,59 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {
     public class OptionalsManagement_ViewModel : MyViewModelBaseAsync
     {
+
+        #region Constructors
+
+        public OptionalsManagement_ViewModel()
+        {
+            ShowCustomersCommand = new RelayCommand(async () => await ShowCustomers());
+            PrintSofiaCommand = new RelayCommand(async () => await PrintSofia());
+            AddOptionalGotCommand = new RelayCommand<object>(async (par) => await AddOptional(par, 1), CanAddOptional);
+            AddOptionalPaidCommand = new RelayCommand<object>(async (par) => await AddOptional(par, 2), CanAddOptional);
+            AddOptionalNotPaidCommand = new RelayCommand<object>(async (par) => await AddOptional(par, 3), CanAddOptional);
+            RecievedMoneyCommand = new RelayCommand<int>(async (par) => await ChangePaymentState(par), CanChange);
+
+            Customers = new ObservableCollection<Customer>();
+        }
+
+        private async Task ChangePaymentState(int par)
+        {
+            SelectedOptional.PaymentType = (PaymentType)par;
+            await Context.SaveAsync();
+        }
+
+
+
+
+        private CustomerOptional _SelectedOptional;
+
+
+        public CustomerOptional SelectedOptional
+        {
+            get
+            {
+                return _SelectedOptional;
+            }
+
+            set
+            {
+                if (_SelectedOptional == value)
+                {
+                    return;
+                }
+
+                _SelectedOptional = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private bool CanChange(int arg)
+        {
+            return SelectedOptional != null;
+        }
+
+        #endregion Constructors
+
         #region Fields
 
         private Bus _Bus;
@@ -42,39 +96,14 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         #endregion Fields
 
-        #region Constructors
-
-        public OptionalsManagement_ViewModel()
-        {
-            ShowCustomersCommand = new RelayCommand(async () => await ShowCustomers());
-            PrintSofiaCommand = new RelayCommand(async () => await PrintSofia());
-            AddOptionalGotCommand = new RelayCommand<object>(async (par) => await AddOptional(par, 0), CanAddOptional);
-            AddOptionalPaidCommand = new RelayCommand<object>(async (par) => await AddOptional(par, 1), CanAddOptional);
-            AddOptionalNotPaidCommand = new RelayCommand<object>(async (par) => await AddOptional(par, 2), CanAddOptional);
-
-            Customers = new ObservableCollection<Customer>();
-        }
-
-        private async Task PrintSofia()
-        {
-            var sofia = (await Context.GetAllOptionalsAsync(1))
-                .OrderBy(y => y.Customer.HotelName)
-                .ThenBy(u => u.Customer.Reservation.Id).ToList();
-            using (DocumentsManagement vm = new DocumentsManagement(new GenericRepository()))
-            {
-                //await vm.PrintAllPhones();
-                vm.PrintOptionals(sofia);
-            }
-
-        }
-
-        #endregion Constructors
-
         #region Properties
 
         public RelayCommand<object> AddOptionalGotCommand { get; set; }
-        public RelayCommand<object> AddOptionalPaidCommand { get; set; }
+
         public RelayCommand<object> AddOptionalNotPaidCommand { get; set; }
+
+        public RelayCommand<object> AddOptionalPaidCommand { get; set; }
+        public RelayCommand<int> RecievedMoneyCommand { get; set; }
 
         public Bus Bus
         {
@@ -218,6 +247,8 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
+        public RelayCommand PrintSofiaCommand { get; set; }
+
         public string SearchTerm
         {
             get
@@ -278,7 +309,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         }
 
         public RelayCommand ShowCustomersCommand { get; set; }
-        public RelayCommand PrintSofiaCommand { get; set; }
 
         public ICollectionView View
         {
@@ -331,7 +361,8 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                         Leader = SelectedLeader,
                         Note = oe.Note,
                         OptionalExcursion = oe,
-                        
+                        PaymentType = (PaymentType)v
+
 
                     });
                 oe.Note = "";
@@ -359,6 +390,18 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             return false;
         }
 
+        private async Task PrintSofia()
+        {
+            var sofia = (await Context.GetAllOptionalsAsync(1))
+                .OrderBy(y => y.Customer.HotelName)
+                .ThenBy(u => u.Customer.Reservation.Id).ToList();
+            using (DocumentsManagement vm = new DocumentsManagement(new GenericRepository()))
+            {
+                //await vm.PrintAllPhones();
+                vm.PrintOptionals(sofia);
+            }
+
+        }
         private async Task ShowCustomers()
         {
             Mouse.OverrideCursor = Cursors.Wait;
@@ -393,5 +436,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         }
 
         #endregion Methods
+
     }
 }

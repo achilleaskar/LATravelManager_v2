@@ -108,11 +108,23 @@
             </ItemsControl>
             <DataGrid CanUserAddRows="False"
                       AutoGenerateColumns="False"
-                      Width="390" HorizontalAlignment="Left"
+                      HorizontalAlignment="Left"
                       ItemsSource="{Binding SelectedCustomer.OptionalExcursions}">
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Τα πήρα"
+                                  Command="{Binding RecievedMoneyCommand}" CommandParameter="1" />
+                        <MenuItem Header="Πλήρωσε"
+                                  Command="{Binding RecievedMoneyCommand}"
+                                  CommandParameter="2" />
+                        <MenuItem Header="Ακύρωσε"
+                                  Command="{Binding RecievedMoneyCommand}"
+                                  CommandParameter="3" />
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Όνομα"
-                                        Width="140"
+                                        Width="120"
                                         Binding="{Binding OptionalExcursion.Name}" />
                     <DataGridTextColumn Header="Date"
                                         Width="40"
@@ -120,14 +132,19 @@
                     <DataGridTextColumn Header="Cost"
                                         Width="50"
                                         Binding="{Binding Cost, StringFormat=C2}" />
+                    <DataGridTextColumn Header="Πληρωμή"
+                                        Width="70"
+                                        Binding="{Binding PaidString}" />
                     <DataGridTextColumn Header="Note"
                                         Width="150"
                                         Binding="{Binding Note}" />
                 </DataGrid.Columns>
-
             </DataGrid>
-            <Button Content="PrintSofia" Command="{Binding PrintSofiaCommand}"/>
-
+            <StackPanel Orientation="Horizontal">
+                
+            <Button Content="PrintSofia" HorizontalAlignment="Left" Margin="5"
+                    Command="{Binding PrintSofiaCommand}" />
+            </StackPanel>
         </StackPanel>
     </Grid>
 </UserControl>

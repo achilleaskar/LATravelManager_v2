@@ -33,9 +33,10 @@ namespace LATravelManager.Model
 
     public enum PaymentType
     {
-        Recieved,
-        NotRecieved,
-        NotPaid
+        Recieved=1,
+        NotRecieved=2,
+        NotPaid=3,
+        Canceled=4
     }
 
     [TypeConverter(typeof(EnumDescriptionTypeConverter))]
