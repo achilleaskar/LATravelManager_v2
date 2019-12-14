@@ -17,7 +17,6 @@ using System.Data.Entity.Core.Objects;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -208,10 +207,22 @@ namespace LATravelManager.UI.Repositories
                 .ToListAsync);
         }
 
-        public IEnumerable<Booking> GetAllBookingsForLists(int excursionId, DateTime checkIn, int dep)
+        public IEnumerable<Booking> GetAllBookingsForLists(int excursionId, DateTime checkIn, int dep, bool checkout = false)
         {
+            if (!checkout)
+            {
+                return Context.Bookings.Where(b => b.Excursion.Id == excursionId && b.Disabled == false &&
+                ((!b.DifferentDates && b.CheckIn == checkIn) || (b.DifferentDates && b.ReservationsInBooking.Any(tc => tc.CustomersList.Any(r => r.CheckIn == checkIn)))) &&
+                (dep == 0 || b.User.BaseLocation == dep))
+                   .Include(f => f.ReservationsInBooking.Select(i => i.CustomersList))
+                   .Include(f => f.ReservationsInBooking.Select(i => i.Room).Select(r => r.Hotel))
+                   .Include(f => f.ReservationsInBooking.Select(i => i.Hotel))
+                   .Include(f => f.Excursion)
+                   .ToList();
+            }
+
             return Context.Bookings.Where(b => b.Excursion.Id == excursionId && b.Disabled == false &&
-            ((!b.DifferentDates && b.CheckIn == checkIn) || (b.DifferentDates && b.ReservationsInBooking.Any(tc => tc.CustomersList.Any(r => r.CheckIn == checkIn)))) &&
+            ((!b.DifferentDates && b.CheckOut == checkIn) || (b.DifferentDates && b.ReservationsInBooking.Any(tc => tc.CustomersList.Any(r => r.CheckOut == checkIn)))) &&
             (dep == 0 || b.User.BaseLocation == dep))
                .Include(f => f.ReservationsInBooking.Select(i => i.CustomersList))
                .Include(f => f.ReservationsInBooking.Select(i => i.Room).Select(r => r.Hotel))
@@ -261,7 +272,7 @@ namespace LATravelManager.UI.Repositories
                 .Include(r => r.Reservation)
                 .Include(r => r.Reservation.Booking)
                 .Include(r => r.Reservation.Hotel)
-                .Include(r => r.Bus)
+                .Include(r => r.BusGo)
                 .Include(r => r.OptionalExcursions)
                 .Include(r => r.Reservation.Room.Hotel)
                 .Where(r => r.Reservation.Booking.Disabled == false)
@@ -511,7 +522,7 @@ namespace LATravelManager.UI.Repositories
                 .Include(f => f.ExcursionDate)
                 .Include(f => f.Payments.Select(p => p.User))
                 .Include(f => f.ReservationsInBooking.Select(i => i.CustomersList))
-                .Include(f => f.ReservationsInBooking.Select(i => i.CustomersList.Select(j => j.Bus.Vehicle)))
+                .Include(f => f.ReservationsInBooking.Select(i => i.CustomersList.Select(j => j.BusGo.Vehicle)))
                 .Include(f => f.ReservationsInBooking.Select(i => i.Room))
                 .Include(f => f.ReservationsInBooking.Select(i => i.Room.RoomType))
                 .Include(f => f.ReservationsInBooking.Select(i => i.Room.Hotel))
@@ -782,14 +793,23 @@ namespace LATravelManager.UI.Repositories
                 .ToListAsync);
         }
 
-        internal IEnumerable<Bus> GetAllBuses(int id = 0, DateTime checkIn = default)
+        internal IEnumerable<Bus> GetAllBuses(int id = 0, DateTime checkIn = default, bool checkout = false)
         {
-            return Context.Set<Bus>().Where(b => (id == 0 && b.TimeGo >= DateTime.Today) || (b.Excursion.Id == id && b.TimeGo == checkIn))
-             .Include(f => f.Excursion)
-             .Include(f => f.Customers)
-             .Include(f => f.Leader)
-             .Include(f => f.Vehicle)
-             .ToList();
+            if (!checkout)
+            {
+                return Context.Set<Bus>().Where(b => (id == 0 && b.TimeGo >= DateTime.Today) || (b.Excursion.Id == id && b.TimeGo == checkIn))
+                 .Include(f => f.Excursion)
+                 .Include(f => f.Customers)
+                 .Include(f => f.Leader)
+                 .Include(f => f.Vehicle)
+                 .ToList();
+            }
+            return Context.Set<Bus>().Where(b => (id == 0 && b.TimeReturn >= DateTime.Today) || (b.Excursion.Id == id && b.TimeReturn == checkIn))
+                 .Include(f => f.Excursion)
+                 .Include(f => f.Customers)
+                 .Include(f => f.Leader)
+                 .Include(f => f.Vehicle)
+                 .ToList();
         }
 
         internal async Task<IEnumerable<Bus>> GetAllBusesAsync(int id = 0, DateTime checkIn = default)
@@ -1112,6 +1132,7 @@ namespace LATravelManager.UI.Repositories
                   .Where(b => b.Booking.Disabled == canceled)
                   .ToListAsync);
         }
+
         internal async Task<ThirdParty_Booking> GetFullThirdPartyBookingByIdAsync(int id)
         {
             return await RunTask(Context.ThirdParty_Bookings.Where(b => b.Id == id)
@@ -1453,15 +1474,13 @@ namespace LATravelManager.UI.Repositories
 
         internal async Task<List<CustomerOptional>> GetAllOptionalsAsync(int id)
         {
-            return await Context.CustomerOptionals.Where(o => o.OptionalExcursion.Id == 1)
+            return await Context.CustomerOptionals.Where(o => o.OptionalExcursion.Id == id)
                  .Include(o => o.Customer)
                  .Include(o => o.Customer.Reservation)
                  .Include(o => o.Customer.Reservation.Room.Hotel)
                  .Include(o => o.Leader)
                  .Include(o => o.OptionalExcursion)
                  .ToListAsync();
-
-
         }
 
         #endregion Methods

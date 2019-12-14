@@ -648,7 +648,7 @@ namespace LATravelManager.Model.Wrapper
                     FIxedCommision = FullPrice - NetPrice;
             }
 
-            decimal full = 0;
+            //decimal full = 0;
             //if (IsPartners && FullPrice == 0 && Commision > 0 && NetPrice > 0)
             //{
             //    full = 100 * NetPrice / (100 - Commision);

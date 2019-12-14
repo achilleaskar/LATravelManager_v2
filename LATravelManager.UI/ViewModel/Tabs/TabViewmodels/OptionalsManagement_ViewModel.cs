@@ -19,7 +19,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {
     public class OptionalsManagement_ViewModel : MyViewModelBaseAsync
     {
-
         #region Constructors
 
         public OptionalsManagement_ViewModel()
@@ -29,45 +28,9 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             AddOptionalGotCommand = new RelayCommand<object>(async (par) => await AddOptional(par, 1), CanAddOptional);
             AddOptionalPaidCommand = new RelayCommand<object>(async (par) => await AddOptional(par, 2), CanAddOptional);
             AddOptionalNotPaidCommand = new RelayCommand<object>(async (par) => await AddOptional(par, 3), CanAddOptional);
-            RecievedMoneyCommand = new RelayCommand<int>(async (par) => await ChangePaymentState(par), CanChange);
-
+            RecievedMoneyCommand = new RelayCommand<object>(async (par) => await ChangePaymentState(par), CanChange);
+            DeleteOptionalCommand = new RelayCommand<object>(async (par) => await DeleteOption(par));
             Customers = new ObservableCollection<Customer>();
-        }
-
-        private async Task ChangePaymentState(int par)
-        {
-            SelectedOptional.PaymentType = (PaymentType)par;
-            await Context.SaveAsync();
-        }
-
-
-
-
-        private CustomerOptional _SelectedOptional;
-
-
-        public CustomerOptional SelectedOptional
-        {
-            get
-            {
-                return _SelectedOptional;
-            }
-
-            set
-            {
-                if (_SelectedOptional == value)
-                {
-                    return;
-                }
-
-                _SelectedOptional = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private bool CanChange(int arg)
-        {
-            return SelectedOptional != null;
         }
 
         #endregion Constructors
@@ -85,6 +48,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         private ObservableCollection<Customer> _Customers;
 
         private ObservableCollection<Leader> _Leaders;
+
         private ObservableCollection<OptionalExcursion> _Optionals;
 
         private string _SearchTerm;
@@ -92,6 +56,9 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         private Customer _SelectedCustomer;
 
         private Leader _SelectedLeader;
+
+        private CustomerOptional _SelectedOptional;
+
         private ICollectionView _View;
 
         #endregion Fields
@@ -103,7 +70,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         public RelayCommand<object> AddOptionalNotPaidCommand { get; set; }
 
         public RelayCommand<object> AddOptionalPaidCommand { get; set; }
-        public RelayCommand<int> RecievedMoneyCommand { get; set; }
 
         public Bus Bus
         {
@@ -209,6 +175,8 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
+        public RelayCommand<object> DeleteOptionalCommand { get; set; }
+
         public ObservableCollection<Leader> Leaders
         {
             get
@@ -248,6 +216,8 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         }
 
         public RelayCommand PrintSofiaCommand { get; set; }
+
+        public RelayCommand<object> RecievedMoneyCommand { get; set; }
 
         public string SearchTerm
         {
@@ -308,6 +278,25 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
+        public CustomerOptional SelectedOptional
+        {
+            get
+            {
+                return _SelectedOptional;
+            }
+
+            set
+            {
+                if (_SelectedOptional == value)
+                {
+                    return;
+                }
+
+                _SelectedOptional = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public RelayCommand ShowCustomersCommand { get; set; }
 
         public ICollectionView View
@@ -354,17 +343,20 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         {
             if (par is OptionalExcursion oe)
             {
-                SelectedCustomer.OptionalExcursions.Add(
-                    new CustomerOptional
-                    {
-                        Cost = oe.Cost,
-                        Leader = SelectedLeader,
-                        Note = oe.Note,
-                        OptionalExcursion = oe,
-                        PaymentType = (PaymentType)v
-
-
-                    });
+                if (!SelectedCustomer.OptionalExcursions.Any(r => r.OptionalExcursion.Id == oe.Id))
+                {
+                    SelectedCustomer.OptionalExcursions.Add(
+                        new CustomerOptional
+                        {
+                            Cost = oe.Cost,
+                            Leader = SelectedLeader,
+                            Note = oe.Note,
+                            OptionalExcursion = oe,
+                            PaymentType = (PaymentType)v
+                        });
+                }
+                else
+                    MessageBox.Show("Υπάρχει ήδη");
                 oe.Note = "";
                 oe.Cost = oe.FirstPrice;
                 await Context.SaveAsync();
@@ -376,11 +368,25 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             return SelectedCustomer != null && SelectedLeader != null;
         }
 
+        private bool CanChange(object a)
+        {
+            return SelectedOptional != null;
+        }
+
+        private async Task ChangePaymentState(object par)
+        {
+            if (par is string p && int.TryParse(p, out int pe))
+            {
+                SelectedOptional.PaymentType = (PaymentType)pe;
+                await Context.SaveAsync();
+            }
+        }
+
         private bool CustomersFilter(object obj)
         {
             if (obj is Customer c)
             {
-                if (Bus == null || Bus.Id == 0 || (c.Bus != null && Bus.Id == c.Bus.Id))
+                if (Bus == null || Bus.Id == 0 || (c.BusGo != null && Bus.Id == c.BusGo.Id))
                 {
                     return string.IsNullOrEmpty(SearchTerm) ||
                             (!string.IsNullOrEmpty(SearchTerm) &&
@@ -390,9 +396,19 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             return false;
         }
 
+        private async Task DeleteOption(object par)
+        {
+            if (par is CustomerOptional co && SelectedCustomer != null)
+            {
+                Context.Delete(co);
+                await Context.SaveAsync();
+                SelectedCustomer.OptionalExcursions.Remove(co);
+            }
+        }
+
         private async Task PrintSofia()
         {
-            var sofia = (await Context.GetAllOptionalsAsync(1))
+            var sofia = (await Context.GetAllOptionalsAsync(3))
                 .OrderBy(y => y.Customer.HotelName)
                 .ThenBy(u => u.Customer.Reservation.Id).ToList();
             using (DocumentsManagement vm = new DocumentsManagement(new GenericRepository()))
@@ -400,8 +416,8 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 //await vm.PrintAllPhones();
                 vm.PrintOptionals(sofia);
             }
-
         }
+
         private async Task ShowCustomers()
         {
             Mouse.OverrideCursor = Cursors.Wait;
@@ -429,13 +445,11 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             {
                 Context = new GenericRepository();
                 await LoadAsync();
-
             }
             Customers = new ObservableCollection<Customer>(await Context.GetAllCustomersAsync(CheckIn));
             Mouse.OverrideCursor = Cursors.Arrow;
         }
 
         #endregion Methods
-
     }
 }

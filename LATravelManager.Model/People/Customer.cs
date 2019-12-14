@@ -29,90 +29,17 @@ namespace LATravelManager.Model.People
 
         private int _Board;
 
-
-
-
-        private int _SeatNumRet;
-
-
-        public int SeatNumRet
-        {
-            get
-            {
-                return _SeatNumRet;
-            }
-
-            set
-            {
-                if (_SeatNumRet == value)
-                {
-                    return;
-                }
-
-                _SeatNumRet = value;
-                RaisePropertyChanged();
-            }
-        }
-
-
-        private int _SeatNum;
-
-
-        public int SeatNum
-        {
-            get
-            {
-                return _SeatNum;
-            }
-
-            set
-            {
-                if (_SeatNum == value)
-                {
-                    return;
-                }
-
-                _SeatNum = value;
-                RaisePropertyChanged();
-            }
-        }
-
         private string _HotelName;
-
+        private ObservableCollection<CustomerOptional> _OptionalExcursions;
         private DateTime _PassportExpiration;
-
         private DateTime _PassportPublish;
-
         private Brush _RoomColor;
+        private int _SeatNum;
+        private int _SeatNumRet;
 
         private string _Surename;
 
         #endregion Fields
-
-
-
-
-        private ObservableCollection<CustomerOptional> _OptionalExcursions;
-
-
-        public ObservableCollection<CustomerOptional> OptionalExcursions
-        {
-            get
-            {
-                return _OptionalExcursions;
-            }
-
-            set
-            {
-                if (_OptionalExcursions == value)
-                {
-                    return;
-                }
-
-                _OptionalExcursions = value;
-                RaisePropertyChanged();
-            }
-        }
 
         #region Properties
 
@@ -138,7 +65,9 @@ namespace LATravelManager.Model.People
             }
         }
 
-        public Bus Bus { get; set; }
+        public Bus BusGo { get; set; }
+
+        public Bus BusReturn { get; set; }
 
         public DateTime CheckIn { get; set; }
 
@@ -155,8 +84,6 @@ namespace LATravelManager.Model.People
 
         public int DeserveDiscount { get; set; }
 
-        [NotMapped]
-        public int ReservationId => Reservation != null ? Reservation.Id : 0;
         public DateTime? DOB
         {
             get;
@@ -198,6 +125,25 @@ namespace LATravelManager.Model.People
         [RegularExpression(@"^[a-z- A-Z]+$", ErrorMessage = "Παρακαλώ χρησιμοποιήστε μόνο λατινικούς χαρακτήρες")]
         [StringLength(30, MinimumLength = 3, ErrorMessage = "Το Όνομα μπορεί να είναι από 3 έως 20 χαρακτήρες")]
         public string Name { get; set; }
+
+        public ObservableCollection<CustomerOptional> OptionalExcursions
+        {
+            get
+            {
+                return _OptionalExcursions;
+            }
+
+            set
+            {
+                if (_OptionalExcursions == value)
+                {
+                    return;
+                }
+
+                _OptionalExcursions = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public DateTime PassportExpiration
         {
@@ -244,6 +190,9 @@ namespace LATravelManager.Model.People
 
         public Reservation Reservation { get; set; }
 
+        [NotMapped]
+        public int ReservationId => Reservation != null ? Reservation.Id : 0;
+
         [StringLength(30, MinimumLength = 0)]
         public string ReturningPlace { get; set; }
 
@@ -267,6 +216,43 @@ namespace LATravelManager.Model.People
             }
         }
 
+        public int SeatNum
+        {
+            get
+            {
+                return _SeatNum;
+            }
+
+            set
+            {
+                if (_SeatNum == value)
+                {
+                    return;
+                }
+
+                _SeatNum = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public int SeatNumRet
+        {
+            get
+            {
+                return _SeatNumRet;
+            }
+
+            set
+            {
+                if (_SeatNumRet == value)
+                {
+                    return;
+                }
+
+                _SeatNumRet = value;
+                RaisePropertyChanged();
+            }
+        }
         public ICollection<Service> Services { get; }
 
         [Required(ErrorMessage = "Επιλέξτε σημέιο αναχώρησης")]
@@ -348,5 +334,6 @@ namespace LATravelManager.Model.People
         }
 
         #endregion Methods
+
     }
 }

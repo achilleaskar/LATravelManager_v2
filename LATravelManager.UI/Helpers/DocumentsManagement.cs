@@ -538,7 +538,7 @@ namespace LATravelManager.UI.Helpers
             }
         }
 
-        internal async Task PrintList(List<Booking> bookings, DateTime checkIn, Bus bus = null, bool borderonly = false)
+        internal async Task PrintList(List<Booking> bookings, DateTime checkIn, bool going, Bus bus = null, bool borderonly = false)
         {
             IEnumerable<Booking> more = await Context.GetAllBookinsFromCustomers(checkIn);
 
@@ -646,7 +646,49 @@ namespace LATravelManager.UI.Helpers
                     customersCount = -1;
                     foreach (Customer customer in reservation.CustomersList)
                     {
-                        if ((bus == null || (customer.Bus != null && customer.Bus.Id == bus.Id)) && customer.CustomerHasBusIndex < 2 && (!reservation.Booking.DifferentDates || customer.CheckIn == checkIn))
+                        if ((bus == null || bus.Going && (customer.BusGo != null && customer.BusGo.Id == bus.Id)) && customer.CustomerHasBusIndex < 2 && (!reservation.Booking.DifferentDates || customer.CheckIn == checkIn))
+                        {
+                            counter++;
+                            myWorksheet.InsertRow(lineNum, 1);
+                            customersCount++;
+
+                            myWorksheet.Cells["A" + lineNum].Value = counter;
+                            myWorksheet.Cells["C" + lineNum].Value = customer.Name;
+                            myWorksheet.Cells["D" + lineNum].Value = customer.Surename;
+                            if (customersCount == 0)
+                            {
+                                myWorksheet.Cells["B" + lineNum].Value = reservation.CheckIn.Day + "-" + reservation.CheckOut.ToString("dd/MM");
+                                if (!borderonly)
+                                {
+                                    myWorksheet.Cells["E" + lineNum].Value = reservation.HotelName.TrimEnd(new[] { '*' });
+                                    if (reservation.Booking.IsPartners)
+                                        myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Partner.Name.Length > 11) ? reservation.Booking.Partner.Name.Substring(0, 11) : reservation.Booking.Partner.Name;
+                                    // else if (!string.IsNullOrEmpty(reservation.Booking.Comment))
+                                    // myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Comment.Length > 12) ? reservation.Booking.Comment.Substring(0, 11) : reservation.Booking.Comment;
+                                }
+                            }
+                            //else if (customersCount == 1)
+                            //    myWorksheet.Cells["E" + lineNum].Value = reservation.RoomTypeName;
+                            if (!borderonly)
+                            {
+                                myWorksheet.Cells["F" + lineNum].Value = customer.StartingPlace;
+                                if (customer.Tel != null && (customer.Tel.StartsWith("69", StringComparison.Ordinal) || customer.Tel.StartsWith("+", StringComparison.Ordinal) || (customer.Tel.StartsWith("00", StringComparison.Ordinal) && customer.Tel.Length > 10 && customer.Tel.Length < 16)))
+                                {
+                                    myWorksheet.Cells["G" + lineNum].Value = customer.Tel;
+                                    PhoneNumbers += customer.Tel + ",";
+                                }
+                                else
+                                    myWorksheet.Cells["G" + lineNum].Value = " ";
+                            }
+                            if (borderonly)
+                            {
+                                myWorksheet.Cells["E" + lineNum].Value = customer.PassportNum ?? "";
+                                myWorksheet.Cells["F" + lineNum].Value = customer.DOB != null && customer.DOB.Value.Year > 1800 ? customer.DOB.Value.ToString("dd/MM/yy") : "";
+                            }
+                            lineNum++;
+
+                        }
+                        else if ((customer.BusReturn != null && customer.BusReturn.Id == bus.Id) && customer.CustomerHasBusIndex < 2 && (!reservation.Booking.DifferentDates || customer.CheckIn == checkIn))
                         {
                             counter++;
                             myWorksheet.InsertRow(lineNum, 1);
@@ -1299,7 +1341,7 @@ namespace LATravelManager.UI.Helpers
 
             }
             Bus bus;
-            bus = c.Bus ?? new Bus { Leader = new Leader { Name = "", Tel = "" } };
+            bus = c.BusGo ?? new Bus { Leader = new Leader { Name = "", Tel = "" } };
 
             if (customerStartingPlace == null || customerStartingPlace.Id == 19)
             {

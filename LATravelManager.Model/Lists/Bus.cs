@@ -457,7 +457,14 @@ namespace LATravelManager.Model.Lists
             Manual = true;
             foreach (var c in Customers)
             {
-                c.Bus = null;
+                if (TimeGo.Year > 2000)
+                {
+                    c.BusGo = null;
+                }
+                else if (TimeReturn.Year > 2000)
+                {
+                    c.BusReturn = null;
+                }
             }
             Customers.Clear();
             Manual = false;
@@ -471,11 +478,17 @@ namespace LATravelManager.Model.Lists
             RaisePropertyChanged(nameof(EmptySeats));
         }
 
+        public bool Going => TimeGo.Date.Year > 2000;
+
         private void RemoveCustomer(int obj)
         {
             if (obj == 0)
             {
-                SelectedCustomer.Bus = null;
+                if (Going)
+                    SelectedCustomer.BusGo = null;
+                else
+                    SelectedCustomer.BusReturn = null;
+
                 Customers.Remove(SelectedCustomer);
             }
             else if (obj == 1)
@@ -483,7 +496,11 @@ namespace LATravelManager.Model.Lists
                 var toRemove = Customers.Where(v => v.Reservation.Booking.Id == SelectedCustomer.Reservation.Booking.Id).ToList();
                 foreach (var c in toRemove)
                 {
-                    c.Bus = null;
+                    if (Going)
+                        c.BusGo = null;
+                    else
+                        c.BusGo = null;
+
                     Customers.Remove(c);
                 }
             }

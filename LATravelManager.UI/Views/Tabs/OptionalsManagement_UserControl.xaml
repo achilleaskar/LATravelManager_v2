@@ -33,7 +33,6 @@
             </StackPanel>
             <DataGrid Height="400"
                       SelectedItem="{Binding SelectedCustomer}"
-                      Width="425"
                       ItemsSource="{Binding Customers}"
                       CanUserSortColumns="False"
                       CanUserDeleteRows="False"
@@ -45,10 +44,13 @@
                                         Binding="{Binding Name}"
                                         Width="90" />
                     <DataGridTextColumn Header="Επίθετο"
-                                        Width="110"
-                                        Binding="{Binding Surename}" />
-                    <DataGridTextColumn Header="Ξενοδοχείο"
                                         Width="100"
+                                        Binding="{Binding Surename}" />
+                    <DataGridTextColumn Header="Τηλέφωνο"
+                                        Width="80"
+                                        Binding="{Binding Tel,UpdateSourceTrigger=PropertyChanged}" />
+                    <DataGridTextColumn Header="Ξενοδοχείο"
+                                        Width="90"
                                         Binding="{Binding Reservation.Room.Hotel.Name}" />
                     <DataGridTextColumn Header="Λεωφορείο"
                                         Binding="{Binding Bus.Vehicle.Name}" />
@@ -108,20 +110,29 @@
             </ItemsControl>
             <DataGrid CanUserAddRows="False"
                       AutoGenerateColumns="False"
-                      HorizontalAlignment="Left"
+                      HorizontalAlignment="Left" SelectedItem="{Binding SelectedOptional}"
                       ItemsSource="{Binding SelectedCustomer.OptionalExcursions}">
-                <DataGrid.ContextMenu>
-                    <ContextMenu>
+                <DataGrid.Resources>
+                    <ContextMenu x:Key="RowMenu">
                         <MenuItem Header="Τα πήρα"
-                                  Command="{Binding RecievedMoneyCommand}" CommandParameter="1" />
+                                  Command="{Binding DataContext.RecievedMoneyCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                  CommandParameter="1" />
                         <MenuItem Header="Πλήρωσε"
-                                  Command="{Binding RecievedMoneyCommand}"
+                                  Command="{Binding DataContext.RecievedMoneyCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
                                   CommandParameter="2" />
                         <MenuItem Header="Ακύρωσε"
-                                  Command="{Binding RecievedMoneyCommand}"
+                                      Command="{Binding DataContext.RecievedMoneyCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
                                   CommandParameter="3" />
+                        <MenuItem Header="Διαγραφη"
+                                  Command="{Binding DataContext.DeleteOptionalCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                  CommandParameter="{Binding}" />
                     </ContextMenu>
-                </DataGrid.ContextMenu>
+                    <Style 
+                           TargetType="{x:Type DataGridRow}">
+                        <Setter Property="ContextMenu"
+                                Value="{StaticResource RowMenu}" />
+                    </Style>
+                </DataGrid.Resources>
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Όνομα"
                                         Width="120"
@@ -141,9 +152,11 @@
                 </DataGrid.Columns>
             </DataGrid>
             <StackPanel Orientation="Horizontal">
-                
-            <Button Content="PrintSofia" HorizontalAlignment="Left" Margin="5"
-                    Command="{Binding PrintSofiaCommand}" />
+
+                <Button Content="PrintSofia"
+                        HorizontalAlignment="Left"
+                        Margin="5"
+                        Command="{Binding PrintSofiaCommand}" />
             </StackPanel>
         </StackPanel>
     </Grid>

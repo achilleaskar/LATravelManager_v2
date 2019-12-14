@@ -102,7 +102,8 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 BookingWr.Disabled = true;
                 foreach (var c in BookingWr.Customers)
                 {
-                    c.Bus = null;
+                    c.BusGo = null;
+                    c.BusReturn = null;
                 }
             }
         }
@@ -881,7 +882,8 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                     if (!customer.Handled)
                     {
                         toRemove.Add(customer);
-                        customer.Bus = null;
+                        customer.BusGo = null;
+                        customer.BusReturn = null;
                     }
                     else
                     {
@@ -997,7 +999,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 }
                 //TODO an mporei na fygei
 
-                FilteredRoomList = new ObservableCollection<RoomWrapper>(tmplist.OrderBy(f => f.Hotel.Name).ThenBy(t => t.RoomType.MaxCapacity).ThenByDescending(r=>r.Rating).ToList());
+                FilteredRoomList = new ObservableCollection<RoomWrapper>(tmplist.OrderBy(f => f.Hotel.Name).ThenBy(t => t.RoomType.MaxCapacity).ThenByDescending(r => r.Rating).ToList());
                 CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(FilteredRoomList);
                 //PropertyGroupDescription groupDescription = new PropertyGroupDescription(nameof(RoomType));
                 //PropertyGroupDescription groupDescriptionb = new PropertyGroupDescription(nameof(Hotel));

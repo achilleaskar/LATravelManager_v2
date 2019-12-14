@@ -896,7 +896,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 using (DocumentsManagement vm = new DocumentsManagement(new GenericRepository()))
                 {
                     // await vm.PrintList(bookings, CheckIn, b, true);
-                    await vm.PrintList(bookings, CheckIn, b, false);
+                    await vm.PrintList(bookings, CheckIn,true, b, false);
                 }
             }
         }
@@ -1407,7 +1407,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
                 using (DocumentsManagement vm = new DocumentsManagement(new GenericRepository()))
                 {
-                    if (bookings.Any(b => b.ReservationsInBooking.Any(r => r.CustomersList.Any(c => c.Bus == null)))) ;
+                    if (bookings.Any(b => b.ReservationsInBooking.Any(r => r.CustomersList.Any(c => c.BusGo == null)))) ;
                     {
                     }
                     foreach (Booking b in bookings)
@@ -1452,7 +1452,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 using (DocumentsManagement vm = new DocumentsManagement(new GenericRepository()))
                 {
                     //await vm.PrintAllPhones();
-                    await vm.PrintList(bookings, CheckIn);
+                    await vm.PrintList(bookings, CheckIn,true);
                 }
             }
             catch (Exception ex)

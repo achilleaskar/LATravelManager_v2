@@ -40,7 +40,7 @@ namespace LATravelManager.UI.Helpers
 
 
 
-        public string IfBus =>Bus!=null?Bus.Vehicle.Name:"";
+        public string IfBus => BusGo != null ? BusGo.Vehicle.Name : BusReturn != null ? BusReturn.Vehicle.Name : "";
 
         #region Properties
 
@@ -56,7 +56,17 @@ namespace LATravelManager.UI.Helpers
             set { SetValue(value); }
         }
 
-        public Bus Bus
+        public Bus BusGo
+        {
+            get { return GetValue<Bus>(); }
+            set
+            {
+                SetValue(value);
+                RaisePropertyChanged(nameof(NoBus));
+            }
+        }
+
+        public Bus BusReturn
         {
             get { return GetValue<Bus>(); }
             set
@@ -225,7 +235,7 @@ namespace LATravelManager.UI.Helpers
             }
         }
 
-        public bool NoBus => Bus == null;
+        public bool NoBus => BusGo == null && BusReturn == null;
 
         public int NumOfServices => Services.Count;
 
