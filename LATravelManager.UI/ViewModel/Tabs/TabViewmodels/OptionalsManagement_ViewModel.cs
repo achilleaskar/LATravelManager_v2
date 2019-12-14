@@ -51,14 +51,14 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             AddOptionalGotCommand = new RelayCommand<object>(async (par) => await AddOptional(par, 0), CanAddOptional);
             AddOptionalPaidCommand = new RelayCommand<object>(async (par) => await AddOptional(par, 1), CanAddOptional);
             AddOptionalNotPaidCommand = new RelayCommand<object>(async (par) => await AddOptional(par, 2), CanAddOptional);
-            
+
             Customers = new ObservableCollection<Customer>();
         }
 
         private async Task PrintSofia()
         {
             var sofia = (await Context.GetAllOptionalsAsync(1))
-                .OrderBy(y=>y.Customer.HotelName)
+                .OrderBy(y => y.Customer.HotelName)
                 .ThenBy(u => u.Customer.Reservation.Id).ToList();
             using (DocumentsManagement vm = new DocumentsManagement(new GenericRepository()))
             {
@@ -324,7 +324,16 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         {
             if (par is OptionalExcursion oe)
             {
-                SelectedCustomer.OptionalExcursions.Add(new CustomerOptional { Cost = oe.Cost, Leader = SelectedLeader, Note = oe.Note, OptionalExcursion = oe });
+                SelectedCustomer.OptionalExcursions.Add(
+                    new CustomerOptional
+                    {
+                        Cost = oe.Cost,
+                        Leader = SelectedLeader,
+                        Note = oe.Note,
+                        OptionalExcursion = oe,
+                        
+
+                    });
                 oe.Note = "";
                 oe.Cost = oe.FirstPrice;
                 await Context.SaveAsync();

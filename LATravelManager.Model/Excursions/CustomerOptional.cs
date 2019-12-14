@@ -1,5 +1,6 @@
 ﻿using LATravelManager.Model.Lists;
 using LATravelManager.Model.People;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LATravelManager.Model.Excursions
 {
@@ -17,6 +18,30 @@ namespace LATravelManager.Model.Excursions
         private OptionalExcursion _OptionalExcursion;
 
         #endregion Fields
+
+
+
+
+        private PaymentType _PaymentType;
+
+        public PaymentType PaymentType
+        {
+            get
+            {
+                return _PaymentType;
+            }
+
+            set
+            {
+                if (_PaymentType == value)
+                {
+                    return;
+                }
+
+                _PaymentType = value;
+                RaisePropertyChanged();
+            }
+        }
 
         #region Properties
 
