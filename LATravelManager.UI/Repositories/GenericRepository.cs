@@ -17,6 +17,7 @@ using System.Data.Entity.Core.Objects;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -182,6 +183,22 @@ namespace LATravelManager.UI.Repositories
                 .ToListAsync);
         }
 
+        internal async Task<IEnumerable<OptionalExcursion>> GetAllOptionalExcursionsAsync(DateTime checkIn, bool track = true)
+        {
+            if (!track)
+            {
+                return await RunTask(Context.OptionalExcursions
+                .Where(o => o.Date == checkIn)
+                .Include(o => o.Excursion)
+                .AsNoTracking()
+                .ToListAsync);
+            }
+            return await RunTask(Context.OptionalExcursions
+                 .Where(o => o.Date == checkIn)
+                 .Include(o => o.Excursion)
+                 .ToListAsync);
+        }
+
         public async Task<IEnumerable<Booking>> GetAllBookingsAsyncP()
         {
             return await RunTask(Context.Bookings
@@ -238,15 +255,15 @@ namespace LATravelManager.UI.Repositories
                 .ToListAsync);
         }
 
-        public async Task<IEnumerable<Customer>> GetAllCustomersAsync(DateTime checkin)
+        public async Task<IEnumerable<Customer>> GetAllCustomersAsync(DateTime date)
         {
-            return await RunTask(Context.Customers.Where(c => (!c.Reservation.Booking.DifferentDates && c.Reservation.Booking.CheckIn == checkin) || (c.Reservation.Booking.DifferentDates && c.CheckIn == checkin) && c.Reservation.Booking.Excursion.Destinations.Any(t => t.Id == 2))
-                .Include(r=>r.Reservation)
-                .Include(r=>r.Reservation.Booking)
-                .Include(r=>r.Reservation.Hotel)
-                .Include(r=>r.Bus)
-                .Include(r=>r.OptionalExcursions)
-                .Include(r=>r.Reservation.Room.Hotel)
+            return await RunTask(Context.Customers.Where(c => (!c.Reservation.Booking.DifferentDates && c.Reservation.Booking.CheckIn <= date && c.Reservation.Booking.CheckOut >= date) || (c.Reservation.Booking.DifferentDates && c.CheckIn <= date && c.CheckOut >= date) && c.Reservation.Booking.Excursion.Destinations.Any(t => t.Id == 2))
+                .Include(r => r.Reservation)
+                .Include(r => r.Reservation.Booking)
+                .Include(r => r.Reservation.Hotel)
+                .Include(r => r.Bus)
+                .Include(r => r.OptionalExcursions)
+                .Include(r => r.Reservation.Room.Hotel)
                 .Where(r => r.Reservation.Booking.Disabled == false)
                 .ToListAsync);
         }
@@ -777,7 +794,9 @@ namespace LATravelManager.UI.Repositories
 
         internal async Task<IEnumerable<Bus>> GetAllBusesAsync(int id = 0, DateTime checkIn = default)
         {
-            return await RunTask(Context.Set<Bus>().Where(b => (id == 0 && b.TimeGo >= DateTime.Today) || b.Excursion.Id == id)
+            DateTime from = checkIn.AddDays(-5);
+            DateTime to = checkIn.AddDays(5);
+            return await RunTask(Context.Set<Bus>().Where(b => (id == 0 && b.TimeGo >= from && b.TimeGo <= to) || b.Excursion.Id == id)
               .Include(f => f.Excursion)
               //.Include(f => f.Customers)
               .Include(f => f.Leader)
@@ -1430,6 +1449,19 @@ namespace LATravelManager.UI.Repositories
             {
                 IsContextAvailable = true;
             }
+        }
+
+        internal async Task<List<CustomerOptional>> GetAllOptionalsAsync(int id)
+        {
+            return await Context.CustomerOptionals.Where(o => o.OptionalExcursion.Id == 1)
+                 .Include(o => o.Customer)
+                 .Include(o => o.Customer.Reservation)
+                 .Include(o => o.Customer.Reservation.Room.Hotel)
+                 .Include(o => o.Leader)
+                 .Include(o => o.OptionalExcursion)
+                 .ToListAsync();
+
+
         }
 
         #endregion Methods

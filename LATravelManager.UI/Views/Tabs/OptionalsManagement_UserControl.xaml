@@ -25,11 +25,11 @@
                      HorizontalAlignment="Stretch" />
             <StackPanel Orientation="Horizontal">
                 <ComboBox ItemsSource="{Binding Buses}"
+                          Width="60"
                           DisplayMemberPath="Vehicle.Name"
                           SelectedItem="{Binding Bus}" />
                 <Button Content="Προβολή"
                         Command="{Binding ShowCustomersCommand}" />
-
             </StackPanel>
             <DataGrid Height="400"
                       SelectedItem="{Binding SelectedCustomer}"
@@ -42,17 +42,92 @@
                       CanUserAddRows="False">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Ονομα"
-                                        Binding="{Binding Name}" />
+                                        Binding="{Binding Name}"
+                                        Width="90" />
                     <DataGridTextColumn Header="Επίθετο"
+                                        Width="110"
                                         Binding="{Binding Surename}" />
                     <DataGridTextColumn Header="Ξενοδοχείο"
+                                        Width="100"
                                         Binding="{Binding Reservation.Room.Hotel.Name}" />
                     <DataGridTextColumn Header="Λεωφορείο"
                                         Binding="{Binding Bus.Vehicle.Name}" />
                 </DataGrid.Columns>
-
+            </DataGrid>
+        </StackPanel>
+        <StackPanel Grid.Column="1">
+            <ComboBox ItemsSource="{Binding Leaders}"
+                      Width="95"
+                      Margin="5"
+                      SelectedItem="{Binding SelectedLeader}"
+                      VerticalAlignment="Center"
+                      HorizontalAlignment="Left" />
+            <Button />
+            <ItemsControl ItemsSource="{Binding Optionals}"
+                          VirtualizingStackPanel.IsVirtualizing="true"
+                          HorizontalAlignment="Left"
+                          Margin="5"
+                          VirtualizingStackPanel.VirtualizationMode="Standard">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Vertical" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <Separator Margin="-4 3" />
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="{Binding Name}"
+                                       Padding="0 5"
+                                       VerticalAlignment="Center"
+                                       Width="150"
+                                       HorizontalAlignment="Center" />
+                                <TextBox Text="{Binding Cost,UpdateSourceTrigger=PropertyChanged}"
+                                         Margin="5 0"
+                                         VerticalAlignment="Center" />
+                                <TextBox Text="{Binding Note,UpdateSourceTrigger=PropertyChanged}"
+                                         VerticalAlignment="Center"
+                                         Width="120" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="Τα πήρα"
+                                        Command="{Binding DataContext.AddOptionalGotCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}" />
+                                <Button Content="Δεν τα πήρα"
+                                        Margin="5 0"
+                                        Command="{Binding DataContext.AddOptionalPaidCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}" />
+                                <Button Content="Δεν πληρωσε"
+                                        Command="{Binding DataContext.AddOptionalNotPaidCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <DataGrid CanUserAddRows="False"
+                      AutoGenerateColumns="False"
+                      Width="390" HorizontalAlignment="Left"
+                      ItemsSource="{Binding SelectedCustomer.OptionalExcursions}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Όνομα"
+                                        Width="140"
+                                        Binding="{Binding OptionalExcursion.Name}" />
+                    <DataGridTextColumn Header="Date"
+                                        Width="40"
+                                        Binding="{Binding OptionalExcursion.Date, StringFormat='{}{0:dd/MM}'}" />
+                    <DataGridTextColumn Header="Cost"
+                                        Width="50"
+                                        Binding="{Binding Cost, StringFormat=C2}" />
+                    <DataGridTextColumn Header="Note"
+                                        Width="150"
+                                        Binding="{Binding Note}" />
+                </DataGrid.Columns>
 
             </DataGrid>
+            <Button Content="PrintSofia" Command="{Binding PrintSofiaCommand}"/>
+
         </StackPanel>
     </Grid>
 </UserControl>

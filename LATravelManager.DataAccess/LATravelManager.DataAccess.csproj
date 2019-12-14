@@ -149,6 +149,10 @@
     <Compile Include="Migrations\201912121858447_12123.designer.cs">
       <DependentUpon>201912121858447_12123.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201912132150372_1213.cs" />
+    <Compile Include="Migrations\201912132150372_1213.designer.cs">
+      <DependentUpon>201912132150372_1213.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\ContextConfiguration.cs" />
     <Compile Include="MainDataBase.cs" />
     <Compile Include="Migrations\Configuration.cs" />
@@ -237,6 +241,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201912121858447_12123.resx">
       <DependentUpon>201912121858447_12123.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201912132150372_1213.resx">
+      <DependentUpon>201912132150372_1213.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

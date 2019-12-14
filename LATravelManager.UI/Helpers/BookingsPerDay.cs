@@ -1,6 +1,9 @@
 ﻿using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Excursions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace LATravelManager.UI.Helpers
 {
@@ -28,6 +31,7 @@ namespace LATravelManager.UI.Helpers
             #endregion Fields
         }
 
+        
         #endregion Classes
     }
 }

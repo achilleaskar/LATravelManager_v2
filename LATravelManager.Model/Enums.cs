@@ -31,6 +31,13 @@ namespace LATravelManager.Model
         OptionalActivities = 1
     }
 
+    public enum PaymentType
+    {
+        Recieved,
+        NotRecieved,
+        NotPaid
+    }
+
     [TypeConverter(typeof(EnumDescriptionTypeConverter))]
     public enum ExpenseBaseCategories //10
     {

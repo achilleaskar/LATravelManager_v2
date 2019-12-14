@@ -1,4 +1,4 @@
-﻿using LATravelManager.Model.People;
+﻿using LATravelManager.Model.Lists;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
@@ -10,18 +10,17 @@ namespace LATravelManager.Model.Excursions
     {
         #region Fields + Constructors
 
-
         private DateTime _Date = DateTime.Today;
 
         private Excursion _Excursion;
 
         private string _Name = string.Empty;
 
-
-
-
         private int _Cost;
 
+        [NotMapped]
+        public int FirstPrice { get; set; }
+        
         public int Cost
         {
             get
@@ -49,7 +48,31 @@ namespace LATravelManager.Model.Excursions
 
         #region Properties
 
-      
+
+
+
+        private string _Note;
+
+        [NotMapped]
+        public string Note
+        {
+            get
+            {
+                return _Note;
+            }
+
+            set
+            {
+                if (_Note == value)
+                {
+                    return;
+                }
+
+                _Note = value;
+                RaisePropertyChanged();
+            }
+        }
+
 
         public Excursion Excursion
         {
@@ -69,10 +92,6 @@ namespace LATravelManager.Model.Excursions
                 RaisePropertyChanged();
             }
         }
-
-
-
-
 
         public DateTime Date
         {

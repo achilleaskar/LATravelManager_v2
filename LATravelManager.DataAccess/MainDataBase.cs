@@ -47,6 +47,7 @@ namespace LATravelManager.DataAccess
         public DbSet<HotelService> HotelServices { get; set; }
         public DbSet<PlaneService> PlaneServices { get; set; }
         public DbSet<Customer> Customers { get; set; }
+        public DbSet<CustomerOptional> CustomerOptionals { get; set; }
         public DbSet<ExcursionCategory> ExcursionCategories { get; set; }
         public DbSet<Excursion> Excursions { get; set; }
         public DbSet<HotelCategory> HotelCategories { get; set; }

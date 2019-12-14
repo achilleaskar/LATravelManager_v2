@@ -437,7 +437,7 @@ namespace LATravelManager.Model.Lists
                     {
                         break;
                     }
-                    if (c.Reservation.Booking.Id != id)
+                    if (c.Reservation.Booking != null && c.Reservation.Booking.Id != id)
                     {
                         id = c.Reservation.Booking.Id;
                         coutner++;

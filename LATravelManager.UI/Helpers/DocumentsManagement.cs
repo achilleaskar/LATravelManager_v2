@@ -3,6 +3,7 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.Lists;
 using LATravelManager.Model.Locations;
@@ -36,7 +37,43 @@ namespace LATravelManager.UI.Helpers
         {
             Context = context;
         }
+        public void PrintOptionals(List<CustomerOptional> sofia)
+        {
+            Thread.CurrentThread.CurrentCulture = culture;
 
+            using (GenericRepository Context = new GenericRepository())
+            {
+
+                if (sofia.Count > 0)
+                {
+
+                    FileInfo fileInfo = new FileInfo(AppDomain.CurrentDomain.BaseDirectory + @"Sources\protypo kratiseon.xlsx");
+                    ExcelPackage p = new ExcelPackage(fileInfo);
+                    ExcelWorksheet myWorksheet = p.Workbook.Worksheets[1];
+
+                    string wbPath = GetPath("Test_Phones", @"\proairetika\");
+                    int lineNum = 4;
+
+
+                    foreach (var c in sofia)
+                    {
+                        myWorksheet.InsertRow(lineNum, 1);
+
+                        myWorksheet.Cells["A" + lineNum].Value = lineNum - 3;
+                        myWorksheet.Cells["B" + lineNum].Value = c.Customer.Name;
+                        myWorksheet.Cells["C" + lineNum].Value = c.Customer.Surename;
+                        myWorksheet.Cells["D" + lineNum].Value = !string.IsNullOrEmpty(c.Customer.Tel) && !c.Customer.Tel.StartsWith("000") ? c.Customer.Tel : "";
+                        myWorksheet.Cells["E" + lineNum].Value = c.Leader.Name.Length > 12 ? c.Leader.Name.Substring(0, 12) : c.Leader.Name;
+                        myWorksheet.Cells["F" + lineNum].Value = c.Customer.Reservation.Room.Hotel.Name;
+
+                        lineNum++;
+                    }
+
+                    fileInfo = new FileInfo(wbPath ?? throw new InvalidOperationException());
+                    p.SaveAs(fileInfo);
+                }
+            }
+        }
         #endregion Constructors
 
         #region Fields
@@ -1355,7 +1392,7 @@ namespace LATravelManager.UI.Helpers
                     regexText = new Regex("zplace");
                     docText = regexText.Replace(docText, customerStartingPlace.Id == 14 && booking.Excursion.Destinations[0].Id == 5 ? "Εθνική Τράπεζα" : customerStartingPlace.Details);
                     regexText = new Regex("zsynodos");
-                    docText = regexText.Replace(docText, booking.Excursion.Id == 29 ? "Αθανασία 6981189869" :bus!=null&&bus.Leader!=null? bus?.Leader.ToString() : booking.Excursion.Destinations[0].Id == 2 ? "ΣΤΡΑΤΟΣ: +30 6988558275" :"");
+                    docText = regexText.Replace(docText, booking.Excursion.Id == 29 ? "Αθανασία 6981189869" : bus != null && bus.Leader != null ? bus?.Leader.ToString() : booking.Excursion.Destinations[0].Id == 2 ? "ΣΤΡΑΤΟΣ: +30 6988558275" : "");
                     regexText = new Regex("zcity");
                     docText = regexText.Replace(docText, booking.Excursion.Destinations[0].Name);
                     regexText = new Regex("zgostart");

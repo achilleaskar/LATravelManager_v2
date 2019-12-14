@@ -13,7 +13,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             InfoViewModel = new Info_ViewModel(MainViewModel);
             InfoViewModel.Load();
             ListManagement = new ListManagement_ViewModel(MainViewModel);
-            OptionalsManagement = new OptionalsManagement_ViewModel(MainViewModel);
+            OptionalsManagement = new OptionalsManagement_ViewModel();
         }
 
         private int _SelectedIndex;
