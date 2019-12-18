@@ -812,11 +812,20 @@ namespace LATravelManager.UI.Repositories
                  .ToList();
         }
 
-        internal async Task<IEnumerable<Bus>> GetAllBusesAsync(int id = 0, DateTime checkIn = default)
+        internal async Task<IEnumerable<Bus>> GetAllBusesAsync(int id = 0, DateTime checkIn = default, bool strict = false)
         {
+            if (checkIn.Year<2000)
+            {
+                checkIn = DateTime.Today;
+            }
             DateTime from = checkIn.AddDays(-5);
             DateTime to = checkIn.AddDays(5);
-            return await RunTask(Context.Set<Bus>().Where(b => (id == 0 && b.TimeGo >= from && b.TimeGo <= to) || b.Excursion.Id == id)
+            if (strict)
+            {
+                from = checkIn;
+                to = checkIn;
+            }
+            return await RunTask(Context.Set<Bus>().Where(b => ((id == 0 || b.Excursion.Id == id) && ((b.TimeGo >= from && b.TimeGo <= to)|| (b.TimeReturn >= from && b.TimeReturn <= to))))
               .Include(f => f.Excursion)
               //.Include(f => f.Customers)
               .Include(f => f.Leader)

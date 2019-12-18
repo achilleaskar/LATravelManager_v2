@@ -49,11 +49,11 @@
                     <DataGridTextColumn Header="Τηλέφωνο"
                                         Width="80"
                                         Binding="{Binding Tel,UpdateSourceTrigger=PropertyChanged}" />
-                    <DataGridTextColumn Header="Ξενοδοχείο"
+                    <DataGridTextColumn Header="Ξενοδοχείο" 
                                         Width="90"
                                         Binding="{Binding Reservation.Room.Hotel.Name}" />
                     <DataGridTextColumn Header="Λεωφορείο"
-                                        Binding="{Binding Bus.Vehicle.Name}" />
+                                        Binding="{Binding BusReturn.Vehicle.Name}" />
                 </DataGrid.Columns>
             </DataGrid>
         </StackPanel>

@@ -873,7 +873,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         public async Task PrintBusLists()
         {
-            var buses = await Context.GetAllBusesAsync((ExcursionsCollectionView.CurrentItem as Excursion).Id, CheckIn);
+            var buses = await Context.GetAllBusesAsync((ExcursionsCollectionView.CurrentItem as Excursion).Id, CheckIn, true);
             foreach (var b in buses)
             {
                 List<Booking> bookings = new List<Booking>();

@@ -688,9 +688,14 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 Customers = new ObservableCollection<Customer>(),
                 Excursion = Context.GetById<Excursion>(SelectedExcursion.Id),
                 Vehicle = Context.GetById<Vehicle>(SelectedVehicle.Id),
-                TimeGo = CheckInDate
                 // TimeGo = SelectedDate.CheckIn
             };
+            if (!CheckOut)
+            {
+                b.TimeGo = CheckInDate;
+            }
+            else
+                b.TimeReturn = CheckInDate;
             Context.Add(b);
             Buses.Add(b);
             RaisePropertyChanged(nameof(HasBus));
@@ -727,7 +732,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                         if (!CheckOut)
                             c.BusGo = SelectedBus;
                         else
-                            c.BusGo = SelectedBus;
+                            c.BusReturn = SelectedBus;
                     }
                 }
             }

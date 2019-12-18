@@ -1108,8 +1108,36 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         private void ValidateRoom(RoomWrapper room)
         {
+            int rating = 0;
             var before = room.PlanDailyInfo.FirstOrDefault(d => d.Date == BookingWr.CheckIn.AddDays(-1));
-            var after = room.PlanDailyInfo.FirstOrDefault(d => d.Date == BookingWr.CheckOut.AddDays(1));
+            var after = room.PlanDailyInfo.FirstOrDefault(d => d.Date == BookingWr.CheckOut);
+            if (before == null || before.RoomState != RoomStateEnum.Available)
+            {
+                rating++;
+            }
+            else if (before.RoomState == RoomStateEnum.Available)
+            {
+                before = room.PlanDailyInfo.FirstOrDefault(d => d.Date == BookingWr.CheckIn.AddDays(-2));
+                if (before == null || before.RoomState != RoomStateEnum.Available)
+                {
+                    rating -= 4;
+                }
+
+            }
+            if (after == null || after.RoomState != RoomStateEnum.Available)
+            {
+                rating++;
+            }
+            else if (after.RoomState == RoomStateEnum.Available)
+            {
+                after = room.PlanDailyInfo.FirstOrDefault(d => d.Date == BookingWr.CheckOut.AddDays(1));
+                if (after == null || after.RoomState != RoomStateEnum.Available)
+                {
+                    rating -= 4;
+                }
+
+
+            }
             room.Rating = ((before != null && before.RoomState != RoomStateEnum.Available) ? 1 : 0) + ((after != null && after.RoomState != RoomStateEnum.Available) ? 1 : 0);
         }
 

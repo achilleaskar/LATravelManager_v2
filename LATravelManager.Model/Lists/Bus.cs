@@ -247,7 +247,7 @@ namespace LATravelManager.Model.Lists
             }
         }
 
-        public int RemainingSeats => Vehicle.SeatsPassengers - Customers.Where(y => y.LeaderDriver == 0).ToList().Count;
+        public int RemainingSeats => Vehicle!=null? Vehicle.SeatsPassengers - Customers.Where(y => y.LeaderDriver == 0).ToList().Count:0;
 
         public RelayCommand<int> RemoveCustomerCommand { get; }
         public RelayCommand SetSeatsCommand { get; }
@@ -499,7 +499,7 @@ namespace LATravelManager.Model.Lists
                     if (Going)
                         c.BusGo = null;
                     else
-                        c.BusGo = null;
+                        c.BusReturn = null;
 
                     Customers.Remove(c);
                 }

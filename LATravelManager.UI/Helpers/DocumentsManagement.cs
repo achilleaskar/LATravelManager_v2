@@ -1,5 +1,6 @@
 ﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Vml;
 using DocumentFormat.OpenXml.Wordprocessing;
 using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
@@ -566,7 +567,7 @@ namespace LATravelManager.UI.Helpers
             ExcelPackage p = new ExcelPackage(fileInfo);
             ExcelWorksheet myWorksheet = p.Workbook.Worksheets[1];
             int counter = 0;
-            int customersCount, secondline;
+            int customersCount;
             List<ReservationWrapper> reservationsThisDay = new List<ReservationWrapper>();
             List<ReservationWrapper> RestReservations = new List<ReservationWrapper>();
 
@@ -787,6 +788,10 @@ namespace LATravelManager.UI.Helpers
                 }
                 PhoneNumbers = PhoneNumbers.Trim(',');
                 Clipboard.SetText(PhoneNumbers);
+                if (lineNum == 5)
+                {
+                    return;
+                }
                 lineNum--;
                 modelTable = myWorksheet.Cells["A5:A" + (lineNum)];
                 modelTable.Style.Border.Top.Style = ExcelBorderStyle.Thin;

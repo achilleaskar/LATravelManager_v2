@@ -82,6 +82,11 @@ namespace LATravelManager.UI.Wrapper
 
                 _Rating = value;
                 RaisePropertyChanged();
+                if (value<0)
+                {
+                    Color = new SolidColorBrush(Colors.Red);
+
+                }
                 switch (value)
                 {
                     case 1:
