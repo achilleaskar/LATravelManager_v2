@@ -1402,7 +1402,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             try
             {
                 var x = await Context.GetAllCitiesAsyncSortedByName();
-                var buses = await Context.GetAllBusesAsync();
+                var buses = await Context.GetAllBusesAsync(checkIn:FilteredReservations.Min(t=>t.Booking.CheckIn));
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
 
                 List<Booking> bookings = new List<Booking>();
