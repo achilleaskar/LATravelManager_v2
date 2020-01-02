@@ -632,9 +632,12 @@ namespace LATravelManager.Model.Wrapper
             Remaining = total - Recieved;
             if (IsPartners)
             {
-                if (FullPrice > 0 && Commision > 0)
+                if (FullPrice > 0 )
                 {
-                    NetPrice = FullPrice - FullPrice * Commision / 100;
+                    if (Commision > 0)
+                        NetPrice = FullPrice - FullPrice * Commision / 100;
+                    else
+                        NetPrice = FullPrice;
                 }
                 if (Partner != null && Partner.Person)
                 {

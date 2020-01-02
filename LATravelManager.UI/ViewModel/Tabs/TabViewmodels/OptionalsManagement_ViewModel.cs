@@ -24,7 +24,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         public OptionalsManagement_ViewModel()
         {
             ShowCustomersCommand = new RelayCommand(async () => await ShowCustomers());
-            PrintSofiaCommand = new RelayCommand(async () => await PrintSofia());
+            PrintSofiaCommand = new RelayCommand(async () => await PrintSofia(), SelectedMainOptional != null);
             AddOptionalGotCommand = new RelayCommand<object>(async (par) => await AddOptional(par, 1), CanAddOptional);
             AddOptionalPaidCommand = new RelayCommand<object>(async (par) => await AddOptional(par, 2), CanAddOptional);
             AddOptionalNotPaidCommand = new RelayCommand<object>(async (par) => await AddOptional(par, 3), CanAddOptional);
@@ -278,6 +278,31 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
+
+
+
+        private OptionalExcursion _SelectedMainOptional;
+
+
+        public OptionalExcursion SelectedMainOptional
+        {
+            get
+            {
+                return _SelectedMainOptional;
+            }
+
+            set
+            {
+                if (_SelectedMainOptional == value)
+                {
+                    return;
+                }
+
+                _SelectedMainOptional = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public CustomerOptional SelectedOptional
         {
             get
@@ -324,7 +349,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
-            Optionals = new ObservableCollection<OptionalExcursion>(await Context.GetAllOptionalExcursionsAsync(CheckIn));
+            Optionals = new ObservableCollection<OptionalExcursion>((await Context.GetAllOptionalExcursionsAsync(CheckIn)).Where(e=>e.Date==CheckIn));
             Leaders = new ObservableCollection<Leader>((await Context.GetAllAsync<Leader>()).OrderBy(l => l.Name));
             Buses = new ObservableCollection<Bus>(await Context.GetAllBusesAsync(checkIn: CheckIn));
             Buses.Insert(0, new Bus { Vehicle = new Vehicle { Name = "Όλες" } });
@@ -408,7 +433,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         private async Task PrintSofia()
         {
-            var sofia = (await Context.GetAllOptionalsAsync(3))
+            var sofia = (await Context.GetAllOptionalsAsync(SelectedMainOptional.Id))
                 .OrderBy(y => y.Customer.HotelName)
                 .ThenBy(u => u.Customer.Reservation.Id).ToList();
             using (DocumentsManagement vm = new DocumentsManagement(new GenericRepository()))

@@ -232,7 +232,7 @@
                                     <DataTemplate>
                                         <DatePicker VerticalAlignment="Center"
                                                     Width="95"
-                                                    SelectedDate="{Binding DOB}" />
+                                                    SelectedDate="{Binding DOB, UpdateSourceTrigger=PropertyChanged}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -265,7 +265,7 @@
                                     <DataTemplate>
                                         <DatePicker VerticalAlignment="Center"
                                                     Width="95"
-                                                    SelectedDate="{Binding PassportPublish}" />
+                                                    SelectedDate="{Binding PassportPublish, UpdateSourceTrigger=PropertyChanged}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -276,7 +276,7 @@
                                     <DataTemplate>
                                         <DatePicker VerticalAlignment="Center"
                                                     Width="95"
-                                                    SelectedDate="{Binding PassportExpiration}" />
+                                                    SelectedDate="{Binding PassportExpiration, UpdateSourceTrigger=PropertyChanged}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>

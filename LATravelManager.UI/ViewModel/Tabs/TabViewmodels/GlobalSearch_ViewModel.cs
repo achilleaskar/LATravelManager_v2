@@ -20,6 +20,7 @@ using LATravelManager.UI.Views.Bansko;
 using LATravelManager.UI.Views.Personal;
 using LATravelManager.UI.Views.ThirdParty;
 using NuGet;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -46,9 +47,11 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             PrintRoomingListsCommand = new RelayCommand(async () => { await PrintRoomingLists(); }, CanPrintRoomingLists);
             PrintAllVouchersCommand = new RelayCommand(async () => { await PrintAllVouchers(); });
             PrintAllLettersCommand = new RelayCommand(PrintAllLetters);
-            PrintListCommand = new RelayCommand(async () => { await PrintList(); });
-            PrintBusListsCommand = new RelayCommand(async () => { await PrintBusLists(); });
+            PrintListCommand = new RelayCommand(async () => { await PrintList(false); });
+            PrintListRetCommand = new RelayCommand(async () => { await PrintList(true); });
+            PrintBusListsCommand = new RelayCommand(async () => { await PrintBusLists(); }, EnableCheckInFilter != EnableCheckOutFilter);
             PrintTheseisCommand = new RelayCommand(async () => { await PrintTheseis(); });
+            VouchersSentCommand = new RelayCommand(async () => { await VouchersSent(); });
 
             ShowReservationsCommand = new RelayCommand<string>(async (obj) => { await ShowReservations(obj, false); }, CanShowReservations);
             ShowCanceled = new RelayCommand<string>(async (obj) => { await ShowReservations(obj, true); }, CanShowReservations);
@@ -60,6 +63,14 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             CheckIn = DateTime.Today;
             CheckOut = DateTime.Today.AddDays(3);
             MainViewModel = mainViewModel;
+        }
+
+        private async Task VouchersSent()
+        {
+            foreach (ReservationWrapper r in FilteredReservations)
+            {
+                r.Booking.VoucherSent = true;
+            }
         }
 
         #endregion Constructors
@@ -314,6 +325,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         public bool DepartureInfoVisible => DailyDepartureInfo != null;
 
         public RelayCommand EditBookingCommand { get; set; }
+        public RelayCommand VouchersSentCommand { get; set; }
 
         public bool EnableCheckInFilter
         {
@@ -594,6 +606,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         public RelayCommand PrintBusListsCommand { get; }
 
         public RelayCommand PrintListCommand { get; set; }
+        public RelayCommand PrintListRetCommand { get; set; }
 
         public RelayCommand PrintRoomingListsCommand { get; set; }
 
@@ -817,7 +830,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                     People.Add($"{entry.Key}: {entry.Value}");
                 }
             }
-            if (EnableCheckInFilter && SelectedExcursionFilter != null && SelectedExcursionFilter.Id > 0 && FilteredReservations != null && FilteredReservations.Count > 0)
+            if (EnableCheckInFilter && ExcursionIndexBookingFilter > 0 && FilteredReservations != null && FilteredReservations.Count > 0)
             {
                 CreateDepartureInfo();
             }
@@ -873,11 +886,12 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         public async Task PrintBusLists()
         {
-            var buses = await Context.GetAllBusesAsync((ExcursionsCollectionView.CurrentItem as Excursion).Id, CheckIn, true);
+            var buses = await Context.GetAllBusesAsync((ExcursionsCollectionView.CurrentItem as Excursion).Id, EnableCheckInFilter ? CheckIn : new DateTime(), EnableCheckOutFilter ? CheckOut : new DateTime(), true);
+            var x = await Context.GetAllCitiesAsyncSortedByName();
+
             foreach (var b in buses)
             {
                 List<Booking> bookings = new List<Booking>();
-                bookings = new List<Booking>();
 
                 foreach (var c in b.Customers)
                 {
@@ -895,8 +909,9 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
                 using (DocumentsManagement vm = new DocumentsManagement(new GenericRepository()))
                 {
-                    // await vm.PrintList(bookings, CheckIn, b, true);
-                    await vm.PrintList(bookings, CheckIn,true, b, false);
+                    if (b.Excursion.Id != 2)
+                        await vm.PrintList(bookings, CheckIn, b.Going ? new DateTime() : b.TimeReturn, true, b, true);
+                    await vm.PrintList(bookings, CheckIn, b.Going ? new DateTime() : b.TimeReturn, EnableCheckInFilter, b, false);
                 }
             }
         }
@@ -1024,7 +1039,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             DailyDepartureInfo dayDeparture = new DailyDepartureInfo(Context, SelectedExcursionFilter.Id);
             DailyDepartureInfo tmpDayDeparture = new DailyDepartureInfo(Context, SelectedExcursionFilter.Id);
             CityDepartureInfo cityDepartureInfo;
-            if (SelectedExcursionFilter.ExcursionType.Category == ExcursionTypeEnum.Group)
+            if (SelectedExcursionFilter != null && SelectedExcursionFilter.ExcursionType != null && SelectedExcursionFilter.ExcursionType.Category == ExcursionTypeEnum.Group)
             {
                 foreach (ExcursionDate datePair in SelectedExcursionFilter.ExcursionDates)
                 {
@@ -1126,7 +1141,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                                     {
                                         cityDepartureInfo.OnlyShipGo++;
                                     }
-                                    else if (r.ReservationType == Model.ReservationTypeEnum.OneDay)
+                                    else if (r.ReservationType == ReservationTypeEnum.OneDay)
                                     {
                                         cityDepartureInfo.OneDayGo++;
                                     }
@@ -1145,10 +1160,10 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                         {
                             foreach (Customer customer in r.CustomersList)
                             {
-                                cityDepartureInfo = dayDeparture.PerCityDepartureList.FirstOrDefault(p => p.City == customer.StartingPlace);
+                                cityDepartureInfo = dayDeparture.PerCityDepartureList.FirstOrDefault(p => p.City == customer.ReturningPlace);
                                 if (cityDepartureInfo == null)
                                 {
-                                    dayDeparture.PerCityDepartureList.Add(new CityDepartureInfo { City = customer.StartingPlace });
+                                    dayDeparture.PerCityDepartureList.Add(new CityDepartureInfo { City = customer.ReturningPlace });
                                     cityDepartureInfo = dayDeparture.PerCityDepartureList[dayDeparture.PerCityDepartureList.Count - 1];
                                 }
                                 if (!r.OnlyStay && ((SelectedExcursionFilter.IncludesShip && (customer.CustomerHasShipIndex == 0 || customer.CustomerHasShipIndex == 2)) || (SelectedExcursionFilter.IncludesBus && (customer.CustomerHasBusIndex == 0 || customer.CustomerHasBusIndex == 2))))
@@ -1161,7 +1176,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                                     {
                                         cityDepartureInfo.OnlyShipReturn++;
                                     }
-                                    else if (r.ReservationType == Model.ReservationTypeEnum.OneDay)
+                                    else if (r.ReservationType == ReservationTypeEnum.OneDay)
                                     {
                                         cityDepartureInfo.OneDayReturn++;
                                     }
@@ -1328,6 +1343,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         {
             if (ReservationsCollectionView != null)
                 ReservationsCollectionView.Refresh();
+            SelectedExcursionFilter = ExcursionsCollectionView.CurrentItem as Excursion;
             CountCustomers();
         }
 
@@ -1426,11 +1442,14 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-        private async Task PrintList()
+        private async Task PrintList(bool ret)
         {
             try
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
+
+                var x = await Context.GetAllCitiesAsyncSortedByName();
+
 
                 List<Booking> bookings = new List<Booking>();
 
@@ -1452,7 +1471,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 using (DocumentsManagement vm = new DocumentsManagement(new GenericRepository()))
                 {
                     //await vm.PrintAllPhones();
-                    await vm.PrintList(bookings, CheckIn,true);
+                    await vm.PrintList(bookings, CheckIn, ret ? CheckOut : new DateTime(), !ret);
                 }
             }
             catch (Exception ex)
@@ -1550,14 +1569,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         {
             try
             {
-                if (ExcursionIndexBookingFilter > 0)
-                {
-                    SelectedExcursionFilter = ExcursionsCollectionView.CurrentItem as Excursion;
-                }
-                else
-                {
-                    SelectedExcursionFilter = null;
-                }
+
                 IsOk = false;
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
                 //await ReloadAsync();

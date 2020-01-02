@@ -756,7 +756,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
                 RoomType tmpRT = await GenericRepository.GetByIdAsync<RoomType>(RoomUnderEdit.RoomType.Id);
                 Hotel tmpH = await GenericRepository.GetByIdAsync<Hotel>(RoomUnderEdit.Hotel.Id);
-                User tmpUsr = await GenericRepository.GetByIdAsync<User>(Helpers.StaticResources.User.Id);
+                User tmpUsr = await GenericRepository.GetByIdAsync<User>(StaticResources.User.Id);
 
                 for (int i = 0; i < Quantity; i++)
                 {

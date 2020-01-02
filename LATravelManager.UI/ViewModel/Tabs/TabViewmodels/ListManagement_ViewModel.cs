@@ -54,11 +54,68 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
     public class ListManagement_ViewModel : MyViewModelBase
     {
+        #region Constructors
+
+        public ListManagement_ViewModel(MainViewModel mainViewModel)
+        {
+            MainViewModel = mainViewModel;
+            //ShowCustomersCommand = new RelayCommand(async () => { await ShowCustomers(); }, () => SelectedExcursion != null && SelectedDate != null);
+            ShowCustomersCommand = new RelayCommand(async () => await ShowCustomers());
+            EditBookingCommand = new RelayCommand(async () => await EditBooking(), CanEditBooking);
+            AddCustomersToBusCommand = new RelayCommand(AddCustomersToBus, CanAddCustomersToBus);
+            UpdateVehiclesCommand = new RelayCommand(async () => await UpdateVehicles());
+
+            SaveBusesCommand = new RelayCommand(async () => await SaveBuses(), Context != null && Context.HasChanges());
+            AddBusCommand = new RelayCommand(AddBus, CanAddBus);
+
+            PutAtSeatsCommand = new RelayCommand<object>(PutAtSeats, CanPutAtSeats);
+            PutAtSeatsReturnCommand = new RelayCommand<object>(PutAtSeatsEp, CanPutAtSeatsEp);
+
+            RemoveBusCommand = new RelayCommand<object>(RemoveBus, CanRemoveBus);
+            MarkAllCommand = new RelayCommand<int>(MarkAll);
+            ClearSelCustomersCommand = new RelayCommand<int>(ClearSelCustomers, CanClearSelCustomers);
+            LeaderDriverCommand = new RelayCommand<int>(LeaderDriver, SelectedCustomer != null);
+
+            SelectAllCommand = new RelayCommand<int>(SelectAll);
+
+            Load();
+        }
+
+
+
+
+        private bool _SecondDepart;
+
+
+        public bool SecondDepart
+        {
+            get
+            {
+                return _SecondDepart;
+            }
+
+            set
+            {
+                if (_SecondDepart == value)
+                {
+                    return;
+                }
+
+                _SecondDepart = value;
+                RaisePropertyChanged();
+                RecalculateCustomers();
+
+            }
+        }
+
+        #endregion Constructors
+
         #region Fields
 
         private List<BookingWrapper> _AllBookings;
         private ObservableCollection<Bus> _Buses;
         private DateTime _CheckInDate;
+        private bool _CheckOut;
         private ObservableCollection<Counter> _Cities;
         private GenericRepository _Context;
         private ObservableCollection<CustomerWrapper> _Customers;
@@ -89,35 +146,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         private ObservableCollection<Vehicle> _Vehicles;
 
         #endregion Fields
-
-        #region Constructors
-
-        public ListManagement_ViewModel(MainViewModel mainViewModel)
-        {
-            MainViewModel = mainViewModel;
-            //ShowCustomersCommand = new RelayCommand(async () => { await ShowCustomers(); }, () => SelectedExcursion != null && SelectedDate != null);
-            ShowCustomersCommand = new RelayCommand(async () => await ShowCustomers());
-            EditBookingCommand = new RelayCommand(async () => await EditBooking(), CanEditBooking);
-            AddCustomersToBusCommand = new RelayCommand(AddCustomersToBus, CanAddCustomersToBus);
-            UpdateVehiclesCommand = new RelayCommand(async () => await UpdateVehicles());
-
-            SaveBusesCommand = new RelayCommand(async () => await SaveBuses(), Context != null && Context.HasChanges());
-            AddBusCommand = new RelayCommand(AddBus, CanAddBus);
-
-            PutAtSeatsCommand = new RelayCommand<object>(PutAtSeats, CanPutAtSeats);
-            PutAtSeatsReturnCommand = new RelayCommand<object>(PutAtSeatsEp, CanPutAtSeatsEp);
-
-            RemoveBusCommand = new RelayCommand<object>(RemoveBus, CanRemoveBus);
-            MarkAllCommand = new RelayCommand<int>(MarkAll);
-            ClearSelCustomersCommand = new RelayCommand<int>(ClearSelCustomers, CanClearSelCustomers);
-            LeaderDriverCommand = new RelayCommand<int>(LeaderDriver, SelectedCustomer != null);
-
-            SelectAllCommand = new RelayCommand<int>(SelectAll);
-
-            Load();
-        }
-
-        #endregion Constructors
 
         #region Properties
 
@@ -180,6 +208,26 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
                 _CheckInDate = value;
                 RaisePropertyChanged();
+            }
+        }
+
+        public bool CheckOut
+        {
+            get
+            {
+                return _CheckOut;
+            }
+
+            set
+            {
+                if (_CheckOut == value)
+                {
+                    return;
+                }
+
+                _CheckOut = value;
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(CheckIn));
             }
         }
 
@@ -352,6 +400,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
                 _NoBus = value;
                 RaisePropertyChanged();
+                RecalculateCustomers();
             }
         }
 
@@ -577,25 +626,47 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 c.Both = 0;
             }
 
-            foreach (BookingWrapper b in AllBookings)
-            {
-                foreach (ReservationWrapper r in b.ReservationsInBooking.Select(r => new ReservationWrapper(r)))
+            if (!CheckOut)
+                foreach (BookingWrapper b in AllBookings)
                 {
-                    tmpHotel = Hotels.Where(h => h.Name.Equals(r.HotelName.TrimEnd(new[] { '*' }))).FirstOrDefault();
-                    foreach (Customer c in r.CustomersList)
+                    foreach (ReservationWrapper r in b.ReservationsInBooking.Select(r => new ReservationWrapper(r)))
                     {
-                        tmpCity = Cities.Where(h => h.Name.Equals(c.StartingPlace)).FirstOrDefault();
-                        if (Cities.Where(ci => ci.Name == c.StartingPlace).FirstOrDefault().Selected)
+                        tmpHotel = Hotels.Where(h => h.Name.Equals(r.HotelName.TrimEnd(new[] { '*' }))).FirstOrDefault();
+                        foreach (Customer c in r.CustomersList)
                         {
-                            tmpHotel.Both += 1;
-                        }
-                        if (Hotels.Where(ho => ho.Name == c.HotelName).FirstOrDefault().Selected)
-                        {
-                            tmpCity.Both += 1;
+                            tmpCity = Cities.Where(h => h.Name.Equals(c.StartingPlace)).FirstOrDefault();
+                            if (Cities.Where(ci => ci.Name == c.StartingPlace).FirstOrDefault().Selected)
+                            {
+                                tmpHotel.Both += 1;
+                            }
+                            if (Hotels.Where(ho => ho.Name == c.HotelName).FirstOrDefault().Selected)
+                            {
+                                tmpCity.Both += 1;
+                            }
                         }
                     }
                 }
-            }
+            else
+                foreach (BookingWrapper b in AllBookings)
+                {
+                    foreach (ReservationWrapper r in b.ReservationsInBooking.Select(r => new ReservationWrapper(r)))
+                    {
+                        tmpHotel = Hotels.Where(h => h.Name.Equals(r.HotelName.TrimEnd(new[] { '*' }))).FirstOrDefault();
+                        foreach (Customer c in r.CustomersList)
+                        {
+                            tmpCity = Cities.Where(h => h.Name.Equals(c.ReturningPlace)).FirstOrDefault();
+                            if (Cities.Where(ci => ci.Name == c.ReturningPlace).FirstOrDefault().Selected)
+                            {
+                                tmpHotel.Both += 1;
+                            }
+                            if (Hotels.Where(ho => ho.Name == c.HotelName).FirstOrDefault().Selected)
+                            {
+                                tmpCity.Both += 1;
+                            }
+                        }
+                    }
+                }
+
         }
 
         public void CountSelected()
@@ -741,6 +812,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
             SelectedBus.RecalculateCustomers();
             CountSelected();
+            RecalculateCustomers();
 
             CollectionViewSource.GetDefaultView(Customers).Refresh();
             SetColors(CollectionViewSource.GetDefaultView(Customers));
@@ -1023,30 +1095,55 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             RaisePropertyChanged(nameof(Customers));
         }
 
+        public bool CheckIn => !CheckOut;
+
         private void RecalculateCustomers()
         {
             ManualAll = true;
             Customers.Clear();
-            foreach (var b in AllBookings)
-            {
-                foreach (var r in b.ReservationsInBooking.Select(r => new ReservationWrapper(r)))
+            if (!CheckOut)
+                foreach (var b in AllBookings)
                 {
-                    foreach (var c in r.CustomersList.Select(k => new CustomerWrapper(k)))
+                    foreach (var r in b.ReservationsInBooking.Select(r => new ReservationWrapper(r)))
                     {
-                        if (Hotels.Where(h => h.Name == r.HotelName.TrimEnd(new[] { '*' })).FirstOrDefault().Selected &&
-                            Cities.Where(s => s.Name == c.StartingPlace).FirstOrDefault().Selected &&
-                            (!CheckOut && (!b.DifferentDates || c.CheckIn == CheckInDate) || (CheckOut && (!b.DifferentDates || c.CheckOut == CheckInDate))) && (!NoBus || (c.BusGo == null && c.BusReturn == null)))
+                        foreach (var c in r.CustomersList.Select(k => new CustomerWrapper(k)))
                         {
-                            Customers.Add(c);
-                            c.PropertyChanged += C_PropertyChanged;
-                        }
-                        else
-                        {
-                            c.Selected = false;
+                            if (Hotels.Where(h => h.Name == r.HotelName.TrimEnd(new[] { '*' })).FirstOrDefault().Selected &&
+                                Cities.Where(s => s.Name == c.StartingPlace).FirstOrDefault().Selected &&
+                                ((!b.DifferentDates || c.CheckIn == CheckInDate)) && (!NoBus || (c.BusGo == null && c.BusReturn == null)) && b.SecondDepart == SecondDepart && c.CustomerHasBusIndex < 2)
+                            {
+                                Customers.Add(c);
+                                c.PropertyChanged += C_PropertyChanged;
+                            }
+                            else
+                            {
+                                c.Selected = false;
+                            }
                         }
                     }
                 }
-            }
+            else
+                foreach (var b in AllBookings)
+                {
+                    foreach (var r in b.ReservationsInBooking.Select(r => new ReservationWrapper(r)))
+                    {
+                        foreach (var c in r.CustomersList.Select(k => new CustomerWrapper(k)))
+                        {
+                            if (Hotels.Where(h => h.Name == r.HotelName.TrimEnd(new[] { '*' })).FirstOrDefault().Selected &&
+                                Cities.Where(s => s.Name == c.ReturningPlace).FirstOrDefault().Selected &&
+                                ((!b.DifferentDates || c.CheckOut == CheckInDate)) && (!NoBus || (c.BusGo == null && c.BusReturn == null)) && c.CustomerHasBusIndex % 2 == 0)
+                            {
+                                Customers.Add(c);
+                                c.PropertyChanged += C_PropertyChanged;
+                            }
+                            else
+                            {
+                                c.Selected = false;
+                            }
+                        }
+                    }
+                }
+
             ManualAll = false;
             CountSelected();
             CollectionViewSource.GetDefaultView(Customers).Refresh();
@@ -1124,27 +1221,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-        private bool _CheckOut;
-
-        public bool CheckOut
-        {
-            get
-            {
-                return _CheckOut;
-            }
-
-            set
-            {
-                if (_CheckOut == value)
-                {
-                    return;
-                }
-
-                _CheckOut = value;
-                RaisePropertyChanged();
-            }
-        }
-
         private async Task ShowCustomers()
         {
             await Task.Delay(0);
@@ -1178,30 +1254,63 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                             tmpHotel = new Counter { Name = r.HotelName.TrimEnd(new[] { '*' }) };
                             Hotels.Add(tmpHotel);
                         }
-                        foreach (Customer c in r.CustomersList)
+                        if (!CheckOut)
                         {
-                            tmpCity = Cities.Where(h => h.Name.Equals(c.StartingPlace)).FirstOrDefault();
-                            if (tmpCity == null)
+
+                            foreach (Customer c in r.CustomersList)
                             {
-                                tmpCity = new Counter { Name = c.StartingPlace };
-                                Cities.Add(tmpCity);
-                            }
-                            if (c.BusGo == null && c.BusReturn == null)
-                            {
-                                tmpCity.UnHandled += 1;
-                                tmpHotel.UnHandled += 1;
-                            }
-                            if (Cities.Where(ci => ci.Name == c.StartingPlace).FirstOrDefault().Selected)
-                            {
-                                tmpHotel.Both += 1;
-                            }
-                            if (Hotels.Where(ho => ho.Name == c.HotelName).FirstOrDefault().Selected)
-                            {
-                                tmpCity.Both += 1;
+                                tmpCity = Cities.Where(h => h.Name.Equals(c.StartingPlace)).FirstOrDefault();
+                                if (tmpCity == null)
+                                {
+                                    tmpCity = new Counter { Name = c.StartingPlace };
+                                    Cities.Add(tmpCity);
+                                }
+                                if (c.BusGo == null && c.BusReturn == null)
+                                {
+                                    tmpCity.UnHandled += 1;
+                                    tmpHotel.UnHandled += 1;
+                                }
+                                if (Cities.Where(ci => ci.Name == c.StartingPlace).FirstOrDefault().Selected)
+                                {
+                                    tmpHotel.Both += 1;
+                                }
+                                if (Hotels.Where(ho => ho.Name == c.HotelName).FirstOrDefault().Selected)
+                                {
+                                    tmpCity.Both += 1;
+                                }
+
+                                tmpCity.Total += 1;
+                                tmpHotel.Total += 1;
                             }
 
-                            tmpCity.Total += 1;
-                            tmpHotel.Total += 1;
+                        }
+                        else
+                        {
+                            foreach (Customer c in r.CustomersList)
+                            {
+                                tmpCity = Cities.Where(h => h.Name.Equals(c.ReturningPlace)).FirstOrDefault();
+                                if (tmpCity == null)
+                                {
+                                    tmpCity = new Counter { Name = c.ReturningPlace };
+                                    Cities.Add(tmpCity);
+                                }
+                                if (c.BusGo == null && c.BusReturn == null)
+                                {
+                                    tmpCity.UnHandled += 1;
+                                    tmpHotel.UnHandled += 1;
+                                }
+                                if (Cities.Where(ci => ci.Name == c.ReturningPlace).FirstOrDefault().Selected)
+                                {
+                                    tmpHotel.Both += 1;
+                                }
+                                if (Hotels.Where(ho => ho.Name == c.HotelName).FirstOrDefault().Selected)
+                                {
+                                    tmpCity.Both += 1;
+                                }
+
+                                tmpCity.Total += 1;
+                                tmpHotel.Total += 1;
+                            }
                         }
                     }
                     catch (Exception ex)

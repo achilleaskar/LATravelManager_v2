@@ -252,11 +252,9 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                             if (x != null && x.Count() > 0)
                             {
                                 FromDepartureInfo = x.Min(e => e.CheckIn);
-
                             }
                             else
                                 FromDepartureInfo = DateTime.Today;
-
                         }
                     }
                     catch
@@ -378,7 +376,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             //}
             DateTime tmpDate = FromDepartureInfo;
             AllDaysDeparturesList.Clear();
-            DailyDepartureInfo dayDeparture = new DailyDepartureInfo(Context, SelectedFilterExcursion.Id);
+            DailyDepartureInfo dayDeparture = new DailyDepartureInfo(Context, SelectedFilterExcursion.Id),tmpDepartInfo=null;
             DailyDepartureInfo tmpDayDeparture = new DailyDepartureInfo(Context, SelectedFilterExcursion.Id);
             CityDepartureInfo cityDepartureInfo;
             if (SelectedFilterExcursion.ExcursionType.Category == Model.ExcursionTypeEnum.Group)
@@ -466,6 +464,16 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                     {
                         if (b.CheckIn == tmpDate)
                         {
+                            if (b.SecondDepart != dayDeparture.SecondDepart)
+                            {
+                                tmpDepartInfo = dayDeparture;
+                                   dayDeparture = AllDaysDeparturesList.FirstOrDefault(d => d.Date == b.CheckIn && d.SecondDepart == b.SecondDepart);
+                                if (dayDeparture == null)
+                                {
+                                    dayDeparture = new DailyDepartureInfo(Context, SelectedFilterExcursion.Id) { Date = tmpDate, PerCityDepartureList = new ObservableCollection<CityDepartureInfo>(), SecondDepart = b.SecondDepart };
+                                    AllDaysDeparturesList.Add(dayDeparture);
+                                }
+                            }
                             foreach (var r in b.ReservationsInBooking)
                                 foreach (Customer customer in r.CustomersList)
                                 {
@@ -499,16 +507,20 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                                         cityDepartureInfo.OnlyStayGo++;
                                     }
                                 }
+                            if (dayDeparture.SecondDepart)
+                            {
+                                dayDeparture = tmpDepartInfo;
+                            }
                         }
                         if (b.CheckOut == tmpDate)
                         {
                             foreach (var r in b.ReservationsInBooking)
                                 foreach (Customer customer in r.CustomersList)
                                 {
-                                    cityDepartureInfo = dayDeparture.PerCityDepartureList.FirstOrDefault(p => p.City == customer.StartingPlace);
+                                    cityDepartureInfo = dayDeparture.PerCityDepartureList.FirstOrDefault(p => p.City == customer.ReturningPlace);
                                     if (cityDepartureInfo == null)
                                     {
-                                        dayDeparture.PerCityDepartureList.Add(new CityDepartureInfo { City = customer.StartingPlace });
+                                        dayDeparture.PerCityDepartureList.Add(new CityDepartureInfo { City = customer.ReturningPlace });
                                         cityDepartureInfo = dayDeparture.PerCityDepartureList[dayDeparture.PerCityDepartureList.Count - 1];
                                     }
                                     if (!r.OnlyStay && ((SelectedFilterExcursion.IncludesShip && (customer.CustomerHasShipIndex == 0 || customer.CustomerHasShipIndex == 2)) || (SelectedFilterExcursion.IncludesBus && (customer.CustomerHasBusIndex == 0 || customer.CustomerHasBusIndex == 2))))
@@ -550,6 +562,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
             AllDaysDeparturesCollectionView = CollectionViewSource.GetDefaultView(AllDaysDeparturesList);
             AllDaysDeparturesCollectionView.SortDescriptions.Add(new SortDescription(nameof(DailyDepartureInfo.Date), ListSortDirection.Ascending));
+            AllDaysDeparturesCollectionView.SortDescriptions.Add(new SortDescription(nameof(DailyDepartureInfo.SecondDepart), ListSortDirection.Ascending));
             Mouse.OverrideCursor = Cursors.Arrow;
         }
 

@@ -318,10 +318,9 @@ namespace LATravelManager.UI.Data.Workers
                             {
                                 if (reservation.Room != null)
                                 {
-
-                                hw = Plan.FirstOrDefault(h => h.Id == reservation.Room.Hotel.Id);
-                                rw = hw.RoomWrappers.FirstOrDefault(r => r.Id == reservation.Room.Id);
-                                rw.MakeReservation(new ReservationWrapper(reservation));
+                                    hw = Plan.FirstOrDefault(h => h.Id == reservation.Room.Hotel.Id);
+                                    rw = hw.RoomWrappers.FirstOrDefault(r => r.Id == reservation.Room.Id);
+                                    rw.MakeReservation(new ReservationWrapper(reservation));
                                 }
                                 else
                                 {

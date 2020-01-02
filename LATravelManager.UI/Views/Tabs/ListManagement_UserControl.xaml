@@ -9,7 +9,7 @@
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              d:DataContext="{d:DesignInstance viewmodels:ListManagement_ViewModel}"
              d:DesignHeight="750"
-             Background="White" 
+             Background="White"
              d:DesignWidth="800">
     <UserControl.Resources>
         <converters:RemainingToColorConverter x:Key="RemainingToColorConverter" />
@@ -72,7 +72,12 @@
                          SelectedDate="{Binding CheckInDate,UpdateSourceTrigger=PropertyChanged}" />
             <!--ItemsSource="{Binding SelectedExcursion.ExcursionDates}"
                        SelectedItem="{Binding SelectedDate}" />-->
-            <CheckBox Content="ChckOut" IsChecked="{Binding CheckOut}" />
+            <CheckBox Content="ChckOut"
+                      IsChecked="{Binding CheckOut}"
+                      Checked="CheckBox_Checked"
+                      Unchecked="CheckBox_Unchecked"
+                      Margin="5 0 0 0"
+                      VerticalAlignment="Center" />
             <Label Content="Γραφείο:"
                    VerticalAlignment="Center" />
             <ComboBox  Width="105"
@@ -289,7 +294,12 @@
                                     VerticalAlignment="Center"
                                     Command="{Binding SelectAllCommand}"
                                     CommandParameter="5" />
-                            <CheckBox Content="NoBus" IsChecked="{Binding NoBus}"/>
+                            <CheckBox Content="NoBus"
+                                      IsChecked="{Binding NoBus}"
+                                      VerticalAlignment="Center" />
+                            <CheckBox Content="Δεύτερη"
+                                      IsChecked="{Binding SecondDepart}"
+                                      VerticalAlignment="Center" />
                         </StackPanel>
                         <Button Margin="5 0"
                                 Grid.Column="2"
@@ -413,10 +423,20 @@
                                                 IsReadOnly="True"
                                                 MaxWidth="90"
                                                 Binding="{Binding StartingPlace}" />
+                            <DataGridTextColumn Header="Επιστροφή"
+                                                IsReadOnly="True"
+                                                MaxWidth="90"
+                                                Visibility="Collapsed"
+                                                Binding="{Binding ReturningPlace}" />
                             <DataGridTextColumn Header="Λεωφορείο"
                                                 IsReadOnly="True"
                                                 MaxWidth="80"
-                                                Binding="{Binding Bus.Vehicle.Name}" />
+                                                Binding="{Binding BusGo.Vehicle.Name}" />
+                            <DataGridTextColumn Header="Λεωφορείο"
+                                                IsReadOnly="True"
+                                                MaxWidth="80"
+                                                Visibility="Collapsed"
+                                                Binding="{Binding BusReturn.Vehicle.Name}" />
                             <DataGridTextColumn Header="Σχόλιο"
                                                 IsReadOnly="True"
                                                 MaxWidth="140"
@@ -436,10 +456,11 @@
             <!--//Visibility="{Binding HasBus,Converter={StaticResource booleanToVisibilityConverter}}"-->
             <GroupBox Header="Λεωφορεία"
                       Margin="5 0 0 0"
-                      Grid.Column="1" FontSize="11"
+                      Grid.Column="1"
+                      FontSize="11"
                       VerticalAlignment="Stretch"
                       VerticalContentAlignment="Stretch">
-                <ScrollViewer HorizontalScrollBarVisibility="Auto" 
+                <ScrollViewer HorizontalScrollBarVisibility="Auto"
                               VerticalScrollBarVisibility="Auto">
                     <ItemsControl ItemsSource="{Binding Buses}"
                                   Margin="-1,0,0,0">
@@ -453,7 +474,8 @@
                             <DataTemplate>
                                 <GroupBox Header="{Binding Vehicle.Name}"
                                           Margin="0 0 5 0"
-                                          BorderThickness="1" Height="400"
+                                          BorderThickness="1"
+                                          Height="400"
                                           BorderBrush="Black"
                                           VerticalAlignment="Stretch">
                                     <Grid>
@@ -588,7 +610,11 @@
                                                                             IsReadOnly="True"
                                                                             MaxWidth="90"
                                                                             Binding="{Binding StartingPlace}" />
-                                                        <DataGridTextColumn Header="Αναχώρηση"
+                                                        <DataGridTextColumn Header="Επιστροφή"
+                                                                            IsReadOnly="True"
+                                                                            MaxWidth="90"
+                                                                            Binding="{Binding ReturningPlace}" />
+                                                        <DataGridTextColumn Header="Σχόλιο"
                                                                             IsReadOnly="True"
                                                                             MaxWidth="90"
                                                                             Binding="{Binding Reservation.Booking.Comment}" />
@@ -621,14 +647,14 @@
                                                            Grid.Row="1"
                                                            Content="{Binding Leader.Tel,UpdateSourceTrigger=PropertyChanged}" />
                                                     <StackPanel Grid.Row="2">
-                                                    <TextBlock Text="Όνομα Οδηγού:"
-                                                               TextDecorations="Underline" />
-                                                    <TextBox Text="{Binding Vehicle.Driver}" />
-                                                    <TextBlock Text="Τηλ. Οδηγού:"
-                                                               TextDecorations="Underline" />
-                                                    <TextBox Text="{Binding Vehicle.DriverTel}" />
+                                                        <TextBlock Text="Όνομα Οδηγού:"
+                                                                   TextDecorations="Underline" />
+                                                        <TextBox Text="{Binding Vehicle.Driver}" />
+                                                        <TextBlock Text="Τηλ. Οδηγού:"
+                                                                   TextDecorations="Underline" />
+                                                        <TextBox Text="{Binding Vehicle.DriverTel}" />
                                                     </StackPanel>
-                                                        
+
 
                                                 </Grid>
                                             </TabItem>

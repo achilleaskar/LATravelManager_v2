@@ -184,6 +184,8 @@ namespace LATravelManager.UI.Repositories
 
         internal async Task<IEnumerable<OptionalExcursion>> GetAllOptionalExcursionsAsync(DateTime checkIn, bool track = true)
         {
+            DateTime from = checkIn.AddDays(-6);
+            DateTime to = checkIn.AddDays(6);
             if (!track)
             {
                 return await RunTask(Context.OptionalExcursions
@@ -231,9 +233,9 @@ namespace LATravelManager.UI.Repositories
                .ToList();
         }
 
-        public async Task<IEnumerable<Booking>> GetAllBookinsFromCustomers(DateTime checkIn)
+        public async Task<IEnumerable<Booking>> GetAllBookinsFromCustomers(DateTime checkIn, DateTime checkout)
         {
-            return await RunTask(Context.Bookings.Where(b => b.DifferentDates && b.ReservationsInBooking.Any(r => r.CustomersList.Any(c => c.CheckIn == checkIn)))
+            return await RunTask(Context.Bookings.Where(b => b.DifferentDates && b.ReservationsInBooking.Any(r => r.CustomersList.Any(c => (checkout.Year < 2000 && c.CheckIn == checkIn) || (checkout.Year > 2000 && c.CheckOut == checkout))))
            .Include(f => f.Partner)
                .Include(f => f.User)
                .Include(f => f.Excursion)
@@ -252,7 +254,6 @@ namespace LATravelManager.UI.Repositories
         {
             return await RunTask(Context.Set<City>()
                 .Include(c => c.Country)
-                .Include(c => c.ExcursionTimes)
                 .Include(c => c.ExcursionTimes.Select(p => p.StartingPlace))
                 .OrderBy(x => x.Name)
                 .ToListAsync);
@@ -273,7 +274,7 @@ namespace LATravelManager.UI.Repositories
                 .Include(r => r.Reservation.Booking)
                 .Include(r => r.Reservation.Hotel)
                 .Include(r => r.BusGo)
-                .Include(r => r.OptionalExcursions)
+                .Include(r => r.OptionalExcursions.Select(o => o.OptionalExcursion))
                 .Include(r => r.Reservation.Room.Hotel)
                 .Where(r => r.Reservation.Booking.Disabled == false)
                 .ToListAsync);
@@ -812,25 +813,32 @@ namespace LATravelManager.UI.Repositories
                  .ToList();
         }
 
-        internal async Task<IEnumerable<Bus>> GetAllBusesAsync(int id = 0, DateTime checkIn = default, bool strict = false)
+        internal async Task<IEnumerable<Bus>> GetAllBusesAsync(int id = 0, DateTime checkIn = default, DateTime checkout = default, bool strict = false)
         {
-            if (checkIn.Year<2000)
+            if (checkIn.Year < 2000)
             {
-                checkIn = DateTime.Today;
+                checkIn = DateTime.Today.AddYears(-200);
             }
             DateTime from = checkIn.AddDays(-5);
             DateTime to = checkIn.AddDays(5);
-            if (strict)
+            if (!strict)
             {
-                from = checkIn;
-                to = checkIn;
+                return await RunTask(Context.Set<Bus>().Where(b => ((id == 0 || b.Excursion.Id == id) && (((b.TimeGo >= from && b.TimeGo <= to)) || ((b.TimeReturn >= from && b.TimeReturn <= to)))))
+                  .Include(f => f.Excursion)
+                  //.Include(f => f.Customers)
+                  .Include(f => f.Leader)
+                  .Include(f => f.Vehicle)
+                  .ToListAsync);
             }
-            return await RunTask(Context.Set<Bus>().Where(b => ((id == 0 || b.Excursion.Id == id) && ((b.TimeGo >= from && b.TimeGo <= to)|| (b.TimeReturn >= from && b.TimeReturn <= to))))
-              .Include(f => f.Excursion)
-              //.Include(f => f.Customers)
-              .Include(f => f.Leader)
-              .Include(f => f.Vehicle)
-              .ToListAsync);
+            else
+            {
+                return await RunTask(Context.Set<Bus>().Where(b => ((id == 0 || b.Excursion.Id == id) && ((checkIn.Year > 2000 && b.TimeGo == checkIn) || (checkout.Year>2000&&b.TimeReturn==checkout))))
+                  .Include(f => f.Excursion)
+                  //.Include(f => f.Customers)
+                  .Include(f => f.Leader)
+                  .Include(f => f.Vehicle)
+                  .ToListAsync);
+            }
         }
 
         internal async Task<List<Hotel>> GetAllHotelsAsync<T>()
@@ -1235,6 +1243,10 @@ namespace LATravelManager.UI.Repositories
                         case nameof(Booking.Comment):
                             if (original is string s2 && !string.IsNullOrEmpty(s2))
                                 sb.Append($"Σχόλιο κράτησης από '{original.ToString()}' σε '{current.ToString()}', ");
+                            else if (original is string s3 && string.IsNullOrEmpty(s3))
+                            {
+                                sb.Append($"Νέο σχόλιο κράτησης '{current.ToString()}', ");
+                            }
                             break;
 
                         case nameof(Booking.Commision):

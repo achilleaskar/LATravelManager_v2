@@ -1,7 +1,5 @@
-﻿using DocumentFormat.OpenXml.Wordprocessing;
-using GalaSoft.MvvmLight.CommandWpf;
+﻿using GalaSoft.MvvmLight.CommandWpf;
 using LATravelManager.Model;
-using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.LocalModels;
 using LATravelManager.Model.Plan;
@@ -19,7 +17,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -54,13 +51,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
             MessengerInstance.Register<SelectedExcursionChangedMessage>(this, exc => { SelectedExcursionChanged(exc.SelectedExcursion); });
         }
 
-
-
-
-
-
         private ReservationWrapper _TmpReservation;
-
 
         public ReservationWrapper TmpReservation
         {
@@ -81,11 +72,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
             }
         }
 
-
-
-
         private PlanDailyInfo _TmpDailyInfo;
-
 
         public PlanDailyInfo TmpDailyInfo
         {
@@ -106,9 +93,6 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
             }
         }
 
-
-
-
         private async Task MoveTo(PlanDailyInfo obj)
         {
             if (obj == null || TmpReservation == null || TmpDailyInfo == null || !obj.Room.CanFit(TmpReservation) || !obj.Room.CanAddReservationToRoom(TmpReservation))
@@ -124,7 +108,6 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
                 d.Reservation = null;
                 d.RoomState = RoomStateEnum.Available;
             }
-
         }
 
         private void MoveFrom(PlanDailyInfo obj)
@@ -541,7 +524,6 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
 
         private ObservableCollection<HotelWrapper> MergeRooms(ObservableCollection<HotelWrapper> filteredPlanList)
         {
-
             int counter = 0;
             var mergedList = new ObservableCollection<HotelWrapper>();
             BookingInfoPerDay vr;
@@ -590,12 +572,10 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
                     //{
                     //    room.DailyBookingInfo.Add(item);
                     //}
-
                 }
                 Context.Save();
                 ////foreach (var item in roomstodelte)
                 ////{
-
                 ////}
                 foreach (RoomWrapper room in hotel.RoomWrappers)
                     if (!room.Handled)
@@ -737,6 +717,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
                 PeopleCount));
 
             decimal total = 0, free = 0;
+
             ////List<BookingInfoPerDay> dbitd = new List<BookingInfoPerDay>();
             //foreach (var item in FilteredPlanList)
             //{
@@ -761,6 +742,34 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
             //await Context.SaveAsync();
 
             FilteredPlanList = MergeRooms(FilteredPlanList);
+
+            List<BookingInfoPerDay> dbitd = new List<BookingInfoPerDay>();
+            foreach (var item in FilteredPlanList)
+            {
+                if (item.Id == 72 || item.Id == 78|| item.Id == 88)
+                {
+                    foreach (var r in item.RoomWrappers)
+                    {
+                        // if (r.RoomType.Id == 8)
+                        foreach (var dbi in r.PlanDailyInfo)
+                            if (dbi.RoomState == RoomStateEnum.Available)// && dbi.Date >= new DateTime(2019, 12, 31) && dbi.Date < new DateTime(2020, 01, 7))
+                            {
+                                dbitd.Add(r.DailyBookingInfo.Where(d => d.Date == dbi.Date).FirstOrDefault());
+                            }
+                    }
+                }
+
+            }
+            for (int i = 0; i < dbitd.Count; i++)
+            {
+                Context.Delete(dbitd[i]);
+                if (i % 100 == 0 && Context.HasChanges())
+                {
+                    await Context.SaveAsync();
+                }
+            }
+            await Context.SaveAsync();
+
             foreach (HotelWrapper h in FilteredPlanList)
             {
                 foreach (var r in h.RoomWrappers)

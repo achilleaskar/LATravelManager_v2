@@ -10,7 +10,7 @@
              mc:Ignorable="d"
              Background="White"
              d:DesignHeight="450"
-             d:DesignWidth="1130">
+             d:DesignWidth="1730">
     <UserControl.Resources>
         <converters:UserToVisibility x:Key="UserToVisibilityConverter" />
         <converters:FloadToStringValueConverter x:Key="FtoSConverter" />
@@ -378,35 +378,43 @@
                               Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
                               IsChecked="{Binding Remaining}" />
                 </StackPanel>
-                <Button Content="PrintRoomingLists"
+                <Button Content="RoomingLists"
                         Margin="5,0"
                         VerticalAlignment="Bottom"
                         Command="{Binding PrintRoomingListsCommand}" />
-                <Button Content="PrintAllVouchers"
+                <Button Content="Vouchers"
                         Margin="5,0"
                         VerticalAlignment="Bottom"
                         Command="{Binding PrintAllVouchersCommand}" />
-                <Button Content="PrintAllLetters"
+                <Button Content="Letters"
                         VerticalAlignment="Bottom"
                         Margin="5,0"
                         Command="{Binding PrintAllLettersCommand}" />
-                <Button Content="PrintList"
+                <Button Content="List"
                         VerticalAlignment="Bottom"
                         Margin="5,0"
                         Command="{Binding PrintListCommand}" />
+                <Button Content="List Ret"
+                        VerticalAlignment="Bottom"
+                        Margin="5,0"
+                        Command="{Binding PrintListRetCommand}" />
                 <Button Content="Bus Lists"
                         VerticalAlignment="Bottom"
                         Margin="5,0"
                         Command="{Binding PrintBusListsCommand}" />
-                <Button Content="Theseis"
+                <!--<Button Content="Theseis"
                         VerticalAlignment="Bottom"
                         Margin="5,0"
-                        Command="{Binding PrintTheseisCommand}" />
+                        Command="{Binding PrintTheseisCommand}" />-->
                 <Button Content="Ακυρωμένες"
                         VerticalAlignment="Bottom"
                         Margin="5,0"
                         Click="Button_Click"
                         Command="{Binding ShowCanceled}" />
+                <Button Content="Sent Vchrs"
+                        VerticalAlignment="Bottom"
+                        Margin="5,0"
+                        Command="{Binding VouchersSentCommand}" />
             </StackPanel>
         </Grid>
 
@@ -465,9 +473,40 @@
                                         Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
                                         IsReadOnly="True" />
                 <DataGridTextColumn Header="Αναχ."
-                                    Binding="{Binding CheckIn ,StringFormat='{}{0:dd/MM}'}" />
+                                    Binding="{Binding CheckIn ,StringFormat='{}{0:dd/MM}'}">
+                    <DataGridTextColumn.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Foreground"
+                                    Value="Black" />
+                            <Setter Property="Background"
+                                    Value="Transparent" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Booking.SecondDepart}" Value="True">
+                                    <Setter Property="Background"
+                                            Value="LightCoral" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGridTextColumn.CellStyle>
+                </DataGridTextColumn>
                 <DataGridTextColumn Header="Επιστ."
-                                    Binding="{Binding CheckOut ,StringFormat='{}{0:dd/MM}'}" />
+                                    Binding="{Binding CheckOut ,StringFormat='{}{0:dd/MM}'}" >
+                    <DataGridTextColumn.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Foreground"
+                                    Value="Black" />
+                            <Setter Property="Background"
+                                    Value="Transparent" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Booking.SecondDepart}"
+                                             Value="True">
+                                    <Setter Property="Background"
+                                            Value="LightCoral" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGridTextColumn.CellStyle>
+                </DataGridTextColumn>
                 <DataGridTextColumn Header="Ονόματα"
                                     Width="240"
                                     CanUserResize="True"

@@ -364,8 +364,7 @@ namespace LATravelManager.UI.Helpers
             set
             {
                 value = (value != null) ? value.ToUpper() : value;
-                if (string.IsNullOrEmpty(ReturningPlace))
-                    ReturningPlace = value;
+                ReturningPlace = value;
                 SetValue(value);
             }
         }

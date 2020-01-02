@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Windows.Data;
 
 namespace LATravelManager.Model.Wrapper
@@ -19,7 +20,7 @@ namespace LATravelManager.Model.Wrapper
         {
         }
 
-
+        public DateTime Starttime { get; set; }
         public int Higher => GetHigher();
 
         public int GetHigher()
@@ -31,6 +32,15 @@ namespace LATravelManager.Model.Wrapper
                     higher = c.LeaderDriver;
             }
             return higher;
+        }
+
+        public override string ToString()
+        {
+            if (CustomersList != null && CustomersList.Count > 0)
+            {
+                return CustomersList[0].StartingPlace;
+            }
+            return "";
         }
 
         public ReservationWrapper(Reservation model) : base(model)
@@ -588,28 +598,10 @@ namespace LATravelManager.Model.Wrapper
             decimal total = 0;
             if (ExcursionType != ExcursionTypeEnum.Personal && ExcursionType != ExcursionTypeEnum.ThirdParty)
             {
-                Recieved = 0;
-                foreach (Payment payment in Booking.Payments)
-                {
-                    Recieved += payment.Amount;
-                }
-
-                if (!Booking.IsPartners)
-                {
-                    foreach (Reservation r in Booking.ReservationsInBooking)
-                    {
-                        foreach (Customer c in r.CustomersList)
-                        {
-                            total += c.Price;
-                        }
-                    }
-                    FullPrice = total;
-                    Remaining = (total - Recieved) >= 1 ? total - Recieved : 0;
-                }
-                else
-                {
-                    Remaining = Booking.NetPrice <= Recieved ? 0 : Booking.NetPrice - Recieved;
-                }
+                BookingWrapper bw = new BookingWrapper(Booking);
+                bw.CalculateRemainingAmount();
+                FullPrice = bw.FullPrice;
+                Remaining = bw.Remaining;
             }
             else if (ExcursionType == ExcursionTypeEnum.Personal)
             {
@@ -819,9 +811,9 @@ namespace LATravelManager.Model.Wrapper
                 {
                     if (Room.RoomType != null)
                     {
-                        if (Room.RoomType.Id!=1)
+                        if (Room.RoomType.Id != 1)
                         {
-                        roomname = Room.RoomType.Name + (Room.RoomType.Id == 1 ? ("(" + CustomersList.Count + ")") : "");
+                            roomname = Room.RoomType.Name + (Room.RoomType.Id == 1 ? ("(" + CustomersList.Count + ")") : "");
 
                         }
                         else

@@ -1,11 +1,9 @@
 ﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Vml;
 using DocumentFormat.OpenXml.Wordprocessing;
 using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Excursions;
-using LATravelManager.Model.Hotels;
 using LATravelManager.Model.Lists;
 using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
@@ -38,23 +36,21 @@ namespace LATravelManager.UI.Helpers
         {
             Context = context;
         }
+
         public void PrintOptionals(List<CustomerOptional> sofia)
         {
             Thread.CurrentThread.CurrentCulture = culture;
 
             using (GenericRepository Context = new GenericRepository())
             {
-
                 if (sofia.Count > 0)
                 {
-
-                    FileInfo fileInfo = new FileInfo(AppDomain.CurrentDomain.BaseDirectory + @"Sources\protypo kratiseon.xlsx");
+                    FileInfo fileInfo = new FileInfo(AppDomain.CurrentDomain.BaseDirectory + @"Sources\proairetikon.xlsx");
                     ExcelPackage p = new ExcelPackage(fileInfo);
                     ExcelWorksheet myWorksheet = p.Workbook.Worksheets[1];
 
                     string wbPath = GetPath("Test_Phones", @"\proairetika\");
                     int lineNum = 4;
-
 
                     foreach (var c in sofia)
                     {
@@ -65,7 +61,8 @@ namespace LATravelManager.UI.Helpers
                         myWorksheet.Cells["C" + lineNum].Value = c.Customer.Surename;
                         myWorksheet.Cells["D" + lineNum].Value = !string.IsNullOrEmpty(c.Customer.Tel) && !c.Customer.Tel.StartsWith("000") ? c.Customer.Tel : "";
                         myWorksheet.Cells["E" + lineNum].Value = c.Leader.Name.Length > 12 ? c.Leader.Name.Substring(0, 12) : c.Leader.Name;
-                        myWorksheet.Cells["F" + lineNum].Value = c.Customer.Reservation.Room.Hotel.Name;
+                        myWorksheet.Cells["F" + lineNum].Value = (new ReservationWrapper(c.Customer.Reservation)).HotelName;
+                        myWorksheet.Cells["G" + lineNum].Value = c.PaymentType == PaymentType.NotPaid ? c.Cost.ToString() : "";
 
                         lineNum++;
                     }
@@ -75,6 +72,7 @@ namespace LATravelManager.UI.Helpers
                 }
             }
         }
+
         #endregion Constructors
 
         #region Fields
@@ -414,7 +412,7 @@ namespace LATravelManager.UI.Helpers
 
                 try
                 {
-                    string LetterFilename = string.Format(@"\{0}_{1}_{2}_{3}_Letter.docx", (resWrapper.CustomersList.OrderBy(cc => cc.Id)).ToList()[0].Surename, resWrapper.HotelName.TrimEnd(new[] { '*' }), resWrapper.RoomTypeNameByNum, resWrapper.Id);
+                    string LetterFilename = string.Format(@"\{0}_{1}_{2}_{3}_Letter.docx", (resWrapper.CustomersList.OrderBy(cc => cc.Id)).ToList()[0].Surename, resWrapper.HotelName.TrimEnd(new[] { '*', '/' }), resWrapper.RoomTypeNameByNum, resWrapper.Id);
                     Directory.CreateDirectory(outputpath + @"\Letters");
                     folderNameVouchers = CreateFolder(resWrapper.CheckIn, @"\Letters\", booking.Excursion.Name);
 
@@ -539,9 +537,9 @@ namespace LATravelManager.UI.Helpers
             }
         }
 
-        internal async Task PrintList(List<Booking> bookings, DateTime checkIn, bool going, Bus bus = null, bool borderonly = false)
+        internal async Task PrintList(List<Booking> bookings, DateTime checkIn, DateTime checkout, bool going, Bus bus = null, bool borderonly = false)
         {
-            IEnumerable<Booking> more = await Context.GetAllBookinsFromCustomers(checkIn);
+            IEnumerable<Booking> more = await Context.GetAllBookinsFromCustomers(checkIn, checkout);
 
             foreach (Booking b in more)
             {
@@ -590,7 +588,7 @@ namespace LATravelManager.UI.Helpers
             {
                 foreach (Reservation r in booking.ReservationsInBooking)
                 {
-                    if (r.OnlyStay || r.Booking.SecondDepart)
+                    if (bus == null && (r.OnlyStay || (r.Booking.SecondDepart && going)))
                     {
                         RestReservations.Add(new ReservationWrapper(r));
                     }
@@ -601,29 +599,65 @@ namespace LATravelManager.UI.Helpers
                 }
             }
 
-            reservationsThisDay = reservationsThisDay.OrderBy(x1 => x1.CustomersList[0].StartingPlace).ThenBy(x => x.HotelName).ToList();
-            if (bus != null)
+            foreach (var r in reservationsThisDay)
             {
-                if (!borderonly)
-                    wbPath = GetPath($"\\Λίστα Λεωφορείου για {reservationsThisDay[0].Booking.Excursion.Destinations[0].Name} " + bus.TimeGo.ToString("dd_MM_yy_") + bus.Vehicle.Name.Trim(new[] { '-' }));
-                else
-                    wbPath = GetPath($"\\Λίστα Συνόρων για {reservationsThisDay[0].Booking.Excursion.Destinations[0].Name} " + bus.TimeGo.ToString("dd_MM_yy_") + bus.Vehicle.Name.Trim(new[] { '-' }));
+                r.Starttime = GetStartingPLaceTime(r, going);
+            }
+            if (going)
+            {
+
+                reservationsThisDay = reservationsThisDay.OrderBy(t => t.Higher).ThenBy(x1 => x1.Starttime.TimeOfDay).ThenBy(x => x.HotelName).ToList();
             }
             else
             {
-                if (!borderonly)
-                    wbPath = GetPath($"\\Λίστα Λεωφορείου για {reservationsThisDay[0].Booking.Excursion.Destinations[0].Name} " + checkIn.ToString("dd_MM_yy"));
+                reservationsThisDay = reservationsThisDay.OrderBy(t => t.Higher).ThenByDescending(x1 => x1.Starttime.TimeOfDay).ThenBy(x => x.HotelName).ToList();
+
+            }
+            //reservationsThisDay = reservationsThisDay.OrderBy(x1 => x1.Starttime.TimeOfDay).ToList();
+            if (going)
+            {
+                if (bus != null)
+                {
+                    if (!borderonly)
+                        wbPath = GetPath($"\\Λίστα Λεωφορείου για {reservationsThisDay[0].Booking.Excursion.Destinations[0].Name} " + bus.TimeGo.ToString("dd_MM_yy_") + bus.Vehicle.Name.Trim(new[] { '-' }));
+                    else
+                        wbPath = GetPath($"\\Λίστα Συνόρων για {reservationsThisDay[0].Booking.Excursion.Destinations[0].Name} " + bus.TimeGo.ToString("dd_MM_yy_") + bus.Vehicle.Name.Trim(new[] { '-' }));
+                }
                 else
-                    wbPath = GetPath($"\\Λίστα Συνόρων για {reservationsThisDay[0].Booking.Excursion.Destinations[0].Name} " + checkIn.ToString("dd_MM_yy"));
+                {
+                    if (!borderonly)
+                        wbPath = GetPath($"\\Λίστα Λεωφορείου για {reservationsThisDay[0].Booking.Excursion.Destinations[0].Name} " + checkIn.ToString("dd_MM_yy"));
+                    else
+                        wbPath = GetPath($"\\Λίστα Συνόρων για {reservationsThisDay[0].Booking.Excursion.Destinations[0].Name} " + checkIn.ToString("dd_MM_yy"));
+                }
+            }
+            else
+            {
+                if (bus != null)
+                {
+                    if (!borderonly)
+                        wbPath = GetPath($"\\Λίστα Λεωφορείου από {reservationsThisDay[0].Booking.Excursion.Destinations[0].Name} " + bus.TimeReturn.ToString("dd_MM_yy_") + bus.Vehicle.Name.Trim(new[] { '-' }));
+                    else
+                        wbPath = GetPath($"\\Λίστα Συνόρων από {reservationsThisDay[0].Booking.Excursion.Destinations[0].Name} " + bus.TimeReturn.ToString("dd_MM_yy_") + bus.Vehicle.Name.Trim(new[] { '-' }));
+                }
+                else
+                {
+                    if (!borderonly)
+                        wbPath = GetPath($"\\Λίστα Λεωφορείου από {reservationsThisDay[0].Booking.Excursion.Destinations[0].Name} " + checkout.ToString("dd_MM_yy"));
+                    else
+                        wbPath = GetPath($"\\Λίστα Συνόρων από {reservationsThisDay[0].Booking.Excursion.Destinations[0].Name} " + checkout.ToString("dd_MM_yy"));
+                }
             }
 
-            myWorksheet.Cells["A1"].Value = "ΑΝΑΧΩΡΗΣΗ - " + (bus == null ? checkIn.ToString("dd/MM/yyyy") : bus.TimeGo.ToString("dd/MM/yyyy"));
+            if (going)
+                myWorksheet.Cells["A1"].Value = "ΑΝΑΧΩΡΗΣΗ - " + (bus == null ? checkIn.ToString("dd/MM/yyyy") : bus.TimeGo.ToString("dd/MM/yyyy"));
+            else
+                myWorksheet.Cells["A1"].Value = "Επιστροφή - " + (bus == null ? checkout.ToString("dd/MM/yyyy") : bus.TimeReturn.ToString("dd/MM/yyyy"));
+
             lineNum = 5;
-            myWorksheet.Cells["A2"].Value = "Αρ. Δωματίων:" + reservationsThisDay.Count;
+            //  myWorksheet.Cells["A2"].Value = "Αρ. Δωματίων:" + reservationsThisDay.Count;
             myWorksheet.Cells["F2"].Value = "Συνοδός:" + ((bus != null && bus.Leader != null && !string.IsNullOrEmpty(bus.Leader.Name)) ? bus.Leader.Name : "");
             myWorksheet.Cells["D2"].Value = "Λεωφορείο:" + ((bus != null && bus.Vehicle != null && !string.IsNullOrEmpty(bus.Vehicle.Name)) ? bus.Vehicle.Name : "");
-
-            reservationsThisDay = reservationsThisDay.OrderBy(t => t.Higher).ToList();
 
             if (borderonly)
             {
@@ -647,137 +681,236 @@ namespace LATravelManager.UI.Helpers
                     customersCount = -1;
                     foreach (Customer customer in reservation.CustomersList)
                     {
-                        if ((bus == null || bus.Going && (customer.BusGo != null && customer.BusGo.Id == bus.Id)) && customer.CustomerHasBusIndex < 2 && (!reservation.Booking.DifferentDates || customer.CheckIn == checkIn))
+                        if (going)
                         {
-                            counter++;
-                            myWorksheet.InsertRow(lineNum, 1);
-                            customersCount++;
-
-                            myWorksheet.Cells["A" + lineNum].Value = counter;
-                            myWorksheet.Cells["C" + lineNum].Value = customer.Name;
-                            myWorksheet.Cells["D" + lineNum].Value = customer.Surename;
-                            if (customersCount == 0)
+                            if ((bus == null || (bus.Going && customer.BusGo != null && customer.BusGo.Id == bus.Id)) && customer.CustomerHasBusIndex < 2 && (!reservation.Booking.DifferentDates || customer.CheckIn == checkIn))
                             {
-                                myWorksheet.Cells["B" + lineNum].Value = reservation.CheckIn.Day + "-" + reservation.CheckOut.ToString("dd/MM");
+
+                                counter++;
+                                myWorksheet.InsertRow(lineNum, 1);
+                                customersCount++;
+
+                                myWorksheet.Cells["A" + lineNum].Value = counter;
+                                myWorksheet.Cells["C" + lineNum].Value = customer.Name;
+                                myWorksheet.Cells["D" + lineNum].Value = customer.Surename;
+                                if (customersCount == 0)
+                                {
+                                    myWorksheet.Cells["B" + lineNum].Value = reservation.CheckIn.Day + "-" + reservation.CheckOut.ToString("dd/MM");
+                                    if (!borderonly)
+                                    {
+                                        myWorksheet.Cells["E" + lineNum].Value = reservation.HotelName.TrimEnd(new[] { '*' });
+                                        if (reservation.Booking.IsPartners)
+                                            myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Partner.Name.Length > 11) ? reservation.Booking.Partner.Name.Substring(0, 11) : reservation.Booking.Partner.Name;
+                                        // else if (!string.IsNullOrEmpty(reservation.Booking.Comment))
+                                        // myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Comment.Length > 12) ? reservation.Booking.Comment.Substring(0, 11) : reservation.Booking.Comment;
+                                    }
+                                }
+                                //else if (customersCount == 1)
+                                //    myWorksheet.Cells["E" + lineNum].Value = reservation.RoomTypeName;
                                 if (!borderonly)
                                 {
-                                    myWorksheet.Cells["E" + lineNum].Value = reservation.HotelName.TrimEnd(new[] { '*' });
-                                    if (reservation.Booking.IsPartners)
-                                        myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Partner.Name.Length > 11) ? reservation.Booking.Partner.Name.Substring(0, 11) : reservation.Booking.Partner.Name;
-                                    // else if (!string.IsNullOrEmpty(reservation.Booking.Comment))
-                                    // myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Comment.Length > 12) ? reservation.Booking.Comment.Substring(0, 11) : reservation.Booking.Comment;
+                                    myWorksheet.Cells["F" + lineNum].Value = customer.StartingPlace;
+                                    if (customer.Tel != null && (customer.Tel.StartsWith("69", StringComparison.Ordinal) || customer.Tel.StartsWith("+", StringComparison.Ordinal) || (customer.Tel.StartsWith("00", StringComparison.Ordinal) && customer.Tel.Length > 10 && customer.Tel.Length < 16)))
+                                    {
+                                        myWorksheet.Cells["G" + lineNum].Value = customer.Tel;
+                                        PhoneNumbers += customer.Tel + ",";
+                                    }
+                                    else
+                                        myWorksheet.Cells["G" + lineNum].Value = " ";
                                 }
-                            }
-                            //else if (customersCount == 1)
-                            //    myWorksheet.Cells["E" + lineNum].Value = reservation.RoomTypeName;
-                            if (!borderonly)
-                            {
-                                myWorksheet.Cells["F" + lineNum].Value = customer.StartingPlace;
-                                if (customer.Tel != null && (customer.Tel.StartsWith("69", StringComparison.Ordinal) || customer.Tel.StartsWith("+", StringComparison.Ordinal) || (customer.Tel.StartsWith("00", StringComparison.Ordinal) && customer.Tel.Length > 10 && customer.Tel.Length < 16)))
+                                if (borderonly)
                                 {
-                                    myWorksheet.Cells["G" + lineNum].Value = customer.Tel;
-                                    PhoneNumbers += customer.Tel + ",";
+                                    myWorksheet.Cells["E" + lineNum].Value = customer.PassportNum ?? "";
+                                    myWorksheet.Cells["F" + lineNum].Value = customer.DOB != null && customer.DOB.Value.Year > 1800 ? customer.DOB.Value.ToString("dd/MM/yy") : "";
                                 }
-                                else
-                                    myWorksheet.Cells["G" + lineNum].Value = " ";
+                                lineNum++;
                             }
-                            if (borderonly)
+                            else
                             {
-                                myWorksheet.Cells["E" + lineNum].Value = customer.PassportNum ?? "";
-                                myWorksheet.Cells["F" + lineNum].Value = customer.DOB != null && customer.DOB.Value.Year > 1800 ? customer.DOB.Value.ToString("dd/MM/yy") : "";
-                            }
-                            lineNum++;
+                                myWorksheet.InsertRow(lineNum, 1);
+                                customersCount++;
 
-                        }
-                        else if ((customer.BusReturn != null && customer.BusReturn.Id == bus.Id) && customer.CustomerHasBusIndex < 2 && (!reservation.Booking.DifferentDates || customer.CheckIn == checkIn))
-                        {
-                            counter++;
-                            myWorksheet.InsertRow(lineNum, 1);
-                            customersCount++;
+                                myWorksheet.Cells["A" + lineNum].Value = "X";
+                                myWorksheet.Cells["C" + lineNum].Value = customer.Name;
+                                myWorksheet.Cells["C" + lineNum].Style.Font.Strike = true;
+                                myWorksheet.Cells["D" + lineNum].Value = customer.Surename;
+                                myWorksheet.Cells["D" + lineNum].Style.Font.Strike = true;
+                                if (customersCount == 0)
+                                {
+                                    myWorksheet.Cells["B" + lineNum].Value = reservation.CheckIn.Day + "-" + reservation.CheckOut.ToString("dd/MM");
+                                    if (!borderonly)
+                                    {
+                                        myWorksheet.Cells["E" + lineNum].Value = reservation.HotelName.TrimEnd(new[] { '*' });
+                                        if (reservation.Booking.IsPartners)
+                                            myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Partner.ToString().Length > 11) ? reservation.Booking.Partner.ToString().Substring(0, 11) : reservation.Booking.Partner.ToString();
+                                        else if (!string.IsNullOrEmpty(reservation.Booking.Comment))
+                                            myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Comment.Length > 12) ? reservation.Booking.Comment.Substring(0, 11) : reservation.Booking.Comment;
+                                    }
+                                }
+                                //else if (customersCount == 1)
+                                //    myWorksheet.Cells["E" + lineNum].Value = reservation.Room.RoomType;
 
-                            myWorksheet.Cells["A" + lineNum].Value = counter;
-                            myWorksheet.Cells["C" + lineNum].Value = customer.Name;
-                            myWorksheet.Cells["D" + lineNum].Value = customer.Surename;
-                            if (customersCount == 0)
-                            {
-                                myWorksheet.Cells["B" + lineNum].Value = reservation.CheckIn.Day + "-" + reservation.CheckOut.ToString("dd/MM");
                                 if (!borderonly)
                                 {
-                                    myWorksheet.Cells["E" + lineNum].Value = reservation.HotelName.TrimEnd(new[] { '*' });
-                                    if (reservation.Booking.IsPartners)
-                                        myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Partner.Name.Length > 11) ? reservation.Booking.Partner.Name.Substring(0, 11) : reservation.Booking.Partner.Name;
-                                    // else if (!string.IsNullOrEmpty(reservation.Booking.Comment))
-                                    // myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Comment.Length > 12) ? reservation.Booking.Comment.Substring(0, 11) : reservation.Booking.Comment;
+                                    myWorksheet.Cells["F" + lineNum].Value = customer.StartingPlace;
+                                    myWorksheet.Cells["F" + lineNum].Style.Font.Strike = true;
+                                    if (customer.Tel != null && (customer.Tel.StartsWith("69", StringComparison.Ordinal) || customer.Tel.StartsWith("+", StringComparison.Ordinal) || (customer.Tel.StartsWith("00", StringComparison.Ordinal) && customer.Tel.Length > 10 && customer.Tel.Length < 16)))
+                                    {
+                                        myWorksheet.Cells["G" + lineNum].Value = customer.Tel;
+                                        myWorksheet.Cells["G" + lineNum].Style.Font.Strike = true;
+                                        PhoneNumbers += customer.Tel + ",";
+                                    }
+                                    else
+                                        myWorksheet.Cells["G" + lineNum].Value = " ";
                                 }
-                            }
-                            //else if (customersCount == 1)
-                            //    myWorksheet.Cells["E" + lineNum].Value = reservation.RoomTypeName;
-                            if (!borderonly)
-                            {
-                                myWorksheet.Cells["F" + lineNum].Value = customer.StartingPlace;
-                                if (customer.Tel != null && (customer.Tel.StartsWith("69", StringComparison.Ordinal) || customer.Tel.StartsWith("+", StringComparison.Ordinal) || (customer.Tel.StartsWith("00", StringComparison.Ordinal) && customer.Tel.Length > 10 && customer.Tel.Length < 16)))
+                                if (borderonly)
                                 {
-                                    myWorksheet.Cells["G" + lineNum].Value = customer.Tel;
-                                    PhoneNumbers += customer.Tel + ",";
+                                    myWorksheet.Cells["I" + lineNum].Value = customer.PassportNum ?? "";
+                                    myWorksheet.Cells["J" + lineNum].Value = customer.DOB != null && customer.DOB.Value.Year > 1800 ? customer.DOB.Value.ToString("dd/MM/yy") : "";
+                                    myWorksheet.Cells["I" + lineNum].Style.Font.Strike = true;
+                                    myWorksheet.Cells["J" + lineNum].Style.Font.Strike = true;
                                 }
-                                else
-                                    myWorksheet.Cells["G" + lineNum].Value = " ";
                             }
-                            if (borderonly)
-                            {
-                                myWorksheet.Cells["E" + lineNum].Value = customer.PassportNum ?? "";
-                                myWorksheet.Cells["F" + lineNum].Value = customer.DOB != null && customer.DOB.Value.Year > 1800 ? customer.DOB.Value.ToString("dd/MM/yy") : "";
-                            }
-                            lineNum++;
 
                         }
-                        //else if (bus != null)
-                        //{
-                        //    myWorksheet.InsertRow(lineNum, 1);
-                        //    customersCount++;
+                        else
+                        {
+                            if ((bus == null || (!bus.Going && customer.BusReturn != null && customer.BusReturn.Id == bus.Id)) && customer.CustomerHasBusIndex % 2 == 0 && (!reservation.Booking.DifferentDates || customer.CheckOut == checkout))
+                            {
+                                counter++;
+                                myWorksheet.InsertRow(lineNum, 1);
+                                customersCount++;
 
-                        //    myWorksheet.Cells["A" + lineNum].Value = "X";
-                        //    myWorksheet.Cells["C" + lineNum].Value = customer.Name;
-                        //    myWorksheet.Cells["C" + lineNum].Style.Font.Strike = true;
-                        //    myWorksheet.Cells["D" + lineNum].Value = customer.Surename;
-                        //    myWorksheet.Cells["D" + lineNum].Style.Font.Strike = true;
-                        //    if (customersCount == 0)
-                        //    {
-                        //        myWorksheet.Cells["B" + lineNum].Value = reservation.CheckIn.Day + "-" + reservation.CheckOut.ToString("dd/MM");
-                        //        if (!borderonly)
-                        //        {
-                        //            myWorksheet.Cells["E" + lineNum].Value = reservation.HotelName.TrimEnd(new[] { '*' });
-                        //            if (reservation.Booking.IsPartners)
-                        //                myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Partner.ToString().Length > 11) ? reservation.Booking.Partner.ToString().Substring(0, 11) : reservation.Booking.Partner.ToString();
-                        //            else if (!string.IsNullOrEmpty(reservation.Booking.Comment))
-                        //                myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Comment.Length > 12) ? reservation.Booking.Comment.Substring(0, 11) : reservation.Booking.Comment;
-                        //        }
-                        //    }
-                        //    //else if (customersCount == 1)
-                        //    //    myWorksheet.Cells["E" + lineNum].Value = reservation.Room.RoomType;
+                                myWorksheet.Cells["A" + lineNum].Value = counter;
+                                myWorksheet.Cells["C" + lineNum].Value = customer.Name;
+                                myWorksheet.Cells["D" + lineNum].Value = customer.Surename;
+                                if (customersCount == 0)
+                                {
+                                    myWorksheet.Cells["B" + lineNum].Value = reservation.CheckIn.Day + "-" + reservation.CheckOut.ToString("dd/MM");
+                                    if (!borderonly)
+                                    {
+                                        myWorksheet.Cells["E" + lineNum].Value = reservation.HotelName.TrimEnd(new[] { '*' });
+                                        if (reservation.Booking.IsPartners)
+                                            myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Partner.Name.Length > 11) ? reservation.Booking.Partner.Name.Substring(0, 11) : reservation.Booking.Partner.Name;
+                                        // else if (!string.IsNullOrEmpty(reservation.Booking.Comment))
+                                        // myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Comment.Length > 12) ? reservation.Booking.Comment.Substring(0, 11) : reservation.Booking.Comment;
+                                    }
+                                }
+                                //else if (customersCount == 1)
+                                //    myWorksheet.Cells["E" + lineNum].Value = reservation.RoomTypeName;
+                                if (!borderonly)
+                                {
+                                    myWorksheet.Cells["F" + lineNum].Value = customer.ReturningPlace;
+                                    if (customer.Tel != null && (customer.Tel.StartsWith("69", StringComparison.Ordinal) || customer.Tel.StartsWith("+", StringComparison.Ordinal) || (customer.Tel.StartsWith("00", StringComparison.Ordinal) && customer.Tel.Length > 10 && customer.Tel.Length < 16)))
+                                    {
+                                        myWorksheet.Cells["G" + lineNum].Value = customer.Tel;
+                                        PhoneNumbers += customer.Tel + ",";
+                                    }
+                                    else
+                                        myWorksheet.Cells["G" + lineNum].Value = " ";
+                                }
+                                if (borderonly)
+                                {
+                                    myWorksheet.Cells["E" + lineNum].Value = customer.PassportNum ?? "";
+                                    myWorksheet.Cells["F" + lineNum].Value = customer.DOB != null && customer.DOB.Value.Year > 1800 ? customer.DOB.Value.ToString("dd/MM/yy") : "";
+                                }
+                                lineNum++;
+                            }
+                            else
+                            {
+                                myWorksheet.InsertRow(lineNum, 1);
+                                customersCount++;
 
-                        //    if (!borderonly)
-                        //    {
-                        //        myWorksheet.Cells["F" + lineNum].Value = customer.StartingPlace;
-                        //        myWorksheet.Cells["F" + lineNum].Style.Font.Strike = true;
-                        //        if (customer.Tel != null && (customer.Tel.StartsWith("69", StringComparison.Ordinal) || customer.Tel.StartsWith("+", StringComparison.Ordinal) || (customer.Tel.StartsWith("00", StringComparison.Ordinal) && customer.Tel.Length > 10 && customer.Tel.Length < 16)))
-                        //        {
-                        //            myWorksheet.Cells["G" + lineNum].Value = customer.Tel;
-                        //            myWorksheet.Cells["G" + lineNum].Style.Font.Strike = true;
-                        //            PhoneNumbers += customer.Tel + ",";
-                        //        }
-                        //        else
-                        //            myWorksheet.Cells["G" + lineNum].Value = " ";
-                        //    }
-                        //    if (borderonly)
-                        //    {
-                        //        myWorksheet.Cells["I" + lineNum].Value = customer.PassportNum ?? "";
-                        //        myWorksheet.Cells["J" + lineNum].Value = customer.DOB != null && customer.DOB.Value.Year > 1800 ? customer.DOB.Value.ToString("dd/MM/yy") : "";
-                        //        myWorksheet.Cells["I" + lineNum].Style.Font.Strike = true;
-                        //        myWorksheet.Cells["J" + lineNum].Style.Font.Strike = true;
-                        //    }
-                        //}
+                                myWorksheet.Cells["A" + lineNum].Value = "X";
+                                myWorksheet.Cells["C" + lineNum].Value = customer.Name;
+                                myWorksheet.Cells["C" + lineNum].Style.Font.Strike = true;
+                                myWorksheet.Cells["D" + lineNum].Value = customer.Surename;
+                                myWorksheet.Cells["D" + lineNum].Style.Font.Strike = true;
+                                if (customersCount == 0)
+                                {
+                                    myWorksheet.Cells["B" + lineNum].Value = reservation.CheckIn.Day + "-" + reservation.CheckOut.ToString("dd/MM");
+                                    if (!borderonly)
+                                    {
+                                        myWorksheet.Cells["E" + lineNum].Value = reservation.HotelName.TrimEnd(new[] { '*' });
+                                        if (reservation.Booking.IsPartners)
+                                            myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Partner.ToString().Length > 11) ? reservation.Booking.Partner.ToString().Substring(0, 11) : reservation.Booking.Partner.ToString();
+                                        else if (!string.IsNullOrEmpty(reservation.Booking.Comment))
+                                            myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Comment.Length > 12) ? reservation.Booking.Comment.Substring(0, 11) : reservation.Booking.Comment;
+                                    }
+                                }
+                                //else if (customersCount == 1)
+                                //    myWorksheet.Cells["E" + lineNum].Value = reservation.Room.RoomType;
+
+                                if (!borderonly)
+                                {
+                                    myWorksheet.Cells["F" + lineNum].Value = customer.ReturningPlace;
+                                    myWorksheet.Cells["F" + lineNum].Style.Font.Strike = true;
+                                    if (customer.Tel != null && (customer.Tel.StartsWith("69", StringComparison.Ordinal) || customer.Tel.StartsWith("+", StringComparison.Ordinal) || (customer.Tel.StartsWith("00", StringComparison.Ordinal) && customer.Tel.Length > 10 && customer.Tel.Length < 16)))
+                                    {
+                                        myWorksheet.Cells["G" + lineNum].Value = customer.Tel;
+                                        myWorksheet.Cells["G" + lineNum].Style.Font.Strike = true;
+                                        PhoneNumbers += customer.Tel + ",";
+                                    }
+                                    else
+                                        myWorksheet.Cells["G" + lineNum].Value = " ";
+                                }
+                                if (borderonly)
+                                {
+                                    myWorksheet.Cells["I" + lineNum].Value = customer.PassportNum ?? "";
+                                    myWorksheet.Cells["J" + lineNum].Value = customer.DOB != null && customer.DOB.Value.Year > 1800 ? customer.DOB.Value.ToString("dd/MM/yy") : "";
+                                    myWorksheet.Cells["I" + lineNum].Style.Font.Strike = true;
+                                    myWorksheet.Cells["J" + lineNum].Style.Font.Strike = true;
+                                }
+                            }
+                            //else if (bus != null)
+                            //{
+                            //    myWorksheet.InsertRow(lineNum, 1);
+                            //    customersCount++;
+
+                            //    myWorksheet.Cells["A" + lineNum].Value = "X";
+                            //    myWorksheet.Cells["C" + lineNum].Value = customer.Name;
+                            //    myWorksheet.Cells["C" + lineNum].Style.Font.Strike = true;
+                            //    myWorksheet.Cells["D" + lineNum].Value = customer.Surename;
+                            //    myWorksheet.Cells["D" + lineNum].Style.Font.Strike = true;
+                            //    if (customersCount == 0)
+                            //    {
+                            //        myWorksheet.Cells["B" + lineNum].Value = reservation.CheckIn.Day + "-" + reservation.CheckOut.ToString("dd/MM");
+                            //        if (!borderonly)
+                            //        {
+                            //            myWorksheet.Cells["E" + lineNum].Value = reservation.HotelName.TrimEnd(new[] { '*' });
+                            //            if (reservation.Booking.IsPartners)
+                            //                myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Partner.ToString().Length > 11) ? reservation.Booking.Partner.ToString().Substring(0, 11) : reservation.Booking.Partner.ToString();
+                            //            else if (!string.IsNullOrEmpty(reservation.Booking.Comment))
+                            //                myWorksheet.Cells["H" + lineNum].Value = (reservation.Booking.Comment.Length > 12) ? reservation.Booking.Comment.Substring(0, 11) : reservation.Booking.Comment;
+                            //        }
+                            //    }
+                            //    //else if (customersCount == 1)
+                            //    //    myWorksheet.Cells["E" + lineNum].Value = reservation.Room.RoomType;
+
+                            //    if (!borderonly)
+                            //    {
+                            //        myWorksheet.Cells["F" + lineNum].Value = customer.StartingPlace;
+                            //        myWorksheet.Cells["F" + lineNum].Style.Font.Strike = true;
+                            //        if (customer.Tel != null && (customer.Tel.StartsWith("69", StringComparison.Ordinal) || customer.Tel.StartsWith("+", StringComparison.Ordinal) || (customer.Tel.StartsWith("00", StringComparison.Ordinal) && customer.Tel.Length > 10 && customer.Tel.Length < 16)))
+                            //        {
+                            //            myWorksheet.Cells["G" + lineNum].Value = customer.Tel;
+                            //            myWorksheet.Cells["G" + lineNum].Style.Font.Strike = true;
+                            //            PhoneNumbers += customer.Tel + ",";
+                            //        }
+                            //        else
+                            //            myWorksheet.Cells["G" + lineNum].Value = " ";
+                            //    }
+                            //    if (borderonly)
+                            //    {
+                            //        myWorksheet.Cells["I" + lineNum].Value = customer.PassportNum ?? "";
+                            //        myWorksheet.Cells["J" + lineNum].Value = customer.DOB != null && customer.DOB.Value.Year > 1800 ? customer.DOB.Value.ToString("dd/MM/yy") : "";
+                            //        myWorksheet.Cells["I" + lineNum].Style.Font.Strike = true;
+                            //        myWorksheet.Cells["J" + lineNum].Style.Font.Strike = true;
+                            //    }
+                            //}
+                        }
                     }
+
                     myWorksheet.Cells["E" + (lineNum - 1)].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
                     myWorksheet.Cells["B" + (lineNum - 1)].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
 
@@ -787,7 +920,11 @@ namespace LATravelManager.UI.Helpers
                     //}
                 }
                 PhoneNumbers = PhoneNumbers.Trim(',');
-                Clipboard.SetText(PhoneNumbers);
+                if (bus == null)
+                {
+
+                    Clipboard.SetText(PhoneNumbers ?? "");
+                }
                 if (lineNum == 5)
                 {
                     return;
@@ -882,95 +1019,110 @@ namespace LATravelManager.UI.Helpers
             }
             else
                 MessageBox.Show("Δέν υπάρχουν άτομα που να πηγαίνουν τις συγκεκριμένες ημέρες από τις επιλεγμένες πόλεις", "Σφάλμα");
-            //if (!borderonly && bus != null)
-            //{
-            //    sampleFile = AppDomain.CurrentDomain.BaseDirectory + @"Sources\protypo_theseis.xlsx";
-            //    //List<string> selectedCities = new List<string>();
-            //    lineNum = 2;
-            //    fileInfo = new FileInfo(sampleFile);
-            //    p = new ExcelPackage(fileInfo);
-            //    myWorksheet = p.Workbook.Worksheets[1];
-            //    counter = 0;
+            if (!borderonly && bus != null && bookings[0].Excursion.Id != 2)
+            {
+                sampleFile = AppDomain.CurrentDomain.BaseDirectory + @"Sources\protypo_theseis.xlsx";
+                //List<string> selectedCities = new List<string>();
+                lineNum = 2;
+                fileInfo = new FileInfo(sampleFile);
+                p = new ExcelPackage(fileInfo);
+                myWorksheet = p.Workbook.Worksheets[1];
+                counter = 0;
 
-            //    if (reservationsThisDay.Count > 0)
-            //    {
+                if (reservationsThisDay.Count > 0)
+                {
+                    foreach (ReservationWrapper reservation in reservationsThisDay)
+                    {
+                        if (50 - ((lineNum - 1) % 50) < 4)
+                        {
+                            lineNum += 50 - ((lineNum - 1) % 50);
+                        }
 
-            //        foreach (ReservationWrapper reservation in reservationsThisDay)
-            //        {
-            //            if (50 - ((lineNum - 1) % 50) < 4)
-            //            {
-            //                lineNum += 50 - ((lineNum - 1) % 50);
-            //            }
+                        foreach (var c in reservation.CustomersList)
+                        {
+                            if (c.SeatNum == 0 || c.SeatNumRet == 0)
+                            {
+                                //  MessageBox.Show($"O pelatis {c} den exei thesi");
+                            }
+                        }
 
-            //            foreach (var c in reservation.CustomersList)
-            //            {
-            //                if (c.SeatNum == 0 || c.SeatNumRet == 0)
-            //                {
-            //                    //  MessageBox.Show($"O pelatis {c} den exei thesi");
-            //                }
-            //            }
+                        myWorksheet.Cells["A" + lineNum].Value = "Επώνυμα: " + reservation.GetSurnames();
+                        myWorksheet.Cells["A" + lineNum].Style.Font.Bold = true;
 
-            //            myWorksheet.Cells["A" + lineNum].Value = "Επώνυμα: " + reservation.GetSurnames();
-            //            myWorksheet.Cells["A" + lineNum].Style.Font.Bold = true;
+                        myWorksheet.Cells["A" + ++lineNum].Value = "Αναχώρηση : Ταξίδι προς " + reservation.Booking.Excursion.Destinations[0].Name + ":";
+                        myWorksheet.Cells["A" + ++lineNum].Value = "Επιστροφή : Ταξίδι από " + reservation.Booking.Excursion.Destinations[0].Name + ":";
 
-            //            myWorksheet.Cells["A" + ++lineNum].Value = "Αναχώρηση : Ταξίδι προς " + reservation.Booking.Excursion.Destinations[0].Name + ":";
-            //            myWorksheet.Cells["A" + ++lineNum].Value = "Επιστροφή : Ταξίδι από " + reservation.Booking.Excursion.Destinations[0].Name + ":";
+                        lineNum--;
 
-            //            lineNum--;
+                        if (reservation.CustomersList.Count > 0)
+                        {
+                            myWorksheet.Cells["B" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNum).ToList()[0].SeatNum;
+                        }
+                        if (reservation.CustomersList.Count > 1)
+                        {
+                            myWorksheet.Cells["C" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNum).ToList()[1].SeatNum;
+                        }
+                        if (reservation.CustomersList.Count > 2)
+                        {
+                            myWorksheet.Cells["D" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNum).ToList()[2].SeatNum;
+                        }
+                        if (reservation.CustomersList.Count > 3)
+                        {
+                            myWorksheet.Cells["E" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNum).ToList()[3].SeatNum;
+                        }
+                        if (reservation.CustomersList.Count > 4)
+                        {
+                            myWorksheet.Cells["F" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNum).ToList()[4].SeatNum;
+                        }
+                        lineNum++;
+                        if (reservation.CustomersList.Count > 0)
+                        {
+                            myWorksheet.Cells["B" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNumRet).ToList()[0].SeatNumRet;
+                        }
+                        if (reservation.CustomersList.Count > 1)
+                        {
+                            myWorksheet.Cells["C" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNumRet).ToList()[1].SeatNumRet;
+                        }
+                        if (reservation.CustomersList.Count > 2)
+                        {
+                            myWorksheet.Cells["D" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNumRet).ToList()[2].SeatNumRet;
+                        }
+                        if (reservation.CustomersList.Count > 3)
+                        {
+                            myWorksheet.Cells["E" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNumRet).ToList()[3].SeatNumRet;
+                        }
+                        if (reservation.CustomersList.Count > 4)
+                        {
+                            myWorksheet.Cells["F" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNumRet).ToList()[4].SeatNumRet;
+                        }
+                        lineNum++;
+                        lineNum++;
+                    }
 
-            //            if (reservation.CustomersList.Count > 0)
-            //            {
-            //                myWorksheet.Cells["B" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNum).ToList()[0].SeatNum;
-            //            }
-            //            if (reservation.CustomersList.Count > 1)
-            //            {
-            //                myWorksheet.Cells["C" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNum).ToList()[1].SeatNum;
-            //            }
-            //            if (reservation.CustomersList.Count > 2)
-            //            {
-            //                myWorksheet.Cells["D" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNum).ToList()[2].SeatNum;
-            //            }
-            //            if (reservation.CustomersList.Count > 3)
-            //            {
-            //                myWorksheet.Cells["E" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNum).ToList()[3].SeatNum;
-            //            }
-            //            if (reservation.CustomersList.Count > 4)
-            //            {
-            //                myWorksheet.Cells["F" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNum).ToList()[4].SeatNum;
-            //            }
-            //            lineNum++;
-            //            if (reservation.CustomersList.Count > 0)
-            //            {
-            //                myWorksheet.Cells["B" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNumRet).ToList()[0].SeatNumRet;
-            //            }
-            //            if (reservation.CustomersList.Count > 1)
-            //            {
-            //                myWorksheet.Cells["C" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNumRet).ToList()[1].SeatNumRet;
-            //            }
-            //            if (reservation.CustomersList.Count > 2)
-            //            {
-            //                myWorksheet.Cells["D" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNumRet).ToList()[2].SeatNumRet;
-            //            }
-            //            if (reservation.CustomersList.Count > 3)
-            //            {
-            //                myWorksheet.Cells["E" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNumRet).ToList()[3].SeatNumRet;
-            //            }
-            //            if (reservation.CustomersList.Count > 4)
-            //            {
-            //                myWorksheet.Cells["F" + lineNum].Value = reservation.CustomersList.OrderBy(t => t.SeatNumRet).ToList()[4].SeatNumRet;
-            //            }
-            //            lineNum++;
-            //            lineNum++;
-            //        }
+                    wbPath = GetPath($"\\Θέσεις Λεωφορείου για {reservationsThisDay[0].Booking.Excursion.Destinations[0].Name} " + bus.TimeGo.ToString("dd_MM_yy"));
 
-            //        wbPath = GetPath($"\\Θέσεις Λεωφορείου για {reservationsThisDay[0].Booking.Excursion.Destinations[0].Name} " + bus.TimeGo.ToString("dd_MM_yy"));
+                    fileInfo = new FileInfo(wbPath ?? throw new InvalidOperationException());
+                    p.SaveAs(fileInfo);
+                    // Process.Start(wbPath);
+                    p.Dispose();
+                }
+            }
+        }
 
-            //        fileInfo = new FileInfo(wbPath ?? throw new InvalidOperationException());
-            //        p.SaveAs(fileInfo);
-            //        // Process.Start(wbPath);
-            //        p.Dispose();
-            //    }
-            //}
+        private DateTime GetStartingPLaceTime(ReservationWrapper r1, bool going)
+        {
+            DateTime r = DateTime.Today;
+            try
+            {
+                if (going)
+                    return (new DateTime() + r1.Booking.Excursion.Destinations[0].ExcursionTimes.FirstOrDefault(t => t.StartingPlace.Name == r1.CustomersList[0].StartingPlace).Time).AddHours(9).AddSeconds(r1.CustomersList[0].StartingPlace[0]);
+                return (new DateTime() + r1.Booking.Excursion.Destinations[0].ExcursionTimes.FirstOrDefault(t => t.StartingPlace.Name == r1.CustomersList[0].ReturningPlace).Time).AddHours(9).AddSeconds(r1.CustomersList[0].ReturningPlace[0]);
+            }
+            catch
+            {
+            }
+
+            return new DateTime().AddHours(23);
         }
 
         internal void PrintAllRooms(List<HotelContainer> hotelContainers)
@@ -1343,14 +1495,12 @@ namespace LATravelManager.UI.Helpers
             if (place != null)
             {
                 customerStartingPlace = place.StartingPlace;
-
             }
             Bus bus;
             bus = c.BusGo ?? new Bus { Leader = new Leader { Name = "", Tel = "" } };
 
             if (customerStartingPlace == null || customerStartingPlace.Id == 19)
             {
-
                 customerStartingPlace = new StartingPlace
                 {
                     Details = reservationWr.CustomersList[0].StartingPlace,
@@ -1429,7 +1579,7 @@ namespace LATravelManager.UI.Helpers
                     regexText = new Regex("regexstart");//
                     docText = regexText.Replace(docText, after12 ? reservationWr.CheckIn.AddDays(1).ToString("dd/MM/yyyy") : startDate.ToString("dd/MM/yyyy"));
                     regexText = new Regex("zreturntime");
-                    docText = regexText.Replace(docText, reservationWr.ExcursionType == ExcursionTypeEnum.Skiathos ? "16:00" : booking.Excursion.Destinations[0].Id == 9 ? "09:00" : "11:00");
+                    docText = regexText.Replace(docText, reservationWr.ExcursionType == ExcursionTypeEnum.Skiathos ? "16:00" : booking.Excursion.Destinations[0].Id == 9 ? "09:00" : "12:00");
                     regexText = new Regex("zdate");//
                     docText = regexText.Replace(docText, after12 ? reservationWr.CheckIn.AddDays(1).ToString("dd/MM") : startDate.ToString("dd/MM"));
                     regexText = new Regex("zlocation");
@@ -1439,7 +1589,10 @@ namespace LATravelManager.UI.Helpers
                     regexText = new Regex("zplace");
                     docText = regexText.Replace(docText, customerStartingPlace.Id == 14 && booking.Excursion.Destinations[0].Id == 5 ? "Εθνική Τράπεζα" : customerStartingPlace.Details);
                     regexText = new Regex("zsynodos");
-                    docText = regexText.Replace(docText, booking.Excursion.Id == 29 ? "Αθανασία 6981189869" : bus != null && bus.Leader != null ? bus?.Leader.ToString() : booking.Excursion.Destinations[0].Id == 2 ? "ΣΤΡΑΤΟΣ: +30 6988558275" : "");
+                    docText = regexText.Replace(docText, booking.Excursion.Id == 29 ? "Αθανασία 6981189869" :
+                        bus.Id > 0 && bus.Leader != null ? bus?.Leader.ToString() :
+                        booking.Excursion.Destinations[0].Id == 2 ? ((new List<int>() { 2, 14, 17, 28 }).Any(t => t == customerStartingPlace.Id) ? "Υπεύθυνος Αναχώρησης:" + Environment.NewLine + "Σωτήρης:6946681572" :
+                        "ΣΤΡΑΤΟΣ:6988558275") : "");
                     regexText = new Regex("zcity");
                     docText = regexText.Replace(docText, booking.Excursion.Destinations[0].Name);
                     regexText = new Regex("zgostart");

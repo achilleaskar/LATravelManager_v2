@@ -49,7 +49,7 @@
                     <DataGridTextColumn Header="Τηλέφωνο"
                                         Width="80"
                                         Binding="{Binding Tel,UpdateSourceTrigger=PropertyChanged}" />
-                    <DataGridTextColumn Header="Ξενοδοχείο" 
+                    <DataGridTextColumn Header="Ξενοδοχείο"
                                         Width="90"
                                         Binding="{Binding Reservation.Room.Hotel.Name}" />
                     <DataGridTextColumn Header="Λεωφορείο"
@@ -110,7 +110,8 @@
             </ItemsControl>
             <DataGrid CanUserAddRows="False"
                       AutoGenerateColumns="False"
-                      HorizontalAlignment="Left" SelectedItem="{Binding SelectedOptional}"
+                      HorizontalAlignment="Left"
+                      SelectedItem="{Binding SelectedOptional}"
                       ItemsSource="{Binding SelectedCustomer.OptionalExcursions}">
                 <DataGrid.Resources>
                     <ContextMenu x:Key="RowMenu">
@@ -120,15 +121,17 @@
                         <MenuItem Header="Πλήρωσε"
                                   Command="{Binding DataContext.RecievedMoneyCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
                                   CommandParameter="2" />
-                        <MenuItem Header="Ακύρωσε"
-                                      Command="{Binding DataContext.RecievedMoneyCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                        <MenuItem Header="Δεν πλήρωσε"
+                                  Command="{Binding DataContext.RecievedMoneyCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
                                   CommandParameter="3" />
+                        <MenuItem Header="Ακύρωσε"
+                                  Command="{Binding DataContext.RecievedMoneyCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                  CommandParameter="4" />
                         <MenuItem Header="Διαγραφη"
                                   Command="{Binding DataContext.DeleteOptionalCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
                                   CommandParameter="{Binding}" />
                     </ContextMenu>
-                    <Style 
-                           TargetType="{x:Type DataGridRow}">
+                    <Style TargetType="{x:Type DataGridRow}">
                         <Setter Property="ContextMenu"
                                 Value="{StaticResource RowMenu}" />
                     </Style>
@@ -153,6 +156,12 @@
             </DataGrid>
             <StackPanel Orientation="Horizontal">
 
+                <ComboBox SelectedItem="{Binding SelectedMainOptional}"
+                          ItemsSource="{Binding Optionals}"
+                          Margin="5"
+                          VerticalAlignment="Center"
+                          Width="80"
+                          DisplayMemberPath="Name" />
                 <Button Content="PrintSofia"
                         HorizontalAlignment="Left"
                         Margin="5"

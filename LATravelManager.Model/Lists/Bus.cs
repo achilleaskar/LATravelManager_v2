@@ -393,10 +393,10 @@ namespace LATravelManager.Model.Lists
                         tmpHotel = new Counter { Name = b.HotelName };
                         Hotels.Add(tmpHotel);
                     }
-                    tmpCity = Cities.Where(h => h.Name.Equals(b.StartingPlace)).FirstOrDefault();
+                    tmpCity = Cities.Where(h => h.Name.Equals(Going ? b.StartingPlace : b.ReturningPlace)).FirstOrDefault();
                     if (tmpCity == null)
                     {
-                        tmpCity = new Counter { Name = b.StartingPlace };
+                        tmpCity = new Counter { Name = Going? b.StartingPlace:b.ReturningPlace };
                         Cities.Add(tmpCity);
                     }
                     tmpCity.Total += 1;
@@ -566,12 +566,12 @@ namespace LATravelManager.Model.Lists
                 BusViewReturn = new BusView();
                 bool normalBackSeat = Vehicle.DoorSeat % 4 > 2;
                 bool doubleDoorPlace = (Vehicle.SeatsPassengers - 5) % 4 == 0;
-                int seires = (Vehicle.SeatsPassengers - 5) / 4 + 1 + (doubleDoorPlace ? 1 : 0);
+                int seires = (Vehicle.SeatsPassengers - 5) / 4 + 2;// + (doubleDoorPlace ? 1 : 0);
                 for (int i = 0; i < seires; i++)
                 {
                     BusViewReturn.Seires.Add(new Seira());
                 }
-                int limit = Vehicle.DoorSeat - (doubleDoorPlace ? 4 : 2) - 1;
+                int limit = Vehicle.DoorSeat - (doubleDoorPlace ? 4 : 2) - 1 -(normalBackSeat?2:0);
 
                 int currentseat = 0;
                 int row = 0;
@@ -633,7 +633,7 @@ namespace LATravelManager.Model.Lists
                     BusViewReturn.Seires[row].Seats[counter].Number = currentseat;
                     BusViewReturn.Seires[row].Seats[counter].Thickness = new Thickness(0, 0, 1, 1);
                     counter++;
-                    if ((currentseat + 2) % 4 == 0)
+                    if ((currentseat + 2 +(doubleDoorPlace?0:2)) % 4 == 0)
                     {
                         counter++;
 
@@ -658,12 +658,12 @@ namespace LATravelManager.Model.Lists
                 BusView = new BusView();
                 bool normalBackSeat = Vehicle.DoorSeat % 4 > 2;
                 bool doubleDoorPlace = (Vehicle.SeatsPassengers - 5) % 4 == 0;
-                int seires = (Vehicle.SeatsPassengers - 5) / 4 + 1 + (doubleDoorPlace ? 1 : 0);
+                int seires = (Vehicle.SeatsPassengers - 5) / 4 + 2;// + (doubleDoorPlace ? 1 : 0);
                 for (int i = 0; i < seires; i++)
                 {
                     BusView.Seires.Add(new Seira());
                 }
-                int limit = Vehicle.DoorSeat - (doubleDoorPlace ? 4 : 2) - 1;
+                int limit = Vehicle.DoorSeat - (doubleDoorPlace ? 4 : 2) - 1 - (normalBackSeat ? 2 : 0);
 
                 int currentseat = 0;
                 int row = 0;
@@ -725,7 +725,7 @@ namespace LATravelManager.Model.Lists
                     BusView.Seires[row].Seats[counter].Number = currentseat;
                     BusView.Seires[row].Seats[counter].Thickness = new Thickness(0, 0, 1, 1);
                     counter++;
-                    if ((currentseat + 2) % 4 == 0)
+                    if ((currentseat + 2 + (doubleDoorPlace ? 0 : 2)) % 4 == 0)
                     {
                         counter++;
 

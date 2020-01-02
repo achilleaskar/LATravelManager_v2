@@ -56,5 +56,21 @@ namespace LATravelManager.UI.Views.Tabs
             ((ListManagement_ViewModel)DataContext).StartSeatRet = seat.Number;
             // int intIndex = Convert.ToInt32(radioButton.Content.ToString());
         }
+
+        private void CheckBox_Checked(object sender, System.Windows.RoutedEventArgs e)
+        {
+            datagrid.Columns[5].Visibility = System.Windows.Visibility.Collapsed;
+            datagrid.Columns[6].Visibility = System.Windows.Visibility.Visible;
+            datagrid.Columns[7].Visibility = System.Windows.Visibility.Collapsed;
+            datagrid.Columns[8].Visibility = System.Windows.Visibility.Visible;
+        }
+
+        private void CheckBox_Unchecked(object sender, System.Windows.RoutedEventArgs e)
+        {
+            datagrid.Columns[5].Visibility = System.Windows.Visibility.Visible;
+            datagrid.Columns[6].Visibility = System.Windows.Visibility.Collapsed;
+            datagrid.Columns[7].Visibility = System.Windows.Visibility.Visible;
+            datagrid.Columns[8].Visibility = System.Windows.Visibility.Collapsed;
+        }
     }
 }

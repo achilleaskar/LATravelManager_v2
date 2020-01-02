@@ -301,6 +301,7 @@ namespace LATravelManager.Model.People
 
         #endregion Properties
 
+
         #region Methods
 
         public string GetHotelName()
