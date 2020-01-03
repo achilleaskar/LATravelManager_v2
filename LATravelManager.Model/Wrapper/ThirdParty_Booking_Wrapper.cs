@@ -197,6 +197,10 @@ namespace LATravelManager.Model.Wrapper
 
                 _FullPrice = value;
                 RaisePropertyChanged();
+                if (NetPrice==0&& Commision==0)
+                {
+                    NetPrice = value;
+                }
                 if (value > 0 && NetPrice > 0)
                     Commision = FullPrice - NetPrice;
                 CalculateRemainingAmount();

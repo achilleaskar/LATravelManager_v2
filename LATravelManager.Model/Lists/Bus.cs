@@ -460,10 +460,12 @@ namespace LATravelManager.Model.Lists
                 if (TimeGo.Year > 2000)
                 {
                     c.BusGo = null;
+                    c.SeatNum = 0;
                 }
                 else if (TimeReturn.Year > 2000)
                 {
                     c.BusReturn = null;
+                    c.SeatNum = 0;
                 }
             }
             Customers.Clear();
