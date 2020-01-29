@@ -4,6 +4,7 @@ using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Hotels;
+using LATravelManager.Model.Lists;
 using LATravelManager.Model.LocalModels;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Wrapper;
@@ -1402,7 +1403,9 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             try
             {
                 var x = await Context.GetAllCitiesAsyncSortedByName();
-                var buses = await Context.GetAllBusesAsync(checkIn:FilteredReservations.Min(t=>t.Booking.CheckIn));
+                List<Bus> buses = null;
+                if (!ReservationsCollectionView.IsEmpty)
+                    buses = (await Context.GetAllBusesAsync(checkIn: ReservationsCollectionView.Cast<ReservationWrapper>().ToList().Min(t => t.Booking.CheckIn))).ToList();
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
 
                 List<Booking> bookings = new List<Booking>();
