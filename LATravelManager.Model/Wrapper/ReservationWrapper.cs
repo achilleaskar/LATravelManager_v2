@@ -87,15 +87,6 @@ namespace LATravelManager.Model.Wrapper
                         {
                             minValue = s.TimeGo;
                         }
-
-                        if (maxValue.Year < 2000)
-                        {
-                            maxValue = s.TimeReturn;
-                        }
-                        else if (s.TimeReturn > maxValue)
-                        {
-                            maxValue = s.TimeReturn;
-                        }
                     }
                 }
                 else if (ExcursionType == ExcursionTypeEnum.ThirdParty && ThirdPartyModel != null)
@@ -135,6 +126,29 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
+
+
+        private bool _Returns = true;
+
+
+        public bool Returns
+        {
+            get
+            {
+                return _Returns;
+            }
+
+            set
+            {
+                if (_Returns == value)
+                {
+                    return;
+                }
+
+                _Returns = value;
+                RaisePropertyChanged();
+            }
+        }
         public DateTime CheckOut
         {
             set { _CheckOut = value; }
@@ -145,15 +159,15 @@ namespace LATravelManager.Model.Wrapper
                     DateTime maxValue = new DateTime();
                     if (ExcursionType == ExcursionTypeEnum.Personal && PersonalModel != null)
                     {
-                        foreach (var s in PersonalModel.Services)
+                        Returns = false;
+                        foreach (var s in PersonalModel.Services.Where(p => (p is PlaneService && p.Allerretour) ||
+                        p is HotelService ||
+                        (p is FerryService && p.Allerretour)))
                         {
-                            if (maxValue.Year < 2000)
+                            if (s.TimeReturn > maxValue)
                             {
                                 maxValue = s.TimeReturn;
-                            }
-                            else if (s.TimeReturn > maxValue)
-                            {
-                                maxValue = s.TimeReturn;
+                                Returns = true;
                             }
                         }
                         _CheckOut = maxValue;
@@ -793,14 +807,22 @@ namespace LATravelManager.Model.Wrapper
 
             if (PersonalModel != null)
             {
+                bool air = PersonalModel.Services.Any(s => s is PlaneService);
+                bool hotel = PersonalModel.Services.Any(s => s is HotelService);
+                bool ship = PersonalModel.Services.Any(s => s is FerryService);
+                bool other = PersonalModel.Services.Any(s => s is TransferService || s is OptionalService || s is GuideService);
+
                 StringBuilder sb = new StringBuilder();
 
-                foreach (Service s in PersonalModel.Services.Where(se => se is HotelService hs && hs.RoomType != null))
-                {
-                    if (!sb.ToString().Contains((s as HotelService).RoomType.Name))
-                        sb.Append((s as HotelService).RoomType.Name + ", ");
-                }
-                return sb.ToString().TrimEnd(',', ' ');
+                if (air)
+                    sb.Append("Αερ.+");
+                if (hotel)
+                    sb.Append("Διαμ.+");
+                if (ship)
+                    sb.Append("Καρ.+");
+                if (other)
+                    sb.Append("Διάφ.+");
+                return sb.ToString().TrimEnd('+');
             }
             else if (ThirdPartyModel != null)
             {
@@ -995,12 +1017,31 @@ namespace LATravelManager.Model.Wrapper
             return roomname;
         }
 
+        public DateTime Createddate => GetCreatedDate();
+
+        private DateTime GetCreatedDate()
+        {
+            if (PersonalModel != null)
+            {
+                return PersonalModel.CreatedDate;
+            }
+            if (ThirdPartyModel != null)
+            {
+                return ThirdPartyModel.CreatedDate;
+            }
+            if (Booking != null)
+            {
+                return Booking.CreatedDate;
+            }
+            return new DateTime();
+        }
+
         private string GetTel()
         {
             StringBuilder sb = new StringBuilder();
             foreach (Customer customer in CustomersList)
             {
-                if (!string.IsNullOrEmpty(customer.Tel))
+                if (!string.IsNullOrEmpty(customer.Tel) && !customer.Tel.StartsWith("000"))
                 {
                     sb.Append(customer.Tel + ", ");
                 }

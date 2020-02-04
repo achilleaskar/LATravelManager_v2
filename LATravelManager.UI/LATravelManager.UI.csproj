@@ -119,6 +119,7 @@
     <Compile Include="Converters\IsGroupConverter.cs" />
     <Compile Include="Converters\RemainingToColorConverter.cs" />
     <Compile Include="Converters\ReservationSelectorVisibilityConverter.cs" />
+    <Compile Include="Converters\ReturnsToDateConverter.cs" />
     <Compile Include="Converters\RoomsLeftMultiBindingConverter.cs" />
     <Compile Include="Converters\RoomsLeftToHotelsConverter.cs" />
     <Compile Include="Converters\RoomsLeftToVisibilityConverter.cs" />

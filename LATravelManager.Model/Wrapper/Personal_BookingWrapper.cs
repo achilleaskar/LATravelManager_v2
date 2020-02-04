@@ -234,7 +234,7 @@ namespace LATravelManager.Model.Wrapper
             {
                 if (s is PlaneService ps)
                 {
-                    tmp = ps.From ?? "";
+                    tmp = ps.To ?? "";
                     if (tmp.Length > 1 && !planes.Contains(tmp))
                         planes += tmp + "-";
                 }
@@ -249,7 +249,7 @@ namespace LATravelManager.Model.Wrapper
             {
                 if (s is FerryService ps)
                 {
-                    tmp = ps.From ?? "";
+                    tmp = ps.To ?? "";
                     if (tmp.Length > 1 && !ferrys.Contains(tmp))
                         ferrys += tmp + "-";
                 }
@@ -281,7 +281,7 @@ namespace LATravelManager.Model.Wrapper
             {
                 if (s is TransferService ps)
                 {
-                    tmp = ps.From ?? "";
+                    tmp = ps.To ?? "";
                     if (tmp.Length > 1 && !transfers.Contains(tmp))
                         transfers += tmp + "-";
                 }

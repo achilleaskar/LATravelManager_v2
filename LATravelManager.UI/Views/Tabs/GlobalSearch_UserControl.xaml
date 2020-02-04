@@ -14,6 +14,7 @@
     <UserControl.Resources>
         <converters:UserToVisibility x:Key="UserToVisibilityConverter" />
         <converters:FloadToStringValueConverter x:Key="FtoSConverter" />
+        <converters:ReturnsToDateConverter x:Key="ReturnsToDateConverter" />
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -490,7 +491,7 @@
                     </DataGridTextColumn.CellStyle>
                 </DataGridTextColumn>
                 <DataGridTextColumn Header="Επιστ."
-                                    Binding="{Binding CheckOut ,StringFormat='{}{0:dd/MM}'}" >
+                                    Binding="{Binding Converter={StaticResource ReturnsToDateConverter}}" >
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Setter Property="Foreground"
@@ -551,7 +552,7 @@
                                     Binding="{Binding DisableReason}" />
                 <DataGridTextColumn Header="Ημερομηνία Κρ."
                                     Width="190"
-                                    Binding="{Binding Booking.CreatedDate,StringFormat='{}{0:dd/MM/yy}'}" />
+                                    Binding="{Binding Createddate,StringFormat='{}{0:dd/MM/yy}'}" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
