@@ -28,22 +28,26 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <StackPanel Grid.Row="0" 
+        <StackPanel Grid.Row="0"
                     Orientation="Horizontal">
             <Border BorderBrush="Gray"
                     Padding="0,3"
                     Background="LightYellow"
                     CornerRadius="3"
-                    BorderThickness="1" VerticalAlignment="Top"
+                    BorderThickness="1"
+                    VerticalAlignment="Top"
                     Margin="0,2,0,3">
                 <StackPanel VerticalAlignment="Stretch"
                             Orientation="Vertical">
                     <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Left">
-                        <TextBlock Text="Ημερομηνία:" Margin="3 0 3 3" VerticalAlignment="Top"/>
+                        <TextBlock Text="Ημερομηνία:"
+                                   Margin="3 0 3 3"
+                                   VerticalAlignment="Top" />
                         <RadioButton Content="CheckIn"
                                      IsChecked="{Binding ByCheckIn}"
-                                     GroupName="by" VerticalAlignment="Center"
+                                     GroupName="by"
+                                     VerticalAlignment="Center"
                                      Margin="5 0" />
                         <RadioButton Content="Κράτησης"
                                      IsChecked="{Binding ByCreated}"
@@ -174,7 +178,10 @@
                                        VerticalAlignment="Center"
                                        ItemsSource="{Binding Partners}"
                                        DisplayMemberPath="Name"
+                                       IsEditable="True"
                                        SelectedIndex="{Binding PartnerIndex,UpdateSourceTrigger=PropertyChanged}" />
+                            <!--<Button Command="{Binding SetNonPartnerCommand}" Margin=" 0 3"
+                                    Content="Όλοι" />-->
                         </StackPanel>
                         <StackPanel Margin="5 0">
                             <Label Content="Λέξη Κλειδί:"
@@ -190,7 +197,7 @@
                 </StackPanel>
             </StackPanel>
         </StackPanel>
-        <Grid   Grid.Row="0" 
+        <Grid   Grid.Row="0"
                 HorizontalAlignment="Left"
                 Grid.Column="1">
             <Grid.RowDefinitions>
@@ -221,7 +228,8 @@
                               IsChecked="{Binding Remaining}" />
                 </StackPanel>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Visibility="Collapsed"
+            <StackPanel Orientation="Horizontal"
+                        Visibility="Collapsed"
                         Grid.Row="1"
                         VerticalAlignment="Bottom">
                 <Button Content="Letters"
@@ -234,34 +242,42 @@
                         Margin="5,0" />
             </StackPanel>
         </Grid>
-        <Grid Grid.Row="1"  Grid.ColumnSpan="2  ">
+        <Grid Grid.Row="1"
+              Grid.ColumnSpan="2  ">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <ListView ItemsSource="{Binding ReservationsCollectionView}" Background="LightBlue">
+            <ListView ItemsSource="{Binding ReservationsCollectionView}"
+                      Background="LightBlue"
+                      SelectedItem="{Binding SelectedReservation}">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListViewItem}">
+                        <EventSetter Event="MouseDoubleClick"
+                                     Handler="ListView_MouseDoubleClick" />
+                    </Style>
+                </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <Border BorderBrush="Gray"
                                 BorderThickness="1">
-                            
-                        <Grid Background="White">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="150" />
-                                <ColumnDefinition Width="80" />
-                                <ColumnDefinition Width="150" />
+                            <Grid Background="White">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="150" />
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="150" />
                                     <ColumnDefinition Width="72" />
                                     <ColumnDefinition Width="65" />
                                     <ColumnDefinition Width="72" />
                                     <ColumnDefinition Width="35" />
                                 </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
                                 <Rectangle Fill="LightGreen"
                                            Grid.Column="1"
                                            Grid.ColumnSpan="2"
@@ -318,10 +334,18 @@
                                         BorderThickness="0 1 0 0"
                                         VerticalAlignment="Bottom"
                                         Grid.ColumnSpan="7" />
-                                <Label Content="Πελάτες:" Padding="2 5 5 5"
-                                          />
-                                    <ListView ItemsSource="{Binding AllCustomers}"
-                                          FontSize="12" Grid.Row="1" Padding="-3 0 0 0"
+                                <Label Content="{Binding Partner}" 
+                                       
+                                       Grid.Row="0"
+                                       Padding="2 5 5 5" />
+                                <Label Content="Πελάτες:"
+                                       Grid.Row="1"
+                                       Padding="2 5 5 5" />
+                                <ListView ItemsSource="{Binding AllCustomers}"
+                                          FontSize="12"
+                                          Height="52"
+                                          Grid.Row="2"
+                                          Padding="-3 0 0 0"
                                           BorderThickness="0 0  2 0"
                                           BorderBrush="Gray"
                                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -378,8 +402,8 @@
                                        Grid.Column="4" />
                                 <!--Papers-->
                                 <Label Content="Προφόρμα:"
-                                       Grid.Row="0" 
-                                       Grid.Column="5"/>
+                                       Grid.Row="0"
+                                       Grid.Column="5" />
                                 <Label Content="OXI"
                                        Grid.Row="0"
                                        HorizontalAlignment="Left"
@@ -398,7 +422,6 @@
                                        Grid.Row="2"
                                        HorizontalAlignment="Left"
                                        Grid.Column="6" />
-                            
                             </Grid>
                         </Border>
                     </DataTemplate>
@@ -415,7 +438,9 @@
                    Foreground="Green"
                    ContentStringFormat="C2" />
             <Label Content="Υπόλοιπο" />
-            <Label Content="{Binding RemainingA}" Foreground="Red" ContentStringFormat="C2"/>
+            <Label Content="{Binding RemainingA}"
+                   Foreground="Red"
+                   ContentStringFormat="C2" />
         </StackPanel>
     </Grid>
 </UserControl>

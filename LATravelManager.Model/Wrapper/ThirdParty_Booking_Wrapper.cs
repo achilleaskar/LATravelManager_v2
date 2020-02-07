@@ -279,7 +279,7 @@ namespace LATravelManager.Model.Wrapper
                     return;
                 }
 
-                if (Math.Abs(_Remaining - value) > 0.0001m)
+                if (Math.Abs(_Remaining - value) > 0.01m)
                 {
                     _Remaining = Math.Round(value, 2);
                     RaisePropertyChanged();
@@ -303,7 +303,7 @@ namespace LATravelManager.Model.Wrapper
                     return;
                 }
 
-                if (Math.Abs(_NetRemaining - value) > 0.0001m)
+                if (Math.Abs(_NetRemaining - value) > 0.01m)
                 {
                     _NetRemaining = Math.Round(value, 2);
                     RaisePropertyChanged();

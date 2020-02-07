@@ -676,6 +676,7 @@ namespace LATravelManager.Model.Wrapper
                 PersonalModel.CalculateRemainingAmount();
                 Recieved = PersonalModel.Recieved;
                 Remaining = PersonalModel.Remaining;
+                FullPrice = PersonalModel.FullPrice;
             }
             else if (ExcursionType == ExcursionTypeEnum.ThirdParty)
             {
@@ -683,6 +684,7 @@ namespace LATravelManager.Model.Wrapper
                 ThirdPartyModel.CalculateRemainingAmount();
                 Recieved = ThirdPartyModel.Recieved;
                 Remaining = ThirdPartyModel.Remaining;
+                FullPrice = ThirdPartyModel.FullPrice;
             }
             //else if (ExcursionType==ExcursionTypeEnum.Personal)
             //{

@@ -1,15 +1,4 @@
-﻿using LATravelManager.DataAccess;
-using LATravelManager.Model;
-using LATravelManager.Model.BookingData;
-using LATravelManager.Model.Excursions;
-using LATravelManager.Model.Hotels;
-using LATravelManager.Model.Lists;
-using LATravelManager.Model.Locations;
-using LATravelManager.Model.People;
-using LATravelManager.Model.Services;
-using LATravelManager.Model.Wrapper;
-using LATravelManager.UI.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Core;
@@ -20,6 +9,17 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using LATravelManager.DataAccess;
+using LATravelManager.Model;
+using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Excursions;
+using LATravelManager.Model.Hotels;
+using LATravelManager.Model.Lists;
+using LATravelManager.Model.Locations;
+using LATravelManager.Model.People;
+using LATravelManager.Model.Services;
+using LATravelManager.Model.Wrapper;
+using LATravelManager.UI.Helpers;
 
 namespace LATravelManager.UI.Repositories
 {
@@ -168,12 +168,14 @@ namespace LATravelManager.UI.Repositories
         //{
         //    return await RunTask(Context.Users.Where(u => u.UserName.Equals(userName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefaultAsync);
         //}
-        public async Task<IEnumerable<Booking>> GetAllBookingsAsync(int excursionId, int excursionCategory, int grafeio, int partnerId, DateTime From, DateTime To, bool byCheckIn = false)
+        public async Task<IEnumerable<Booking>> GetAllBookingsAsync(int excursionId, int excursionCategory, int grafeio, int partnerId, DateTime From, DateTime To, bool byCheckIn = false, bool canceled = false, bool onlypartners = false)
         {
             return await RunTask(Context.Bookings.Where(c =>
+            c.Disabled == canceled &&
             (excursionCategory == -1 || (int)c.Excursion.ExcursionType.Category == excursionCategory) &&
             (excursionId == -1 || c.Excursion.Id == excursionId) &&
             (grafeio == 0 || c.User.BaseLocation == grafeio) &&
+            (!onlypartners || c.IsPartners) &&
             ((partnerId == -1 && c.Partner.Id != 219) || ((c.Partner.Id == partnerId) && (StaticResources.User.BaseLocation == 1 || c.Partner.Id != 219))) &&
             ((byCheckIn && c.CheckIn >= From && c.CheckIn <= To) || (!byCheckIn && c.CreatedDate >= From && c.CreatedDate <= To)))
                 .Include(f => f.Partner)
@@ -880,12 +882,13 @@ namespace LATravelManager.UI.Repositories
                .ToListAsync);
         }
 
-        internal async Task<List<Personal_Booking>> GetAllPersonalBookingsFiltered(int userId, bool completed, DateTime dateLimit, int partnerId = 0, int remainingPar = 0, DateTime checkin = new DateTime(), DateTime checkout = new DateTime(), bool canceled = false, string keyword = null, int id = 0, bool common = true, bool byCheckIn = true)
+        internal async Task<List<Personal_Booking>> GetAllPersonalBookingsFiltered(int userId, bool completed, DateTime dateLimit, int partnerId = 0, int remainingPar = 0, DateTime checkin = new DateTime(), DateTime checkout = new DateTime(), bool canceled = false, string keyword = null, int id = 0, bool common = true, bool byCheckIn = true, bool onlyPartners = false)
         {
             var x = await RunTask(Context.Personal_Bookings
            .Where(c =>
            c.CreatedDate >= dateLimit &&
            c.Disabled == canceled &&
+            (!onlyPartners || c.IsPartners) &&
            (userId == 0 || c.User.Id == userId) &&
            (partnerId == 0 || c.Partner.Id == partnerId) &&
            (remainingPar == 0 || (byCheckIn && c.Services.Any(s => s.TimeGo >= checkin) && c.Services.Any(s => s.TimeGo <= checkout) || (!byCheckIn && c.CreatedDate >= checkin && c.CreatedDate <= checkout))) &&

@@ -33,7 +33,6 @@ namespace LATravelManager.Model.BookingData
 
         public bool VoucherSent { get; set; }
         public bool ProformaSent { get; set; }
-        public bool RecieptSent { get; set; }
 
         #region Properties
 

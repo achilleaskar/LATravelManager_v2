@@ -43,6 +43,29 @@ namespace LATravelManager.Model.Hotels
             }
         }
 
+
+
+        private bool _Paid;
+
+
+        public bool Paid
+        {
+            get
+            {
+                return _Paid;
+            }
+
+            set
+            {
+                if (_Paid == value)
+                {
+                    return;
+                }
+
+                _Paid = value;
+                RaisePropertyChanged();
+            }
+        }
         /// <summary>
         /// Sets and gets the Note property. Changes to that property's value raise the
         /// PropertyChanged event.

@@ -518,7 +518,7 @@ namespace LATravelManager.Model.Wrapper
                     return;
                 }
 
-                if (Math.Abs(_Remaining - value) > 0.00001m)
+                if (Math.Abs(_Remaining - value) > 0.01m)
                 {
                     _Remaining = Math.Round(value, 1);
                     RaisePropertyChanged();

@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
 
 namespace LATravelManager.UI.Views.Tabs
 {
@@ -23,6 +24,11 @@ namespace LATravelManager.UI.Views.Tabs
         public Cards_UserControl()
         {
             InitializeComponent();
+        }
+
+        private void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            ((Cards_ViewModel)DataContext).EditBookingCommand.Execute(null);
         }
     }
 }

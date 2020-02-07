@@ -33,10 +33,7 @@ namespace LATravelManager.Model.BookingData
         public bool GroupBooking { get; set; }
         public bool VoucherSent { get; set; }
         public bool ProformaSent { get; set; }
-        public bool RecieptSent { get; set; }
         public bool RoomingListIncluded { get; set; }
-
-
 
         public void GetHigher()
         {

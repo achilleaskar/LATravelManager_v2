@@ -1,23 +1,29 @@
-﻿using GalaSoft.MvvmLight.CommandWpf;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Data;
+using System.Windows.Input;
+using GalaSoft.MvvmLight.CommandWpf;
 using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Wrapper;
+using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
+using LATravelManager.UI.ViewModel.CategoriesViewModels.Group;
+using LATravelManager.UI.ViewModel.CategoriesViewModels.Personal;
+using LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
-using OfficeOpenXml;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Drawing.Text;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Data;
+using LATravelManager.UI.Views.Bansko;
+using LATravelManager.UI.Views.Personal;
+using LATravelManager.UI.Views.ThirdParty;
 
 namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {
@@ -29,14 +35,69 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         {
             MainViewModel = mainViewModel;
             ShowReservationsCommand = new RelayCommand<string>(async (obj) => { await ShowReservations(obj); }, CanShowReservations);
+            EditBookingCommand = new RelayCommand(async () => { await EditBooking(); }, CanEditBooking);
+            SetNonPartnerCommand = new RelayCommand(() => { PartnerIndex = -1; }, PartnerIndex >= 0);
+
             Load();
         }
 
+        public ReservationWrapper SelectedReservation
+        {
+            get
+            {
+                return _SelectedReservation;
+            }
 
+            set
+            {
+                if (_SelectedReservation == value)
+                {
+                    return;
+                }
 
+                _SelectedReservation = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private async Task EditBooking()
+        {
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                if (SelectedReservation.ExcursionType == ExcursionTypeEnum.Personal)
+                {
+                    NewReservation_Personal_ViewModel viewModel = new NewReservation_Personal_ViewModel(MainViewModel);
+                    await viewModel.LoadAsync(SelectedReservation.PersonalModel.Id);
+                    MessengerInstance.Send(new OpenChildWindowCommand(new EditPersonalBooking_Window(), viewModel));
+                }
+                else if (SelectedReservation.ExcursionType == ExcursionTypeEnum.ThirdParty)
+                {
+                    NewReservation_ThirdParty_VIewModel viewModel = new NewReservation_ThirdParty_VIewModel(MainViewModel);
+                    await viewModel.LoadAsync(SelectedReservation.ThirdPartyModel.Id);
+                    MessengerInstance.Send(new OpenChildWindowCommand(new Edit_ThirdParty_Booking_Window(), viewModel));
+                }
+                else
+                {
+                    NewReservation_Group_ViewModel viewModel = new NewReservation_Group_ViewModel(MainViewModel);
+                    await viewModel.LoadAsync(SelectedReservation.Booking.Id);
+                    MessengerInstance.Send(new OpenChildWindowCommand(new EditBooking_Bansko_Window(), viewModel));
+                }
+                Mouse.OverrideCursor = Cursors.Arrow;
+            }
+            catch (Exception ex)
+            {
+                MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
+            }
+        }
+
+        private bool CanEditBooking()
+        {
+            return SelectedReservation != null;
+        }
 
         private decimal _Available;
-
 
         public decimal Available
         {
@@ -57,10 +118,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-
-
         private decimal _RemainingA;
-
 
         public decimal RemainingA
         {
@@ -81,10 +139,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-
-
         private decimal _Total;
-
 
         public decimal Total
         {
@@ -278,7 +333,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 {
                     ReservationsCollectionView.Refresh();
                     CalculateAmounts();
-
                 }
                 RaisePropertyChanged();
             }
@@ -303,7 +357,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 {
                     ReservationsCollectionView.Refresh();
                     CalculateAmounts();
-
                 }
                 RaisePropertyChanged();
             }
@@ -396,7 +449,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 {
                     ReservationsCollectionView.Refresh();
                     CalculateAmounts();
-
                 }
                 RaisePropertyChanged();
             }
@@ -476,6 +528,15 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 }
 
                 _BookingsCollectionView = value;
+                ReservationsCollectionView.Filter = CustomerFilter;
+                if (ReservationsCollectionView != null && ReservationsCollectionView.SortDescriptions != null)
+                {
+                    ReservationsCollectionView.SortDescriptions.Clear();
+                    if (ByCheckIn)
+                        ReservationsCollectionView.SortDescriptions.Add(new SortDescription("CheckIn", ListSortDirection.Ascending));
+                    else
+                        ReservationsCollectionView.SortDescriptions.Add(new SortDescription("CreatedDate", ListSortDirection.Ascending));
+                }
                 RaisePropertyChanged();
             }
         }
@@ -500,6 +561,8 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         }
 
         public RelayCommand<string> ShowReservationsCommand { get; set; }
+        public RelayCommand EditBookingCommand { get; set; }
+        public RelayCommand SetNonPartnerCommand { get; set; }
 
         #endregion Properties
 
@@ -522,6 +585,14 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 }
 
                 _ByCreated = value;
+                if (ReservationsCollectionView != null && ReservationsCollectionView.SortDescriptions != null)
+                {
+                    ReservationsCollectionView.SortDescriptions.Clear();
+                    if (ByCheckIn)
+                        ReservationsCollectionView.SortDescriptions.Add(new SortDescription("CheckIn", ListSortDirection.Ascending));
+                    else
+                        ReservationsCollectionView.SortDescriptions.Add(new SortDescription("CreatedDate", ListSortDirection.Ascending));
+                }
                 RaisePropertyChanged();
             }
         }
@@ -541,6 +612,14 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 }
 
                 _ΒyCheckIn = value;
+                if (ReservationsCollectionView != null && ReservationsCollectionView.SortDescriptions != null)
+                {
+                    ReservationsCollectionView.SortDescriptions.Clear();
+                    if (ByCheckIn)
+                        ReservationsCollectionView.SortDescriptions.Add(new SortDescription("CheckIn", ListSortDirection.Ascending));
+                    else
+                        ReservationsCollectionView.SortDescriptions.Add(new SortDescription("CreatedDate", ListSortDirection.Ascending));
+                }
                 RaisePropertyChanged();
             }
         }
@@ -561,6 +640,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 ByCreated = true;
                 CheckOut = DateTime.Today;
                 CheckIn = DateTime.Today.AddMonths(-1);
+                DepartmentIndexBookingFilter = StaticResources.User.BaseLocation;
             }
             catch (Exception ex)
             {
@@ -588,6 +668,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         }
 
         private bool _Remaining;
+        private ReservationWrapper _SelectedReservation;
 
         public bool Remaining
         {
@@ -630,7 +711,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             {
                 ReservationsCollectionView.Refresh();
                 CalculateAmounts();
-
             }
             SelectedExcursionFilter = ExcursionsCollectionView.CurrentItem as Excursion;
         }
@@ -671,7 +751,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                         To = CheckOut;
                         break;
                 }
-                List<BookingWrapper> listg = (await Context.GetAllBookingsAsync(ExcursionIndexBookingFilter > 0 ? (ExcursionsCollectionView.CurrentItem as Excursion).Id : -1, ExcursionCategoryIndexBookingFilter > 0 ? ExcursionCategoryIndexBookingFilter - 1 : -1, DepartmentIndexBookingFilter, PartnerIndex >= 0 ? Partners[PartnerIndex].Id : -1, From, To, ByCheckIn)).Select(b => new BookingWrapper(b)).ToList();
+                List<BookingWrapper> listg = (await Context.GetAllBookingsAsync(ExcursionIndexBookingFilter > 0 ? (ExcursionsCollectionView.CurrentItem as Excursion).Id : -1, ExcursionCategoryIndexBookingFilter > 0 ? ExcursionCategoryIndexBookingFilter - 1 : -1, DepartmentIndexBookingFilter, PartnerIndex >= 0 ? Partners[PartnerIndex].Id : -1, From, To, ByCheckIn,onlypartners: true)).Select(b => new BookingWrapper(b)).ToList();
 
                 List<ReservationWrapper> listr = new List<ReservationWrapper>();
                 foreach (var booking in listg)
@@ -685,7 +765,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 {
                     await Context.GetAllCitiesAsyncSortedByName();
                     await Context.GetAllHotelsAsync<Hotel>();
-                    listr.AddRange((await Context.GetAllPersonalBookingsFiltered(0, true, new DateTime(), remainingPar: 1, checkin: From, checkout: To, partnerId: PartnerIndex >= 0 ? Partners[PartnerIndex].Id : 0)).Select(r => new ReservationWrapper { Id = r.Id, PersonalModel = new Personal_BookingWrapper(r), CreatedDate = r.CreatedDate, CustomersList = r.Customers.ToList() }).ToList());
+                    listr.AddRange((await Context.GetAllPersonalBookingsFiltered(0, true, new DateTime(), remainingPar: 1, checkin: From, checkout: To, partnerId: PartnerIndex >= 0 ? Partners[PartnerIndex].Id : 0,onlyPartners:true)).Select(r => new ReservationWrapper { Id = r.Id, PersonalModel = new Personal_BookingWrapper(r), CreatedDate = r.CreatedDate, CustomersList = r.Customers.ToList() }).ToList());
                 }
                 //if (ExcursionIndexBookingFilter == 0 && (ExcursionCategoryIndexBookingFilter == 5 || ExcursionCategoryIndexBookingFilter == 0))
                 //{
@@ -695,8 +775,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 FilteredReservations = new ObservableCollection<ReservationWrapper>(listr);
                 Parallel.ForEach(FilteredReservations, wr => wr.CalculateAmounts());
                 ReservationsCollectionView = CollectionViewSource.GetDefaultView(FilteredReservations);
-                ReservationsCollectionView.Filter = CustomerFilter;
-                ReservationsCollectionView.SortDescriptions.Add(new SortDescription("CreatedDate", ListSortDirection.Ascending));
+
                 CalculateAmounts();
             }
             catch (Exception ex)
@@ -708,8 +787,8 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 MessengerInstance.Send(new IsBusyChangedMessage(false));
                 IsOk = true;
             }
-
         }
+
         private void CalculateAmounts()
         {
             Total = RemainingA = Available = 0;

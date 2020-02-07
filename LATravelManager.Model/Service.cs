@@ -25,6 +25,30 @@ namespace LATravelManager.Model.Services
 
         #endregion Fields
 
+
+
+
+        private bool _NotifOk;
+
+
+        public bool NotifOk
+        {
+            get
+            {
+                return _NotifOk;
+            }
+
+            set
+            {
+                if (_NotifOk == value)
+                {
+                    return;
+                }
+
+                _NotifOk = value;
+                RaisePropertyChanged();
+            }
+        }
         #region Properties
 
         public bool Allerretour

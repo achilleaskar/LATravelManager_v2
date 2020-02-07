@@ -395,7 +395,8 @@ namespace LATravelManager.Model.Wrapper
                     return;
                 }
 
-                _FullPrice = value;
+                if (Math.Abs(FullPrice - value) > 0.01m)
+                    _FullPrice = value;
                 RaisePropertyChanged();
                 //if (IsPartners)
                 //{
@@ -469,7 +470,7 @@ namespace LATravelManager.Model.Wrapper
             get { return GetValue<decimal>(); }
             set
             {
-                if (Math.Abs(NetPrice - value) > 0.001m)
+                if (Math.Abs(NetPrice - value) > 0.01m)
                 {
                     SetValue(value);
                     if (FullPrice > 0)
@@ -531,7 +532,7 @@ namespace LATravelManager.Model.Wrapper
                     return;
                 }
 
-                if (Math.Abs(_Remaining - value) > 0.001m)
+                if (Math.Abs(_Remaining - value) > 0.01m)
                 {
                     _Remaining = Math.Round(value, 2);
                     RaisePropertyChanged();
@@ -687,7 +688,7 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
-        public decimal EPSILON { get; private set; } = 0.0001m;
+        public decimal EPSILON { get; private set; } = 0.001m;
 
         public bool Contains(string key)
         {
@@ -750,7 +751,7 @@ namespace LATravelManager.Model.Wrapper
             {
                 if (Customers.Count > 1)
                 {
-                    if (Math.Abs(Customers[Customers.Count - 1].Price) < 0.00001m)
+                    if (Math.Abs(Customers[Customers.Count - 1].Price) < 0.001m)
                     {
                         Customers[Customers.Count - 1].Price = Customers[0].Price;
                     }

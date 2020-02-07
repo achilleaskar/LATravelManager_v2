@@ -1225,7 +1225,7 @@
                                 <CheckBox IsChecked="{Binding BookingWr.SecondDepart}"
                                           VerticalAlignment="Center" />
                                 <TextBox Text="{Binding Line,UpdateSourceTrigger=PropertyChanged}"
-                                         Margin="0,0,5,0" />
+                                         Margin="5,0"  VerticalAlignment="Center" />
                             </StackPanel>
                             <ComboBox ItemsSource="{Binding Users}"
                                       SelectedIndex="{Binding SelectedUserIndex}"

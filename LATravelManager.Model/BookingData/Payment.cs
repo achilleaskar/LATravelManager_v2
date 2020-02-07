@@ -209,7 +209,7 @@ namespace LATravelManager.Model.BookingData
         }
 
         [NotMapped]
-        public decimal EPSILON { get; private set; } = 0.0001m;
+        public decimal EPSILON { get; private set; } = 0.001m;
 
         public string ExcursionName
         {

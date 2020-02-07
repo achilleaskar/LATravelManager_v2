@@ -204,10 +204,6 @@ namespace LATravelManager.UI.Helpers
             }
         }
 
-        internal async Task CheckForNotifications(object sender, EventArgs e)
-        {
-        }
-
         public ObservableCollection<Hotel> Hotels
         {
             get
