@@ -4,11 +4,9 @@ using LATravelManager.Model.People;
 using LATravelManager.Model.Services;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-using System.Windows;
-using System.Windows.Data;
 
 namespace LATravelManager.Model.Wrapper
 {
@@ -22,6 +20,66 @@ namespace LATravelManager.Model.Wrapper
 
         public DateTime Starttime { get; set; }
         public int Higher => GetHigher();
+
+        public string Category => GetCategory();
+
+        private string GetCategory()
+        {
+            if (Booking != null)
+            {
+                switch (Booking.Excursion.ExcursionType.Category)
+                {
+                    case ExcursionTypeEnum.Bansko:
+                        return "Μπάνσκο";
+
+                    case ExcursionTypeEnum.Skiathos:
+                        return "Σκιάθος";
+
+                    case ExcursionTypeEnum.Personal:
+                        return "Ατομικό";
+
+                    case ExcursionTypeEnum.Group:
+                        return "Οργανωμένη";
+
+                    case ExcursionTypeEnum.ThirdParty:
+                        return "Τρίτου";
+
+                    default:
+                        return "Error";
+                }
+            }
+            if (PersonalModel != null)
+            {
+                return "Ατομικό";
+            }
+            if (ThirdPartyModel != null)
+            {
+                return "Τρίτου";
+            }
+            return "Error";
+
+        }
+
+        private BookingWrapper _BookingWrapper;
+
+        public BookingWrapper BookingWrapper
+        {
+            get
+            {
+                return _BookingWrapper;
+            }
+
+            set
+            {
+                if (_BookingWrapper == value)
+                {
+                    return;
+                }
+
+                _BookingWrapper = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public int GetHigher()
         {
@@ -45,7 +103,6 @@ namespace LATravelManager.Model.Wrapper
 
         public ReservationWrapper(Reservation model) : base(model)
         {
-
         }
 
         #endregion Constructors
@@ -98,7 +155,7 @@ namespace LATravelManager.Model.Wrapper
                 {
                     if (Booking != null && !Booking.DifferentDates)
                     {
-                        return Booking.ExcursionDate == null ? Booking.CheckIn : Booking.ExcursionDate.CheckIn;
+                        return !Booking.Excursion.FixedDates|| Booking.ExcursionDate == null  ? Booking.CheckIn : Booking.ExcursionDate.CheckIn;
                     }
                     foreach (Customer customer in CustomersList)
                     {
@@ -126,10 +183,7 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
-
-
         private bool _Returns = true;
-
 
         public bool Returns
         {
@@ -149,6 +203,7 @@ namespace LATravelManager.Model.Wrapper
                 RaisePropertyChanged();
             }
         }
+
         public DateTime CheckOut
         {
             set { _CheckOut = value; }
@@ -180,7 +235,7 @@ namespace LATravelManager.Model.Wrapper
                     {
                         if (Booking != null && !Booking.DifferentDates)
                         {
-                            return Booking.ExcursionDate == null ? Booking.CheckOut : Booking.ExcursionDate.CheckOut;
+                            return !Booking.Excursion.FixedDates || Booking.ExcursionDate == null ? Booking.CheckOut : Booking.ExcursionDate.CheckOut;
                         }
 
                         foreach (Customer customer in CustomersList)
@@ -245,8 +300,6 @@ namespace LATravelManager.Model.Wrapper
             set
             {
                 SetValue(value);
-
-
             }
         }
 
@@ -274,6 +327,7 @@ namespace LATravelManager.Model.Wrapper
         }
 
         public string Dates => CheckIn.ToString("dd/MM") + "-" + CheckOut.ToString("dd/MM");
+        public string DatesWithYear => CheckIn.ToString("dd/MM") + " - " + CheckOut.ToString("dd/MM yyyy");
 
         public int DaysCount
         {
@@ -609,12 +663,12 @@ namespace LATravelManager.Model.Wrapper
 
         public void CalculateAmounts()
         {
-            decimal total = 0;
             if (ExcursionType != ExcursionTypeEnum.Personal && ExcursionType != ExcursionTypeEnum.ThirdParty)
             {
                 BookingWrapper bw = new BookingWrapper(Booking);
                 bw.CalculateRemainingAmount();
-                FullPrice = bw.FullPrice;
+                FullPrice = bw.IsPartners?bw.NetPrice: bw.FullPrice;
+                Recieved = bw.Recieved;
                 Remaining = bw.Remaining;
             }
             else if (ExcursionType == ExcursionTypeEnum.Personal)
@@ -636,20 +690,20 @@ namespace LATravelManager.Model.Wrapper
             //}
         }
 
-        public bool Contains(string key)
+        public bool Contains(string key, bool full = true)
         {
-            key = key.ToUpper();
             if (string.IsNullOrEmpty(key))
             {
                 return true;
             }
+            key = key.ToUpper();
             if (ExcursionType != ExcursionTypeEnum.Personal && ExcursionType != ExcursionTypeEnum.ThirdParty)
             {
                 if (Booking == null)
                 {
                     return false;
                 }
-                if ((!string.IsNullOrEmpty(Booking.Comment) && Booking.Comment.ToUpper().Contains(key)) || (!string.IsNullOrEmpty(HotelName) && HotelName.ToUpper().Contains(key)) || (Booking.IsPartners && Booking.Partner.Name.ToUpper().Contains(key)))
+                if ((!string.IsNullOrEmpty(Booking.Comment) && Booking.Comment.ToUpper().Contains(key)) || (!string.IsNullOrEmpty(HotelName) && HotelName.ToUpper().Contains(key)) || (full && Booking.IsPartners && Booking.Partner.Name.ToUpper().Contains(key)))
                 {
                     return true;
                 }
@@ -660,7 +714,7 @@ namespace LATravelManager.Model.Wrapper
                 {
                     return false;
                 }
-                if ((!string.IsNullOrEmpty(PersonalModel.Comment) && PersonalModel.Comment.ToUpper().Contains(key)) || (PersonalModel.IsPartners && PersonalModel.Partner.Name.ToUpper().Contains(key)))
+                if ((!string.IsNullOrEmpty(PersonalModel.Comment) && PersonalModel.Comment.ToUpper().Contains(key)) || (full && PersonalModel.IsPartners && PersonalModel.Partner.Name.ToUpper().Contains(key)))
                 {
                     return true;
                 }
@@ -679,8 +733,8 @@ namespace LATravelManager.Model.Wrapper
             }
             foreach (Customer c in CustomersList)
             {
-                if (c.Name.ToUpper().StartsWith(key) || c.Surename.ToUpper().StartsWith(key) || (c.Tel != null && c.Tel.StartsWith(key)) || (c.Email != null && c.Email.ToUpper().StartsWith(key))
-                    || (!string.IsNullOrEmpty(c.PassportNum) && c.PassportNum.ToUpper().StartsWith(key)) || c.StartingPlace.ToUpper().Contains(key))
+                if (c.Name.ToUpper().StartsWith(key) || c.Surename.ToUpper().StartsWith(key) || (full && c.Tel != null && c.Tel.StartsWith(key)) || (full && c.Email != null && c.Email.ToUpper().StartsWith(key))
+                    || (full && !string.IsNullOrEmpty(c.PassportNum) && c.PassportNum.ToUpper().StartsWith(key)) || (full && c.StartingPlace.ToUpper().Contains(key)))
                 {
                     return true;
                 }
@@ -780,6 +834,29 @@ namespace LATravelManager.Model.Wrapper
             return string.Join(", ", locations);
         }
 
+        public ObservableCollection<Customer> AllCustomers => GetAllCustomers();
+
+        private ObservableCollection<Customer> GetAllCustomers()
+        {
+            if (PersonalModel != null)
+            {
+                return PersonalModel.Customers;
+            }
+            if (ThirdPartyModel != null)
+            {
+                return ThirdPartyModel.Customers;
+            }
+            if (BookingWrapper != null)
+            {
+                return new ObservableCollection<Customer>(BookingWrapper.Customers.Select(c => c.Model));
+            }
+            if (CustomersList != null)
+            {
+                return new ObservableCollection<Customer>(CustomersList);
+            }
+            return new ObservableCollection<Customer>();
+        }
+
         private string GetNames()
         {
             StringBuilder sb = new StringBuilder();
@@ -836,7 +913,6 @@ namespace LATravelManager.Model.Wrapper
                         if (Room.RoomType.Id != 1)
                         {
                             roomname = Room.RoomType.Name + (Room.RoomType.Id == 1 ? ("(" + CustomersList.Count + ")") : "");
-
                         }
                         else
                         {
@@ -872,7 +948,6 @@ namespace LATravelManager.Model.Wrapper
                 else if (ReservationType == ReservationTypeEnum.Noname)
                 {
                     return GetNoNameType();
-
                 }
                 else if (ReservationType == ReservationTypeEnum.Transfer)
                 {
@@ -1010,6 +1085,7 @@ namespace LATravelManager.Model.Wrapper
                 case 6:
                     roomname = "6BED(NN)";
                     break;
+
                 default:
                     roomname = "VERY BIG";
                     break;

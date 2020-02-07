@@ -31,6 +31,10 @@ namespace LATravelManager.Model.BookingData
 
         #endregion Constructors
 
+        public bool VoucherSent { get; set; }
+        public bool ProformaSent { get; set; }
+        public bool RecieptSent { get; set; }
+
         #region Properties
 
         public static string Destination => "Atomiko";

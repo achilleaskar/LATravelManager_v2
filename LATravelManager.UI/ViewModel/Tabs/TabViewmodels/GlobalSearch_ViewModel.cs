@@ -41,9 +41,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         {
             FilteredReservations = new ObservableCollection<ReservationWrapper>();
             ReservationsCollectionView = CollectionViewSource.GetDefaultView(FilteredReservations);
-            Excursions = new ObservableCollection<Excursion>();
-            ExcursionsCollectionView = CollectionViewSource.GetDefaultView(Excursions);
-            ExcursionsCollectionView.Filter = CustomerExcursionsFilter;
+           
 
             PrintRoomingListsCommand = new RelayCommand(async () => { await PrintRoomingLists(); }, CanPrintRoomingLists);
             PrintAllVouchersCommand = new RelayCommand(async () => { await PrintAllVouchers(); });
@@ -442,7 +440,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 {
                     Excursions.Insert(0, new Excursion { ExcursionDates = new ObservableCollection<ExcursionDate> { new ExcursionDate { CheckIn = new DateTime() } }, Name = "Όλες", Id = 0 });
                 }
-
                 ExcursionsCollectionView = CollectionViewSource.GetDefaultView(Excursions);
                 ExcursionsCollectionView.Filter = CustomerExcursionsFilter;
                 ExcursionsCollectionView.SortDescriptions.Add(new SortDescription("FirstDate", ListSortDirection.Ascending));
@@ -872,7 +869,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             {
                 Context = new GenericRepository();
                 Users = MainViewModel.BasicDataManager.Users;
-                Excursions = MainViewModel.BasicDataManager.Excursions;
+                Excursions = new ObservableCollection<Excursion>(MainViewModel.BasicDataManager.Excursions);
                 SearchBookingsHelper = new SearchBookingsHelper(Context);
             }
             catch (Exception ex)

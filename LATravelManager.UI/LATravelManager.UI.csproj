@@ -190,10 +190,12 @@
     <Compile Include="ViewModel\ServiceViewModels\Plane_ViewModel.cs" />
     <Compile Include="ViewModel\ServiceViewModels\ServiceViewModel.cs" />
     <Compile Include="ViewModel\ServiceViewModels\Transfer_ViewModel.cs" />
+    <Compile Include="ViewModel\Tabs\CardsTab.cs" />
     <Compile Include="ViewModel\Tabs\EconomicData_Tab.cs" />
     <Compile Include="ViewModel\Tabs\GlobalSearchTab.cs" />
     <Compile Include="ViewModel\Tabs\ManagementTab.cs" />
     <Compile Include="ViewModel\Tabs\PlanTab.cs" />
+    <Compile Include="ViewModel\Tabs\TabViewmodels\Cards_ViewModel.cs" />
     <Compile Include="ViewModel\Tabs\TabViewmodels\ListManagement_ViewModel.cs" />
     <Compile Include="ViewModel\Tabs\TabViewmodels\Management_ViewModel.cs" />
     <Compile Include="ViewModel\Tabs\TabViewmodels\OptionalsManagement_ViewModel.cs" />
@@ -351,6 +353,9 @@
     </Compile>
     <Compile Include="Views\Skiathos_UserControl.xaml.cs">
       <DependentUpon>Skiathos_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Tabs\Cards_UserControl.xaml.cs">
+      <DependentUpon>Cards_UserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Tabs\EconomicData_UserControl.xaml.cs">
       <DependentUpon>EconomicData_UserControl.xaml</DependentUpon>
@@ -581,6 +586,10 @@
     <Page Include="Views\Skiathos_UserControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Tabs\Cards_UserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Tabs\EconomicData_UserControl.xaml">
       <SubType>Designer</SubType>
@@ -885,6 +894,11 @@
     </PackageReference>
     <PackageReference Include="MaterialDesignColors">
       <Version>1.2.1</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers">
+      <Version>2.9.8</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.CSharp">
       <Version>4.7.0</Version>

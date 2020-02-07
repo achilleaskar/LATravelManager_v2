@@ -1,0 +1,725 @@
+﻿using GalaSoft.MvvmLight.CommandWpf;
+using LATravelManager.Model;
+using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Excursions;
+using LATravelManager.Model.Hotels;
+using LATravelManager.Model.People;
+using LATravelManager.Model.Wrapper;
+using LATravelManager.UI.Message;
+using LATravelManager.UI.Repositories;
+using LATravelManager.UI.ViewModel.BaseViewModels;
+using LATravelManager.UI.ViewModel.Window_ViewModels;
+using OfficeOpenXml;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Drawing.Text;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Data;
+
+namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
+{
+    public class Cards_ViewModel : MyViewModelBase
+    {
+        #region Constructors
+
+        public Cards_ViewModel(MainViewModel mainViewModel)
+        {
+            MainViewModel = mainViewModel;
+            ShowReservationsCommand = new RelayCommand<string>(async (obj) => { await ShowReservations(obj); }, CanShowReservations);
+            Load();
+        }
+
+
+
+
+        private decimal _Available;
+
+
+        public decimal Available
+        {
+            get
+            {
+                return _Available;
+            }
+
+            set
+            {
+                if (_Available == value)
+                {
+                    return;
+                }
+
+                _Available = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
+
+        private decimal _RemainingA;
+
+
+        public decimal RemainingA
+        {
+            get
+            {
+                return _RemainingA;
+            }
+
+            set
+            {
+                if (_RemainingA == value)
+                {
+                    return;
+                }
+
+                _RemainingA = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
+
+        private decimal _Total;
+
+
+        public decimal Total
+        {
+            get
+            {
+                return _Total;
+            }
+
+            set
+            {
+                if (_Total == value)
+                {
+                    return;
+                }
+
+                _Total = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        #endregion Constructors
+
+        #region Fields
+
+        private ObservableCollection<Booking> _Bookings;
+
+        private ICollectionView _BookingsCollectionView;
+
+        private DateTime _CheckIn;
+        private DateTime _CheckOut;
+        private bool _Completed;
+
+        private GenericRepository _Context;
+
+        private int _DepartmentIndexBookingFilter;
+        private int _ExcursionCategoryIndexBookingFilter;
+        private int _ExcursionIndexBookingFilter;
+        private ObservableCollection<Excursion> _Excursions;
+
+        private ICollectionView _ExcursionsCollectionView;
+
+        private ObservableCollection<ReservationWrapper> _FilteredReservations;
+        private string _FilterString;
+        private bool _IsOk = true;
+
+        private int _PartnerIndex = -1;
+        private ObservableCollection<Partner> _Partners;
+
+        private Excursion _SelectedExcursionFilter;
+
+        #endregion Fields
+
+        #region Properties
+
+        public ObservableCollection<Booking> Bookings
+        {
+            get
+            {
+                return _Bookings;
+            }
+
+            set
+            {
+                if (_Bookings == value)
+                {
+                    return;
+                }
+
+                _Bookings = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public DateTime CheckIn
+        {
+            get
+            {
+                return _CheckIn;
+            }
+
+            set
+            {
+                if (_CheckIn == value)
+                {
+                    return;
+                }
+
+                _CheckIn = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public DateTime CheckOut
+        {
+            get
+            {
+                return _CheckOut;
+            }
+
+            set
+            {
+                if (_CheckOut == value)
+                {
+                    return;
+                }
+
+                _CheckOut = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool Completed
+        {
+            get
+            {
+                return _Completed;
+            }
+
+            set
+            {
+                if (_Completed == value)
+                {
+                    return;
+                }
+
+                _Completed = value;
+                ExcursionsCollectionView.Refresh();
+                RaisePropertyChanged();
+            }
+        }
+
+        public GenericRepository Context
+        {
+            get
+            {
+                return _Context;
+            }
+
+            set
+            {
+                if (_Context == value)
+                {
+                    return;
+                }
+
+                _Context = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public int DepartmentIndexBookingFilter
+        {
+            get
+            {
+                return _DepartmentIndexBookingFilter;
+            }
+
+            set
+            {
+                if (_DepartmentIndexBookingFilter == value)
+                {
+                    return;
+                }
+
+                _DepartmentIndexBookingFilter = value;
+                RaisePropertyChanged();
+                if (ReservationsCollectionView != null)
+                {
+                    ReservationsCollectionView.Refresh();
+                    CalculateAmounts();
+                }
+            }
+        }
+
+        public int ExcursionCategoryIndexBookingFilter
+        {
+            get
+            {
+                return _ExcursionCategoryIndexBookingFilter;
+            }
+
+            set
+            {
+                if (_ExcursionCategoryIndexBookingFilter == value)
+                {
+                    return;
+                }
+
+                _ExcursionCategoryIndexBookingFilter = value;
+                if (ReservationsCollectionView != null)
+                {
+                    ReservationsCollectionView.Refresh();
+                    CalculateAmounts();
+
+                }
+                RaisePropertyChanged();
+            }
+        }
+
+        public int ExcursionIndexBookingFilter
+        {
+            get
+            {
+                return _ExcursionIndexBookingFilter;
+            }
+
+            set
+            {
+                if (_ExcursionIndexBookingFilter == value)
+                {
+                    return;
+                }
+
+                _ExcursionIndexBookingFilter = value;
+                if (ReservationsCollectionView != null)
+                {
+                    ReservationsCollectionView.Refresh();
+                    CalculateAmounts();
+
+                }
+                RaisePropertyChanged();
+            }
+        }
+
+        public ObservableCollection<Excursion> Excursions
+        {
+            get
+            {
+                return _Excursions;
+            }
+
+            set
+            {
+                if (_Excursions == value)
+                {
+                    return;
+                }
+                _Excursions = value;
+
+                if (Excursions != null && !Excursions.Any(e => e.Id == 0))
+                {
+                    Excursions.Insert(0, new Excursion { ExcursionDates = new ObservableCollection<ExcursionDate> { new ExcursionDate { CheckIn = new DateTime() } }, Name = "Όλες", Id = 0 });
+                }
+
+                ExcursionsCollectionView = CollectionViewSource.GetDefaultView(Excursions);
+                ExcursionsCollectionView.Filter = CustomerExcursionsFilter;
+                ExcursionsCollectionView.SortDescriptions.Add(new SortDescription("FirstDate", ListSortDirection.Ascending));
+
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(ExcursionsCollectionView));
+            }
+        }
+
+        public ICollectionView ExcursionsCollectionView
+        {
+            get
+            {
+                return _ExcursionsCollectionView;
+            }
+
+            set
+            {
+                if (_ExcursionsCollectionView == value)
+                {
+                    return;
+                }
+
+                _ExcursionsCollectionView = value;
+                ExcursionsCollectionView.CurrentChanged += ExcursionsCollectionView_CurrentChanged;
+                RaisePropertyChanged();
+            }
+        }
+
+        public ObservableCollection<ReservationWrapper> FilteredReservations
+        {
+            get
+            {
+                return _FilteredReservations;
+            }
+
+            set
+            {
+                if (_FilteredReservations == value)
+                {
+                    return;
+                }
+
+                _FilteredReservations = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string FilterString
+        {
+            get
+            {
+                return _FilterString;
+            }
+
+            set
+            {
+                if (_FilterString == value)
+                {
+                    return;
+                }
+
+                _FilterString = value;
+                if (ReservationsCollectionView != null)
+                {
+                    ReservationsCollectionView.Refresh();
+                    CalculateAmounts();
+
+                }
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool IsOk
+        {
+            get
+            {
+                return _IsOk;
+            }
+
+            set
+            {
+                if (_IsOk == value)
+                {
+                    return;
+                }
+
+                _IsOk = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public MainViewModel MainViewModel { get; }
+
+        public int PartnerIndex
+        {
+            get
+            {
+                return _PartnerIndex;
+            }
+
+            set
+            {
+                if (_PartnerIndex == value)
+                {
+                    return;
+                }
+
+                _PartnerIndex = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public ObservableCollection<Partner> Partners
+        {
+            get
+            {
+                return _Partners;
+            }
+
+            set
+            {
+                if (_Partners == value)
+                {
+                    return;
+                }
+
+                _Partners = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public ICollectionView ReservationsCollectionView
+        {
+            get
+            {
+                return _BookingsCollectionView;
+            }
+
+            set
+            {
+                if (_BookingsCollectionView == value)
+                {
+                    return;
+                }
+
+                _BookingsCollectionView = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public Excursion SelectedExcursionFilter
+        {
+            get
+            {
+                return _SelectedExcursionFilter;
+            }
+
+            set
+            {
+                if (_SelectedExcursionFilter == value)
+                {
+                    return;
+                }
+
+                _SelectedExcursionFilter = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public RelayCommand<string> ShowReservationsCommand { get; set; }
+
+        #endregion Properties
+
+        private bool _ΒyCheckIn;
+
+        private bool _ByCreated;
+
+        public bool ByCreated
+        {
+            get
+            {
+                return _ByCreated;
+            }
+
+            set
+            {
+                if (_ByCreated == value)
+                {
+                    return;
+                }
+
+                _ByCreated = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool ByCheckIn
+        {
+            get
+            {
+                return _ΒyCheckIn;
+            }
+
+            set
+            {
+                if (_ΒyCheckIn == value)
+                {
+                    return;
+                }
+
+                _ΒyCheckIn = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        #region Methods
+
+        public override void Load(int id = 0, MyViewModelBaseAsync previousViewModel = null)
+        {
+            try
+            {
+                Context = new GenericRepository();
+
+                Partners = new ObservableCollection<Partner>(MainViewModel.BasicDataManager.Partners);
+                Excursions = new ObservableCollection<Excursion>(MainViewModel.BasicDataManager.Excursions);
+
+                Bookings = new ObservableCollection<Booking>();
+                PartnerIndex = -1;
+                ByCreated = true;
+                CheckOut = DateTime.Today;
+                CheckIn = DateTime.Today.AddMonths(-1);
+            }
+            catch (Exception ex)
+            {
+                MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
+            }
+            finally
+            {
+                IsLoaded = true;
+            }
+        }
+
+        public override void Reload()
+        {
+        }
+
+        private bool CanShowReservations(string arg)
+        {
+            return IsOk;
+        }
+
+        private bool CustomerExcursionsFilter(object item)
+        {
+            Excursion excursion = item as Excursion;
+            return Completed || excursion.ExcursionDates.Any(d => d.CheckOut >= DateTime.Today) || excursion.Id == 0;
+        }
+
+        private bool _Remaining;
+
+        public bool Remaining
+        {
+            get
+            {
+                return _Remaining;
+            }
+
+            set
+            {
+                if (_Remaining == value)
+                {
+                    return;
+                }
+
+                _Remaining = value;
+                if (ReservationsCollectionView != null)
+                {
+                    ReservationsCollectionView.Refresh();
+                    CalculateAmounts();
+                }
+                RaisePropertyChanged();
+            }
+        }
+
+        private bool CustomerFilter(object item)
+        {
+            ReservationWrapper reservation = item as ReservationWrapper;
+            var x = reservation.Contains(FilterString, false) &&
+                (!Remaining || reservation.Remaining > 3) &&
+                (DepartmentIndexBookingFilter == 0 || reservation.UserWr.BaseLocation == DepartmentIndexBookingFilter) &&
+                (ExcursionCategoryIndexBookingFilter == 0 || (ExcursionCategoryIndexBookingFilter == 1 && reservation.Booking != null && reservation.Booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Bansko) || (ExcursionCategoryIndexBookingFilter == 2 && reservation.Booking != null && reservation.Booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Skiathos) || (ExcursionCategoryIndexBookingFilter == 3 && reservation.PersonalModel != null) || (ExcursionCategoryIndexBookingFilter == 4 && reservation.Booking != null && reservation.Booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Group) || (ExcursionCategoryIndexBookingFilter == 5 && reservation.ThirdPartyModel != null)) &&
+                (ExcursionIndexBookingFilter == 0 || (reservation.Booking != null && ExcursionsCollectionView.CurrentItem != null && ExcursionsCollectionView.CurrentItem is Excursion && reservation.Booking.Excursion != null && reservation.Booking.Excursion.Id == ((Excursion)ExcursionsCollectionView.CurrentItem).Id));
+            return x;
+        }
+
+        private void ExcursionsCollectionView_CurrentChanged(object sender, EventArgs e)
+        {
+            if (ReservationsCollectionView != null)
+            {
+                ReservationsCollectionView.Refresh();
+                CalculateAmounts();
+
+            }
+            SelectedExcursionFilter = ExcursionsCollectionView.CurrentItem as Excursion;
+        }
+
+        private async Task ShowReservations(string parameter)
+        {
+            try
+            {
+                IsOk = false;
+                MessengerInstance.Send(new IsBusyChangedMessage(true));
+                //await ReloadAsync();
+                if (Context != null)
+                {
+                    Context.Dispose();
+                }
+                Context = new GenericRepository(true);
+                DateTime From, To = DateTime.Today;
+                switch (parameter)
+                {
+                    case "1":
+                        From = DateTime.Today.AddMonths(-1);
+                        break;
+
+                    case "3":
+                        From = DateTime.Today.AddMonths(-3);
+                        break;
+
+                    case "6":
+                        From = DateTime.Today.AddMonths(-6);
+                        break;
+
+                    case "10":
+                        From = new DateTime();
+                        break;
+
+                    default:
+                        From = CheckIn;
+                        To = CheckOut;
+                        break;
+                }
+                List<BookingWrapper> listg = (await Context.GetAllBookingsAsync(ExcursionIndexBookingFilter > 0 ? (ExcursionsCollectionView.CurrentItem as Excursion).Id : -1, ExcursionCategoryIndexBookingFilter > 0 ? ExcursionCategoryIndexBookingFilter - 1 : -1, DepartmentIndexBookingFilter, PartnerIndex >= 0 ? Partners[PartnerIndex].Id : -1, From, To, ByCheckIn)).Select(b => new BookingWrapper(b)).ToList();
+
+                List<ReservationWrapper> listr = new List<ReservationWrapper>();
+                foreach (var booking in listg)
+                {
+                    if (!listr.Any(r => r.Booking.Id == booking.Id && r.Booking.ReservationsInBooking != null && r.Booking.ReservationsInBooking.Count > 0))
+                    {
+                        listr.Add(new ReservationWrapper(booking.ReservationsInBooking[0]));
+                    }
+                }
+                if (ExcursionIndexBookingFilter == 0 && (ExcursionCategoryIndexBookingFilter == 3 || ExcursionCategoryIndexBookingFilter == 0))
+                {
+                    await Context.GetAllCitiesAsyncSortedByName();
+                    await Context.GetAllHotelsAsync<Hotel>();
+                    listr.AddRange((await Context.GetAllPersonalBookingsFiltered(0, true, new DateTime(), remainingPar: 1, checkin: From, checkout: To, partnerId: PartnerIndex >= 0 ? Partners[PartnerIndex].Id : 0)).Select(r => new ReservationWrapper { Id = r.Id, PersonalModel = new Personal_BookingWrapper(r), CreatedDate = r.CreatedDate, CustomersList = r.Customers.ToList() }).ToList());
+                }
+                //if (ExcursionIndexBookingFilter == 0 && (ExcursionCategoryIndexBookingFilter == 5 || ExcursionCategoryIndexBookingFilter == 0))
+                //{
+                //    listr.AddRange((await Context.GetAllThirdPartyBookingsFiltered(0, Completed, new DateTime(), checkin: From, checkout: To, byCheckIn: ByCheckIn)).Select(r => new ReservationWrapper { Id = r.Id, ThirdPartyModel = new ThirdParty_Booking_Wrapper(r), CreatedDate = r.CreatedDate, CustomersList = r.Customers.ToList() }).ToList());
+                //}
+
+                FilteredReservations = new ObservableCollection<ReservationWrapper>(listr);
+                Parallel.ForEach(FilteredReservations, wr => wr.CalculateAmounts());
+                ReservationsCollectionView = CollectionViewSource.GetDefaultView(FilteredReservations);
+                ReservationsCollectionView.Filter = CustomerFilter;
+                ReservationsCollectionView.SortDescriptions.Add(new SortDescription("CreatedDate", ListSortDirection.Ascending));
+                CalculateAmounts();
+            }
+            catch (Exception ex)
+            {
+                MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
+            }
+            finally
+            {
+                MessengerInstance.Send(new IsBusyChangedMessage(false));
+                IsOk = true;
+            }
+
+        }
+        private void CalculateAmounts()
+        {
+            Total = RemainingA = Available = 0;
+            foreach (ReservationWrapper res in ReservationsCollectionView)
+            {
+                Total += res.FullPrice;
+                RemainingA += res.Remaining;
+            }
+        }
+
+        #endregion Methods
+    }
+}

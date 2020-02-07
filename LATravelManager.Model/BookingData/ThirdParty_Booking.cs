@@ -57,6 +57,10 @@ namespace LATravelManager.Model.BookingData
 
         #endregion Properties
 
+        public bool VoucherSent { get; set; }
+        public bool ProformaSent { get; set; }
+        public bool RecieptSent { get; set; }
+
         #region Methods
 
         private string GetNames()

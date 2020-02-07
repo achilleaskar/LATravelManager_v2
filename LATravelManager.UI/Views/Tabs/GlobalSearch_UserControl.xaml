@@ -519,7 +519,7 @@
                                     Width="90"
                                     Binding="{Binding HotelName}" />
                 <DataGridTextColumn Header="Τύπος Δωμ."
-                                    Width="70"
+                                    Width="80"
                                     Binding="{Binding RoomTypeName}" />
                 <DataGridTextColumn Header="Αναχώρηση"
                                     Width="80"
@@ -529,7 +529,7 @@
                                     Width="45"
                                     Binding="{Binding Recieved,Converter={StaticResource FtoSConverter } }" />
                 <DataGridTextColumn Header="Υπόλοιπο"
-                                    Width="40"
+                                    Width="45"
                                     Binding="{Binding Remaining ,Converter={StaticResource FtoSConverter } }" />
                 <DataGridTextColumn Header="Τηλέφωνο"
                                     Width="95"

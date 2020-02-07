@@ -37,7 +37,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         #region Fields
 
         private static readonly string[] ValidateDepartureInfoProperties =
-       {
+                {
             nameof(FromDepartureInfo),nameof(ToDepartureInfo)
         };
 
@@ -376,7 +376,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             //}
             DateTime tmpDate = FromDepartureInfo;
             AllDaysDeparturesList.Clear();
-            DailyDepartureInfo dayDeparture = new DailyDepartureInfo(Context, SelectedFilterExcursion.Id),tmpDepartInfo=null;
+            DailyDepartureInfo dayDeparture = new DailyDepartureInfo(Context, SelectedFilterExcursion.Id), tmpDepartInfo = null;
             DailyDepartureInfo tmpDayDeparture = new DailyDepartureInfo(Context, SelectedFilterExcursion.Id);
             CityDepartureInfo cityDepartureInfo;
             if (SelectedFilterExcursion.ExcursionType.Category == Model.ExcursionTypeEnum.Group)
@@ -467,7 +467,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                             if (b.SecondDepart != dayDeparture.SecondDepart)
                             {
                                 tmpDepartInfo = dayDeparture;
-                                   dayDeparture = AllDaysDeparturesList.FirstOrDefault(d => d.Date == b.CheckIn && d.SecondDepart == b.SecondDepart);
+                                dayDeparture = AllDaysDeparturesList.FirstOrDefault(d => d.Date == b.CheckIn && d.SecondDepart == b.SecondDepart);
                                 if (dayDeparture == null)
                                 {
                                     dayDeparture = new DailyDepartureInfo(Context, SelectedFilterExcursion.Id) { Date = tmpDate, PerCityDepartureList = new ObservableCollection<CityDepartureInfo>(), SecondDepart = b.SecondDepart };

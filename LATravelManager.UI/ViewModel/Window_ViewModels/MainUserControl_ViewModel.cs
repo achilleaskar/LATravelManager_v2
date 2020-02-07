@@ -12,7 +12,6 @@ using LATravelManager.UI.ViewModel.Management;
 using LATravelManager.UI.ViewModel.Parents;
 using LATravelManager.UI.Views;
 using LATravelManager.UI.Views.Management;
-using LATravelManager.UI.Views.Services;
 using Notifications.Wpf;
 using System;
 using System.Collections.Generic;

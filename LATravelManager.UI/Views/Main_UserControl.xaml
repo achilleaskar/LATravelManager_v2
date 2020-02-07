@@ -44,6 +44,9 @@
         <DataTemplate DataType="{x:Type tabs:AddRooms_ViewModel}">
             <tabViews:AddRooms_UserControl />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type tabs:Cards_ViewModel}">
+            <tabViews:Cards_UserControl />
+        </DataTemplate>
         <!--  <DataTemplate DataType="{x:Type viewmodels:PersonalExcursion_ViewModel}">
                 <views:PersonalExcursions_UserControl />
             </DataTemplate>

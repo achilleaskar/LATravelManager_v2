@@ -27,12 +27,14 @@ namespace LATravelManager.UI.ViewModel
                 SecondaryViewModels = new List<MyViewModelBase>();
 
                 SecondaryTabs.Add(new GlobalSearchTab());
+                SecondaryTabs.Add(new CardsTab());
                 SecondaryTabs.Add(new ManagementTab());
                 SecondaryTabs.Add(new EconomicData_Tab());
                 SecondaryTabs.Add(new AddRoomsTab());
                 //  SecondaryTabs.Add(new SettingsTab());
 
                 SecondaryViewModels.Add(new GlobalSearch_ViewModel(mainViewModel));//
+                SecondaryViewModels.Add(new Cards_ViewModel(mainViewModel));
                 SecondaryViewModels.Add(new Management_ViewModel(mainViewModel));//
                 SecondaryViewModels.Add(new GlobalEconomics_ViewModel(mainViewModel));
                 SecondaryViewModels.Add(new AddRooms_ViewModel(mainViewModel));
