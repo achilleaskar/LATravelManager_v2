@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using LATravelManager.Model.Notifications;
 
 namespace LATravelManager.Model.Hotels
 {
@@ -45,31 +46,33 @@ namespace LATravelManager.Model.Hotels
 
 
 
-        private bool _Paid;
 
 
-        public bool Paid
+
+
+
+        private NotifSatus _NotifStatus;
+
+
+        public NotifSatus NotifStatus
         {
             get
             {
-                return _Paid;
+                return _NotifStatus;
             }
 
             set
             {
-                if (_Paid == value)
+                if (_NotifStatus == value)
                 {
                     return;
                 }
 
-                _Paid = value;
+                _NotifStatus = value;
                 RaisePropertyChanged();
             }
         }
-        /// <summary>
-        /// Sets and gets the Note property. Changes to that property's value raise the
-        /// PropertyChanged event.
-        /// </summary>
+
         [StringLength(100)]
         public string Note
         {

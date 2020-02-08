@@ -17,6 +17,8 @@
         <converters:FloadToStringValueConverter x:Key="FtoSConverter" />
         <converters:ReturnsToDateConverter x:Key="ReturnsToDateConverter" />
         <converters:DateTimeToString x:Key="DateTimeToString" />
+        <converters:BoolToRedGreenConverter x:Key="BoolToRedGreenConverter" />
+        <converters:BoolToYesNoConverter x:Key="BoolToYesNoConverter" />
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -411,8 +413,9 @@
                                 <Label Content="Τιμολόγιο:"
                                        Grid.Column="5"
                                        Grid.Row="1" />
-                                <Label Content="OXI"
-                                       Grid.Row="1"
+                                <Label Content="{Binding Reciept,Converter={StaticResource BoolToYesNoConverter}}"
+                                       Grid.Row="1" FontWeight="Bold"
+                                       Foreground="{Binding Reciept,Converter={StaticResource BoolToRedGreenConverter}}"
                                        HorizontalAlignment="Left"
                                        Grid.Column="6" />
                                 <Label Content="Voucher:"

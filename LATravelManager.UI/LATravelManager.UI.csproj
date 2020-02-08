@@ -109,6 +109,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\BoolToBorderColorConverter.cs" />
+    <Compile Include="Converters\BoolToRedGreenConverter.cs" />
+    <Compile Include="Converters\BoolToYesNoConverter.cs" />
     <Compile Include="Converters\EmptyStringToZeroConverter.cs" />
     <Compile Include="Converters\DateTimeToString.cs" />
     <Compile Include="Converters\DayStateToContentConverter.cs" />

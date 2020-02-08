@@ -2,6 +2,37 @@
 
 namespace LATravelManager.Model
 {
+    public enum ContinentsEnum
+    {
+        NorthAmerica,
+        SouthAmerica,
+        Africa,
+        Europe,
+        Asia,
+        Australia,
+        Antarctica
+    }
+
+    public enum DayStateEnum
+    {
+        Empty,
+        FirstDay,
+        LastDay
+    };
+
+    [TypeConverter(typeof(EnumDescriptionTypeConverter))]
+    public enum ExcursionExpenseCategories //100
+    {
+        [Description("Σύνολο Εκδρομής")]
+        Total = 0,
+
+        [Description("Ημερομηνίες")]
+        Dates = 1,
+
+        [Description("Κράτηση")]
+        Booking = 2
+    }
+
     public enum ExcursionTypeEnum
     {
         Bansko = 0,
@@ -9,34 +40,6 @@ namespace LATravelManager.Model
         Personal = 2,
         Group = 3,
         ThirdParty = 4
-    }
-
-    [TypeConverter(typeof(EnumDescriptionTypeConverter))]
-    public enum TransactionType //1
-    {
-        [Description("Έσοδο")]
-        Income = 0,
-
-        [Description("Έξοδο")]
-        Expense = 1
-    }
-
-    [TypeConverter(typeof(EnumDescriptionTypeConverter))]
-    public enum IncomeBaseCategories
-    {
-        [Description("Γενικά")]
-        None = 0,
-
-        [Description("Προαιρετικά")]
-        OptionalActivities = 1
-    }
-
-    public enum PaymentType
-    {
-        Recieved=1,
-        NotRecieved=2,
-        NotPaid=3,
-        Canceled=4
     }
 
     [TypeConverter(typeof(EnumDescriptionTypeConverter))]
@@ -58,6 +61,37 @@ namespace LATravelManager.Model
         TaxExpense = 4
     }
 
+    public enum FileType
+    {
+        Avatar = 1,
+        Photo = 2
+    }
+
+    public enum FlightMode
+    {
+        allerRetour,
+        onlyGo,
+        OnlyReturn
+
+    }
+
+    [TypeConverter(typeof(EnumDescriptionTypeConverter))]
+    public enum GeneralOrDatesExpenseCategories //100
+    {
+        [Description("Γενικά")]
+        Total = 0,
+
+        [Description("Ημερομηνίες")]
+        Dates = 1,
+    }
+
+    public enum GrafeiaXriston
+    {
+        Allo = 0,
+        Thessalonikis = 1,
+        Larisas = 2
+    }
+
     [TypeConverter(typeof(EnumDescriptionTypeConverter))]
     public enum GroupExpenseCategories //100
     {
@@ -77,27 +111,76 @@ namespace LATravelManager.Model
         Guide = 4
     }
 
-    [TypeConverter(typeof(EnumDescriptionTypeConverter))]
-    public enum ExcursionExpenseCategories //100
+    public enum HotelCategoryEnum
     {
-        [Description("Σύνολο Εκδρομής")]
-        Total = 0,
-
-        [Description("Ημερομηνίες")]
-        Dates = 1,
-
-        [Description("Κράτηση")]
-        Booking = 2
+        apart,
+        threestar,
+        fourstar,
+        fivestar,
+        house
     }
 
     [TypeConverter(typeof(EnumDescriptionTypeConverter))]
-    public enum GeneralOrDatesExpenseCategories //100
+    public enum IncomeBaseCategories
     {
         [Description("Γενικά")]
-        Total = 0,
+        None = 0,
 
-        [Description("Ημερομηνίες")]
-        Dates = 1,
+        [Description("Προαιρετικά")]
+        OptionalActivities = 1
+    }
+
+    public enum NotificaationType
+    {
+        CheckIn,
+        Option,
+        NoPay,
+    }
+
+    public enum PaymentType
+    {
+        Recieved = 1,
+        NotRecieved = 2,
+        NotPaid = 3,
+        Canceled = 4
+    }
+
+    public enum ReservationTypeEnum
+    {
+        Normal,
+        Noname,
+        Overbooked,
+        NoRoom,
+        Transfer,
+        OneDay
+    }
+
+    public enum RoomStateEnum
+    {
+        NotAvailable,
+        Allotment,
+        Available,
+        MovableNoName,
+        NotMovableNoName,
+        Booked,
+        OverBookedByMistake,
+        Booking
+    }
+
+    public enum RoomTypeEnum
+    {
+        Available,
+        Allotment,
+        Booking
+    }
+
+    public enum SeatType
+    {
+        Driver,
+        Leader,
+        Normal,
+        Road,
+        Door
     }
 
     [TypeConverter(typeof(EnumDescriptionTypeConverter))]
@@ -147,88 +230,13 @@ namespace LATravelManager.Model
         IKA = 5
     }
 
-    public enum FileType
+    [TypeConverter(typeof(EnumDescriptionTypeConverter))]
+    public enum TransactionType //1
     {
-        Avatar = 1,
-        Photo = 2
-    }
+        [Description("Έσοδο")]
+        Income = 0,
 
-    public enum SeatType
-    {
-        Driver,
-        Leader,
-        Normal,
-        Road,
-        Door
-    }
-
-    public enum ReservationTypeEnum
-    {
-        Normal,
-        Noname,
-        Overbooked,
-        NoRoom,
-        Transfer,
-        OneDay
-    }
-
-    public enum FlightMode
-    {
-        allerRetour,
-        onlyGo,
-        OnlyReturn
-    }
-
-    public enum RoomStateEnum
-    {
-        NotAvailable,
-        Allotment,
-        Available,
-        MovableNoName,
-        NotMovableNoName,
-        Booked,
-        OverBookedByMistake,
-        Booking
-    }
-
-    public enum RoomTypeEnum
-    {
-        Available,
-        Allotment,
-        Booking
-    }
-
-    public enum GrafeiaXriston
-    {
-        Allo = 0,
-        Thessalonikis = 1,
-        Larisas = 2
-    }
-
-    public enum HotelCategoryEnum
-    {
-        apart,
-        threestar,
-        fourstar,
-        fivestar,
-        house
-    }
-
-    public enum DayStateEnum
-    {
-        Empty,
-        FirstDay,
-        LastDay
-    };
-
-    public enum ContinentsEnum
-    {
-        NorthAmerica,
-        SouthAmerica,
-        Africa,
-        Europe,
-        Asia,
-        Australia,
-        Antarctica
+        [Description("Έξοδο")]
+        Expense = 1
     }
 }
