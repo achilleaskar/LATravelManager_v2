@@ -7,7 +7,7 @@ using LATravelManager.Model.People;
 
 namespace LATravelManager.Model.Notifications
 {
-    public class NotifSatus : BaseModel
+    public class NotifStatus : BaseModel
     {
 
 

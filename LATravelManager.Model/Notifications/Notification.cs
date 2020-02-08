@@ -28,10 +28,10 @@ namespace LATravelManager.Model.Notifications
 
 
 
-        private NotifSatus _NotifStatus;
+        private NotifStatus _NotifStatus;
 
 
-        public NotifSatus NotifStatus
+        public NotifStatus NotifStatus
         {
             get
             {

@@ -1,4 +1,5 @@
 ﻿using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Notifications;
 using LATravelManager.Model.People;
 using System;
 using System.Collections.Generic;
@@ -25,10 +26,30 @@ namespace LATravelManager.Model.Services
 
         #endregion Fields
 
+        private NotifStatus _NotifStatus;
+
+
+        public NotifStatus NotifStatus
+        {
+            get
+            {
+                return _NotifStatus;
+            }
+
+            set
+            {
+                if (_NotifStatus == value)
+                {
+                    return;
+                }
+
+                _NotifStatus = value;
+                RaisePropertyChanged();
+            }
+        }
 
 
 
-        
         #region Properties
 
         public bool Allerretour
