@@ -32,9 +32,15 @@ namespace LATravelManager.Model.Wrapper
             Customers = new ObservableCollection<CustomerWrapper>();
             Customers.CollectionChanged += Customers_CollectionChanged;
             Payments.CollectionChanged += Payments_CollectionChanged;
+            ExtraServices.CollectionChanged += ExtraServices_CollectionChanged;
             ReservationsInBooking.CollectionChanged += ReservationsCollectionChanged;
 
             InitializeBookingWrapper(v);
+        }
+
+        private void ExtraServices_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            CalculateRemainingAmount();
         }
 
         #endregion Constructors
@@ -488,9 +494,9 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
-        private decimal _Extras;
+        private int _Extras;
 
-        public decimal Extras
+        public int Extras
         {
             get
             {
@@ -672,7 +678,7 @@ namespace LATravelManager.Model.Wrapper
             if (!Loaded)
                 return;
             decimal total = 0;
-            decimal extra = 0;
+            int extra = 0;
 
             _Recieved = 0;
 

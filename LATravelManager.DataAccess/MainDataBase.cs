@@ -10,6 +10,7 @@ using LATravelManager.Model.Plan;
 using LATravelManager.Model.Services;
 using System;
 using System.Data.Entity;
+using System.Data.Entity.ModelConfiguration.Conventions;
 
 namespace LATravelManager.DataAccess
 {
@@ -76,6 +77,8 @@ namespace LATravelManager.DataAccess
                 .Configure(s => s.HasMaxLength(200).HasColumnType("varchar"));
             modelBuilder.Properties<bool>().Configure(c => c.HasColumnType("bit"));
             //Database.Connection.Open();
+            modelBuilder.Conventions.Remove<DecimalPropertyConvention>();
+            modelBuilder.Conventions.Add(new DecimalPropertyConvention(18,2));
             base.OnModelCreating(modelBuilder);
             // SetExecutionStrategy(MySqlProviderInvariantName.ProviderName, () => new MySqlExecutionStrategy());
             //modelBuilder.Properties<TimeSpan>().Configure(c => c.HasColumnType("time"));

@@ -11,10 +11,10 @@ namespace LATravelManager.Model.BookingData
 
 
 
-        private decimal _Amount;
+        private int _Amount;
 
 
-        public decimal Amount
+        public int Amount
         {
             get
             {

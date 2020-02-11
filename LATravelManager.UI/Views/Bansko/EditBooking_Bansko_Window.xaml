@@ -728,6 +728,45 @@
                         </StackPanel>
                     </Grid>
                 </GroupBox>
+                <StackPanel Grid.Row="1"
+                            Orientation="Vertical">
+                    <TextBlock Text="Πρόσθετες Υπηρεσίες"
+                               HorizontalAlignment="Left" />
+                    <ListView Name="extras"
+                              Focusable="False"
+                              Height="142"
+                              SelectedItem="{Binding SelectedExtraService}"
+                              Width="425"
+                              ItemsSource="{Binding BookingWr.ExtraServices}">
+                        <ListView.Resources>
+                            <ContextMenu x:Key="ItemContextMenub">
+                                <MenuItem Header="Διαγραφη"
+                                          Visibility="{Binding Converter={StaticResource UserToVisibilityConverter},ConverterParameter=1,  Mode=OneWay}"
+                                          Command="{Binding DataContext.DeleteExtraServiceCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
+                                    <MenuItem.Icon>
+                                        <Image MaxHeight="20"
+                                               Stretch="Fill" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
+                        </ListView.Resources>
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="{x:Type ListViewItem}">
+                                <Setter Property="ContextMenu"
+                                        Value="{StaticResource ItemContextMenub}" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Περιγραφή"
+                                                DisplayMemberBinding="{Binding Comment}" />
+                                <GridViewColumn Header="Ποσό"
+                                                Width="40"
+                                                DisplayMemberBinding="{Binding Amount,Converter={StaticResource FtoSConverter}}" />
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </StackPanel>
             </StackPanel>
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
