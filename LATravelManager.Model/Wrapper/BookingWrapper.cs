@@ -58,7 +58,7 @@ namespace LATravelManager.Model.Wrapper
 
 
 
-        
+
 
         public ExtraService ExtraService
         {
@@ -675,12 +675,16 @@ namespace LATravelManager.Model.Wrapper
             decimal extra = 0;
 
             _Recieved = 0;
-            _Recieved += Payments.Sum(p => p.Amount);
+
+            foreach (var p in Payments)
+                _Recieved += p.Amount;
             Recieved = _Recieved;
 
-            total += Customers.Sum(c => c.Price);
+            foreach (var c in Customers)
+                total += c.Price;
 
-            extra = ExtraServices.Sum(e => e.Amount);
+            foreach (var e in ExtraServices)
+                extra = e.Amount;
             Extras = extra;
 
             FullPrice = total + Extras;

@@ -57,5 +57,30 @@ namespace LATravelManager.Model.BookingData
                 RaisePropertyChanged();
             }
         }
+
+
+
+
+        private Booking _Booking;
+
+
+        public Booking Booking
+        {
+            get
+            {
+                return _Booking;
+            }
+
+            set
+            {
+                if (_Booking == value)
+                {
+                    return;
+                }
+
+                _Booking = value;
+                RaisePropertyChanged();
+            }
+        }
     }
 }

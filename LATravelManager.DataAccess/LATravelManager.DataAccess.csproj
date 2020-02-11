@@ -177,6 +177,10 @@
     <Compile Include="Migrations\202002111214134_112.designer.cs">
       <DependentUpon>202002111214134_112.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202002111315509_112sos.cs" />
+    <Compile Include="Migrations\202002111315509_112sos.designer.cs">
+      <DependentUpon>202002111315509_112sos.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\ContextConfiguration.cs" />
     <Compile Include="MainDataBase.cs" />
     <Compile Include="Migrations\Configuration.cs" />
@@ -287,6 +291,9 @@
     <EmbeddedResource Include="Migrations\202002111214134_112.resx">
       <DependentUpon>202002111214134_112.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202002111315509_112sos.resx">
+      <DependentUpon>202002111315509_112sos.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BouncyCastle">
@@ -299,7 +306,7 @@
       <Version>3.11.1</Version>
     </PackageReference>
     <PackageReference Include="MySql.Data.EntityFramework">
-      <Version>8.0.18</Version>
+      <Version>8.0.19</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

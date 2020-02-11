@@ -74,6 +74,7 @@ namespace LATravelManager.DataAccess
         {
             modelBuilder.Properties<string>()
                 .Configure(s => s.HasMaxLength(200).HasColumnType("varchar"));
+            modelBuilder.Properties<bool>().Configure(c => c.HasColumnType("bit"));
             //Database.Connection.Open();
             base.OnModelCreating(modelBuilder);
             // SetExecutionStrategy(MySqlProviderInvariantName.ProviderName, () => new MySqlExecutionStrategy());
