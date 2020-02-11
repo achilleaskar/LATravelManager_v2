@@ -1,4 +1,5 @@
-﻿using GalaSoft.MvvmLight;
+﻿using DocumentFormat.OpenXml.Office2010.ExcelAc;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.People;
@@ -6,6 +7,7 @@ using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -145,10 +147,5 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
         }
     }
 
-    public class HotelOptions
-    {
-        public Hotel Hotel { get; set; }
-        public int Counter { get; set; }
-        public DateTime Date { get; set; }
-    }
+   
 }

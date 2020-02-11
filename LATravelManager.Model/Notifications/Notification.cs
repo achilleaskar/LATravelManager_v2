@@ -1,10 +1,59 @@
-﻿using LATravelManager.Model.Wrapper;
+﻿using LATravelManager.Model.Hotels;
+using LATravelManager.Model.Services;
+using LATravelManager.Model.Wrapper;
 
 namespace LATravelManager.Model.Notifications
 {
     public class Notification : BaseModel
     {
         private string _Details;
+
+        private HotelOptions _HotelOptions;
+
+
+
+
+
+
+        private Service _Service;
+
+
+        public Service Service
+        {
+            get
+            {
+                return _Service;
+            }
+
+            set
+            {
+                if (_Service == value)
+                {
+                    return;
+                }
+
+                _Service = value;
+                RaisePropertyChanged();
+            }
+        }
+        public HotelOptions HotelOptions
+        {
+            get
+            {
+                return _HotelOptions;
+            }
+
+            set
+            {
+                if (_HotelOptions == value)
+                {
+                    return;
+                }
+
+                _HotelOptions = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public string Details
         {
@@ -25,12 +74,7 @@ namespace LATravelManager.Model.Notifications
             }
         }
 
-
-
-
-
         private NotificaationType _NotificaationType;
-
 
         public NotificaationType NotificaationType
         {
@@ -53,7 +97,6 @@ namespace LATravelManager.Model.Notifications
 
         private NotifStatus _NotifStatus;
 
-
         public NotifStatus NotifStatus
         {
             get
@@ -72,7 +115,6 @@ namespace LATravelManager.Model.Notifications
                 RaisePropertyChanged();
             }
         }
-
 
         private ReservationWrapper _ReservationWrapper;
 

@@ -59,6 +59,7 @@
     <Compile Include="BookingData\Personal_Booking.cs" />
     <Compile Include="BookingData\ThirdParty_Booking.cs" />
     <Compile Include="Excursions\CustomerOptional.cs" />
+    <Compile Include="Hotels\HotelOptions.cs" />
     <Compile Include="Notifications\Notification.cs" />
     <Compile Include="Notifications\NotifStatus.cs" />
     <Compile Include="Parea.cs" />
