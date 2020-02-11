@@ -26,5 +26,10 @@ namespace LATravelManager.UI.Views.Management
                     u.BasicDataManager.Context.RollBack();
             }
         }
+
+        private void Button_Click()
+        {
+
+        }
     }
 }

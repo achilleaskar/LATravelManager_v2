@@ -1,5 +1,7 @@
-﻿using LATravelManager.UI.ViewModel.Window_ViewModels;
+﻿using LATravelManager.Model.Notifications;
+using LATravelManager.UI.ViewModel.Window_ViewModels;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace LATravelManager.UI.Views
 {
@@ -21,6 +23,17 @@ namespace LATravelManager.UI.Views
             }
         }
 
-
+        private void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var t = sender.GetType();
+            if (DataContext is MainUserControl_ViewModel mucvm
+                && sender is ListViewItem lvi
+                && lvi.DataContext is Notification n
+                && n.ReservationWrapper != null)
+            {
+                mucvm.SelectedReservation = n.ReservationWrapper;
+                mucvm.EditBookingCommand.Execute(null);
+            }
+        }
     }
 }

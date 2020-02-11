@@ -182,6 +182,7 @@ namespace LATravelManager.UI.Repositories
                 .Include(f => f.ExcursionDate)
                 .Include(f => f.Payments)
                 .Include(f => f.User)
+                .Include(f => f.ExtraServices)
                 .Include(f => f.Excursion)
                 .Include(f => f.Excursion.ExcursionType)
                 .Include(f => f.ReservationsInBooking.Select(i => i.CustomersList))
@@ -221,6 +222,7 @@ namespace LATravelManager.UI.Repositories
                .Include(f => f.User)
                .Include(f => f.Excursion)
                .Include(f => f.ExcursionDate)
+               .Include(f => f.ExtraServices)
                .Include(f => f.Payments.Select(p => p.User))
                .Include(f => f.ReservationsInBooking.Select(i => i.CustomersList))
                .Include(f => f.ReservationsInBooking.Select(i => i.Room))
@@ -298,6 +300,7 @@ namespace LATravelManager.UI.Repositories
                 .Include(f => f.Booking.ExcursionDate)
                 .Include(f => f.Booking.Partner)
                 .Include(f => f.Booking.Payments)
+                .Include(f => f.Booking.ExtraServices)
                 .Include(f => f.Room)
                 .Include(f => f.Room.Hotel)
                 .Include(f => f.Room.RoomType)
@@ -323,6 +326,7 @@ namespace LATravelManager.UI.Repositories
                        DbFunctions.DiffDays(o.CheckIn, o.CreatedDate) <= 5)) && o.Disabled == false)
                            .Include(x => x.ReservationsInBooking.Select(t => t.CustomersList))
                            .Include(x => x.Payments)
+                           .Include(x => x.ExtraServices)
                            .Include(x => x.User)
                            .Include(x => x.Excursion.Destinations)
                            .ToListAsync);
@@ -359,33 +363,37 @@ namespace LATravelManager.UI.Repositories
                 .ToListAsync);
         }
 
-        public async Task<List<Option>> GetAllPendingOptions()
+        public async Task<List<Option>> GetAllPendingOptions(bool ok = false)
         {
-            return await RunTask(Context.Options.Where(o => o.Room.User.BaseLocation == StaticResources.User.BaseLocation &&
-            (StaticResources.User.Level < 3 || o.Room.User.Id == StaticResources.User.Id) &&
-            o.Date >= DateTime.Today && o.Date <= limit)
+            return await RunTask(Context.Options
+                .Where(o => o.Room.User.BaseLocation == StaticResources.User.BaseLocation &&
+                ((ok && o.NotifStatus != null && o.NotifStatus.IsOk) || (!ok && (o.NotifStatus == null || !o.NotifStatus.IsOk))) &&
+                (StaticResources.User.Level < 3 || o.Room.User.Id == StaticResources.User.Id) &&
+                o.Date >= DateTime.Today && o.Date <= limit)
                 .Include(x => x.Room.Hotel)
                 .ToListAsync);
         }
 
-        public async Task<List<HotelService>> GetAllPersonalOptions()
+        public async Task<List<HotelService>> GetAllPersonalOptions(bool ok = false)
         {
             return await RunTask(Context.HotelServices
-                .Where(s => s.Personal_Booking.User.BaseLocation == StaticResources.User.BaseLocation &&
-                (StaticResources.User.Level < 2 || s.Personal_Booking.User.Id == StaticResources.User.Id) &&
-                s.Option >= DateTime.Today && s.Option <= limit && s.Personal_Booking.Disabled == false)
+                .Where(o => o.Personal_Booking.User.BaseLocation == StaticResources.User.BaseLocation &&
+                ((ok && o.NotifStatus != null && o.NotifStatus.IsOk) || (!ok && (o.NotifStatus == null || !o.NotifStatus.IsOk))) &&
+                (StaticResources.User.Level < 2 || o.Personal_Booking.User.Id == StaticResources.User.Id) &&
+                 o.Option >= DateTime.Today && o.Option <= limit && o.Personal_Booking.Disabled == false)
                 .Include(x => x.Personal_Booking.Customers)
                 .ToListAsync);
         }
 
-        public async Task<List<PlaneService>> GetAllPlaneOptions()
+        public async Task<List<PlaneService>> GetAllPlaneOptions(bool ok = false)
         {
             var planelimit = DateTime.Today.AddDays(4);
             return await RunTask(Context.PlaneServices
-                .Where(s => s.Personal_Booking.User.BaseLocation == StaticResources.User.BaseLocation &&
-                (StaticResources.User.Level < 2 || s.Personal_Booking.User.Id == StaticResources.User.Id) &&
-                (s.TimeGo >= DateTime.Today || s.TimeReturn >= DateTime.Today) &&
-                (s.TimeGo <= planelimit || s.TimeReturn <= planelimit) && s.Personal_Booking.Disabled == false)
+                .Where(o => o.Personal_Booking.User.BaseLocation == StaticResources.User.BaseLocation &&
+                ((ok && o.NotifStatus != null && o.NotifStatus.IsOk) || (!ok && (o.NotifStatus == null || !o.NotifStatus.IsOk))) &&
+                (StaticResources.User.Level < 2 || o.Personal_Booking.User.Id == StaticResources.User.Id) &&
+                (o.TimeGo >= DateTime.Today || o.TimeReturn >= DateTime.Today) &&
+                (o.TimeGo <= planelimit || o.TimeReturn <= planelimit) && o.Personal_Booking.Disabled == false)
                 .Include(x => x.Personal_Booking.Customers)
                 .Include(x => x.Airline)
                 .ToListAsync);
@@ -400,6 +408,7 @@ namespace LATravelManager.UI.Repositories
                 .Include(f => f.Booking.ExcursionDate)
                 .Include(f => f.Booking.Partner)
                 .Include(f => f.Booking.Payments)
+                .Include(f => f.Booking.ExtraServices)
                 .Include(f => f.Room)
                 .Include(f => f.Room.Hotel)
                 .Include(f => f.Room.RoomType)
@@ -502,6 +511,7 @@ namespace LATravelManager.UI.Repositories
                 .Include(f => f.User)
                 .Include(f => f.Excursion)
                 .Include(f => f.ExcursionDate)
+                .Include(f => f.ExtraServices)
                 .Include(f => f.Payments.Select(p => p.User))
                 .Include(f => f.ReservationsInBooking.Select(i => i.CustomersList))
                 .Include(f => f.ReservationsInBooking.Select(i => i.CustomersList.Select(j => j.BusGo.Vehicle)))
@@ -921,6 +931,7 @@ namespace LATravelManager.UI.Repositories
                   .Include(f => f.Booking.Excursion)
                   .Include(f => f.Booking.Excursion.ExcursionType)
                   .Include(f => f.Booking.Payments)
+                  .Include(f => f.Booking.ExtraServices)
                   .Include(f => f.CustomersList)
                   .ToListAsync);
         }
@@ -956,6 +967,7 @@ namespace LATravelManager.UI.Repositories
                   .Include(f => f.Booking.Excursion)
                   .Include(f => f.Booking.Excursion.ExcursionType)
                   .Include(f => f.Booking.Payments)
+                  .Include(f => f.Booking.ExtraServices)
                   .Include(f => f.CustomersList)
                   .Include(f => f.Room.Hotel)
                   .Include(f => f.Room.RoomType)
@@ -1028,6 +1040,7 @@ namespace LATravelManager.UI.Repositories
                   .Include(f => f.Booking.Excursion)
                   .Include(f => f.Booking.Excursion.ExcursionType)
                   .Include(f => f.Booking.Payments)
+                  .Include(f => f.Booking.ExtraServices)
                   .Include(f => f.Booking.ReservationsInBooking.Select(i => i.CustomersList))
                   .Include(f => f.Room.Hotel)
                   .Include(f => f.Room.RoomType)

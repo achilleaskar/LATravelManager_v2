@@ -44,7 +44,6 @@
         <DataTemplate x:Key="EnabledTemplate"
                       DataType="{x:Type viewmodels:NewReservation_ThirdParty_VIewModel}">
             <StackPanel>
-
                 <Button Content="Ακύρωση Κράτησης"
                         Padding="3 3"
                         FontSize="11"
@@ -61,7 +60,6 @@
                          TextWrapping="Wrap" />
             </StackPanel>
         </DataTemplate>
-
         <DataTemplate x:Key="DisabledTemplate"
                       DataType="{x:Type viewmodels:NewReservation_ThirdParty_VIewModel}">
             <Grid Background="Red">
@@ -217,10 +215,35 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTextColumn Header="Αρ. Ταυτ."
-                                                MinWidth="80"
+                            <DataGridTextColumn Header="Passport Id"
                                                 MaxWidth="200"
                                                 Binding="{Binding PassportNum,UpdateSourceTrigger=PropertyChanged}" />
+                            <DataGridTemplateColumn Header="Έκδοση"
+                                                    Width="Auto"
+                                                    CellStyle="{StaticResource DataGridCellStyle}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <DatePicker VerticalAlignment="Center"
+                                                    Width="95"
+                                                    SelectedDate="{Binding PassportPublish, UpdateSourceTrigger=PropertyChanged}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Λήξη"
+                                                    Width="Auto"
+                                                    CellStyle="{StaticResource DataGridCellStyle}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <DatePicker VerticalAlignment="Center"
+                                                    Width="95"
+                                                    SelectedDate="{Binding PassportExpiration, UpdateSourceTrigger=PropertyChanged}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Email"
+                                                MaxWidth="200"
+                                                Binding="{Binding Email, UpdateSourceTrigger=PropertyChanged}"
+                                                Visibility="{Binding DataContext.SelectedExcursion.IncludesPlane, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}" />
                             <DataGridTemplateColumn Header="Πάσο"
                                                     Width="70">
                                 <DataGridTemplateColumn.CellTemplate>
@@ -266,7 +289,6 @@
                         </Grid.RowDefinitions>
                         <StackPanel Orientation="Horizontal"
                                     Background="AliceBlue">
-
                             <GroupBox HorizontalAlignment="Left"
                                       VerticalAlignment="Top"
                                       Header="Νέα Πληρωμή">
@@ -427,7 +449,6 @@
                                         Value="Center" />
                             </Style>
                         </StackPanel.Resources>
-
                         <StackPanel>
                             <StackPanel Orientation="Horizontal">
                                 <StackPanel>
@@ -450,7 +471,6 @@
                                            Foreground="Red"
                                            Width="138" />
                             </StackPanel>
-
                             <TextBlock Text="Περιγραφή πακέτου:"
                                        HorizontalAlignment="Left" />
                             <TextBox HorizontalAlignment="Stretch"
@@ -468,7 +488,6 @@
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-
                                 <TextBlock Text="Προορισμός:"
                                            Margin="0 0 5 0"
                                            HorizontalAlignment="Left" />
@@ -478,7 +497,6 @@
                                          MinWidth="160"
                                          Text="{Binding ThirdPartyWr.City,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                                          VerticalAlignment="Bottom" />
-
                                 <TextBlock Text="Διαμονή:"
                                            Grid.Row="1"
                                            VerticalAlignment="Center"
@@ -491,17 +509,14 @@
                                          Text="{Binding ThirdPartyWr.Stay,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                                          VerticalAlignment="Bottom" />
                             </Grid>
-
                             <Button Content="Προσθήκη/Αλλαγή Αρχείου:"
                                     Margin="0 5 5 5"
                                     HorizontalAlignment="Left"
                                     Command="{Binding UploadFileCommand}" />
                             <StackPanel Orientation="Horizontal">
-
                                 <TextBlock HorizontalAlignment="Stretch"
                                            Text="Αρχείο:"
                                            VerticalAlignment="Bottom" />
-
                                 <TextBlock HorizontalAlignment="Stretch"
                                            Margin=" 5 0"
                                            VerticalAlignment="Bottom">
@@ -572,7 +587,6 @@
                                          MaxWidth="60"
                                          Grid.Row="1"
                                          Grid.Column="1" />
-
                                 <TextBlock Text="Νet τιμή:"
                                            Grid.Row="2"
                                            HorizontalAlignment="Left" />
@@ -602,7 +616,6 @@
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-
                                 <Label Content="Προκαταβολή:"
                                        Grid.Row="3"
                                        Grid.Column="0"
@@ -618,7 +631,8 @@
                                        Grid.Column="0"
                                        Margin="0,0,5,0" />
                                 <TextBlock Grid.Row="5"
-                                           Width="50" Background="LightGreen"
+                                           Width="50"
+                                           Background="LightGreen"
                                            Text="{Binding ThirdPartyWr.Remaining,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource FtoSConverter}}"
                                            VerticalAlignment="Center"
                                            Grid.Column="1"
@@ -648,7 +662,6 @@
                                          Text="{Binding ThirdPartyWr.Comment,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                                          VerticalAlignment="Bottom" />
                             </Grid>
-
                             <ComboBox ItemsSource="{Binding Users}"
                                       SelectedIndex="{Binding SelectedUserIndex}"
                                       DisplayMemberPath="UserName"

@@ -62,5 +62,32 @@ namespace LATravelManager.Model.Excursions
         }
 
         #endregion Methods
+
+
+
+
+
+
+        private bool _Deactivated;
+
+
+        public bool Deactivated
+        {
+            get
+            {
+                return _Deactivated;
+            }
+
+            set
+            {
+                if (_Deactivated == value)
+                {
+                    return;
+                }
+
+                _Deactivated = value;
+                RaisePropertyChanged();
+            }
+        }
     }
 }

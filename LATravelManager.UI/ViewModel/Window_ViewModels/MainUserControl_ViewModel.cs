@@ -1,25 +1,35 @@
-﻿using GalaSoft.MvvmLight.CommandWpf;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Data;
+using System.Windows.Input;
+using GalaSoft.MvvmLight.CommandWpf;
 using LaTravelManager.ViewModel.Management;
+using LATravelManager.Model;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Hotels;
+using LATravelManager.Model.Notifications;
 using LATravelManager.Model.Services;
 using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
+using LATravelManager.UI.ViewModel.CategoriesViewModels.Group;
+using LATravelManager.UI.ViewModel.CategoriesViewModels.Personal;
+using LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty;
 using LATravelManager.UI.ViewModel.Management;
 using LATravelManager.UI.ViewModel.Parents;
 using LATravelManager.UI.Views;
+using LATravelManager.UI.Views.Bansko;
 using LATravelManager.UI.Views.Management;
+using LATravelManager.UI.Views.Personal;
+using LATravelManager.UI.Views.ThirdParty;
 using Notifications.Wpf;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
 
 namespace LATravelManager.UI.ViewModel.Window_ViewModels
 {
@@ -40,6 +50,10 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             OpenLeadersEditCommand = new RelayCommand(OpenLeadersWindow, CanEditWindows);
             OpenVehiclesEditCommand = new RelayCommand(OpenVehiclesWindow, CanEditWindows);
             OpenOptionalsEditCommand = new RelayCommand(OpenOpionalsWindow, CanEditWindows);
+
+            NotIsOkCommand = new RelayCommand(async () => { await TryLogOut(); });
+
+            EditBookingCommand = new RelayCommand(async () => { await EditBooking(); }, CanEditBooking);
 
             TemplateViewmodels = new List<ExcursionCategory_ViewModelBase>();
 
@@ -62,6 +76,61 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             MessengerInstance.Send(new OpenChildWindowCommand(new OptionalExcursionsManagement_Window { DataContext = vm }));
         }
 
+        private async Task EditBooking()
+        {
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                if (SelectedReservation.ExcursionType == ExcursionTypeEnum.Personal)
+                {
+                    NewReservation_Personal_ViewModel viewModel = new NewReservation_Personal_ViewModel(MainViewModel);
+                    await viewModel.LoadAsync(SelectedReservation.PersonalModel.Id);
+                    MessengerInstance.Send(new OpenChildWindowCommand(new EditPersonalBooking_Window(), viewModel));
+                }
+                else if (SelectedReservation.ExcursionType == ExcursionTypeEnum.ThirdParty)
+                {
+                    NewReservation_ThirdParty_VIewModel viewModel = new NewReservation_ThirdParty_VIewModel(MainViewModel);
+                    await viewModel.LoadAsync(SelectedReservation.ThirdPartyModel.Id);
+                    MessengerInstance.Send(new OpenChildWindowCommand(new Edit_ThirdParty_Booking_Window(), viewModel));
+                }
+                else
+                {
+                    NewReservation_Group_ViewModel viewModel = new NewReservation_Group_ViewModel(MainViewModel);
+                    await viewModel.LoadAsync(SelectedReservation.Booking.Id);
+                    MessengerInstance.Send(new OpenChildWindowCommand(new EditBooking_Bansko_Window(), viewModel));
+                }
+                Mouse.OverrideCursor = Cursors.Arrow;
+            }
+            catch (Exception ex)
+            {
+                MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
+            }
+        }
+
+        public ReservationWrapper SelectedReservation
+        {
+            get
+            {
+                return _SelectedReservation;
+            }
+
+            set
+            {
+                if (_SelectedReservation == value)
+                {
+                    return;
+                }
+
+                _SelectedReservation = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private bool CanEditBooking()
+        {
+            return SelectedReservation != null;
+        }
+
         #endregion Constructors
 
         #region Fields
@@ -72,11 +141,13 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
         private NavigationViewModel _NavigationViewModel;
 
-        private List<string> _Nots;
+        private List<Notification> _Nots;
 
         private ExcursionCategory_ViewModelBase _SelectedExcursionType;
 
         private int _SelectedTemplateIndex;
+
+        public RelayCommand EditBookingCommand { get; set; }
 
         private ObservableCollection<ExcursionCategory> _Templates;
 
@@ -154,7 +225,29 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             }
         }
 
-        public List<string> Nots
+        private ICollectionView _NotsCV;
+        private ReservationWrapper _SelectedReservation;
+
+        public ICollectionView NotsCV
+        {
+            get
+            {
+                return _NotsCV;
+            }
+
+            set
+            {
+                if (_NotsCV == value)
+                {
+                    return;
+                }
+
+                _NotsCV = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public List<Notification> Nots
         {
             get
             {
@@ -170,6 +263,8 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
                 _Nots = value;
                 HasNots = Nots.Count > 0;
+                NotsCV = CollectionViewSource.GetDefaultView(Nots);
+                NotsCV.GroupDescriptions.Add(new PropertyGroupDescription(nameof(Notification.NotificaationType)));
                 RaisePropertyChanged();
             }
         }
@@ -182,6 +277,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
         public RelayCommand OpenOptionalsEditCommand { get; }
 
         public RelayCommand OpenHotelEditCommand { get; }
+        public RelayCommand NotIsOkCommand { get; }
 
         public RelayCommand OpenLeadersEditCommand { get; }
 
@@ -273,10 +369,10 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             // await SetProperViewModel();
         }
 
-        public async Task<List<string>> LoadOptions(GenericRepository repository)
+        public async Task<List<Notification>> LoadOptions(GenericRepository repository)
         {
             List<Option> options = await repository.GetAllPendingOptions();
-            List<string> reply = new List<string>();
+            List<Notification> reply = new List<Notification>();
 
             if (options.Count > 0)
             {
@@ -303,7 +399,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                 }
                 foreach (var hotel in hotelOptionsLis)
                 {
-                    reply.Add($"Οι Option για { hotel.Counter} δωμάτια στο { hotel.Hotel.Name} λήγουν στις {hotel.Date.ToShortDateString()}");
+                    reply.Add(new Notification { Details = $"Οι Option για { hotel.Counter} δωμάτια στο { hotel.Hotel.Name} λήγουν στις {hotel.Date.ToShortDateString()}", NotificaationType = Model.NotificaationType.Option });
                 }
             }
             return reply;
@@ -352,10 +448,9 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             var notificationManager = new NotificationManager();
 
             var Repository = new GenericRepository();
-            List<string> nots = new List<string>();
+            List<Notification> nots = new List<Notification>();
 
             nots.AddRange(await LoadOptions(Repository));
-            //nots.AddRange(await Repository.GetNotifications());
             nots.AddRange(await GetPersonalOptions(Repository));
             nots.AddRange(await GetPersonalCheckIns(Repository));
             nots.AddRange(await GetNonPayersGroup(Repository));
@@ -367,17 +462,17 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             {
                 notificationManager.Show(new NotificationContent
                 {
-                    Message = not,
+                    Message = not.Details,
                     Type = NotificationType.Warning
                 });
             }
             Nots = nots;
         }
 
-        private async Task<IEnumerable<string>> GetNonPayersGroup(GenericRepository repository)
+        private async Task<IEnumerable<Notification>> GetNonPayersGroup(GenericRepository repository)
         {
             List<BookingWrapper> options = (await repository.GetAllNonPayersGroup()).Select(b => new BookingWrapper(b)).ToList();
-            List<string> reply = new List<string>();
+            List<Notification> reply = new List<Notification>();
 
             if (options.Count > 0)
             {
@@ -386,23 +481,33 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                 {
                     if (((DateTime.Today - booking.CreatedDate).TotalDays >= 5 || (booking.CheckIn - DateTime.Today).TotalDays <= 5) && booking.FullPrice > booking.Customers.Count && booking.Recieved < 1)
                     {
-                        reply.Add($"Η κράτηση για { booking.Excursion.Destinations[0]}  " +
-                            $"στο όνομα { booking.ReservationsInBooking[0].CustomersList[0] } δέν έχει δώσει προκαταβολή");
+                        reply.Add(new Notification
+                        {
+                            Details = $"Η κράτηση για { booking.Excursion.Destinations[0]}  " +
+                            $"στο όνομα { booking.ReservationsInBooking[0].CustomersList[0] } δέν έχει δώσει προκαταβολή",
+                            ReservationWrapper = new ReservationWrapper { BookingWrapper = booking },
+                            NotificaationType = Model.NotificaationType.NoPay
+                        });
                     }
                     else if ((booking.CheckIn - DateTime.Today).TotalDays <= 5 && booking.Remaining > 1)
                     {
-                        reply.Add($"Η κράτηση για { booking.Excursion.Destinations[0]}  " +
-                            $"στο όνομα { booking.ReservationsInBooking[0].CustomersList[0] } δέν έχει κάνει εξόφληση");
+                        reply.Add(new Notification
+                        {
+                            Details = $"Η κράτηση για { booking.Excursion.Destinations[0]}  " +
+                            $"στο όνομα { booking.ReservationsInBooking[0].CustomersList[0] } δέν έχει κάνει εξόφληση",
+                            ReservationWrapper = new ReservationWrapper { BookingWrapper = booking },
+                            NotificaationType = Model.NotificaationType.NoPay
+                        });
                     }
                 }
             }
             return reply;
         }
 
-        private async Task<IEnumerable<string>> GetNonPayersPersonal(GenericRepository repository)
+        private async Task<IEnumerable<Notification>> GetNonPayersPersonal(GenericRepository repository)
         {
             List<Personal_BookingWrapper> options = (await repository.GetAllNonPayersPersonal()).Select(b => new Personal_BookingWrapper(b)).ToList();
-            List<string> reply = new List<string>();
+            List<Notification> reply = new List<Notification>();
 
             if (options.Count > 0)
             {
@@ -411,21 +516,31 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                 {
                     if ((DateTime.Today - booking.CreatedDate).TotalDays >= 5 || booking.Services.Any(a => (a.TimeGo - DateTime.Today).TotalDays <= 5) && booking.FullPrice > booking.Customers.Count && booking.Recieved < 1)
                     {
-                        reply.Add($"Το ατομικό πακέτο στο όνομα { booking.Customers[0] } δέν έχει δώσει προκαταβολή");
+                        reply.Add(new Notification
+                        {
+                            Details = $"Το ατομικό πακέτο στο όνομα { booking.Customers[0] } δέν έχει δώσει προκαταβολή",
+                            ReservationWrapper = new ReservationWrapper { PersonalModel = booking },
+                            NotificaationType = Model.NotificaationType.NoPay
+                        });
                     }
                     else if (booking.Services.Any(a => (a.TimeGo - DateTime.Today).TotalDays <= 5) && booking.Remaining > 1)
                     {
-                        reply.Add($"Το ατομικό πακέτο στο όνομα { booking.Customers[0] } δέν έχει δώσει προκαταβολή");
+                        reply.Add(new Notification
+                        {
+                            Details = $"Το ατομικό πακέτο στο όνομα { booking.Customers[0] } δέν έχει δώσει προκαταβολή",
+                            ReservationWrapper = new ReservationWrapper { PersonalModel = booking },
+                            NotificaationType = Model.NotificaationType.NoPay
+                        });
                     }
                 }
             }
             return reply;
         }
 
-        private async Task<IEnumerable<string>> GetNonPayersThirdParty(GenericRepository repository)
+        private async Task<IEnumerable<Notification>> GetNonPayersThirdParty(GenericRepository repository)
         {
             List<ThirdParty_Booking_Wrapper> options = (await repository.GetAllNonPayersThirdparty()).Select(b => new ThirdParty_Booking_Wrapper(b)).ToList();
-            List<string> reply = new List<string>();
+            List<Notification> reply = new List<Notification>();
 
             if (options.Count > 0)
             {
@@ -434,23 +549,33 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                 {
                     if (((DateTime.Today - booking.CreatedDate).TotalDays >= 5 || (booking.CheckIn - DateTime.Today).TotalDays <= 5) && booking.FullPrice > booking.Customers.Count && booking.Recieved < 1)
                     {
-                        reply.Add($"Το πακέτο συνεργάτη για { booking.City} " +
-                            $"στο όνομα { booking.Customers[0]} δέν έχει δώσει προκαταβολή");
+                        reply.Add(new Notification
+                        {
+                            Details = $"Το πακέτο συνεργάτη για { booking.City} " +
+                            $"στο όνομα { booking.Customers[0]} δέν έχει δώσει προκαταβολή",
+                            ReservationWrapper = new ReservationWrapper { ThirdPartyModel = booking },
+                            NotificaationType = Model.NotificaationType.NoPay
+                        });
                     }
                     else if ((booking.CheckIn - DateTime.Today).TotalDays <= 5 && booking.Remaining > 1)
                     {
-                        reply.Add($"Το πακέτο συνεργάτη για { booking.City} " +
-                            $"στο όνομα { booking.Customers[0]} δέν έχει κάνει εξόφληση");
+                        reply.Add(new Notification
+                        {
+                            Details = $"Το πακέτο συνεργάτη για { booking.City} " +
+                            $"στο όνομα { booking.Customers[0]} δέν έχει κάνει εξόφληση",
+                            ReservationWrapper = new ReservationWrapper { ThirdPartyModel = booking },
+                            NotificaationType = Model.NotificaationType.NoPay
+                        });
                     }
                 }
             }
             return reply;
         }
 
-        private async Task<IEnumerable<string>> GetPersonalCheckIns(GenericRepository repository)
+        private async Task<IEnumerable<Notification>> GetPersonalCheckIns(GenericRepository repository)
         {
             List<PlaneService> options = await repository.GetAllPlaneOptions();
-            List<string> reply = new List<string>();
+            List<Notification> reply = new List<Notification>();
 
             if (options.Count > 0)
             {
@@ -465,12 +590,12 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                         if (option.Airline.Checkin != 0 && option.TimeGo > DateTime.Now &&
                             (option.TimeGo - DateTime.Now).TotalHours <= option.Airline.Checkin)
                         {
-                            reply.Add($"Ανοιξε το CheckIn {option.From}-{option.To} του {(option.Personal_Booking.Customers.Count > 0 ? option.Personal_Booking.Customers.ToList()[0].ToString() : option.Id.ToString())}");
+                            reply.Add(new Notification { Details = $"Ανοιξε το CheckIn {option.From}-{option.To} του {(option.Personal_Booking.Customers.Count > 0 ? option.Personal_Booking.Customers.ToList()[0].ToString() : option.Id.ToString())}", NotificaationType = Model.NotificaationType.CheckIn, ReservationWrapper = new ReservationWrapper { PersonalModel = new Personal_BookingWrapper(option.Personal_Booking) } });
                         }
                         if (option.Airline.Checkin != 0 && option.TimeReturn > DateTime.Now && option.Allerretour &&
                             (option.TimeReturn - DateTime.Now).TotalHours <= option.Airline.Checkin)
                         {
-                            reply.Add($"Ανοιξε το το CheckIn {option.To}-{option.From} του {(option.Personal_Booking.Customers.Count > 0 ? option.Personal_Booking.Customers.ToList()[0].ToString() : option.Id.ToString())}");
+                            reply.Add(new Notification { Details = $"Ανοιξε το το CheckIn Επιστροφής {option.To}-{option.From} του {(option.Personal_Booking.Customers.Count > 0 ? option.Personal_Booking.Customers.ToList()[0].ToString() : option.Id.ToString())}", NotificaationType = Model.NotificaationType.CheckIn, ReservationWrapper = new ReservationWrapper { PersonalModel = new Personal_BookingWrapper(option.Personal_Booking) } });
                         }
                     }
                 }
@@ -478,10 +603,10 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             return reply;
         }
 
-        private async Task<IEnumerable<string>> GetPersonalOptions(GenericRepository repository)
+        private async Task<IEnumerable<Notification>> GetPersonalOptions(GenericRepository repository)
         {
             List<HotelService> options = await repository.GetAllPersonalOptions();
-            List<string> reply = new List<string>();
+            List<Notification> reply = new List<Notification>();
 
             if (options.Count > 0)
             {
@@ -491,7 +616,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                     {
                         continue;
                     }
-                    reply.Add($"Η Option για το ατομικό {(option.Personal_Booking.Customers.Count > 0 ? option.Personal_Booking.Customers.ToList()[0].ToString() : option.Id.ToString())} στο {(option.Hotel != null ? option.Hotel.Name : "Αγνωστο Ξενοδοχείο")} λήγει στις {option.Option.ToShortDateString()}");
+                    reply.Add(new Notification { Details = $"Η Option για το ατομικό {(option.Personal_Booking.Customers.Count > 0 ? option.Personal_Booking.Customers.ToList()[0].ToString() : option.Id.ToString())} στο {(option.Hotel != null ? option.Hotel.Name : "Αγνωστο Ξενοδοχείο")} λήγει στις {option.Option.ToShortDateString()}", NotificaationType = NotificaationType.PersonalOption, ReservationWrapper = new ReservationWrapper { PersonalModel = new Personal_BookingWrapper(option.Personal_Booking) } });
                 }
             }
             return reply;

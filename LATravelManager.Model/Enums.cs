@@ -134,6 +134,7 @@ namespace LATravelManager.Model
     {
         CheckIn,
         Option,
+        PersonalOption,
         NoPay,
     }
 

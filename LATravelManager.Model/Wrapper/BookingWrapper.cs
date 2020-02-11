@@ -1,8 +1,4 @@
-﻿using LATravelManager.Model.BookingData;
-using LATravelManager.Model.Excursions;
-using LATravelManager.Model.People;
-using LATravelManager.UI.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -11,16 +7,22 @@ using System.Linq;
 using System.Text;
 using System.Windows.Data;
 using System.Windows.Media;
+using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Excursions;
+using LATravelManager.Model.People;
+using LATravelManager.UI.Helpers;
 
 namespace LATravelManager.Model.Wrapper
 {
     public class BookingWrapper : ModelWrapper<Booking>
     {
         #region Constructors
+
         public string Nights
         {
             get { return $"{(int)(CheckOut - CheckIn).TotalDays} νύχτες"; }
         }
+
         public BookingWrapper() : this(new Booking())
         {
         }
@@ -49,6 +51,33 @@ namespace LATravelManager.Model.Wrapper
 
         #endregion Fields
 
+
+
+        private ExtraService _ExtraService;
+
+
+
+
+        
+
+        public ExtraService ExtraService
+        {
+            get
+            {
+                return _ExtraService;
+            }
+
+            set
+            {
+                if (_ExtraService == value)
+                {
+                    return;
+                }
+
+                _ExtraService = value;
+                RaisePropertyChanged();
+            }
+        }
         #region Properties
 
         private ICollectionView _CustomersCV;
@@ -171,7 +200,6 @@ namespace LATravelManager.Model.Wrapper
                 DatesError = ValidateToDatetime();
                 RaisePropertyChanged(nameof(Nights));
             }
-
         }
 
         public string Comment
@@ -184,7 +212,6 @@ namespace LATravelManager.Model.Wrapper
         {
             get { return GetValue<bool>(); }
             set { SetValue(value); }
-
         }
 
         public bool GroupBooking
@@ -192,11 +219,13 @@ namespace LATravelManager.Model.Wrapper
             get { return GetValue<bool>(); }
             set { SetValue(value); }
         }
+
         public bool VoucherSent
         {
             get { return GetValue<bool>(); }
             set { SetValue(value); }
         }
+
         public bool RoomingListIncluded
         {
             get { return GetValue<bool>(); }
@@ -237,7 +266,7 @@ namespace LATravelManager.Model.Wrapper
                 if (Math.Abs(value - GetValue<decimal>()) >= 0.01m)
                 {
                     SetValue(value);
-                    NetPrice = Math.Round(FullPrice - FullPrice * Commision / 100, 2);
+                    NetPrice = Math.Round(FullPrice - (FullPrice - Extras) * Commision / 100, 2);
                     FIxedCommision = FullPrice - NetPrice;
                     CalculateRemainingAmount();
                 }
@@ -285,7 +314,7 @@ namespace LATravelManager.Model.Wrapper
                 {
                     hotels.Add(res.Room.Hotel.Name);
                 }
-                if ((res.ReservationType==ReservationTypeEnum.Noname || res.ReservationType == ReservationTypeEnum.Overbooked) && res.Hotel != null && !hotels.Any(x => x == res.Hotel.Name))
+                if ((res.ReservationType == ReservationTypeEnum.Noname || res.ReservationType == ReservationTypeEnum.Overbooked) && res.Hotel != null && !hotels.Any(x => x == res.Hotel.Name))
                 {
                     hotels.Add(res.Hotel.Name);
                 }
@@ -427,8 +456,6 @@ namespace LATravelManager.Model.Wrapper
 
         public bool IsGroup => Excursion != null && Excursion.ExcursionType.Category == ExcursionTypeEnum.Group && Excursion.FixedDates;
 
-
-
         public bool IsNotGroup => !IsGroup;
 
         public bool IsNotPartners => !IsPartners;
@@ -461,6 +488,27 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
+        private decimal _Extras;
+
+        public decimal Extras
+        {
+            get
+            {
+                return _Extras;
+            }
+
+            set
+            {
+                if (_Extras == value)
+                {
+                    return;
+                }
+                if (Math.Abs(Extras - value) > 0.01m)
+                    _Extras = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public string Locations => GetLocations();
 
         public string Names => GetNames();
@@ -473,9 +521,9 @@ namespace LATravelManager.Model.Wrapper
                 if (Math.Abs(NetPrice - value) > 0.01m)
                 {
                     SetValue(value);
-                    if (FullPrice > 0)
+                    if (FullPrice - Extras > 0)
                     {
-                        Commision = 100 * (FullPrice - NetPrice) / FullPrice;
+                        Commision = 100 * (FullPrice - Extras - NetPrice) / (FullPrice - Extras);
 
                         //FullPrice = (Commision == 100) ? 0 : Math.Round(value / (1 - (Commision / 100)), 2);
                         CalculateRemainingAmount();
@@ -499,6 +547,11 @@ namespace LATravelManager.Model.Wrapper
         public ObservableCollection<Payment> Payments
         {
             get { return GetValue<ObservableCollection<Payment>>(); }
+        }
+
+        public ObservableCollection<ExtraService> ExtraServices
+        {
+            get { return GetValue<ObservableCollection<ExtraService>>(); }
         }
 
         public decimal Recieved
@@ -619,24 +672,26 @@ namespace LATravelManager.Model.Wrapper
             if (!Loaded)
                 return;
             decimal total = 0;
+            decimal extra = 0;
 
             _Recieved = 0;
-            foreach (Payment payment in Payments)
-                _Recieved += payment.Amount;
+            _Recieved += Payments.Sum(p => p.Amount);
             Recieved = _Recieved;
 
-            foreach (CustomerWrapper customer in Customers)
-            {
-                total += customer.Price;
-            }
-            FullPrice = total;
+            total += Customers.Sum(c => c.Price);
+
+            extra = ExtraServices.Sum(e => e.Amount);
+            Extras = extra;
+
+            FullPrice = total + Extras;
             Remaining = total - Recieved;
+
             if (IsPartners)
             {
-                if (FullPrice > 0 )
+                if (FullPrice - Extras > 0)
                 {
                     if (Commision > 0)
-                        NetPrice = FullPrice - FullPrice * Commision / 100;
+                        NetPrice = FullPrice - (FullPrice - Extras) * Commision / 100;
                     else
                         NetPrice = FullPrice;
                 }
@@ -651,16 +706,6 @@ namespace LATravelManager.Model.Wrapper
                 if (FIxedCommision == 0 && Commision > 0 && FullPrice > 0)
                     FIxedCommision = FullPrice - NetPrice;
             }
-
-            //decimal full = 0;
-            //if (IsPartners && FullPrice == 0 && Commision > 0 && NetPrice > 0)
-            //{
-            //    full = 100 * NetPrice / (100 - Commision);
-
-            //    decimal tmpPrice = Math.Round(full / Customers.Count, 2);
-            //    foreach (CustomerWrapper customer in Customers)
-            //        customer.Price = tmpPrice;
-            //}
         }
 
         private decimal _FIxedCommision;

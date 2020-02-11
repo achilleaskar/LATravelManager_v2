@@ -49,6 +49,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             AddFromFileCommand = new RelayCommand(AddFromFile);
 
             DeletePaymentCommand = new RelayCommand(DeletePayment, CanDeletePayment);
+            DeleteExtraServiceCommand = new RelayCommand(DeleteExtraService, CanDeleteExtraservice);
             PrintRecieptCommand = new RelayCommand(PrintReciept);
 
             DeleteSelectedCustomersCommand = new RelayCommand(DeleteSelectedCustomers, CanDeleteCustomers);
@@ -395,6 +396,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         public RelayCommand ClearBookingCommand { get; set; }
 
         public RelayCommand DeletePaymentCommand { get; set; }
+        public RelayCommand DeleteExtraServiceCommand { get; set; }
 
         public ObservableCollection<Email> Emails
         {
@@ -747,6 +749,31 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                         SelectedEmail = Emails[0];
                     }
                 }
+                RaisePropertyChanged();
+            }
+        }
+
+
+
+
+        private ExtraService _SelectedExtraService;
+
+
+        public ExtraService SelectedExtraService
+        {
+            get
+            {
+                return _SelectedExtraService;
+            }
+
+            set
+            {
+                if (_SelectedExtraService == value)
+                {
+                    return;
+                }
+
+                _SelectedExtraService = value;
                 RaisePropertyChanged();
             }
         }
@@ -1604,6 +1631,11 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             return SelectedPayment != null && AreContexesFree;
         }
 
+        private bool CanDeleteExtraservice()
+        {
+            return SelectedExtraService != null && AreContexesFree;
+        }
+
         private bool CanMakeNoNameReservation(RoomType roomType)
         {
             if (BookingWr == null || FilteredRoomList == null || (SelectedCustomer == null && !All) || !AreBookingDataValid || !AreContexesFree ||
@@ -1831,6 +1863,11 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         private void DeletePayment()
         {
             GenericRepository.Delete(SelectedPayment);
+        }
+
+        private void DeleteExtraService()
+        {
+            GenericRepository.Delete(SelectedExtraService);
         }
 
         private string GetBookingDataValidationError(string propertyName)

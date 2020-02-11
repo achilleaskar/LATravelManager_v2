@@ -1,12 +1,11 @@
-﻿using LATravelManager.Model.Excursions;
-using LATravelManager.Model.People;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 using System.Text;
+using LATravelManager.Model.Excursions;
+using LATravelManager.Model.People;
 
 namespace LATravelManager.Model.BookingData
 {
@@ -17,6 +16,7 @@ namespace LATravelManager.Model.BookingData
         public Booking()
         {
             Payments = new ObservableCollection<Payment>();
+            ExtraServices = new ObservableCollection<ExtraService>();
             ReservationsInBooking = new ObservableCollection<Reservation>();
             ChangesInBooking = new ObservableCollection<ChangeInBooking>();
             CheckIn = DateTime.Today;
@@ -26,7 +26,6 @@ namespace LATravelManager.Model.BookingData
         #endregion Constructors
 
         #region Properties
-
 
         // public int LeaderDriver => GetHigher(); ReservationsInBooking.OrderByDescending(r=> r.CustomersList.OrderByDescending(c=>c.LeaderDriver).First().LeaderDriver).Select;
 
@@ -48,7 +47,6 @@ namespace LATravelManager.Model.BookingData
                     }
                 }
             }
-
         }
 
         [NotMapped]
@@ -58,7 +56,6 @@ namespace LATravelManager.Model.BookingData
         public ObservableCollection<ChangeInBooking> ChangesInBooking { get; }
         public DateTime CheckIn { get; set; }
         public DateTime CheckOut { get; set; }
-
 
         //    Customers.CollectionChanged += Customers_CollectionChanged;
         //    foreach (Customer customer in tmpBooking.Customers)
@@ -129,6 +126,8 @@ namespace LATravelManager.Model.BookingData
         //    CheckIn = DateTime.Today;
         //}
         public ICollection<Payment> Payments { get; }
+
+        public ICollection<ExtraService> ExtraServices { get; }
 
         public bool Reciept { get; set; }
         public ObservableCollection<Reservation> ReservationsInBooking { get; }

@@ -255,6 +255,8 @@
         </TabControl>
         <StackPanel Orientation="Vertical"
                     Grid.Row="1">
+            <CheckBox Content="Απενεργοποιημένη εδρομή"
+                      IsChecked="{Binding Deactivated}" />
             <Button Content="Προσθήκη"
                     Margin="5,5,5,0"
                     Command="{Binding AddEntityCommand}" />

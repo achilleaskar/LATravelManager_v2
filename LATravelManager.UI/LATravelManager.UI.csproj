@@ -119,6 +119,7 @@
     <Compile Include="Converters\FloadToStringValueConverter.cs" />
     <Compile Include="Converters\GroupToContainsConverter.cs" />
     <Compile Include="Converters\IsGroupConverter.cs" />
+    <Compile Include="Converters\NotCategoryConverter.cs" />
     <Compile Include="Converters\RemainingToColorConverter.cs" />
     <Compile Include="Converters\ReservationSelectorVisibilityConverter.cs" />
     <Compile Include="Converters\ReturnsToDateConverter.cs" />

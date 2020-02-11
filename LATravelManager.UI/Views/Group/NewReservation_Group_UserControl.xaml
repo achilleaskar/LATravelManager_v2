@@ -13,7 +13,6 @@
              Background="White"
              d:DesignHeight="700"
              d:DesignWidth="1200">
-
     <UserControl.Resources>
         <converters:BoolToColorConverter x:Key="BrushColorConverter" />
         <converters:UserToVisibility x:Key="UserToVisibilityConverter" />
@@ -51,7 +50,6 @@
             </CollectionViewSource.GroupDescriptions>
         </CollectionViewSource>
     </UserControl.Resources>
-
     <ScrollViewer HorizontalScrollBarVisibility="Auto"
                   VerticalScrollBarVisibility="Auto">
         <Grid VerticalAlignment="Top"
@@ -76,7 +74,6 @@
                                         Value="Center" />
                             </Style>
                         </StackPanel.Resources>
-
                         <ListView ItemsSource="{Binding Source={StaticResource cvs}}"
                                   Grid.Row="1"
                                   Width="460"
@@ -111,7 +108,6 @@
                                     <!--<GridViewColumn Header="Ξενοδοχείο"
                                                     Width="120"
                                                     DisplayMemberBinding="{Binding Hotel.Name}" />-->
-
                                     <GridViewColumn Width="40">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate />
@@ -325,7 +321,6 @@
                             <StackPanel Orientation="Horizontal"
                                         Margin="0,5"
                                         HorizontalAlignment="Right">
-
                                 <CheckBox Content="Όλοι"
                                           IsChecked="{Binding All}"
                                           VerticalAlignment="Center"
@@ -383,7 +378,6 @@
                                            HorizontalAlignment="Left"
                                            Text="Γραφείο?" />
                                 <CheckBox Name="IsPartnerCheckBox"
-                                          
                                           IsChecked="{Binding IsPartners,UpdateSourceTrigger=PropertyChanged}"
                                           HorizontalAlignment="Left"
                                           VerticalAlignment="Center" />
@@ -411,7 +405,6 @@
                             <StackPanel Orientation="Horizontal"
                                         Margin="0 0 0 5"
                                         Visibility="{Binding IsPartners,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource booleanToVisibilityConverter}}">
-
                                 <TextBlock Text="Email:"
                                            VerticalAlignment="Center"
                                            HorizontalAlignment="Left" />
@@ -434,19 +427,18 @@
                                 <TextBlock Text="Σύνολο:"
                                            HorizontalAlignment="Left" />
                                 <TextBlock Text="{Binding BookingWr.FullPrice,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                         Margin="0,0,5,5"
-                                         VerticalAlignment="Center"
-                                         HorizontalAlignment="Left"
-                                         MinWidth="40"
-                                         MaxWidth="60"
-                                         Grid.Column="1" />
+                                           Margin="0,0,5,5"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Left"
+                                           MinWidth="40"
+                                           MaxWidth="60"
+                                           Grid.Column="1" />
                                 <TextBlock Text="Προμήθεια (%):"
                                            Grid.Row="1"
                                            HorizontalAlignment="Left" />
                                 <StackPanel   Grid.Row="1"
                                               Orientation="Horizontal"
                                               Grid.Column="1">
-
                                     <TextBox Text="{Binding BookingWr.Commision,Converter={StaticResource FtoSConverter},ConverterParameter=0,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                              Margin="0,0,5,5"
                                              VerticalAlignment="Center"
@@ -546,7 +538,6 @@
                                         HorizontalAlignment="Center">
                                 <CheckBox Content="Onlystay"
                                           IsChecked="{Binding OnlyStay}" />
-                              
                                 <CheckBox Content="Διαφ. Ημ."
                                           IsChecked="{Binding BookingWr.DifferentDates }" />
                             </StackPanel>
@@ -555,7 +546,6 @@
                                       DisplayMemberPath="UserName"
                                       Visibility="{Binding Converter={StaticResource UserToVisibilityConverter},ConverterParameter=1,  Mode=OneWay}"
                                       VerticalAlignment="Center" />
-
                             <TextBlock Text="{Binding ErrorsInCanAddReservationToRoom}"
                                        HorizontalAlignment="Center"
                                        FontSize="14"
@@ -566,7 +556,6 @@
                         </StackPanel>
                     </GroupBox>
                 </Grid>
-
                 <Border BorderThickness="1"
                         Height="250"
                         Visibility="Collapsed"
@@ -604,7 +593,6 @@
                         </StackPanel>
                         <StackPanel Grid.Row="1"
                                     VerticalAlignment="Center">
-
                             <Separator />
                             <TextBlock Text="{Binding SelectedCustomer.Reservation.CheckIn, StringFormat='{}{0:dd/MM/yyyy}'}" />
                             <Separator Width="10" />
@@ -632,8 +620,7 @@
                         </StackPanel>
                     </Grid>
                 </Border>
-                <GroupBox Grid.Column="1"
-                          Header="Πληρωμές"
+                <GroupBox Header="Πληρωμές"
                           HorizontalAlignment="Left"
                           VerticalAlignment="Top">
                     <Grid>
@@ -746,6 +733,90 @@
                                                         DisplayMemberBinding="{Binding User.UserName}" />
                                         <GridViewColumn Header="Σημείωση"
                                                         DisplayMemberBinding="{Binding Comment}" />
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </StackPanel>
+                    </Grid>
+                </GroupBox>
+                <GroupBox Header="Πληρωμές"
+                          HorizontalAlignment="Left"
+                          VerticalAlignment="Top">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <GroupBox HorizontalAlignment="Center"
+                                  VerticalAlignment="Top"
+                                  Header="Νέα Υπηρεσία">
+
+                            <StackPanel Orientation="Horizontal">
+                                <StackPanel Grid.Row="1"
+                                            Margin="5,5,0,0"
+                                            Grid.Column="0"
+                                            HorizontalAlignment="Stretch"
+                                            Grid.ColumnSpan="2">
+                                    <TextBlock Text="Περιγραφή:"
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center" />
+                                    <TextBox Margin="0,0,5,-5"
+                                             HorizontalAlignment="Stretch"
+                                             Grid.Column="1"
+                                             Width="140"
+                                             TextWrapping="Wrap"
+                                             Height="40"
+                                             Text="{Binding ExtraService.Comment}" />
+                                </StackPanel>
+                                <StackPanel Margin="5,5,5,0">
+                                    <TextBlock Text="Ποσό:"
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center" />
+                                    <TextBox Grid.Row="0"
+                                             Margin="0,5"
+                                             HorizontalAlignment="Center"
+                                             Grid.Column="1"
+                                             Text="{Binding ExtraService.Amount,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                             Width="50" />
+                                </StackPanel>
+                            </StackPanel>
+                        </GroupBox>
+                        <StackPanel Grid.Row="1"
+                                    Orientation="Vertical">
+                            <TextBlock Text="Πρόσθετες Υπηρεσίες"
+                                       HorizontalAlignment="Left" />
+                            <ListView Name="extras"
+                                      Focusable="False"
+                                      Height="142"
+                                      SelectedItem="{Binding SelectedExtraService}"
+                                      Width="425"
+                                      ItemsSource="{Binding BookingWr.ExtraServices}">
+                                <ListView.Resources>
+                                    <ContextMenu x:Key="ItemContextMenub">
+                                        <MenuItem Header="Διαγραφη"
+                                                  Visibility="{Binding Converter={StaticResource UserToVisibilityConverter},ConverterParameter=1,  Mode=OneWay}"
+                                                  Command="{Binding DataContext.DeleteExtraServiceCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
+                                            <MenuItem.Icon>
+                                                <Image MaxHeight="20"
+                                                       Stretch="Fill" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                </ListView.Resources>
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="{x:Type ListViewItem}">
+                                        <Setter Property="ContextMenu"
+                                                Value="{StaticResource ItemContextMenub}" />
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Header="Περιγραφή"
+                                                        DisplayMemberBinding="{Binding Comment}" />
+                                        <GridViewColumn Header="Ποσό"
+                                                        Width="40"
+                                                        DisplayMemberBinding="{Binding Amount,Converter={StaticResource FtoSConverter}}" />
                                     </GridView>
                                 </ListView.View>
                             </ListView>
@@ -891,16 +962,18 @@
                                     </Style>
                                 </DataGridComboBoxColumn.EditingElementStyle>
                             </DataGridComboBoxColumn>
+                            <DataGridTextColumn Header="Email"
+                                                MaxWidth="200"
+                                                Binding="{Binding Email, UpdateSourceTrigger=PropertyChanged}"
+                                                Visibility="{Binding DataContext.SelectedExcursion.IncludesPlane, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}" />
                             <DataGridTextColumn Header="Passport Id"
                                                 MaxWidth="200"
                                                 Binding="{Binding PassportNum,UpdateSourceTrigger=PropertyChanged}"
                                                 Visibility="{Binding DataContext.SelectedExcursion.PassportNeeded, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}" />
-
                             <DataGridTemplateColumn Header="Έκδοση"
                                                     Width="Auto"
                                                     CellStyle="{StaticResource DataGridCellStyle}"
                                                     Visibility="{Binding DataContext.SelectedExcursion.PassportNeeded, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">
-
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <DatePicker VerticalAlignment="Center"
@@ -913,7 +986,6 @@
                                                     Width="Auto"
                                                     CellStyle="{StaticResource DataGridCellStyle}"
                                                     Visibility="{Binding DataContext.SelectedExcursion.PassportNeeded, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}">
-
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <DatePicker VerticalAlignment="Center"
@@ -999,7 +1071,6 @@
                     </DataGrid>
                     <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Center">
-
                         <TextBlock Text="{Binding ErrorsInDatagrid}"
                                    FontSize="14"
                                    Foreground="Red"

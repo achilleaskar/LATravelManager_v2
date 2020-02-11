@@ -82,7 +82,7 @@ namespace LATravelManager.UI.Wrapper
 
                 _Rating = value;
                 RaisePropertyChanged();
-                if (value<0)
+                if (value < 0)
                 {
                     Color = new SolidColorBrush(Colors.Red);
 
@@ -154,7 +154,13 @@ namespace LATravelManager.UI.Wrapper
             for (var i = 0; i < PlanDailyInfo.Count; i++)
                 if (datesNeeded[i].RoomState != RoomStateEnum.NotAvailable && PlanDailyInfo[i].RoomState != RoomStateEnum.NotAvailable) //ksanades to
                     return false;
-            return true;
+            var state = datesNeeded[datesNeeded.Count - 1].RoomState;
+            var statestart = datesNeeded[0].RoomState;
+            if ((state == RoomStateEnum.Allotment || state == RoomStateEnum.Available) && (statestart == RoomStateEnum.Allotment || statestart == RoomStateEnum.Available))
+            {
+                return true;
+            }
+            return false;
         }
 
         public List<BookingInfoPerDay> DailyBookingInfo
@@ -407,7 +413,7 @@ namespace LATravelManager.UI.Wrapper
                     else
                     {
                         tmpPlanInfo.RoomState = RoomStateEnum.OverBookedByMistake;
-                        MessageBox.Show($"Η κράτηση {reservationWr.CustomersList[0].Surename} στις {reservationWr.Dates} είναι overbook από Λάθος");
+                        MessageBox.Show($"Η κράτηση {reservationWr.CustomersList[0].Surename} στις {reservationWr.Dates} είναι overbook από λάθος");
                     }
                     tmpDate = tmpDate.AddDays(1);
                 }

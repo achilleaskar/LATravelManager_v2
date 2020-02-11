@@ -41,7 +41,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         {
             FilteredReservations = new ObservableCollection<ReservationWrapper>();
             ReservationsCollectionView = CollectionViewSource.GetDefaultView(FilteredReservations);
-           
+
 
             PrintRoomingListsCommand = new RelayCommand(async () => { await PrintRoomingLists(); }, CanPrintRoomingLists);
             PrintAllVouchersCommand = new RelayCommand(async () => { await PrintAllVouchers(); });
@@ -1209,7 +1209,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         private bool CustomerExcursionsFilter(object item)
         {
             Excursion excursion = item as Excursion;
-            return Completed || excursion.ExcursionDates.Any(d => d.CheckOut >= DateTime.Today) || excursion.Id == 0;
+            return Completed || (!excursion.Deactivated && excursion.ExcursionDates.Any(d => d.CheckOut >= DateTime.Today)) || excursion.Id == 0;
         }
 
         //    int arithmos = 1;

@@ -89,6 +89,11 @@ namespace LATravelManager.UI.Wrapper
             get { return GetValue<bool>(); }
             set { SetValue(value); }
         }
+        public bool Deactivated
+        {
+            get { return GetValue<bool>(); }
+            set { SetValue(value); }
+        }
 
         public bool AgeNeeded => !DOBNeeded;
 

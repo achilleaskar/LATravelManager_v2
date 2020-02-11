@@ -55,6 +55,7 @@
     <Compile Include="Airline.cs" />
     <Compile Include="BaseModel.cs" />
     <Compile Include="BookingData\Booking.cs" />
+    <Compile Include="BookingData\ExtraService.cs" />
     <Compile Include="BookingData\Personal_Booking.cs" />
     <Compile Include="BookingData\ThirdParty_Booking.cs" />
     <Compile Include="Excursions\CustomerOptional.cs" />

@@ -9,6 +9,7 @@
              xmlns:tabViews="clr-namespace:LATravelManager.UI.Views.Tabs"
              xmlns:viewmodel="clr-namespace:LATravelManager.UI.ViewModel.Window_ViewModels"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
              d:DataContext="{d:DesignInstance viewmodel:MainUserControl_ViewModel}"
              x:Class="LATravelManager.UI.Views.Main_UserControl"
              mc:Ignorable="d"
@@ -16,7 +17,7 @@
              d:DesignHeight="450"
              d:DesignWidth="900">
     <UserControl.Resources>
-
+        <converters:NotCategoryConverter x:Key="NotCategoryConverter" />
         <DataTemplate DataType="{x:Type viewmodels:BanskoParent_ViewModel}">
             <views:Bansko_UserControl />
         </DataTemplate>
@@ -127,14 +128,63 @@
                     </ToggleButton>
                     <Popup IsOpen="{Binding IsChecked, ElementName=button}"
                            StaysOpen="False">
-                            <ListView ItemsSource="{Binding Nots}">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock TextWrapping="Wrap"
-                                                   Width="250"  Text="{Binding}"/>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
+                        <ListView ItemsSource="{Binding Nots}">
+                            <ListView.Resources>
+                                <ContextMenu x:Key="ItemContextMenu">
+                                    <MenuItem Header="Διαγραφη"
+                                              Command="{Binding DataContext.NotIsOkCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}" />
+                                </ContextMenu>
+                            </ListView.Resources>
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="{x:Type ListViewItem}">
+                                    <EventSetter Event="MouseDoubleClick"
+                                                 Handler="ListView_MouseDoubleClick" />
+                                    <Setter Property="ContextMenu"
+                                            Value="{StaticResource ItemContextMenu}" />
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.GroupStyle>
+                                <GroupStyle>
+                                    <GroupStyle.ContainerStyle>
+                                        <Style TargetType="{x:Type GroupItem}">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate>
+                                                        <Expander IsExpanded="False">
+                                                            <Expander.Header>
+                                                                <!--IsEnabled="{Binding Converter={StaticResource RoomsLeftToVisibilityConverter}}">-->
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <TextBlock Text="{Binding ItemCount}"
+                                                                               FontSize="16"
+                                                                               Foreground="Green"
+                                                                               FontWeight="Bold"
+                                                                               VerticalAlignment="Top"
+                                                                               FontStyle="Italic"
+                                                                               Margin="0,0,10,0" />
+                                                                    <TextBlock Text="{Binding Name,Converter={StaticResource NotCategoryConverter}}"
+                                                                               FontWeight="Bold"
+                                                                               VerticalAlignment="Top"
+                                                                               Foreground="Black"
+                                                                               FontSize="16" />
+                                                                </StackPanel>
+                                                            </Expander.Header>
+                                                            <ItemsPresenter />
+                                                        </Expander>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </GroupStyle.ContainerStyle>
+                                </GroupStyle>
+                            </ListView.GroupStyle>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock TextWrapping="Wrap"
+                                               Width="250"
+                                               Text="{Binding Details}" />
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
                     </Popup>
                 </StackPanel>
                 <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />

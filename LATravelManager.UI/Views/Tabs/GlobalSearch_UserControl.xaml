@@ -37,7 +37,6 @@
                             Orientation="Vertical">
                     <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Center">
-
                         <RadioButton Content="CheckIn-Out"
                                      IsChecked="{Binding CheckInOut}"
                                      GroupName="aa"
@@ -55,7 +54,6 @@
                         <CheckBox Margin="5,0"
                                   VerticalAlignment="Center"
                                   IsChecked="{Binding EnableCheckInFilter}" />
-
                         <DatePicker SelectedDate="{Binding CheckOut}"
                                     Width="118" />
                         <CheckBox Margin="5,0"
@@ -81,7 +79,6 @@
                                         CommandParameter="7"
                                         Command="{Binding ShowReservationsCommand}"
                                         Padding="5,2" />
-                               
                                 <Border BorderBrush="Gray"
                                         BorderThickness="1,0,0,0" />
                                 <Button Content="Με όνομα"
@@ -124,7 +121,6 @@
                         <Setter Property="Foreground"
                                 Value="Blue" />
                     </Style>
-
                     <Style TargetType="ComboBoxItem">
                         <Setter Property="Foreground"
                                 Value="Black" />
@@ -231,7 +227,6 @@
                 </StackPanel>
             </StackPanel>
         </StackPanel>
-
         <Grid   Grid.Row="0"
                 Grid.Column="1">
             <Grid.RowDefinitions>
@@ -240,7 +235,6 @@
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal"
                         VerticalAlignment="Top">
-
                 <StackPanel Margin="5"
                             Visibility="{Binding HasPeople,Converter={StaticResource booleanToVisibilityConverter}}">
                     <ToggleButton  Name="button"
@@ -363,12 +357,9 @@
                     </Popup>
                 </StackPanel>
             </StackPanel>
-
-
             <StackPanel Orientation="Horizontal"
                         Grid.Row="1"
                         VerticalAlignment="Bottom">
-
                 <StackPanel VerticalAlignment="Bottom">
                     <CheckBox Content="Τράπεζα"
                               Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
@@ -418,7 +409,6 @@
                         Command="{Binding VouchersSentCommand}" />
             </StackPanel>
         </Grid>
-
         <DataGrid Grid.Row="1"
                   Grid.ColumnSpan="2"
                   Name="datagrid"
@@ -451,12 +441,10 @@
                     </MenuItem>
                     <MenuItem Header="Έστειλα Voucher"
                               Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
-                              Command="{Binding DataContext.VouchersSentCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}">
-                    </MenuItem>
+                              Command="{Binding DataContext.VouchersSentCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}"></MenuItem>
                     <MenuItem Header="Έστειλα Rooming List"
                               Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
-                              Command="{Binding DataContext.ListSentCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}">
-                    </MenuItem>
+                              Command="{Binding DataContext.ListSentCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}"></MenuItem>
                 </ContextMenu>
             </DataGrid.Resources>
             <DataGrid.RowStyle>
@@ -482,7 +470,8 @@
                             <Setter Property="Background"
                                     Value="Transparent" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Booking.SecondDepart}" Value="True">
+                                <DataTrigger Binding="{Binding Booking.SecondDepart}"
+                                             Value="True">
                                     <Setter Property="Background"
                                             Value="LightCoral" />
                                 </DataTrigger>
@@ -491,7 +480,7 @@
                     </DataGridTextColumn.CellStyle>
                 </DataGridTextColumn>
                 <DataGridTextColumn Header="Επιστ."
-                                    Binding="{Binding Converter={StaticResource ReturnsToDateConverter}}" >
+                                    Binding="{Binding Converter={StaticResource ReturnsToDateConverter}}">
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Setter Property="Foreground"

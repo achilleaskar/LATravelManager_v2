@@ -28,6 +28,29 @@ namespace LATravelManager.Model.Notifications
 
 
 
+
+        private NotificaationType _NotificaationType;
+
+
+        public NotificaationType NotificaationType
+        {
+            get
+            {
+                return _NotificaationType;
+            }
+
+            set
+            {
+                if (_NotificaationType == value)
+                {
+                    return;
+                }
+
+                _NotificaationType = value;
+                RaisePropertyChanged();
+            }
+        }
+
         private NotifStatus _NotifStatus;
 
 
@@ -50,28 +73,6 @@ namespace LATravelManager.Model.Notifications
             }
         }
 
-
-        private bool _Ignore;
-
-
-        public bool Ignore
-        {
-            get
-            {
-                return _Ignore;
-            }
-
-            set
-            {
-                if (_Ignore == value)
-                {
-                    return;
-                }
-
-                _Ignore = value;
-                RaisePropertyChanged();
-            }
-        }
 
         private ReservationWrapper _ReservationWrapper;
 
