@@ -1,8 +1,8 @@
-﻿using LATravelManager.Model.Hotels;
-using LATravelManager.Model.People;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using LATravelManager.Model.Hotels;
+using LATravelManager.Model.People;
 
 namespace LATravelManager.Model.BookingData
 {

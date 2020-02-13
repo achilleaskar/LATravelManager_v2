@@ -134,9 +134,8 @@
                         Command="{Binding RemoveEntityCommand}" />
             </Grid>
         </GroupBox>
-        <StackPanel 
-                  Grid.Column="1" 
-            >
+        <StackPanel
+                  Grid.Column="1">
             <TextBlock Text="Ειδικές οδηγίες" />
             <TextBox  VerticalAlignment="Stretch"
                       TextWrapping="Wrap" Height="325"

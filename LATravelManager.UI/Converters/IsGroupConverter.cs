@@ -1,7 +1,7 @@
-﻿using LATravelManager.Model.Wrapper;
-using System;
+﻿using System;
 using System.Globalization;
 using System.Windows.Data;
+using LATravelManager.Model.Wrapper;
 
 namespace LATravelManager.UI.Converters
 {

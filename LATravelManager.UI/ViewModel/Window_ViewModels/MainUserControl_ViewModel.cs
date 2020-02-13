@@ -70,11 +70,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             //  MessengerInstance.Register<ExcursionCategoryChangedMessage>(this, async index => { await SetProperViewModel(); });
         }
 
-
-
-
         private Notification _SelectedNot;
-
 
         public Notification SelectedNot
         {
@@ -97,7 +93,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
         private async Task NotIsOk()
         {
-            if (SelectedNot != null && SelectedNot.ReservationWrapper != null)
+            if (SelectedNot != null)
             {
                 if (SelectedNot.NotificaationType == NotificaationType.Option && SelectedNot.HotelOptions != null)
                 {
@@ -111,10 +107,16 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                 {
                     ps.NotifStatus = new NotifStatus { IsOk = true, OkByUser = NotsRepository.GetById<User>(StaticResources.User.Id), OkDate = DateTime.Now };
                 }
+                else if (SelectedNot.NotificaationType == NotificaationType.PersonalOption && SelectedNot.Service != null && SelectedNot.Service is HotelService hs)
+                {
+                    hs.NotifStatus = new NotifStatus { IsOk = true, OkByUser = NotsRepository.GetById<User>(StaticResources.User.Id), OkDate = DateTime.Now };
+                }
             }
             if (NotsRepository.HasChanges())
             {
+                Mouse.OverrideCursor = Cursors.Wait;
                 await NotsRepository.SaveAsync();
+                Mouse.OverrideCursor = Cursors.Arrow;
             }
         }
 
@@ -142,10 +144,16 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                     await viewModel.LoadAsync(SelectedReservation.ThirdPartyModel.Id);
                     MessengerInstance.Send(new OpenChildWindowCommand(new Edit_ThirdParty_Booking_Window(), viewModel));
                 }
-                else
+                else if (SelectedReservation.Booking != null)
                 {
                     NewReservation_Group_ViewModel viewModel = new NewReservation_Group_ViewModel(MainViewModel);
                     await viewModel.LoadAsync(SelectedReservation.Booking.Id);
+                    MessengerInstance.Send(new OpenChildWindowCommand(new EditBooking_Bansko_Window(), viewModel));
+                }
+                else if (SelectedReservation.BookingWrapper != null)
+                {
+                    NewReservation_Group_ViewModel viewModel = new NewReservation_Group_ViewModel(MainViewModel);
+                    await viewModel.LoadAsync(SelectedReservation.BookingWrapper.Id);
                     MessengerInstance.Send(new OpenChildWindowCommand(new EditBooking_Bansko_Window(), viewModel));
                 }
                 Mouse.OverrideCursor = Cursors.Arrow;
@@ -418,10 +426,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             // await SetProperViewModel();
         }
 
-
-
         private GenericRepository _NotsRepository;
-
 
         public GenericRepository NotsRepository
         {
@@ -441,6 +446,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                 RaisePropertyChanged();
             }
         }
+
         public async Task<List<Notification>> LoadOptions(GenericRepository repository)
         {
             List<Option> options = await repository.GetAllPendingOptions();

@@ -1,6 +1,4 @@
-﻿using LATravelManager.Model.Excursions;
-using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace LATravelManager.Model.Locations
 {

@@ -1,4 +1,12 @@
-﻿using GalaSoft.MvvmLight.Command;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using GalaSoft.MvvmLight.Command;
 using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Excursions;
@@ -12,20 +20,11 @@ using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.Wrapper;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LATravelManager.UI.Data.Workers
 {
     public class Lists : MyViewModelBaseAsync
     {
-
         #region Constructors
 
         public Lists(Excursion excursion, DateTime from, DateTime to)
@@ -394,7 +393,7 @@ namespace LATravelManager.UI.Data.Workers
                         myWorksheet.Cells["D" + lineNum].Value = customer.Name;
                         myWorksheet.Cells["E" + lineNum].Value = customer.Surename;
                         myWorksheet.Cells["F" + lineNum].Value = customer.Age < 18 ? customer.Age.ToString() + "yo" : "";
-                        myWorksheet.Cells["G" + lineNum].Value = customer.Board==1?"HB":customer.Board==2?"FB":"";
+                        myWorksheet.Cells["G" + lineNum].Value = customer.Board == 1 ? "HB" : customer.Board == 2 ? "FB" : "";
                         lineNum++;
                     }
                 }
@@ -783,6 +782,7 @@ namespace LATravelManager.UI.Data.Workers
                 }
             }
         }
+
         private void RoomingListChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             //if (e.Action == NotifyCollectionChangedAction.Remove)

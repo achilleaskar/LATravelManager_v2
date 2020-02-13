@@ -1,12 +1,11 @@
-﻿using GalaSoft.MvvmLight;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using GalaSoft.MvvmLight;
 
 namespace LATravelManager.Model
 {
     public abstract class BaseModel : ObservableObject
     {
-       
         #region Properties
 
         /// <summary>

@@ -1,9 +1,9 @@
-﻿using GalaSoft.MvvmLight.CommandWpf;
+﻿using System.Windows.Controls;
+using System.Windows.Input;
+using GalaSoft.MvvmLight.CommandWpf;
 using LATravelManager.Model.LocalModels;
 using LATravelManager.UI.ViewModel.CategoriesViewModels;
 using LATravelManager.UI.Wrapper;
-using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace LATravelManager.UI.Views
 {
@@ -32,7 +32,6 @@ namespace LATravelManager.UI.Views
             {
                 dc.AddRoomThisDayCommand.Execute(pd);
             }
-
         }
     }
 }

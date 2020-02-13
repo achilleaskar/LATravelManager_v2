@@ -106,9 +106,10 @@ namespace LATravelManager.Model.BookingData
 
         public bool IsPartners { get; set; }
         public string Names => GetNames();
-        
+
         [NotMapped]
         public decimal NetPrice { get; set; }
+
         public Partner Partner { get; set; }
 
         //public Booking(Booking booking, object uOW)

@@ -1,6 +1,6 @@
-﻿using LATravelManager.Model.BookingData;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using LATravelManager.Model.BookingData;
 
 namespace LATravelManager.Model.People
 {

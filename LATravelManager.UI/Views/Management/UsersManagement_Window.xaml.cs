@@ -1,6 +1,6 @@
-﻿using LaTravelManager.ViewModel.Management;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
+using LaTravelManager.ViewModel.Management;
 
 namespace LATravelManager.UI.Views.Management
 {

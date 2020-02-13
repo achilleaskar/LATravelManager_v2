@@ -1,13 +1,13 @@
-﻿using LATravelManager.Model.BookingData;
-using LATravelManager.Model.Excursions;
-using LATravelManager.Model.Lists;
-using LATravelManager.Model.Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Windows.Media;
+using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Excursions;
+using LATravelManager.Model.Lists;
+using LATravelManager.Model.Services;
 
 namespace LATravelManager.Model.People
 {
@@ -253,6 +253,7 @@ namespace LATravelManager.Model.People
                 RaisePropertyChanged();
             }
         }
+
         public ICollection<Service> Services { get; }
 
         [Required(ErrorMessage = "Επιλέξτε σημέιο αναχώρησης")]
@@ -301,7 +302,6 @@ namespace LATravelManager.Model.People
 
         #endregion Properties
 
-
         #region Methods
 
         public string GetHotelName()
@@ -335,6 +335,5 @@ namespace LATravelManager.Model.People
         }
 
         #endregion Methods
-
     }
 }

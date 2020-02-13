@@ -1,4 +1,14 @@
-﻿using DocumentFormat.OpenXml;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using LATravelManager.Model;
@@ -12,16 +22,6 @@ using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
 using DW = DocumentFormat.OpenXml.Drawing.Wordprocessing;
 using PIC = DocumentFormat.OpenXml.Drawing.Pictures;
 using TEST = DocumentFormat.OpenXml.Drawing;
@@ -605,13 +605,11 @@ namespace LATravelManager.UI.Helpers
             }
             if (going)
             {
-
                 reservationsThisDay = reservationsThisDay.OrderBy(t => t.Higher).ThenBy(x1 => x1.Starttime.TimeOfDay).ThenBy(x => x.HotelName).ToList();
             }
             else
             {
                 reservationsThisDay = reservationsThisDay.OrderBy(t => t.Higher).ThenByDescending(x1 => x1.Starttime.TimeOfDay).ThenBy(x => x.HotelName).ToList();
-
             }
             //reservationsThisDay = reservationsThisDay.OrderBy(x1 => x1.Starttime.TimeOfDay).ToList();
             if (going)
@@ -685,7 +683,6 @@ namespace LATravelManager.UI.Helpers
                         {
                             if ((bus == null || (bus.Going && customer.BusGo != null && customer.BusGo.Id == bus.Id)) && customer.CustomerHasBusIndex < 2 && (!reservation.Booking.DifferentDates || customer.CheckIn == checkIn))
                             {
-
                                 counter++;
                                 myWorksheet.InsertRow(lineNum, 1);
                                 customersCount++;
@@ -771,7 +768,6 @@ namespace LATravelManager.UI.Helpers
                                     myWorksheet.Cells["J" + lineNum].Style.Font.Strike = true;
                                 }
                             }
-
                         }
                         else
                         {
@@ -922,7 +918,6 @@ namespace LATravelManager.UI.Helpers
                 PhoneNumbers = PhoneNumbers.Trim(',');
                 if (bus == null)
                 {
-
                     Clipboard.SetText(PhoneNumbers ?? "");
                 }
                 if (lineNum == 5)
@@ -1591,8 +1586,9 @@ namespace LATravelManager.UI.Helpers
                     regexText = new Regex("zsynodos");
                     docText = regexText.Replace(docText, booking.Excursion.Id == 29 ? "Αθανασία 6981189869" :
                         bus.Id > 0 && bus.Leader != null ? bus?.Leader.ToString() :
-                        booking.Excursion.Destinations[0].Id == 2 ? ((new List<int>() { 2, 14, 17, 28 }).Any(t => t == customerStartingPlace.Id) ? "Υπεύθυνος Αναχώρησης:" + Environment.NewLine + "Σωτήρης:6946681572" :
-                        "ΣΤΡΑΤΟΣ:6988558275") : "");
+                         //booking.Excursion.Destinations[0].Id == 2 ? ((new List<int>() { 2, 14, 17, 28 }).Any(t => t == customerStartingPlace.Id) ? "Υπεύθυνος Αναχώρησης:" + Environment.NewLine + "Σωτήρης:6946681572" :
+                         //"ΣΤΡΑΤΟΣ:6988558275") : "");
+                         "");
                     regexText = new Regex("zcity");
                     docText = regexText.Replace(docText, booking.Excursion.Destinations[0].Name);
                     regexText = new Regex("zgostart");

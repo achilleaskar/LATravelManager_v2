@@ -1,5 +1,5 @@
-﻿using LATravelManager.UI.ViewModel.BaseViewModels;
-using System.Windows;
+﻿using System.Windows;
+using LATravelManager.UI.ViewModel.BaseViewModels;
 
 namespace LATravelManager.UI.Message
 {

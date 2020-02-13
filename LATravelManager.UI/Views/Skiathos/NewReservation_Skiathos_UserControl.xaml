@@ -956,6 +956,9 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Email"
+                                                MaxWidth="100"
+                                                Binding="{Binding Email, UpdateSourceTrigger=PropertyChanged}" />
                         </DataGrid.Columns>
                     </DataGrid>
                     <StackPanel Orientation="Horizontal"

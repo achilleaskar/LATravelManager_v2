@@ -1,24 +1,16 @@
-﻿using LATravelManager.Model.People;
+﻿using System.Collections.ObjectModel;
 using LATravelManager.UI.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LATravelManager.Model
 {
     public class Parea : BaseModel
     {
-
         public Parea()
         {
             Customers = new ObservableCollection<CustomerWrapper>();
         }
 
         private bool _done;
-
 
         public bool Done
         {
@@ -39,11 +31,7 @@ namespace LATravelManager.Model
             }
         }
 
-
-
-
         private int _Counter;
-
 
         public int Counter
         {
@@ -66,7 +54,6 @@ namespace LATravelManager.Model
 
         private int _bookingId;
 
-
         public int BookingId
         {
             get
@@ -86,10 +73,7 @@ namespace LATravelManager.Model
             }
         }
 
-
-
         private ObservableCollection<CustomerWrapper> _Customers;
-
 
         public ObservableCollection<CustomerWrapper> Customers
         {

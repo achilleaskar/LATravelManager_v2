@@ -1,9 +1,9 @@
-﻿using LATravelManager.Model.Hotels;
-using LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using LATravelManager.Model.Hotels;
+using LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko;
 
 namespace LATravelManager.UI.Views.Bansko
 {
@@ -16,7 +16,6 @@ namespace LATravelManager.UI.Views.Bansko
         {
             InitializeComponent();
         }
-
 
         public static T GetVisualChild<T>(Visual parent) where T : Visual
         {

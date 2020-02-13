@@ -1,5 +1,5 @@
-﻿using LATravelManager.UI.ViewModel.CategoriesViewModels.Personal;
-using System.Windows;
+﻿using System.Windows;
+using LATravelManager.UI.ViewModel.CategoriesViewModels.Personal;
 
 namespace LATravelManager.UI.Views.Personal
 {

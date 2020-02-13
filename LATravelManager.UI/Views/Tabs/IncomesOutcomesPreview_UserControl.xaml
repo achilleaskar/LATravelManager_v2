@@ -278,7 +278,7 @@
                         Command="{Binding ShowTransactionsCommand}"
                         VerticalAlignment="Bottom" />
             </StackPanel>
-            <StackPanel Orientation="Vertical"  
+            <StackPanel Orientation="Vertical"
                         HorizontalAlignment="Left"
                         Grid.Row="3">
                 <Label Content="{Binding Incomes}" Padding="0"
@@ -286,7 +286,7 @@
                 <Label Content="{Binding Outcomes}"
                        Padding="0"
                        Margin="0 3" />
-                <Separator   />
+                <Separator />
                 <Label Content="{Binding Total}"
                        Padding="0"
                        Margin="0 3" />
@@ -322,7 +322,6 @@
                        BasedOn="{StaticResource {x:Type DataGridRow}}">
                     <Setter Property="ContextMenu"
                             Value="{StaticResource reservationContextSubMenu}" />
-
                 </Style>
             </DataGrid.RowStyle>
             <DataGrid.Columns>

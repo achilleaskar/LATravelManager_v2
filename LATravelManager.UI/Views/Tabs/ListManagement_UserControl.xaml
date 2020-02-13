@@ -654,8 +654,6 @@
                                                                    TextDecorations="Underline" />
                                                         <TextBox Text="{Binding Vehicle.DriverTel}" />
                                                     </StackPanel>
-
-
                                                 </Grid>
                                             </TabItem>
                                             <TabItem Header="Θέσεις">

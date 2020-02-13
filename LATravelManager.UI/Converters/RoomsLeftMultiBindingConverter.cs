@@ -1,8 +1,8 @@
-﻿using LATravelManager.Model.Hotels;
-using LATravelManager.UI.ViewModel.CategoriesViewModels;
-using System;
+﻿using System;
 using System.Globalization;
 using System.Windows.Data;
+using LATravelManager.Model.Hotels;
+using LATravelManager.UI.ViewModel.CategoriesViewModels;
 
 namespace LATravelManager.UI.Converters
 {

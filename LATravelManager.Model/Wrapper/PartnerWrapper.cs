@@ -1,10 +1,10 @@
-﻿using LATravelManager.Model.LocalModels;
-using LATravelManager.Model.People;
-using LATravelManager.Model.Wrapper;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using LATravelManager.Model.LocalModels;
+using LATravelManager.Model.People;
+using LATravelManager.Model.Wrapper;
 
 namespace LATravelManager.UI.Wrapper
 {

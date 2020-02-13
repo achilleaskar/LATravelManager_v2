@@ -1,4 +1,15 @@
-﻿using DocumentFormat.OpenXml.Packaging;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Data;
+using System.Windows.Input;
+using System.Windows.Media;
+using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using GalaSoft.MvvmLight.CommandWpf;
 using LATravelManager.Model;
@@ -16,17 +27,6 @@ using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Views.Universal;
 using LATravelManager.UI.Wrapper;
 using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Data;
-using System.Windows.Input;
-using System.Windows.Media;
 
 namespace LATravelManager.UI.ViewModel.BaseViewModels
 {
@@ -49,8 +49,9 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             AddFromFileCommand = new RelayCommand(AddFromFile);
 
             DeletePaymentCommand = new RelayCommand(DeletePayment, CanDeletePayment);
-            DeleteExtraServiceCommand = new RelayCommand(DeleteExtraService, CanDeleteExtraservice);
             PrintRecieptCommand = new RelayCommand(PrintReciept);
+            DeleteExtraServiceCommand = new RelayCommand(DeleteExtraService, CanDeleteExtraservice);
+            AddExraServiceCommand = new RelayCommand(AddExtraService, CanAddExtraservice);
 
             DeleteSelectedCustomersCommand = new RelayCommand(DeleteSelectedCustomers, CanDeleteCustomers);
 
@@ -76,6 +77,51 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             FilteredRoomList = new ObservableCollection<RoomWrapper>();
             SelectedUserIndex = -1;
             Emails = new ObservableCollection<Email>();
+            NewExtraService = new ExtraService();
+        }
+
+
+
+
+        private ExtraService _NewExtraService;
+
+
+        public ExtraService NewExtraService
+        {
+            get
+            {
+                return _NewExtraService;
+            }
+
+            set
+            {
+                if (_NewExtraService == value)
+                {
+                    return;
+                }
+
+                _NewExtraService = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private void AddExtraService()
+        {
+            BookingWr.ExtraServices.Add(new ExtraService
+            {
+                Description = NewExtraService.Description,
+                Amount = NewExtraService.Amount,
+                Customer = SelectedCustomer.Model
+            });
+            BookingWr.CalculateRemainingAmount();
+        }
+
+        private bool CanAddExtraservice()
+        {
+            return !string.IsNullOrEmpty(NewExtraService.Description) &&
+                NewExtraService.Description.Length > 3 &&
+                SelectedCustomer != null;
+
         }
 
         private bool CanDeleteCustomers()
@@ -753,11 +799,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
-
-
-
         private ExtraService _SelectedExtraService;
-
 
         public ExtraService SelectedExtraService
         {
@@ -774,6 +816,13 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 }
 
                 _SelectedExtraService = value;
+                if (BookingWr != null && SelectedExtraService.Customer != null && BookingWr.Customers.Any(c => c.Id == SelectedExtraService.Customer.Id))
+                {
+                    foreach (var cu in BookingWr.Customers)
+                    {
+                        cu.IsSelected = cu.Id == SelectedExtraService.Customer.Id;
+                    }
+                }
                 RaisePropertyChanged();
             }
         }
@@ -872,9 +921,9 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         public RelayCommand ShowFilteredRoomsCommand { get; set; }
         public GenericRepository GenericRepository { get; set; }
         public RelayCommand UpdateAllCommand { get; set; }
+        public RelayCommand AddExraServiceCommand { get; set; }
         public RelayCommand DeleteSelectedCustomersCommand { get; set; }
         public RelayCommand ShowAltairnativesCommand { get; set; }
-
 
         public ObservableCollection<User> Users
         {
@@ -1111,7 +1160,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             //            }
             //        }
             //    }
-            //    //TODO an mporei na fygei
 
             //   // FilteredRoomList = new ObservableCollection<RoomWrapper>(tmplist.OrderBy(f => f.RoomType.MinCapacity).ToList());
             //    //CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(FilteredRoomList);
@@ -1149,7 +1197,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 {
                     rating -= 4;
                 }
-
             }
             if (after == null || after.RoomState != RoomStateEnum.Available)
             {
@@ -1162,8 +1209,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 {
                     rating -= 4;
                 }
-
-
             }
             room.Rating = ((before != null && before.RoomState != RoomStateEnum.Available) ? 1 : 0) + ((after != null && after.RoomState != RoomStateEnum.Available) ? 1 : 0);
         }
@@ -1617,7 +1662,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             {
                 return false;
             }
-
             return true;
         }
 

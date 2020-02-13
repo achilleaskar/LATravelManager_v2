@@ -1,6 +1,6 @@
-﻿using LATravelManager.Model.Locations;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using LATravelManager.Model.Locations;
 
 namespace LATravelManager.Model.Hotels
 {

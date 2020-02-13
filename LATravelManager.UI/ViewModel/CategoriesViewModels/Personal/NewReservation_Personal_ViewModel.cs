@@ -1,4 +1,10 @@
-﻿using GalaSoft.MvvmLight.CommandWpf;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
+using GalaSoft.MvvmLight.CommandWpf;
 using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Hotels;
@@ -13,12 +19,6 @@ using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.ServiceViewModels;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 {
@@ -232,7 +232,6 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
         }
 
         public Payment Payment { get; private set; }
-
 
         public Personal_BookingWrapper PersonalWr
         {

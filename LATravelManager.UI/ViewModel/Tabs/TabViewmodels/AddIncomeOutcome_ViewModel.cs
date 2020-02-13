@@ -1,4 +1,12 @@
-﻿using GalaSoft.MvvmLight.CommandWpf;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Data;
+using System.Windows.Input;
+using GalaSoft.MvvmLight.CommandWpf;
 using LATravelManager.Model;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Hotels;
@@ -15,14 +23,6 @@ using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Views.Bansko;
 using LATravelManager.UI.Views.Personal;
 using LATravelManager.UI.Views.ThirdParty;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Data;
-using System.Windows.Input;
 
 namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {
@@ -351,11 +351,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-
-
-
-
-
         public RelayCommand UpdateBusesCommand { get; set; }
 
         public RelayCommand UpdateExcursions { get; set; }
@@ -396,7 +391,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         private bool CanSaveTransaction()
         {
-            if ((Transaction.ExpenseBaseCategory == ExpenseBaseCategories.GroupExpense ||Transaction.IncomeBaseCategory == IncomeBaseCategories.OptionalActivities) && SelectedExcursion.Id == 0)
+            if ((Transaction.ExpenseBaseCategory == ExpenseBaseCategories.GroupExpense || Transaction.IncomeBaseCategory == IncomeBaseCategories.OptionalActivities) && SelectedExcursion.Id == 0)
             {
                 return false;
             }
@@ -501,9 +496,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             Transaction.RaisePropertyChanged("Saved");
         }
 
-
         private Bus _SelectedBus;
-
 
         public Bus SelectedBus
         {
@@ -523,6 +516,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 RaisePropertyChanged();
             }
         }
+
         private async Task SearchForReservations()
         {
             try

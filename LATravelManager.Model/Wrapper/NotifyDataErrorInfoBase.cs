@@ -1,9 +1,9 @@
-﻿using GalaSoft.MvvmLight;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using GalaSoft.MvvmLight;
 
 namespace LATravelManager.UI.Wrapper
 {

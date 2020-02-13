@@ -1,4 +1,11 @@
-﻿using GalaSoft.MvvmLight.CommandWpf;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Data;
+using System.Windows.Input;
+using GalaSoft.MvvmLight.CommandWpf;
 using LATravelManager.Model;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Lists;
@@ -6,13 +13,6 @@ using LATravelManager.Model.People;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
-using System;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Data;
-using System.Windows.Input;
 
 namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {
@@ -236,7 +236,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         public MainViewModel MainViewModel { get; }
 
-
         public Excursion SelectedExcursion
         {
             get
@@ -256,12 +255,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-
-
-
-
         private int _UserIndexFilter;
-
 
         public int UserIndexFilter
         {
@@ -327,11 +321,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-
-
-
         private Transaction _SelectedTransaction;
-
 
         public Transaction SelectedTransaction
         {
@@ -444,7 +434,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 to: EnableToFilter ? (DateTime?)To : null,
                 user: UserIndexFilter > 0 ? Users[UserIndexFilter - 1] : null)));
 
-
             decimal incomes = 0;
             decimal outcomes = 0;
             foreach (var tran in FilteredTransactions)
@@ -459,14 +448,9 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             Incomes = $"Έσοδα:  {  incomes.ToString("C2")}";
             Outcomes = $"Έξοδα:  { outcomes.ToString("C2")}";
             Mouse.OverrideCursor = Cursors.Arrow;
-
         }
 
-
-
-
         private string _Incomes;
-
 
         public string Incomes
         {
@@ -487,10 +471,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-
-
         private string _Outcomes;
-
 
         public string Outcomes
         {
@@ -511,11 +492,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-
-
-
         private Bus _SelectedBus;
-
 
         public Bus SelectedBus
         {

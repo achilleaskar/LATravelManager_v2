@@ -1,6 +1,6 @@
-﻿using LATravelManager.Model.Hotels;
+﻿using System;
+using LATravelManager.Model.Hotels;
 using LATravelManager.Model.Locations;
-using System;
 
 namespace LATravelManager.Model.Services
 {

@@ -72,7 +72,6 @@ namespace LATravelManager.Model
         allerRetour,
         onlyGo,
         OnlyReturn
-
     }
 
     [TypeConverter(typeof(EnumDescriptionTypeConverter))]

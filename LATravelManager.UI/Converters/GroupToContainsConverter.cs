@@ -1,14 +1,9 @@
-﻿using LATravelManager.Model.BookingData;
+﻿using System;
+using System.Globalization;
+using System.Windows.Data;
 using LATravelManager.Model.Hotels;
 using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
 using LATravelManager.UI.Wrapper;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Data;
 
 namespace LATravelManager.UI.Converters
 {
@@ -32,7 +27,7 @@ namespace LATravelManager.UI.Converters
                             {
                                 foreach (roomDetail d in r.Items)
                                 {
-                                        counter += d.Count;
+                                    counter += d.Count;
                                 }
                             }
                         }

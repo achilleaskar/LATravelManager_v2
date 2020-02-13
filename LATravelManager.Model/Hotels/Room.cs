@@ -1,10 +1,10 @@
-﻿using LATravelManager.Model.People;
-using LATravelManager.Model.Plan;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using LATravelManager.Model.People;
+using LATravelManager.Model.Plan;
 
 namespace LATravelManager.Model.Hotels
 {

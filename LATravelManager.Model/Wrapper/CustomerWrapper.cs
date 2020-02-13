@@ -1,14 +1,13 @@
-﻿using LATravelManager.Model;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Windows.Media;
+using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
-using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Lists;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Services;
 using LATravelManager.Model.Wrapper;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Windows.Media;
 
 namespace LATravelManager.UI.Helpers
 {
@@ -36,9 +35,6 @@ namespace LATravelManager.UI.Helpers
         private bool _Selected;
 
         #endregion Fields
-
-
-
 
         public string IfBus => BusGo != null ? BusGo.Vehicle.Name : BusReturn != null ? BusReturn.Vehicle.Name : "";
 

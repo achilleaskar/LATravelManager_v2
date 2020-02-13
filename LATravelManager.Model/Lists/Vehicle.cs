@@ -24,7 +24,7 @@ namespace LATravelManager.Model.Lists
         #region Properties
 
         [Required]
-        [Range(10,100,ErrorMessage ="Επιλέξτε την θέση πίσω απο την πόρτα")]
+        [Range(10, 100, ErrorMessage = "Επιλέξτε την θέση πίσω απο την πόρτα")]
         public int DoorSeat
         {
             get
@@ -45,7 +45,7 @@ namespace LATravelManager.Model.Lists
         }
 
         [Required]
-        [MaxLength(25),MinLength(3)]
+        [MaxLength(25), MinLength(3)]
         public string Driver
         {
             get
@@ -64,6 +64,7 @@ namespace LATravelManager.Model.Lists
                 RaisePropertyChanged();
             }
         }
+
         [Required]
         [Phone]
         [MaxLength(15), MinLength(10)]
@@ -85,6 +86,7 @@ namespace LATravelManager.Model.Lists
                 RaisePropertyChanged();
             }
         }
+
         [Required]
         [MaxLength(25)]
         public string Name
@@ -105,6 +107,7 @@ namespace LATravelManager.Model.Lists
                 RaisePropertyChanged();
             }
         }
+
         [Required]
         [MaxLength(10)]
         public string Plate
@@ -125,8 +128,9 @@ namespace LATravelManager.Model.Lists
                 RaisePropertyChanged();
             }
         }
+
         [Required]
-        [Range(1,3)]
+        [Range(1, 3)]
         public int SeatsFront
         {
             get
@@ -145,7 +149,8 @@ namespace LATravelManager.Model.Lists
                 RaisePropertyChanged();
             }
         }
-        [Required,Range(10,100)]
+
+        [Required, Range(10, 100)]
         public int SeatsPassengers
         {
             get

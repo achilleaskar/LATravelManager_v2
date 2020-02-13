@@ -1,7 +1,7 @@
-﻿using LATravelManager.Model.Hotels;
+﻿using System.Collections.Generic;
+using LATravelManager.Model.Hotels;
 using LATravelManager.Model.Locations;
 using LATravelManager.Model.Wrapper;
-using System.Collections.Generic;
 
 namespace LATravelManager.UI.Wrapper
 {

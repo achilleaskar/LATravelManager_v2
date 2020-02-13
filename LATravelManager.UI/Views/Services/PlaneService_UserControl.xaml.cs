@@ -1,8 +1,8 @@
-﻿using LATravelManager.UI.ViewModel.ServiceViewModels;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using LATravelManager.UI.ViewModel.ServiceViewModels;
 
 namespace LATravelManager.UI.Views.Services
 {

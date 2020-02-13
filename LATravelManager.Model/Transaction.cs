@@ -1,9 +1,9 @@
-﻿using LATravelManager.Model.BookingData;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
+using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Lists;
 using LATravelManager.Model.People;
-using System;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LATravelManager.Model
 {
@@ -527,8 +527,6 @@ namespace LATravelManager.Model
             return (names.IndexOfAny(new char[] { ',' }) >= 0 ? " των " : " του ") + names;
         }
 
-
-
         private string GetDescription()
         {
             if (TransactionType == TransactionType.Income)
@@ -542,7 +540,6 @@ namespace LATravelManager.Model
                     else
                     {
                         return "Έσοδο προαιρετικών " + Excursion.Name + "," + SelectedBus ?? "";
-
                     }
                 }
                 return "Έσοδο " + SelectedBus ?? "";

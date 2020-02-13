@@ -1,6 +1,6 @@
-﻿using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Input;
+using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
 
 namespace LATravelManager.UI.Views.Tabs
 {

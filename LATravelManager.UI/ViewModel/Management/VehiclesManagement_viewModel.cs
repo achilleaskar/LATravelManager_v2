@@ -1,16 +1,10 @@
-﻿using LaTravelManager.BaseTypes;
+﻿using System.Collections.ObjectModel;
+using System.Linq;
+using LaTravelManager.BaseTypes;
 using LATravelManager.Model.Lists;
-using LATravelManager.Model.Locations;
 using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.ViewModel.BaseViewModels;
-using LATravelManager.UI.Wrapper;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LATravelManager.UI.ViewModel.Management
 {

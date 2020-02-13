@@ -1,4 +1,7 @@
-﻿using GalaSoft.MvvmLight.CommandWpf;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using GalaSoft.MvvmLight.CommandWpf;
 using LaTravelManager.BaseTypes;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Locations;
@@ -7,9 +10,6 @@ using LATravelManager.UI.Message;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.Views.Management;
 using LATravelManager.UI.Wrapper;
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace LaTravelManager.ViewModel.Management
 {

@@ -1,11 +1,8 @@
-﻿using LATravelManager.Model.BookingData;
-using LATravelManager.Model.People;
-using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
-using System;
+﻿using System;
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
-
+using LATravelManager.Model.People;
 
 namespace LATravelManager.UI.Converters
 {

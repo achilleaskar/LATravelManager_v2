@@ -1,8 +1,7 @@
 ﻿namespace LATravelManager.DataAccess.Migrations
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class _72 : DbMigration
     {
         public override void Up()
@@ -16,7 +15,7 @@
             AddColumn("dbo.ThirdParty_Booking", "ProformaSent", c => c.Boolean(nullable: false));
             AddColumn("dbo.ThirdParty_Booking", "RecieptSent", c => c.Boolean(nullable: false));
         }
-        
+
         public override void Down()
         {
             DropColumn("dbo.ThirdParty_Booking", "RecieptSent");

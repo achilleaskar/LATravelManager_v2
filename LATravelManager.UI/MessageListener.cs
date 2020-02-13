@@ -1,6 +1,6 @@
-﻿using GalaSoft.MvvmLight.Messaging;
+﻿using System.Windows;
+using GalaSoft.MvvmLight.Messaging;
 using LATravelManager.UI.Message;
-using System.Windows;
 
 namespace LATravelManager.UI
 {

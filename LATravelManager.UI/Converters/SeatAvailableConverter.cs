@@ -1,15 +1,11 @@
-﻿using LATravelManager.Model.Lists;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
+using LATravelManager.Model.Lists;
 
 namespace LATravelManager.UI.Converters
 {
-   public class SeatAvailableConverter : IValueConverter
+    public class SeatAvailableConverter : IValueConverter
     {
         #region Methods
 
@@ -17,7 +13,7 @@ namespace LATravelManager.UI.Converters
         {
             if (value is Seat seat)
             {
-                if (seat.Customer==null && seat.Number>0)
+                if (seat.Customer == null && seat.Number > 0)
                 {
                     return true;
                 }

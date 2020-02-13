@@ -1,8 +1,7 @@
 namespace LATravelManager.DataAccess.Migrations
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class _10222 : DbMigration
     {
         public override void Up()
@@ -13,9 +12,8 @@ namespace LATravelManager.DataAccess.Migrations
             CreateIndex("dbo.ExcursionTimes", "StartingPlace_Id1");
             AddForeignKey("dbo.ExcursionTimes", "From_Id", "dbo.StartingPlaces", "Id");
             AddForeignKey("dbo.ExcursionTimes", "StartingPlace_Id1", "dbo.StartingPlaces", "Id");
-           
         }
-        
+
         public override void Down()
         {
             AddColumn("dbo.ExcursionTimes", "Excursion_Id", c => c.Int());

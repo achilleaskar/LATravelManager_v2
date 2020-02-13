@@ -14,7 +14,6 @@ namespace LATravelManager.UI.Views.Tabs
 
         private void ListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿using LATravelManager.UI.ViewModel.BaseViewModels;
+﻿using System;
+using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
-using System;
 
 namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {

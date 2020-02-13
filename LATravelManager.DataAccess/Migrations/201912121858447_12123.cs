@@ -1,8 +1,7 @@
 ﻿namespace LATravelManager.DataAccess.Migrations
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class _12123 : DbMigration
     {
         public override void Up()
@@ -12,7 +11,7 @@
             CreateIndex("dbo.CustomerOptionals", "Leader_Id");
             AddForeignKey("dbo.CustomerOptionals", "Leader_Id", "dbo.Leaders", "Id");
         }
-        
+
         public override void Down()
         {
             DropForeignKey("dbo.CustomerOptionals", "Leader_Id", "dbo.Leaders");

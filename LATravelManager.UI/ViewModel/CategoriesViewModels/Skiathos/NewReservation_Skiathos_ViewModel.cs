@@ -1,11 +1,11 @@
-﻿using LATravelManager.Model.Excursions;
+﻿using System;
+using System.Threading.Tasks;
+using LATravelManager.Model.Excursions;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Wrapper;
-using System;
-using System.Threading.Tasks;
 
 namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Skiathos
 {

@@ -1,18 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using LATravelManager.Model.People;
 
 namespace LATravelManager.Model.BookingData
 {
     public class ExtraService : BaseModel
     {
-
-
-
         private int _Amount;
 
+
+
+
+        private Customer _Customer;
+
+
+        public Customer Customer
+        {
+            get
+            {
+                return _Customer;
+            }
+
+            set
+            {
+                if (_Customer == value)
+                {
+                    return;
+                }
+
+                _Customer = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public int Amount
         {
@@ -33,11 +50,7 @@ namespace LATravelManager.Model.BookingData
             }
         }
 
-
-
-
         private string _Description;
-
 
         public string Description
         {
@@ -58,11 +71,7 @@ namespace LATravelManager.Model.BookingData
             }
         }
 
-
-
-
         private Booking _Booking;
-
 
         public Booking Booking
         {

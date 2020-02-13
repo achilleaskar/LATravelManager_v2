@@ -1,5 +1,5 @@
-﻿using LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty;
-using System.Windows;
+﻿using System.Windows;
+using LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty;
 
 namespace LATravelManager.UI.Views.ThirdParty
 {

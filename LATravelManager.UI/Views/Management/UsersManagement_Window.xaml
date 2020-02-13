@@ -13,7 +13,7 @@
         Title="{Binding ControlName}"
         Height="470"
         Width="800">
-   
+
     <Grid Margin="20">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -148,7 +148,7 @@
                         Command="{Binding UpdateEntitiesCommand}">
                     <iconPacks:PackIconFontAwesome Kind="SyncSolid"
                                                    VerticalAlignment="Center"
-                                                 
+
                                                    Margin="5" />
                 </Button>
                 <DataGrid ItemsSource="{Binding MainCollection}"

@@ -1,22 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LATravelManager.Model.People;
 
 namespace LATravelManager.Model.Notifications
 {
     public class NotifStatus : BaseModel
     {
-
-
-
-
-
-
         private User _OkByUser;
-
 
         public User OkByUser
         {
@@ -37,11 +26,7 @@ namespace LATravelManager.Model.Notifications
             }
         }
 
-
-
-
         private DateTime _OkDate;
-
 
         public DateTime OkDate
         {
@@ -62,11 +47,7 @@ namespace LATravelManager.Model.Notifications
             }
         }
 
-
-
-
         private bool _IsOk;
-
 
         public bool IsOk
         {

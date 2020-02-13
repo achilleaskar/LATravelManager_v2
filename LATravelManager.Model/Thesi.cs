@@ -1,19 +1,10 @@
-﻿using LATravelManager.Model.People;
-using LATravelManager.UI.Helpers;
+﻿using LATravelManager.UI.Helpers;
 
 namespace LATravelManager.Model
 {
     public class Thesi : BaseModel
     {
-
-
-
-
-
-
-
         private CustomerWrapper _customer;
-
 
         public CustomerWrapper Customer
         {
@@ -32,8 +23,6 @@ namespace LATravelManager.Model
                 _customer = value;
                 RaisePropertyChanged();
             }
-
-
         }
     }
 }

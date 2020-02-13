@@ -1,7 +1,7 @@
-﻿using LATravelManager.Model.Hotels;
-using System;
+﻿using System;
 using System.Globalization;
 using System.Windows.Data;
+using LATravelManager.Model.Hotels;
 
 namespace LATravelManager.UI.Converters
 {

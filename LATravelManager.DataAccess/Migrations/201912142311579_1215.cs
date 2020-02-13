@@ -1,8 +1,7 @@
 ﻿namespace LATravelManager.DataAccess.Migrations
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class _1215 : DbMigration
     {
         public override void Up()
@@ -14,7 +13,7 @@
             AddForeignKey("dbo.Customers", "BusGo_Id", "dbo.Buses", "Id");
             AddForeignKey("dbo.Customers", "BusReturn_Id", "dbo.Buses", "Id");
         }
-        
+
         public override void Down()
         {
             DropForeignKey("dbo.Customers", "BusReturn_Id", "dbo.Buses");

@@ -170,7 +170,6 @@
                                                                                     </DataTrigger>
                                                                                 </Style.Triggers>
                                                                             </Style>
-
                                                                         </TextBlock.Style>
                                                                     </TextBlock>
                                                                     <!--Text="{Binding Converter={StaticResource RoomsLeftToHotelsConverter}}"-->
@@ -534,7 +533,6 @@
                                         HorizontalAlignment="Center">
                                 <CheckBox Content="Onlystay"
                                           IsChecked="{Binding OnlyStay}" />
-                            
                             </StackPanel>
                             <ComboBox ItemsSource="{Binding Users}"
                                       SelectedIndex="{Binding SelectedUserIndex}"
@@ -762,7 +760,7 @@
                               SelectedItem="{Binding SelectedCustomer}"
                               CanUserAddRows="True">
                         <DataGrid.Resources>
-                            
+
                             <Style TargetType="{x:Type ComboBox}">
                                 <Setter Property="Margin"
                                         Value="0" />
@@ -926,6 +924,9 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Email"
+                                                MaxWidth="100"
+                                                Binding="{Binding Email, UpdateSourceTrigger=PropertyChanged}" />
                         </DataGrid.Columns>
                     </DataGrid>
                     <StackPanel Orientation="Horizontal"

@@ -1,9 +1,9 @@
-﻿using LATravelManager.UI.Wrapper;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using LATravelManager.UI.Wrapper;
 
 namespace LATravelManager.Model.Wrapper
 {
@@ -44,8 +44,6 @@ namespace LATravelManager.Model.Wrapper
 
         public T Model { get; }
 
-       
-
         public string Title { get; set; }
 
         #endregion Properties
@@ -83,6 +81,7 @@ namespace LATravelManager.Model.Wrapper
             }
             return false;
         }
+
         public void ValidateAllProperties()
         {
             foreach (PropertyInfo pi in Model.GetType().GetProperties())
@@ -106,6 +105,7 @@ namespace LATravelManager.Model.Wrapper
             RaisePropertyChanged(propertyName);
             ValidatePropertyInternal(propertyName, value);
         }
+
         protected virtual IEnumerable<string> ValidateProperty(string propertyName)
         {
             return null;
@@ -119,6 +119,7 @@ namespace LATravelManager.Model.Wrapper
 
             ValidateCustomErrors(propertyName);
         }
+
         private void ValidateCustomErrors(string propertyName)
         {
             IEnumerable<string> errors = ValidateProperty(propertyName);

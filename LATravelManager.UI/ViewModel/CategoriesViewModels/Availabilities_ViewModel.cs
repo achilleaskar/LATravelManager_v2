@@ -1,13 +1,13 @@
-﻿using GalaSoft.MvvmLight;
-using LATravelManager.Model;
-using LATravelManager.Model.Hotels;
-using LATravelManager.Model.LocalModels;
-using LATravelManager.UI.Wrapper;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
+using GalaSoft.MvvmLight;
+using LATravelManager.Model;
+using LATravelManager.Model.Hotels;
+using LATravelManager.Model.LocalModels;
+using LATravelManager.UI.Wrapper;
 
 namespace LATravelManager.UI.ViewModel.CategoriesViewModels
 {

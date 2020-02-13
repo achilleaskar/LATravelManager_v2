@@ -1,9 +1,9 @@
-﻿using LATravelManager.Model.Hotels;
-using LATravelManager.UI.ViewModel.CategoriesViewModels.Group;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using LATravelManager.Model.Hotels;
+using LATravelManager.UI.ViewModel.CategoriesViewModels.Group;
 
 namespace LATravelManager.UI.Views.Group
 {
@@ -93,8 +93,5 @@ namespace LATravelManager.UI.Views.Group
         {
         }
 
-        private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-        {
-        }
     }
 }

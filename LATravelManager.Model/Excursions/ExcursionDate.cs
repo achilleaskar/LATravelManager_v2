@@ -28,13 +28,7 @@ namespace LATravelManager.Model.Excursions
 
         #endregion Fields
 
-
-
-
-
-
         private bool _Night = true;
-
 
         public bool NightStart
         {
@@ -55,7 +49,6 @@ namespace LATravelManager.Model.Excursions
             }
         }
 
-        
         #region Properties
 
         /// <summary>

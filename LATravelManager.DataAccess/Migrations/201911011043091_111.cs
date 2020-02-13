@@ -1,8 +1,7 @@
 namespace LATravelManager.DataAccess.Migrations
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class _111 : DbMigration
     {
         public override void Up()
@@ -11,7 +10,7 @@ namespace LATravelManager.DataAccess.Migrations
             DropColumn("dbo.Excursions", "NightStart");
             DropColumn("dbo.RoomTypes", "Index");
         }
-        
+
         public override void Down()
         {
             AddColumn("dbo.RoomTypes", "Index", c => c.Int(nullable: false));

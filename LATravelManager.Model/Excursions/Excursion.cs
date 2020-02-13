@@ -1,11 +1,9 @@
-﻿using LATravelManager.Model.Lists;
-using LATravelManager.Model.Locations;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Windows.Data;
+using LATravelManager.Model.Lists;
+using LATravelManager.Model.Locations;
 
 namespace LATravelManager.Model.Excursions
 {
@@ -63,13 +61,7 @@ namespace LATravelManager.Model.Excursions
 
         #endregion Methods
 
-
-
-
-
-
         private bool _Deactivated;
-
 
         public bool Deactivated
         {

@@ -1,11 +1,11 @@
-﻿using LATravelManager.Model.Hotels;
-using LATravelManager.UI.Wrapper;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Windows.Data;
+using LATravelManager.Model.Hotels;
+using LATravelManager.UI.Wrapper;
 
 namespace LATravelManager.UI.Converters
 {

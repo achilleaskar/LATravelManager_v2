@@ -1,10 +1,10 @@
-﻿using LATravelManager.UI.ViewModel.BaseViewModels;
+﻿using System.Linq;
+using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.CategoriesViewModels;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko;
 using LATravelManager.UI.ViewModel.Tabs;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Wrapper;
-using System.Linq;
 
 namespace LATravelManager.UI.ViewModel.Parents
 {

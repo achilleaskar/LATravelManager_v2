@@ -4,7 +4,6 @@ namespace LATravelManager.Model.Lists
 {
     public class Leader : BaseModel, INamed
     {
-
         #region Fields
 
         private string _Name = string.Empty;
@@ -34,7 +33,7 @@ namespace LATravelManager.Model.Lists
                 RaisePropertyChanged();
             }
         }
-        
+
         [Required]
         [MaxLength(15), MinLength(10)]
         [Phone]
@@ -61,8 +60,7 @@ namespace LATravelManager.Model.Lists
 
         public override string ToString()
         {
-            return Name+": "+Tel;
+            return Name + ": " + Tel;
         }
-
     }
 }

@@ -1,6 +1,6 @@
-﻿using LATravelManager.UI.Helpers;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Input;
+using LATravelManager.UI.Helpers;
 
 namespace LATravelManager.UI.Views.Tabs
 {

@@ -1,11 +1,11 @@
-﻿using LATravelManager.Model.BookingData;
-using LATravelManager.Model.People;
-using LATravelManager.UI.Helpers;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using LATravelManager.Model.BookingData;
+using LATravelManager.Model.People;
+using LATravelManager.UI.Helpers;
 
 namespace LATravelManager.Model.Wrapper
 {
@@ -197,7 +197,7 @@ namespace LATravelManager.Model.Wrapper
 
                 _FullPrice = value;
                 RaisePropertyChanged();
-                if (NetPrice==0&& Commision==0)
+                if (NetPrice == 0 && Commision == 0)
                 {
                     NetPrice = value;
                 }
@@ -243,6 +243,15 @@ namespace LATravelManager.Model.Wrapper
         }
 
         public bool Reciept
+        {
+            get { return GetValue<bool>(); }
+            set { SetValue(value); }
+        } public bool VoucherSent
+        {
+            get { return GetValue<bool>(); }
+            set { SetValue(value); }
+        }
+         public bool ProformaSent
         {
             get { return GetValue<bool>(); }
             set { SetValue(value); }
@@ -328,6 +337,8 @@ namespace LATravelManager.Model.Wrapper
             get { return GetValue<User>(); }
             set { SetValue(value); }
         }
+
+    
 
         #endregion Properties
 

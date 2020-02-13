@@ -1,8 +1,8 @@
-﻿using LATravelManager.Model.BookingData;
+﻿using System;
+using System.Threading.Tasks;
+using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Repositories;
-using System;
-using System.Threading.Tasks;
 
 namespace LATravelManager.UI.Helpers
 {

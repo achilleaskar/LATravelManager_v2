@@ -28,7 +28,6 @@ namespace LATravelManager.Model.Hotels
         [NotMapped]
         public int freeRooms { get; set; }
 
-
         #region Properties
 
         /// <summary>

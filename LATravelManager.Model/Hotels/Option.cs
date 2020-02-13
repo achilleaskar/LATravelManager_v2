@@ -44,15 +44,7 @@ namespace LATravelManager.Model.Hotels
             }
         }
 
-
-
-
-
-
-
-
         private NotifStatus _NotifStatus;
-
 
         public NotifStatus NotifStatus
         {

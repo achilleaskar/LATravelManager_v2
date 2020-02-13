@@ -1,20 +1,16 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using GalaSoft.MvvmLight;
 using LATravelManager.Model;
-using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.Lists;
 using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
-using LATravelManager.Model.Plan;
-using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace LATravelManager.UI.Helpers
 {
@@ -348,12 +344,7 @@ namespace LATravelManager.UI.Helpers
             return Context.HasChanges();
         }
 
-
-
-
-
         private ObservableCollection<OptionalExcursion> _OptionalExcursions;
-
 
         public ObservableCollection<OptionalExcursion> OptionalExcursions
         {
@@ -373,6 +364,7 @@ namespace LATravelManager.UI.Helpers
                 RaisePropertyChanged();
             }
         }
+
         public async Task LoadAsync()
         {
             Mouse.OverrideCursor = Cursors.Wait;
@@ -391,8 +383,7 @@ namespace LATravelManager.UI.Helpers
             Airlines = new ObservableCollection<Airline>(await Context.GetAllAsync<Airline>());
             Vehicles = new ObservableCollection<Vehicle>(await Context.GetAllAsync<Vehicle>());
             Leaders = new ObservableCollection<Leader>(await Context.GetAllAsync<Leader>());
-            OptionalExcursions = new ObservableCollection<OptionalExcursion>(await Context.GetAllAsync<OptionalExcursion>(o=>o.Date>=DateTime.Today));
-
+            OptionalExcursions = new ObservableCollection<OptionalExcursion>(await Context.GetAllAsync<OptionalExcursion>(o => o.Date >= DateTime.Today));
 
             //DateTime from = new DateTime(2019, 12, 18);
             //DateTime to = new DateTime(2020, 01, 1);

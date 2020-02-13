@@ -1,16 +1,4 @@
-﻿using GalaSoft.MvvmLight.CommandWpf;
-using LATravelManager.Model.Excursions;
-using LATravelManager.Model.Lists;
-using LATravelManager.Model.People;
-using LATravelManager.Model.Wrapper;
-using LATravelManager.UI.Helpers;
-using LATravelManager.UI.Message;
-using LATravelManager.UI.Repositories;
-using LATravelManager.UI.ViewModel.BaseViewModels;
-using LATravelManager.UI.ViewModel.CategoriesViewModels.Group;
-using LATravelManager.UI.ViewModel.Window_ViewModels;
-using LATravelManager.UI.Views.Bansko;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,6 +10,18 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using GalaSoft.MvvmLight.CommandWpf;
+using LATravelManager.Model.Excursions;
+using LATravelManager.Model.Lists;
+using LATravelManager.Model.People;
+using LATravelManager.Model.Wrapper;
+using LATravelManager.UI.Helpers;
+using LATravelManager.UI.Message;
+using LATravelManager.UI.Repositories;
+using LATravelManager.UI.ViewModel.BaseViewModels;
+using LATravelManager.UI.ViewModel.CategoriesViewModels.Group;
+using LATravelManager.UI.ViewModel.Window_ViewModels;
+using LATravelManager.UI.Views.Bansko;
 
 namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {
@@ -81,11 +81,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             Load();
         }
 
-
-
-
         private bool _SecondDepart;
-
 
         public bool SecondDepart
         {
@@ -104,7 +100,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 _SecondDepart = value;
                 RaisePropertyChanged();
                 RecalculateCustomers();
-
             }
         }
 
@@ -666,7 +661,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                         }
                     }
                 }
-
         }
 
         public void CountSelected()
@@ -1256,7 +1250,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                         }
                         if (!CheckOut)
                         {
-
                             foreach (Customer c in r.CustomersList)
                             {
                                 tmpCity = Cities.Where(h => h.Name.Equals(c.StartingPlace)).FirstOrDefault();
@@ -1282,7 +1275,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                                 tmpCity.Total += 1;
                                 tmpHotel.Total += 1;
                             }
-
                         }
                         else
                         {

@@ -1,9 +1,5 @@
-﻿using LATravelManager.Model.Excursions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using LATravelManager.Model.Excursions;
 
 namespace LATravelManager.Model.Wrapper
 {
@@ -11,29 +7,31 @@ namespace LATravelManager.Model.Wrapper
     {
         public OptionalExcursionsWrapper() : this(new OptionalExcursion())
         {
-
         }
+
         public OptionalExcursionsWrapper(OptionalExcursion model) : base(model)
         {
             Title = "Η προαιρετική";
         }
-
 
         public Excursion Excursion
         {
             get { return GetValue<Excursion>(); }
             set { SetValue(value); }
         }
+
         public DateTime Date
         {
             get { return GetValue<DateTime>(); }
             set { SetValue(value); }
         }
+
         public string Name
         {
             get { return GetValue<string>(); }
             set { SetValue(value.ToUpper()); }
-        } 
+        }
+
         public int Cost
         {
             get { return GetValue<int>(); }

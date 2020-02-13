@@ -190,9 +190,7 @@
                         <Label Content="Πλοίο:" />
                         <CheckBox IsChecked="{Binding SelectedEntity.IncludesShip,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                   VerticalAlignment="Center" />
-
                     </StackPanel>
-
                 </Grid>
             </TabItem>
             <TabItem Header="Ώρες">
@@ -256,8 +254,9 @@
         <StackPanel Orientation="Vertical"
                     Grid.Row="1">
             <CheckBox Content="Απενεργοποιημένη εδρομή"
-                       HorizontalAlignment="Right"
-                     Margin="5" IsChecked="{Binding SelectedEntity.Deactivated}" />
+                      HorizontalAlignment="Right"
+                      Margin="5"
+                      IsChecked="{Binding SelectedEntity.Deactivated}" />
             <Button Content="Προσθήκη"
                     Margin="5,5,5,0"
                     Command="{Binding AddEntityCommand}" />

@@ -1,9 +1,9 @@
-﻿using LATravelManager.Model.Hotels;
-using LATravelManager.UI.ViewModel.CategoriesViewModels.Skiathos;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using LATravelManager.Model.Hotels;
+using LATravelManager.UI.ViewModel.CategoriesViewModels.Skiathos;
 
 namespace LATravelManager.UI.Views.Skiathos
 {

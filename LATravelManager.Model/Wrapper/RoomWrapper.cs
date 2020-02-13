@@ -1,9 +1,4 @@
-﻿using LATravelManager.Model;
-using LATravelManager.Model.Hotels;
-using LATravelManager.Model.LocalModels;
-using LATravelManager.Model.Plan;
-using LATravelManager.Model.Wrapper;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -11,6 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
+using LATravelManager.Model;
+using LATravelManager.Model.Hotels;
+using LATravelManager.Model.LocalModels;
+using LATravelManager.Model.Plan;
+using LATravelManager.Model.Wrapper;
 
 namespace LATravelManager.UI.Wrapper
 {
@@ -29,23 +29,13 @@ namespace LATravelManager.UI.Wrapper
         }
     }
 
-
-
-
-
     public class RoomWrapper : ModelWrapper<Room>
     {
         #region Constructors
+
         private int _Rating;
 
-
-
-
-
-
-
         private SolidColorBrush _Color = new SolidColorBrush(Colors.Black);
-
 
         public SolidColorBrush Color
         {
@@ -85,22 +75,24 @@ namespace LATravelManager.UI.Wrapper
                 if (value < 0)
                 {
                     Color = new SolidColorBrush(Colors.Red);
-
                 }
                 switch (value)
                 {
                     case 1:
                         Color = new SolidColorBrush(Colors.Blue);
                         break;
+
                     case 2:
                         Color = new SolidColorBrush(Colors.Green);
                         break;
+
                     default:
                         Color = new SolidColorBrush(Colors.Black);
                         break;
                 };
             }
         }
+
         public RoomWrapper(Room model) : base(model)
         {
             PlanDailyInfo = new List<PlanDailyInfo>();
@@ -109,7 +101,6 @@ namespace LATravelManager.UI.Wrapper
         public RoomWrapper() : this(new Room())
         {
         }
-
 
         public List<Period> Periods { get; set; }
 

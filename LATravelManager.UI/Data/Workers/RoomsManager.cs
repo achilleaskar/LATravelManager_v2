@@ -1,4 +1,10 @@
-﻿using DocumentFormat.OpenXml.Packaging;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Media;
+using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
@@ -8,12 +14,6 @@ using LATravelManager.Model.Plan;
 using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.Wrapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Media;
 
 namespace LATravelManager.UI.Data.Workers
 {

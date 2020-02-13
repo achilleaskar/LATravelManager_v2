@@ -1,4 +1,12 @@
-﻿using GalaSoft.MvvmLight.CommandWpf;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media;
+using GalaSoft.MvvmLight.CommandWpf;
 using LATravelManager.Model;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.LocalModels;
@@ -13,14 +21,6 @@ using LATravelManager.UI.ViewModel.CategoriesViewModels.Group;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Views.Bansko;
 using LATravelManager.UI.Wrapper;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media;
 
 namespace LATravelManager.UI.ViewModel.CategoriesViewModels
 {
@@ -746,7 +746,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
             List<BookingInfoPerDay> dbitd = new List<BookingInfoPerDay>();
             foreach (var item in FilteredPlanList)
             {
-                if (item.Id == 72 || item.Id == 78|| item.Id == 88)
+                if (item.Id == 72 || item.Id == 78 || item.Id == 88)
                 {
                     foreach (var r in item.RoomWrappers)
                     {
@@ -758,7 +758,6 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
                             }
                     }
                 }
-
             }
             for (int i = 0; i < dbitd.Count; i++)
             {

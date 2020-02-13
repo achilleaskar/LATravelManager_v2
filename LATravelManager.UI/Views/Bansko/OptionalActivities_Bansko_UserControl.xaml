@@ -7,7 +7,7 @@
              d:DesignHeight="450"
              Background="White"
              d:DesignWidth="800">
-   
+
     <UserControl.Resources>
         <Style x:Key="DataGridCellStyle"
                TargetType="{x:Type DataGridCell}">

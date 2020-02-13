@@ -1,6 +1,6 @@
-﻿using LATravelManager.Model.BookingData;
+﻿using System;
+using LATravelManager.Model.BookingData;
 using LATravelManager.Model.People;
-using System;
 
 namespace LATravelManager.Model.Wrapper
 {

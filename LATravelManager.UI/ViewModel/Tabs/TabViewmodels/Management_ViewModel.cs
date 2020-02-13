@@ -79,11 +79,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-
-
-
         private OptionalsManagement_ViewModel _OptionalsManagement;
-
 
         public OptionalsManagement_ViewModel OptionalsManagement
         {

@@ -1,17 +1,11 @@
-﻿using GalaSoft.MvvmLight.CommandWpf;
-using LATravelManager.Model.Excursions;
-using LATravelManager.Model.LocalModels;
-using LATravelManager.Model.Wrapper;
-using LATravelManager.UI.Repositories;
-using OfficeOpenXml;
-using Org.BouncyCastle.Asn1.Crmf;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.IO;
-using System.Threading.Tasks;
+using GalaSoft.MvvmLight.CommandWpf;
+using LATravelManager.Model.Excursions;
+using LATravelManager.Model.LocalModels;
+using LATravelManager.UI.Repositories;
 
 namespace LATravelManager.UI.Helpers
 {
@@ -25,8 +19,6 @@ namespace LATravelManager.UI.Helpers
             Context = context;
             ExcursionId = excursionId;
         }
-
-
 
         public bool SecondDepart { get; set; }
         //private bool CanPrintList(int arg)

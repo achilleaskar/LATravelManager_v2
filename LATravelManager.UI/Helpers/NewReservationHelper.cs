@@ -1,4 +1,8 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Media;
+using GalaSoft.MvvmLight;
 using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Hotels;
@@ -9,10 +13,6 @@ using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.Wrapper;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Media;
 
 public class NewReservationHelper : ViewModelBase
 {

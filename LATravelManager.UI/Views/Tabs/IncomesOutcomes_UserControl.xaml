@@ -23,7 +23,6 @@
             <TabItem Header="Προβολή">
                 <local:IncomesOutcomesPreview_UserControl DataContext="{Binding PreviewIncomesOutcomes_ViewModel}" />
             </TabItem>
-            
         </TabControl>
     </Grid>
 </UserControl>

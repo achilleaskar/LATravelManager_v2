@@ -1,4 +1,15 @@
-﻿using GalaSoft.MvvmLight.CommandWpf;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Data.Entity.Infrastructure;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
+using GalaSoft.MvvmLight.CommandWpf;
 using LaTravelManager.ViewModel.Management;
 using LATravelManager.Model;
 using LATravelManager.Model.Hotels;
@@ -12,17 +23,6 @@ using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Views;
 using LATravelManager.UI.Wrapper;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Data.Entity.Infrastructure;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Input;
 
 namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {
@@ -797,11 +797,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-
-
-
         private ObservableCollection<roomDetail> _Periods;
-
 
         public ObservableCollection<roomDetail> Periods
         {
@@ -872,21 +868,21 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                     hotel = HotelContainers.FirstOrDefault(p => p.Hotel.Id == room.Hotel.Id);
                     if (hotel == null)
                     {
-                        hotel = new HotelContainer { Hotel = room.Hotel,Periods=new List<PeriodContainer>()};
+                        hotel = new HotelContainer { Hotel = room.Hotel, Periods = new List<PeriodContainer>() };
                         HotelContainers.Add(hotel);
                     }
-                   
+
                     period = hotel.Periods.FirstOrDefault(b => b.Period.From == t2.From && b.Period.To == t2.To);
                     if (period == null)
                     {
-                        period = new PeriodContainer { Period = new Period { From = t2.From, To = t2.To } ,Roomtypes=new List<roomDetail>() };
+                        period = new PeriodContainer { Period = new Period { From = t2.From, To = t2.To }, Roomtypes = new List<roomDetail>() };
                         hotel.Periods.Add(period);
                     }
 
                     roomdetail = period.Roomtypes.FirstOrDefault(tr => tr.Rommtype.Id == room.RoomType.Id);
                     if (roomdetail == null)
                     {
-                        roomdetail = new roomDetail { Rommtype = room.RoomType } ;
+                        roomdetail = new roomDetail { Rommtype = room.RoomType };
                         period.Roomtypes.Add(roomdetail);
                     }
                     roomdetail.Count++;
@@ -926,12 +922,11 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
     {
         public Hotel Hotel { get; set; }
         public List<PeriodContainer> Periods { get; set; }
-
     }
+
     public class PeriodContainer
     {
         public Period Period { get; set; }
         public List<roomDetail> Roomtypes { get; set; }
     }
-
 }

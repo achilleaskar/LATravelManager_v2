@@ -26,7 +26,6 @@
         <DataTemplate x:Key="EnabledTemplate"
                       DataType="{x:Type viewmodels:NewReservation_Personal_ViewModel}">
             <StackPanel>
-
                 <Button Content="Ακύρωση Κράτησης"
                         Padding="3 3"
                         FontSize="11"
@@ -43,7 +42,6 @@
                          TextWrapping="Wrap" />
             </StackPanel>
         </DataTemplate>
-
         <DataTemplate x:Key="DisabledTemplate"
                       DataType="{x:Type viewmodels:NewReservation_Personal_ViewModel}">
             <Grid Background="Red">
@@ -281,9 +279,8 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <DataGridTextColumn Header="Email"
-                                                MaxWidth="200"
-                                                Binding="{Binding Email, UpdateSourceTrigger=PropertyChanged}"
-                                                Visibility="{Binding DataContext.SelectedExcursion.IncludesPlane, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}" />
+                                                MaxWidth="100"
+                                                Binding="{Binding Email, UpdateSourceTrigger=PropertyChanged}"/>
                             <DataGridTemplateColumn Header="Πάσο"
                                                     Width="70">
                                 <DataGridTemplateColumn.CellTemplate>
@@ -330,7 +327,6 @@
                         </Grid.RowDefinitions>
                         <StackPanel Orientation="Horizontal"
                                     Background="AliceBlue">
-
                             <GroupBox HorizontalAlignment="Left"
                                       VerticalAlignment="Top"
                                       Height="90"
@@ -388,7 +384,6 @@
                                     </StackPanel>
                                 </StackPanel>
                             </GroupBox>
-
                             <Border VerticalAlignment="Stretch"
                                     Width="160"
                                     HorizontalAlignment="Center"
@@ -410,7 +405,6 @@
                                 </ContentControl>
                             </Border>
                         </StackPanel>
-
                         <StackPanel Grid.Row="1"
                                     Orientation="Vertical">
                             <TextBlock Text=" Ιστορικό Πληρωμών"
@@ -802,18 +796,17 @@
                         </ListView>
                     </GroupBox>
                     <Border BorderBrush="Red"
-                    Margin="5 10 0 0"
+                            Margin="5 10 0 0"
                             BorderThickness="1"
                             VerticalAlignment="Top">
-                        
-                    <TextBlock  VerticalAlignment="Top"
-                                Visibility="{Binding PersonalWr.CanShowDirections,Converter={StaticResource booleanToVisibilityConverter}}"
-                                Grid.Column="1"
-                                Width="215"
-                                TextWrapping="Wrap"
-                                Text="{Binding PersonalWr.Partner.Note}"
-                                FontSize="13"
-                                HorizontalAlignment="Stretch" />
+                        <TextBlock  VerticalAlignment="Top"
+                                    Visibility="{Binding PersonalWr.CanShowDirections,Converter={StaticResource booleanToVisibilityConverter}}"
+                                    Grid.Column="1"
+                                    Width="215"
+                                    TextWrapping="Wrap"
+                                    Text="{Binding PersonalWr.Partner.Note}"
+                                    FontSize="13"
+                                    HorizontalAlignment="Stretch" />
                     </Border>
                 </StackPanel>
             </Grid>

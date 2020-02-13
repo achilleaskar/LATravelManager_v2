@@ -7,7 +7,7 @@
              mc:Ignorable="d"
              d:DesignHeight="450"
              d:DesignWidth="1000">
-    
+
     <UserControl.Resources>
         <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
                          Color="{x:Static SystemColors.HighlightColor}" />

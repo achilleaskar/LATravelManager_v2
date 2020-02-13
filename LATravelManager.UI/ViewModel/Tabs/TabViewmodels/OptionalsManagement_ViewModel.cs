@@ -1,12 +1,4 @@
-﻿using GalaSoft.MvvmLight.CommandWpf;
-using LATravelManager.Model;
-using LATravelManager.Model.Excursions;
-using LATravelManager.Model.Lists;
-using LATravelManager.Model.People;
-using LATravelManager.UI.Helpers;
-using LATravelManager.UI.Repositories;
-using LATravelManager.UI.ViewModel.BaseViewModels;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -14,6 +6,14 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using GalaSoft.MvvmLight.CommandWpf;
+using LATravelManager.Model;
+using LATravelManager.Model.Excursions;
+using LATravelManager.Model.Lists;
+using LATravelManager.Model.People;
+using LATravelManager.UI.Helpers;
+using LATravelManager.UI.Repositories;
+using LATravelManager.UI.ViewModel.BaseViewModels;
 
 namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {
@@ -278,11 +278,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-
-
-
         private OptionalExcursion _SelectedMainOptional;
-
 
         public OptionalExcursion SelectedMainOptional
         {
@@ -349,7 +345,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
-            Optionals = new ObservableCollection<OptionalExcursion>((await Context.GetAllOptionalExcursionsAsync(CheckIn)).Where(e=>e.Date==CheckIn));
+            Optionals = new ObservableCollection<OptionalExcursion>((await Context.GetAllOptionalExcursionsAsync(CheckIn)).Where(e => e.Date == CheckIn));
             Leaders = new ObservableCollection<Leader>((await Context.GetAllAsync<Leader>()).OrderBy(l => l.Name));
             Buses = new ObservableCollection<Bus>(await Context.GetAllBusesAsync(checkIn: CheckIn));
             Buses.Insert(0, new Bus { Vehicle = new Vehicle { Name = "Όλες" } });

@@ -128,7 +128,8 @@
                     </ToggleButton>
                     <Popup IsOpen="{Binding IsChecked, ElementName=button}"
                            StaysOpen="False">
-                        <ListView ItemsSource="{Binding Nots}">
+                        <ListView ItemsSource="{Binding Nots}"
+                                  SelectedItem="{Binding SelectedNot}">
                             <ListView.Resources>
                                 <ContextMenu x:Key="ItemContextMenu">
                                     <MenuItem Header="Διαγραφη"
@@ -179,9 +180,42 @@
                             </ListView.GroupStyle>
                             <ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock TextWrapping="Wrap"
-                                               Width="250"
-                                               Text="{Binding Details}" />
+                                    <Border BorderBrush="Black"
+                                            Grid.Column="1"
+                                            BorderThickness=" 1 ">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="280" />
+                                                <ColumnDefinition MaxWidth="60" />
+                                                <ColumnDefinition Width="80" />
+                                            </Grid.ColumnDefinitions>
+                                            <Border BorderBrush="Black"
+                                                    BorderThickness=" 0 0 1 0"
+                                                    HorizontalAlignment="Right" />
+                                            <Border BorderBrush="Black"
+                                                    Grid.Column="1"
+                                                    BorderThickness=" 0 0 1 0"
+                                                    HorizontalAlignment="Right" />
+                                            <TextBlock TextWrapping="Wrap"
+                                                       Margin="5 0"
+                                                       Text="{Binding Details}" />
+                                            <StackPanel Grid.Column="1"
+                                                        Margin="5 0"
+                                                        VerticalAlignment="Top"
+                                                        Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}">
+                                                <TextBlock Text="Χρήστης:" />
+                                                <TextBlock Text="{Binding UserName}"
+                                                           Margin="0 3"
+                                                           HorizontalAlignment="Left" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="2"
+                                                        Margin="5 0">
+                                                <TextBlock Text="Συνεργάτης:" />
+                                                <TextBlock Text="{Binding PartnerName}"
+                                                           HorizontalAlignment="Left" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>

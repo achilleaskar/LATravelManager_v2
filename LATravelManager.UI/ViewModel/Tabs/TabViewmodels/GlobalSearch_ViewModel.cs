@@ -1,4 +1,12 @@
-﻿using GalaSoft.MvvmLight.CommandWpf;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Data;
+using System.Windows.Input;
+using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
 using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
@@ -21,15 +29,6 @@ using LATravelManager.UI.Views.Bansko;
 using LATravelManager.UI.Views.Personal;
 using LATravelManager.UI.Views.ThirdParty;
 using NuGet;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Data;
-using System.Windows.Input;
 
 namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {
@@ -41,7 +40,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         {
             FilteredReservations = new ObservableCollection<ReservationWrapper>();
             ReservationsCollectionView = CollectionViewSource.GetDefaultView(FilteredReservations);
-
 
             PrintRoomingListsCommand = new RelayCommand(async () => { await PrintRoomingLists(); }, CanPrintRoomingLists);
             PrintAllVouchersCommand = new RelayCommand(async () => { await PrintAllVouchers(); });
@@ -1450,7 +1448,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
                 var x = await Context.GetAllCitiesAsyncSortedByName();
 
-
                 List<Booking> bookings = new List<Booking>();
 
                 foreach (ReservationWrapper r in CollectionViewSource.GetDefaultView(FilteredReservations))
@@ -1569,7 +1566,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         {
             try
             {
-
                 IsOk = false;
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
                 //await ReloadAsync();

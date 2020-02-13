@@ -1,11 +1,11 @@
-﻿using LATravelManager.Model.BookingData;
-using LATravelManager.Model.Locations;
-using LATravelManager.Model.People;
-using LATravelManager.UI.Repositories;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Locations;
+using LATravelManager.Model.People;
+using LATravelManager.UI.Repositories;
 
 namespace LATravelManager.UI.Helpers
 {

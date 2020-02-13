@@ -1,6 +1,6 @@
-﻿using LATravelManager.Model.Excursions;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using LATravelManager.Model.Excursions;
 
 namespace LATravelManager.UI.Helpers
 {

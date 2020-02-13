@@ -1,6 +1,4 @@
-﻿using LATravelManager.Model.Lists;
-using System;
-using System.Collections.ObjectModel;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -20,7 +18,7 @@ namespace LATravelManager.Model.Excursions
 
         [NotMapped]
         public int FirstPrice { get; set; }
-        
+
         public int Cost
         {
             get
@@ -48,9 +46,6 @@ namespace LATravelManager.Model.Excursions
 
         #region Properties
 
-
-
-
         private string _Note;
 
         [NotMapped]
@@ -72,7 +67,6 @@ namespace LATravelManager.Model.Excursions
                 RaisePropertyChanged();
             }
         }
-
 
         public Excursion Excursion
         {

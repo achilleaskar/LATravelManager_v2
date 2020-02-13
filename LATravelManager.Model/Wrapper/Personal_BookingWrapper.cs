@@ -1,14 +1,14 @@
-﻿using LATravelManager.Model.BookingData;
-using LATravelManager.Model.People;
-using LATravelManager.Model.Services;
-using LATravelManager.UI.Helpers;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using LATravelManager.Model.BookingData;
+using LATravelManager.Model.People;
+using LATravelManager.Model.Services;
+using LATravelManager.UI.Helpers;
 
 namespace LATravelManager.Model.Wrapper
 {
@@ -43,6 +43,15 @@ namespace LATravelManager.Model.Wrapper
         }
 
         public bool Disabled
+        {
+            get { return GetValue<bool>(); }
+            set { SetValue(value); }
+        } public bool VoucherSent
+        {
+            get { return GetValue<bool>(); }
+            set { SetValue(value); }
+        }
+        public bool ProformaSent
         {
             get { return GetValue<bool>(); }
             set { SetValue(value); }

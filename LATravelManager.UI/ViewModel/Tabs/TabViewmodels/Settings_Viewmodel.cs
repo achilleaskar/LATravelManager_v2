@@ -1,7 +1,7 @@
-﻿using LATravelManager.UI.Message;
-using LATravelManager.UI.ViewModel.BaseViewModels;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using LATravelManager.UI.Message;
+using LATravelManager.UI.ViewModel.BaseViewModels;
 
 namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {

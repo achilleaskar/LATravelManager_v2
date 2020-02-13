@@ -1,10 +1,9 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System.Collections.Generic;
+using GalaSoft.MvvmLight;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Wrapper;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace LATravelManager.UI.ViewModel.BaseViewModels
 {

@@ -1,7 +1,7 @@
-﻿using LATravelManager.Model.BookingData;
-using LATravelManager.Model.Hotels;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Hotels;
 
 namespace LATravelManager.Model.Plan
 {
@@ -19,6 +19,7 @@ namespace LATravelManager.Model.Plan
         private int _MinimunStay;
 
         public Room Room { get; set; }
+
         public int MinimunStay
         {
             get
@@ -77,12 +78,6 @@ namespace LATravelManager.Model.Plan
                 RaisePropertyChanged();
             }
         }
-
-
-
-
-
-
 
         //private Room _Room;
 

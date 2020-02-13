@@ -1,8 +1,8 @@
-﻿using LATravelManager.Model.Lists;
-using System;
+﻿using System;
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
+using LATravelManager.Model.Lists;
 
 namespace LATravelManager.UI.Converters
 {
@@ -16,7 +16,7 @@ namespace LATravelManager.UI.Converters
             {
                 if (seat.SeatType == Model.SeatType.Normal)
                 {
-                    if (seat.Customer!=null)
+                    if (seat.Customer != null)
                     {
                         return seat.Customer.RoomColor;
                     }

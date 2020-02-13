@@ -327,6 +327,7 @@ namespace LATravelManager.UI.Repositories
                            .Include(x => x.ReservationsInBooking.Select(t => t.CustomersList))
                            .Include(x => x.Payments)
                            .Include(x => x.ExtraServices)
+                           .Include(x => x.Partner)
                            .Include(x => x.User)
                            .Include(x => x.Excursion.Destinations)
                            .ToListAsync);
@@ -346,6 +347,7 @@ namespace LATravelManager.UI.Repositories
                 ((DbFunctions.DiffDays(DateTime.Today, o.CreatedDate) >= 5 && !o.Payments.Any(p => p.Amount > 0)) ||
                  o.Services.Any(r => DbFunctions.DiffDays(r.TimeGo, o.CreatedDate) <= 5)) && o.Disabled == false)
                 .Include(x => x.Customers)
+                .Include(x => x.Partner)
                 .Include(x => x.Payments)
                 .ToListAsync);
         }
@@ -360,6 +362,8 @@ namespace LATravelManager.UI.Repositories
                 || DbFunctions.DiffDays(o.CheckIn, o.CreatedDate) <= 5) && o.Disabled == false)
                 .Include(x => x.Customers)
                 .Include(x => x.Payments)
+                .Include(x => x.Partner)
+                .Include(x => x.User)
                 .ToListAsync);
         }
 
@@ -371,6 +375,7 @@ namespace LATravelManager.UI.Repositories
                 (StaticResources.User.Level < 3 || o.Room.User.Id == StaticResources.User.Id) &&
                 o.Date >= DateTime.Today && o.Date <= limit)
                 .Include(x => x.Room.Hotel)
+                .Include(x => x.Room.User)
                 .ToListAsync);
         }
 
@@ -382,6 +387,7 @@ namespace LATravelManager.UI.Repositories
                 (StaticResources.User.Level < 2 || o.Personal_Booking.User.Id == StaticResources.User.Id) &&
                  o.Option >= DateTime.Today && o.Option <= limit && o.Personal_Booking.Disabled == false)
                 .Include(x => x.Personal_Booking.Customers)
+                .Include(x => x.Personal_Booking.Partner)
                 .ToListAsync);
         }
 

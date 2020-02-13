@@ -1,7 +1,7 @@
-﻿using LATravelManager.Model.Wrapper;
-using LATravelManager.UI.Wrapper;
-using System;
+﻿using System;
 using System.Windows.Media;
+using LATravelManager.Model.Wrapper;
+using LATravelManager.UI.Wrapper;
 
 namespace LATravelManager.Model.LocalModels
 {

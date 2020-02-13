@@ -1,4 +1,6 @@
-﻿using LATravelManager.DataAccess.Migrations;
+﻿using System.Data.Entity;
+using System.Data.Entity.ModelConfiguration.Conventions;
+using LATravelManager.DataAccess.Migrations;
 using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Excursions;
@@ -8,9 +10,6 @@ using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Plan;
 using LATravelManager.Model.Services;
-using System;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration.Conventions;
 
 namespace LATravelManager.DataAccess
 {
@@ -36,7 +35,6 @@ namespace LATravelManager.DataAccess
 
         #endregion Fields
 
-      
         #region Properties
 
         public DbSet<Airline> Airlines { get; set; }
@@ -78,7 +76,7 @@ namespace LATravelManager.DataAccess
             modelBuilder.Properties<bool>().Configure(c => c.HasColumnType("bit"));
             //Database.Connection.Open();
             modelBuilder.Conventions.Remove<DecimalPropertyConvention>();
-            modelBuilder.Conventions.Add(new DecimalPropertyConvention(18,2));
+            modelBuilder.Conventions.Add(new DecimalPropertyConvention(18, 2));
             base.OnModelCreating(modelBuilder);
             // SetExecutionStrategy(MySqlProviderInvariantName.ProviderName, () => new MySqlExecutionStrategy());
             //modelBuilder.Properties<TimeSpan>().Configure(c => c.HasColumnType("time"));

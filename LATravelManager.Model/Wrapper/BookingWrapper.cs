@@ -57,33 +57,6 @@ namespace LATravelManager.Model.Wrapper
 
         #endregion Fields
 
-
-
-        private ExtraService _ExtraService;
-
-
-
-
-
-
-        public ExtraService ExtraService
-        {
-            get
-            {
-                return _ExtraService;
-            }
-
-            set
-            {
-                if (_ExtraService == value)
-                {
-                    return;
-                }
-
-                _ExtraService = value;
-                RaisePropertyChanged();
-            }
-        }
         #region Properties
 
         private ICollectionView _CustomersCV;

@@ -1,8 +1,7 @@
 ﻿namespace LATravelManager.DataAccess.Migrations
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class _112sos : DbMigration
     {
         public override void Up()
@@ -45,7 +44,7 @@
             AlterColumn("dbo.ThirdParty_Booking", "VoucherSent", c => c.Boolean(nullable: false, storeType: "bit"));
             AlterColumn("dbo.ThirdParty_Booking", "ProformaSent", c => c.Boolean(nullable: false, storeType: "bit"));
         }
-        
+
         public override void Down()
         {
             AlterColumn("dbo.ThirdParty_Booking", "ProformaSent", c => c.Boolean(nullable: false));

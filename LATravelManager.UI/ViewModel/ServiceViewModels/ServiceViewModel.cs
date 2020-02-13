@@ -1,7 +1,7 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using GalaSoft.MvvmLight;
 using LATravelManager.Model.Services;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Personal;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LATravelManager.UI.ViewModel.ServiceViewModels
 {

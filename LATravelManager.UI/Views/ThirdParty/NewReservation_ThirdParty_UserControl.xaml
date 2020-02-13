@@ -241,9 +241,9 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <DataGridTextColumn Header="Email"
-                                                MaxWidth="200"
+                                                MaxWidth="100"
                                                 Binding="{Binding Email, UpdateSourceTrigger=PropertyChanged}"
-                                                Visibility="{Binding DataContext.SelectedExcursion.IncludesPlane, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}" />
+                                                />
                             <DataGridTemplateColumn Header="Πάσο"
                                                     Width="70">
                                 <DataGridTemplateColumn.CellTemplate>

@@ -168,8 +168,14 @@
                                        VerticalAlignment="Center"
                                        ItemsSource="{Binding ExcursionsCollectionView}"
                                        SelectedIndex="{Binding ExcursionIndexBookingFilter}" />
+                            <CheckBox Content="Όλοκληρωμένες"
+                                      Margin="0 5 0 0"
+                                      IsChecked="{Binding Completed}" />
                         </StackPanel>
                     </StackPanel>
+                    <Border BorderBrush="Gray"
+                            BorderThickness="0 0 0 1"
+                            Margin="-5 0 5 0" />
                     <StackPanel Orientation="Horizontal"
                                 VerticalAlignment="Bottom"
                                 Margin="5 0 0 0">
@@ -197,16 +203,12 @@
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
+                <Border BorderBrush="Gray"
+                        BorderThickness="0 0 1 0"
+                        Margin="-5 0 5 0" />
             </StackPanel>
-        </StackPanel>
-        <Grid   Grid.Row="0"
-                HorizontalAlignment="Left"
-                Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <StackPanel VerticalAlignment="Top">
+            <StackPanel VerticalAlignment="Top"
+                        Grid.Column="1">
                 <StackPanel>
                     <TextBlock Text="Γραφείο:"
                                Margin="0 5 0 0"
@@ -221,13 +223,16 @@
                         <ComboBoxItem Content="Συνεργάτών" />
                     </ComboBox>
                 </StackPanel>
-                <StackPanel VerticalAlignment="Center"
-                            Margin="0 14">
-                    <CheckBox Content="Όλοκληρωμένες"
-                              IsChecked="{Binding Completed}" />
+                <StackPanel VerticalAlignment="Top"
+                            Margin="0 5">
                     <CheckBox Content="Υπόλοιπο"
-                              Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
                               IsChecked="{Binding Remaining}" />
+                    <CheckBox Content="OXI Voucher"
+                              IsChecked="{Binding NoVoucher}" />
+                    <CheckBox Content="OXI Proforma"
+                              IsChecked="{Binding NoProforma}" />
+                    <CheckBox Content="OXI Τιμολόγιο"
+                              IsChecked="{Binding NoReciept}" />
                 </StackPanel>
             </StackPanel>
             <StackPanel Orientation="Horizontal"
@@ -243,7 +248,7 @@
                         VerticalAlignment="Bottom"
                         Margin="5,0" />
             </StackPanel>
-        </Grid>
+        </StackPanel>
         <Grid Grid.Row="1"
               Grid.ColumnSpan="2  ">
             <Grid.ColumnDefinitions>
@@ -336,8 +341,7 @@
                                         BorderThickness="0 1 0 0"
                                         VerticalAlignment="Bottom"
                                         Grid.ColumnSpan="7" />
-                                <Label Content="{Binding Partner}" 
-                                       
+                                <Label Content="{Binding Partner}"
                                        Grid.Row="0"
                                        Padding="2 5 5 5" />
                                 <Label Content="Πελάτες:"
@@ -400,6 +404,7 @@
                                        Grid.Row="2" />
                                 <Label Content="{Binding Remaining,Converter={StaticResource FtoSConverter}}"
                                        Grid.Row="2"
+                                       Foreground="{Binding Remaining, Converter={StaticResource BoolToRedGreenConverter}}"
                                        HorizontalAlignment="Right"
                                        Grid.Column="4" />
                                 <!--Papers-->
@@ -414,7 +419,8 @@
                                        Grid.Column="5"
                                        Grid.Row="1" />
                                 <Label Content="{Binding Reciept,Converter={StaticResource BoolToYesNoConverter}}"
-                                       Grid.Row="1" FontWeight="Bold"
+                                       Grid.Row="1"
+                                       FontWeight="Bold"
                                        Foreground="{Binding Reciept,Converter={StaticResource BoolToRedGreenConverter}}"
                                        HorizontalAlignment="Left"
                                        Grid.Column="6" />
@@ -433,8 +439,12 @@
         </Grid>
         <StackPanel Orientation="Horizontal"
                     Grid.Row="2">
-            <Label Content="Τζίρος:" />
+            <Label Content="Net:" />
             <Label Content="{Binding Total}"
+                   ContentStringFormat="C2" />
+            <Label Content="Προμήθεια:" />
+            <Label Content="{Binding Commision}"
+                   Foreground="Blue"
                    ContentStringFormat="C2" />
             <Label Content="Απόθεμα" />
             <Label Content="{Binding Available}"

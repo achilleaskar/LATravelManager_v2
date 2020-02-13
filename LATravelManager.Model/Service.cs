@@ -1,9 +1,9 @@
-﻿using LATravelManager.Model.BookingData;
-using LATravelManager.Model.Notifications;
-using LATravelManager.Model.People;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Notifications;
+using LATravelManager.Model.People;
 
 namespace LATravelManager.Model.Services
 {
@@ -28,7 +28,6 @@ namespace LATravelManager.Model.Services
 
         private NotifStatus _NotifStatus;
 
-
         public NotifStatus NotifStatus
         {
             get
@@ -47,8 +46,6 @@ namespace LATravelManager.Model.Services
                 RaisePropertyChanged();
             }
         }
-
-
 
         #region Properties
 

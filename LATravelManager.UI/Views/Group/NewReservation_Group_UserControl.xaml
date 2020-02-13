@@ -739,7 +739,7 @@
                         </StackPanel>
                     </Grid>
                 </GroupBox>
-                <GroupBox Header="Πληρωμές"
+                <GroupBox Header="Εξτρά Υπηρεσίες"
                           HorizontalAlignment="Left"
                           VerticalAlignment="Top">
                     <Grid>
@@ -748,49 +748,48 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <GroupBox HorizontalAlignment="Center"
-                                  VerticalAlignment="Top"
-                                  Header="Νέα Υπηρεσία">
-
-                            <StackPanel Orientation="Horizontal">
-                                <StackPanel Grid.Row="1"
-                                            Margin="5,5,0,0"
-                                            Grid.Column="0"
-                                            HorizontalAlignment="Stretch"
-                                            Grid.ColumnSpan="2">
-                                    <TextBlock Text="Περιγραφή:"
-                                               HorizontalAlignment="Left"
-                                               VerticalAlignment="Center" />
-                                    <TextBox Margin="0,0,5,-5"
-                                             HorizontalAlignment="Stretch"
-                                             Grid.Column="1"
-                                             Width="140"
-                                             TextWrapping="Wrap"
-                                             Height="40"
-                                             Text="{Binding ExtraService.Comment}" />
-                                </StackPanel>
-                                <StackPanel Margin="5,5,5,0">
-                                    <TextBlock Text="Ποσό:"
-                                               HorizontalAlignment="Left"
-                                               VerticalAlignment="Center" />
-                                    <TextBox Grid.Row="0"
-                                             Margin="0,5"
-                                             HorizontalAlignment="Center"
-                                             Grid.Column="1"
-                                             Text="{Binding ExtraService.Amount,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                             Width="50" />
-                                </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Πελάτης:" />
+                            <Label Content="{Binding SelectedCustomer.FullName}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="1">
+                            <StackPanel Margin="5 0 5 5"
+                                        Grid.Column="0"
+                                        HorizontalAlignment="Stretch"
+                                        Grid.ColumnSpan="2">
+                                <TextBlock Text="Περιγραφή:"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Center" />
+                                <TextBox Margin="0,0,5,5"
+                                         HorizontalAlignment="Stretch"
+                                         Grid.Column="1"
+                                         Width="140"
+                                         TextWrapping="Wrap"
+                                         Height="45"
+                                         Text="{Binding NewExtraService.Description}" />
                             </StackPanel>
-                        </GroupBox>
-                        <StackPanel Grid.Row="1"
+                            <StackPanel  VerticalAlignment="Top">
+                                <TextBlock Text="Ποσό:"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Center" />
+                                <TextBox Grid.Row="0"
+                                         Margin="0 0 0 5"
+                                         HorizontalAlignment="Center"
+                                         Grid.Column="1"
+                                         Text="{Binding NewExtraService.Amount,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                         Width="50" />
+                                <Button Content="Προσθήκη"
+                                        Command="{Binding AddExraServiceCommand}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Grid.Row="2"
                                     Orientation="Vertical">
-                            <TextBlock Text="Πρόσθετες Υπηρεσίες"
-                                       HorizontalAlignment="Left" />
                             <ListView Name="extras"
                                       Focusable="False"
                                       Height="142"
                                       SelectedItem="{Binding SelectedExtraService}"
-                                      Width="425"
+                                      Width="270"
                                       ItemsSource="{Binding BookingWr.ExtraServices}">
                                 <ListView.Resources>
                                     <ContextMenu x:Key="ItemContextMenub">
@@ -813,10 +812,14 @@
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header="Περιγραφή"
+                                                        Width="120"
                                                         DisplayMemberBinding="{Binding Comment}" />
                                         <GridViewColumn Header="Ποσό"
                                                         Width="40"
                                                         DisplayMemberBinding="{Binding Amount,Converter={StaticResource FtoSConverter}}" />
+                                 <GridViewColumn Header="Πελατης"
+                                                        Width="100"
+                                                        DisplayMemberBinding="{Binding Customer.FullName}" />
                                     </GridView>
                                 </ListView.View>
                             </ListView>
@@ -963,9 +966,8 @@
                                 </DataGridComboBoxColumn.EditingElementStyle>
                             </DataGridComboBoxColumn>
                             <DataGridTextColumn Header="Email"
-                                                MaxWidth="200"
-                                                Binding="{Binding Email, UpdateSourceTrigger=PropertyChanged}"
-                                                Visibility="{Binding DataContext.SelectedExcursion.IncludesPlane, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}" />
+                                                MaxWidth="100"
+                                                Binding="{Binding Email, UpdateSourceTrigger=PropertyChanged}" />
                             <DataGridTextColumn Header="Passport Id"
                                                 MaxWidth="200"
                                                 Binding="{Binding PassportNum,UpdateSourceTrigger=PropertyChanged}"

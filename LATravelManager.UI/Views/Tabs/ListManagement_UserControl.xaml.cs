@@ -1,9 +1,9 @@
-﻿using LATravelManager.Model.Lists;
+﻿using System.Windows.Controls;
+using System.Windows.Input;
+using LATravelManager.Model.Lists;
 using LATravelManager.Model.People;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
-using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace LATravelManager.UI.Views.Tabs
 {

@@ -1,9 +1,9 @@
-﻿using LATravelManager.Model;
-using LATravelManager.Model.Services;
-using LATravelManager.UI.ViewModel.CategoriesViewModels.Personal;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using LATravelManager.Model;
+using LATravelManager.Model.Services;
+using LATravelManager.UI.ViewModel.CategoriesViewModels.Personal;
 
 namespace LATravelManager.UI.ViewModel.ServiceViewModels
 {

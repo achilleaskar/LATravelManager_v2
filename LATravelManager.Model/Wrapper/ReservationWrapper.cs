@@ -1,66 +1,75 @@
-﻿using LATravelManager.Model.BookingData;
-using LATravelManager.Model.Hotels;
-using LATravelManager.Model.People;
-using LATravelManager.Model.Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Hotels;
+using LATravelManager.Model.People;
+using LATravelManager.Model.Services;
 
 namespace LATravelManager.Model.Wrapper
 {
     public class ReservationWrapper : ModelWrapper<Reservation>
     {
+
         #region Constructors
 
         public ReservationWrapper() : this(new Reservation())
         {
         }
 
-        public DateTime Starttime { get; set; }
-        public int Higher => GetHigher();
 
-        public string Category => GetCategory();
 
-        private string GetCategory()
+
+        private string _PartnerName;
+
+
+        public string PartnerName
         {
-            if (Booking != null)
+            get
             {
-                switch (Booking.Excursion.ExcursionType.Category)
+                return _PartnerName;
+            }
+
+            set
+            {
+                if (_PartnerName == value)
                 {
-                    case ExcursionTypeEnum.Bansko:
-                        return "Μπάνσκο";
-
-                    case ExcursionTypeEnum.Skiathos:
-                        return "Σκιάθος";
-
-                    case ExcursionTypeEnum.Personal:
-                        return "Ατομικό";
-
-                    case ExcursionTypeEnum.Group:
-                        return "Οργανωμένη";
-
-                    case ExcursionTypeEnum.ThirdParty:
-                        return "Τρίτου";
-
-                    default:
-                        return "Error";
+                    return;
                 }
-            }
-            if (PersonalModel != null)
-            {
-                return "Ατομικό";
-            }
-            if (ThirdPartyModel != null)
-            {
-                return "Τρίτου";
-            }
-            return "Error";
 
+                _PartnerName = value;
+                RaisePropertyChanged();
+            }
         }
 
+        public ReservationWrapper(Reservation model) : base(model)
+        {
+        }
+
+        #endregion Constructors
+
+        #region Fields
+
+        public DateTime _CheckOut;
         private BookingWrapper _BookingWrapper;
+        private Room _NoNameRoom;
+        private Personal_BookingWrapper _PersonalModel;
+        private bool _Returns = true;
+        private ThirdParty_Booking_Wrapper _ThirdPartyModel;
+
+        #endregion Fields
+
+        #region Properties
+
+        public ObservableCollection<Customer> AllCustomers => GetAllCustomers();
+
+        public Booking Booking
+        {
+            get { return GetValue<Booking>(); }
+            set { SetValue(value); }
+        }
 
         public BookingWrapper BookingWrapper
         {
@@ -81,49 +90,7 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
-        public int GetHigher()
-        {
-            int higher = 0;
-            foreach (var c in CustomersList)
-            {
-                if (c.LeaderDriver > higher)
-                    higher = c.LeaderDriver;
-            }
-            return higher;
-        }
-
-        public override string ToString()
-        {
-            if (CustomersList != null && CustomersList.Count > 0)
-            {
-                return CustomersList[0].StartingPlace;
-            }
-            return "";
-        }
-
-        public ReservationWrapper(Reservation model) : base(model)
-        {
-        }
-
-        #endregion Constructors
-
-        #region Fields
-
-        public DateTime _CheckOut;
-        private Room _NoNameRoom;
-
-        private Personal_BookingWrapper _PersonalModel;
-        private ThirdParty_Booking_Wrapper _ThirdPartyModel;
-
-        #endregion Fields
-
-        #region Properties
-
-        public Booking Booking
-        {
-            get { return GetValue<Booking>(); }
-            set { SetValue(value); }
-        }
+        public string Category => GetCategory();
 
         public DateTime CheckIn
         {
@@ -155,7 +122,7 @@ namespace LATravelManager.Model.Wrapper
                 {
                     if (Booking != null && !Booking.DifferentDates)
                     {
-                        return !Booking.Excursion.FixedDates|| Booking.ExcursionDate == null  ? Booking.CheckIn : Booking.ExcursionDate.CheckIn;
+                        return !Booking.Excursion.FixedDates || Booking.ExcursionDate == null ? Booking.CheckIn : Booking.ExcursionDate.CheckIn;
                     }
                     foreach (Customer customer in CustomersList)
                     {
@@ -180,27 +147,6 @@ namespace LATravelManager.Model.Wrapper
                 }
                 CheckOut = maxValue;
                 return minValue;
-            }
-        }
-
-        private bool _Returns = true;
-
-        public bool Returns
-        {
-            get
-            {
-                return _Returns;
-            }
-
-            set
-            {
-                if (_Returns == value)
-                {
-                    return;
-                }
-
-                _Returns = value;
-                RaisePropertyChanged();
             }
         }
 
@@ -256,21 +202,6 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
-        public string GetHotelTel()
-        {
-            string tel = string.Empty;
-            if (Room != null && Room.Hotel != null && !string.IsNullOrEmpty(Room.Hotel.Tel) && !Room.Hotel.Tel.StartsWith("000"))
-            {
-                tel = Room.Hotel.Tel;
-            }
-            else if (Hotel != null && !string.IsNullOrEmpty(Hotel.Tel))
-            {
-                tel = Hotel.Tel;
-            }
-
-            return tel.StartsWith("000") || tel.StartsWith("123") ? "" : tel;
-        }
-
         public string Comment
         {
             get
@@ -294,6 +225,7 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
+        public DateTime Createddate => GetCreatedDate();
         public List<Customer> CustomersList
         {
             get { return GetValue<List<Customer>>(); }
@@ -328,7 +260,6 @@ namespace LATravelManager.Model.Wrapper
 
         public string Dates => CheckIn.ToString("dd/MM") + "-" + CheckOut.ToString("dd/MM");
         public string DatesWithYear => CheckIn.ToString("dd/MM") + " - " + CheckOut.ToString("dd/MM yyyy");
-
         public int DaysCount
         {
             get { return Nights + 1; }
@@ -417,7 +348,6 @@ namespace LATravelManager.Model.Wrapper
         }
 
         public decimal FullPrice { get; set; }
-
         public bool HB
         {
             get { return GetValue<bool>(); }
@@ -425,7 +355,7 @@ namespace LATravelManager.Model.Wrapper
         }
 
         public string HBText => HB ? "HB" : "BB";
-
+        public int Higher => GetHigher();
         public Hotel Hotel
         {
             get { return GetValue<Hotel>(); }
@@ -449,7 +379,6 @@ namespace LATravelManager.Model.Wrapper
         public string HotelName => GetHotelName();
         public string Locations => GetLocations();
         public string Names => GetNames();
-
         public int Nights
         {
             get { return (int)(CheckOut - CheckIn).TotalDays; }
@@ -474,14 +403,12 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
+        public int Number { get; set; }
         //public RoomType NoNameRoomType
         //{
         //    get { return GetValue<RoomType>(); }
         //    set { SetValue(value); }
         //}
-
-        public int Number { get; set; }
-
         public bool OnlyStay
         {
             get { return GetValue<bool>(); }
@@ -502,22 +429,34 @@ namespace LATravelManager.Model.Wrapper
         {
             get
             {
+
+                if (!string.IsNullOrEmpty(PartnerName))
+                {
+                    return PartnerName;
+                }
                 switch (ExcursionType)
                 {
                     case ExcursionTypeEnum.Bansko:
                     case ExcursionTypeEnum.Skiathos:
                     case ExcursionTypeEnum.Group:
-                        return Booking.IsPartners ? Booking.Partner.Name : "";
+
+                        PartnerName = Booking.IsPartners ? Booking.Partner.Name : "";
+                        break;
 
                     case ExcursionTypeEnum.Personal:
-                        return PersonalModel.IsPartners ? PersonalModel.Partner.Name : "";
+                        PartnerName = PersonalModel.IsPartners ? PersonalModel.Partner.Name : "";
+                        break;
 
                     case ExcursionTypeEnum.ThirdParty:
-                        return ThirdPartyModel.Partner.Name;
+                        PartnerName = ThirdPartyModel.Partner.Name;
+                        break;
 
                     default:
-                        return "";
+                        PartnerName = "";
+                        break;
+
                 }
+                return PartnerName;
             }
         }
 
@@ -540,6 +479,7 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
+        public bool ProformaSent => GetProformaSent();
         public bool Reciept
         {
             get
@@ -565,11 +505,29 @@ namespace LATravelManager.Model.Wrapper
 
         public decimal Recieved { get; set; }
         public decimal Remaining { get; set; }
-
         public ReservationTypeEnum ReservationType
         {
             get { return GetValue<ReservationTypeEnum>(); }
             set { SetValue(value); }
+        }
+
+        public bool Returns
+        {
+            get
+            {
+                return _Returns;
+            }
+
+            set
+            {
+                if (_Returns == value)
+                {
+                    return;
+                }
+
+                _Returns = value;
+                RaisePropertyChanged();
+            }
         }
 
         public Room Room
@@ -579,11 +537,9 @@ namespace LATravelManager.Model.Wrapper
         }
 
         public string RoomTypeName => GetRoomTypeName();
-
         public string RoomTypeNameByNum => GetRoomTypeNameByNum();
-
+        public DateTime Starttime { get; set; }
         public string Tel => GetTel();
-
         public ThirdParty_Booking_Wrapper ThirdPartyModel
         {
             get
@@ -604,7 +560,6 @@ namespace LATravelManager.Model.Wrapper
         }
 
         public string To => GetDestination();
-
         public bool Transfer
         {
             get { return GetValue<bool>(); }
@@ -657,6 +612,8 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
+        public bool VoucherSent => GetVoucherSent();
+
         #endregion Properties
 
         #region Methods
@@ -667,7 +624,7 @@ namespace LATravelManager.Model.Wrapper
             {
                 BookingWrapper bw = new BookingWrapper(Booking);
                 bw.CalculateRemainingAmount();
-                FullPrice = bw.IsPartners?bw.NetPrice: bw.FullPrice;
+                FullPrice = bw.IsPartners ? bw.NetPrice : bw.FullPrice;
                 Recieved = bw.Recieved;
                 Remaining = bw.Remaining;
             }
@@ -742,6 +699,161 @@ namespace LATravelManager.Model.Wrapper
                 }
             }
             return false;
+        }
+
+        public int GetHigher()
+        {
+            int higher = 0;
+            foreach (var c in CustomersList)
+            {
+                if (c.LeaderDriver > higher)
+                    higher = c.LeaderDriver;
+            }
+            return higher;
+        }
+
+        public string GetHotelTel()
+        {
+            string tel = string.Empty;
+            if (Room != null && Room.Hotel != null && !string.IsNullOrEmpty(Room.Hotel.Tel) && !Room.Hotel.Tel.StartsWith("000"))
+            {
+                tel = Room.Hotel.Tel;
+            }
+            else if (Hotel != null && !string.IsNullOrEmpty(Hotel.Tel))
+            {
+                tel = Hotel.Tel;
+            }
+
+            return tel.StartsWith("000") || tel.StartsWith("123") ? "" : tel;
+        }
+
+        public string GetNoNameType()
+        {
+            string roomname = string.Empty;
+            switch (CustomersList.Count())
+            {
+                case 1:
+                    roomname = "SINGLE(NN)";
+                    break;
+
+                case 2:
+                    roomname = "DOUBLE(NN)";
+                    break;
+
+                case 3:
+                    roomname = "TRIPLE(NN)";
+                    break;
+
+                case 4:
+                    roomname = "QUAD(NN)";
+                    break;
+
+                case 5:
+                    roomname = "5BED(NN)";
+                    break;
+
+                case 6:
+                    roomname = "6BED(NN)";
+                    break;
+
+                default:
+                    roomname = "VERY BIG";
+                    break;
+            }
+            return roomname;
+        }
+
+        public string GetSurnames()
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var c in CustomersList)
+            {
+                sb.Append(c.Surename + " - ");
+            }
+            return sb.ToString().TrimEnd(new[] { ' ', '-' }).TrimEnd();
+        }
+
+        public override string ToString()
+        {
+            if (CustomersList != null && CustomersList.Count > 0)
+            {
+                return CustomersList[0].StartingPlace;
+            }
+            return "";
+        }
+
+        private ObservableCollection<Customer> GetAllCustomers()
+        {
+            if (PersonalModel != null)
+            {
+                return PersonalModel.Customers;
+            }
+            if (ThirdPartyModel != null)
+            {
+                return ThirdPartyModel.Customers;
+            }
+            if (BookingWrapper != null)
+            {
+                return new ObservableCollection<Customer>(BookingWrapper.Customers.Select(c => c.Model));
+            }
+            if (CustomersList != null)
+            {
+                return new ObservableCollection<Customer>(CustomersList);
+            }
+            return new ObservableCollection<Customer>();
+        }
+
+        private string GetCategory()
+        {
+            if (Booking != null)
+            {
+                switch (Booking.Excursion.ExcursionType.Category)
+                {
+                    case ExcursionTypeEnum.Bansko:
+                        return "Μπάνσκο";
+
+                    case ExcursionTypeEnum.Skiathos:
+                        return "Σκιάθος";
+
+                    case ExcursionTypeEnum.Personal:
+                        return "Ατομικό";
+
+                    case ExcursionTypeEnum.Group:
+                        return "Οργανωμένη";
+
+                    case ExcursionTypeEnum.ThirdParty:
+                        return "Τρίτου";
+
+                    default:
+                        return "Error";
+                }
+            }
+            if (PersonalModel != null)
+            {
+                return "Ατομικό";
+            }
+            if (ThirdPartyModel != null)
+            {
+                return "Τρίτου";
+            }
+            return "Error";
+        }
+
+        private DateTime GetCreatedDate()
+        {
+            if (PersonalModel != null)
+            {
+                return PersonalModel.CreatedDate;
+            }
+            if (ThirdPartyModel != null)
+            {
+                return ThirdPartyModel.CreatedDate;
+            }
+            if (Booking != null)
+            {
+                return Booking.CreatedDate;
+            }
+            return new DateTime();
         }
 
         private string GetDestination()
@@ -836,29 +948,6 @@ namespace LATravelManager.Model.Wrapper
             return string.Join(", ", locations);
         }
 
-        public ObservableCollection<Customer> AllCustomers => GetAllCustomers();
-
-        private ObservableCollection<Customer> GetAllCustomers()
-        {
-            if (PersonalModel != null)
-            {
-                return PersonalModel.Customers;
-            }
-            if (ThirdPartyModel != null)
-            {
-                return ThirdPartyModel.Customers;
-            }
-            if (BookingWrapper != null)
-            {
-                return new ObservableCollection<Customer>(BookingWrapper.Customers.Select(c => c.Model));
-            }
-            if (CustomersList != null)
-            {
-                return new ObservableCollection<Customer>(CustomersList);
-            }
-            return new ObservableCollection<Customer>();
-        }
-
         private string GetNames()
         {
             StringBuilder sb = new StringBuilder();
@@ -878,6 +967,23 @@ namespace LATravelManager.Model.Wrapper
                 }
             }
             return sb.ToString().TrimEnd(',', ' ');
+        }
+
+        private bool GetProformaSent()
+        {
+            if (PersonalModel != null)
+            {
+                return PersonalModel.ProformaSent;
+            }
+            if (ThirdPartyModel != null)
+            {
+                return ThirdPartyModel.ProformaSent;
+            }
+            if (Booking != null)
+            {
+                return Booking.ProformaSent;
+            }
+            return false;
         }
 
         private string GetRoomTypeName()
@@ -1059,61 +1165,6 @@ namespace LATravelManager.Model.Wrapper
             return roomname;
         }
 
-        public string GetNoNameType()
-        {
-            string roomname = string.Empty;
-            switch (CustomersList.Count())
-            {
-                case 1:
-                    roomname = "SINGLE(NN)";
-                    break;
-
-                case 2:
-                    roomname = "DOUBLE(NN)";
-                    break;
-
-                case 3:
-                    roomname = "TRIPLE(NN)";
-                    break;
-
-                case 4:
-                    roomname = "QUAD(NN)";
-                    break;
-
-                case 5:
-                    roomname = "5BED(NN)";
-                    break;
-
-                case 6:
-                    roomname = "6BED(NN)";
-                    break;
-
-                default:
-                    roomname = "VERY BIG";
-                    break;
-            }
-            return roomname;
-        }
-
-        public DateTime Createddate => GetCreatedDate();
-
-        private DateTime GetCreatedDate()
-        {
-            if (PersonalModel != null)
-            {
-                return PersonalModel.CreatedDate;
-            }
-            if (ThirdPartyModel != null)
-            {
-                return ThirdPartyModel.CreatedDate;
-            }
-            if (Booking != null)
-            {
-                return Booking.CreatedDate;
-            }
-            return new DateTime();
-        }
-
         private string GetTel()
         {
             StringBuilder sb = new StringBuilder();
@@ -1127,14 +1178,21 @@ namespace LATravelManager.Model.Wrapper
             return sb.ToString().TrimEnd(',', ' ');
         }
 
-        public string GetSurnames()
+        private bool GetVoucherSent()
         {
-            StringBuilder sb = new StringBuilder();
-            foreach (var c in CustomersList)
+            if (PersonalModel != null)
             {
-                sb.Append(c.Surename + " - ");
+                return PersonalModel.VoucherSent;
             }
-            return sb.ToString().TrimEnd(new[] { ' ', '-' }).TrimEnd();
+            if (ThirdPartyModel != null)
+            {
+                return ThirdPartyModel.VoucherSent;
+            }
+            if (Booking != null)
+            {
+                return Booking.VoucherSent;
+            }
+            return false;
         }
 
         #endregion Methods

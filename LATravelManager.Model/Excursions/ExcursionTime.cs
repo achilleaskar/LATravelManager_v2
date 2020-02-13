@@ -1,5 +1,5 @@
-﻿using LATravelManager.Model.Locations;
-using System;
+﻿using System;
+using LATravelManager.Model.Locations;
 
 namespace LATravelManager.Model.Excursions
 {
@@ -7,8 +7,8 @@ namespace LATravelManager.Model.Excursions
     {
         public ExcursionTime()
         {
-
         }
+
         private TimeSpan _Time;
 
         public TimeSpan Time
@@ -30,11 +30,7 @@ namespace LATravelManager.Model.Excursions
             }
         }
 
-
-
-
         private City _From;
-
 
         public City From
         {

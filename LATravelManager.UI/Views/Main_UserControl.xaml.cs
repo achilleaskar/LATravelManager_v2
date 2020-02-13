@@ -1,7 +1,7 @@
-﻿using LATravelManager.Model.Notifications;
-using LATravelManager.UI.ViewModel.Window_ViewModels;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Input;
+using LATravelManager.Model.Notifications;
+using LATravelManager.UI.ViewModel.Window_ViewModels;
 
 namespace LATravelManager.UI.Views
 {

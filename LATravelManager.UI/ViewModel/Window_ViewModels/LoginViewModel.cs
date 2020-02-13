@@ -1,13 +1,13 @@
-﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.CommandWpf;
-using LATravelManager.Model.People;
-using LATravelManager.UI.Message;
-using LATravelManager.UI.Security;
-using System;
+﻿using System;
 using System.Linq;
 using System.Security;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.CommandWpf;
+using LATravelManager.Model.People;
+using LATravelManager.UI.Message;
+using LATravelManager.UI.Security;
 
 namespace LATravelManager.UI.ViewModel.Window_ViewModels
 {
