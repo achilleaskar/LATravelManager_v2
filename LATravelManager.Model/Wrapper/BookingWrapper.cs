@@ -502,8 +502,8 @@ namespace LATravelManager.Model.Wrapper
                     SetValue(value);
                     if (FullPrice - Extras > 0)
                     {
-                        Commision = 100 * (FullPrice - Extras - NetPrice) / (FullPrice - Extras);
-
+                        Commision = 100 * (FullPrice - NetPrice) / (FullPrice - Extras);
+                        // Commision = 100 * (FullPrice - NetPrice) / FullPrice;
                         //FullPrice = (Commision == 100) ? 0 : Math.Round(value / (1 - (Commision / 100)), 2);
                         CalculateRemainingAmount();
                     }
@@ -514,7 +514,11 @@ namespace LATravelManager.Model.Wrapper
         public Partner Partner
         {
             get { return GetValue<Partner>(); }
-            set { SetValue(value); }
+            set
+            {
+                SetValue(value);
+                CalculateRemainingAmount();
+            }
         }
 
         public bool Reciept
@@ -667,7 +671,6 @@ namespace LATravelManager.Model.Wrapper
             Extras = extra;
 
             FullPrice = total + Extras;
-            Remaining = total - Recieved;
 
             if (IsPartners)
             {
@@ -689,6 +692,9 @@ namespace LATravelManager.Model.Wrapper
                 if (FIxedCommision == 0 && Commision > 0 && FullPrice > 0)
                     FIxedCommision = FullPrice - NetPrice;
             }
+            else
+                Remaining = FullPrice - Recieved;
+
         }
 
         private decimal _FIxedCommision;
@@ -710,7 +716,7 @@ namespace LATravelManager.Model.Wrapper
                 if (Math.Abs(value - _FIxedCommision) >= 0.01m)
                 {
                     _FIxedCommision = Math.Round(value, 2);
-                    Commision = Math.Round(_FIxedCommision * 100 / FullPrice, 2);
+                    Commision = Math.Round(_FIxedCommision * 100 / (FullPrice - Extras), 2);
                 }
                 RaisePropertyChanged();
             }

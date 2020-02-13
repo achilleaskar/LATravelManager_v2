@@ -62,36 +62,46 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             MainViewModel = mainViewModel;
         }
 
-        private async Task VouchersSent()
-        {
-            foreach (ReservationWrapper r in FilteredReservations)
-            {
-                r.Booking.VoucherSent = true;
-            }
-        }
-
         #endregion Constructors
 
         #region Fields
 
         private ObservableCollection<DailyDepartureInfo> _AllDaysDeparturesList;
+
         private bool _Bank;
+
         private int _BookingIdFilter;
+
         private DateTime _CheckIn;
+
         private bool _CheckInOut;
+
         private DateTime _CheckOut;
+
         private bool _Completed = false;
+
         private DailyDepartureInfo _DailyDepartureInfo;
+
         private int _DepartmentIndexBookingFilter;
+
         private bool _EnableCheckInFilter = false;
+
         private bool _EnableCheckOutFilter = false;
+
         private int _ExcursionCategoryIndexBookingFilter;
+
         private int _ExcursionIndexBookingFilter;
+
         private ObservableCollection<Excursion> _Excursions;
+
         private ICollectionView _ExcursionsCollectionView;
+
         private ObservableCollection<ReservationWrapper> _FilteredReservations = new ObservableCollection<ReservationWrapper>();
+
         private string _FilterString = string.Empty;
+
         private bool _FromTo = true;
+
         private int _GroupIndexBookingFilter;
 
         private bool _IsOk = true;
@@ -322,7 +332,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         public bool DepartureInfoVisible => DailyDepartureInfo != null;
 
         public RelayCommand EditBookingCommand { get; set; }
-        public RelayCommand VouchersSentCommand { get; set; }
 
         public bool EnableCheckInFilter
         {
@@ -602,6 +611,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         public RelayCommand PrintBusListsCommand { get; }
 
         public RelayCommand PrintListCommand { get; set; }
+
         public RelayCommand PrintListRetCommand { get; set; }
 
         public RelayCommand PrintRoomingListsCommand { get; set; }
@@ -737,6 +747,8 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 RaisePropertyChanged();
             }
         }
+
+        public RelayCommand VouchersSentCommand { get; set; }
 
         #endregion Properties
 
@@ -1550,15 +1562,29 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         {
             List<ReservationWrapper> toremove = FilteredReservations.Where(r => r.ExcursionType != ExcursionTypeEnum.Personal && r.Booking != null && r.Booking.Id == obj.Booking.Id).ToList();
 
-            foreach (var r in toremove)
-            {
-                FilteredReservations.Remove(r);
-            }
             if (toremove.Count > 0)
             {
+                int index = -1;
+                ReservationWrapper selected = null;
+                if (SelectedReservation != null)
+                {
+                    selected = FilteredReservations.FirstOrDefault(r => r.Id == SelectedReservation.Id);
+                    index = FilteredReservations.IndexOf(selected);
+                }
+
+                foreach (var r in toremove)
+                {
+                    FilteredReservations.Remove(r);
+                }
                 FilteredReservations.AddRange(obj.Booking.ReservationsInBooking.Select(w => new ReservationWrapper(w)));
                 ReservationsCollectionView.Refresh();
                 CountCustomers();
+                if (selected != null)
+                    SelectedReservation = FilteredReservations.FirstOrDefault(r => r.Id == selected.Id);
+                if (SelectedReservation == null && index < FilteredReservations.Count)
+                {
+                    SelectedReservation = FilteredReservations[index];
+                }
             }
         }
 
@@ -1664,6 +1690,14 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(false));
                 IsOk = true;
+            }
+        }
+
+        private async Task VouchersSent()
+        {
+            foreach (ReservationWrapper r in FilteredReservations)
+            {
+                r.Booking.VoucherSent = true;
             }
         }
 

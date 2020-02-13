@@ -76,9 +76,9 @@
                         </StackPanel.Resources>
                         <ListView ItemsSource="{Binding Source={StaticResource cvs}}"
                                   Grid.Row="1"
-                                  Width="460"
+                                  Width="400"
                                   HorizontalAlignment="Left"
-                                  Height="230"
+                                  Height="227"
                                   SelectedItem="{Binding SelectedRoom, UpdateSourceTrigger=PropertyChanged}"
                                   Grid.ColumnSpan="2">
                             <ListView.Resources>
@@ -154,12 +154,6 @@
                                                                                VerticalAlignment="Top"
                                                                                Foreground="Black"
                                                                                FontSize="16" />
-                                                                    <TextBlock Foreground="Black"
-                                                                               Margin="10 0"
-                                                                               FontSize="14"
-                                                                               TextWrapping="Wrap"
-                                                                               Width="310"
-                                                                               VerticalAlignment="Center" />
                                                                     <!--Text="{Binding Converter={StaticResource RoomsLeftToHotelsConverter}}"-->
                                                                     <!--Visibility="{Binding Converter={StaticResource RoomsHotelsToVisibilityConverter}}"-->
                                                                     <!--
@@ -367,8 +361,7 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <GroupBox Margin="5,0"
-                              Width="195"
+                    <GroupBox Width="180"
                               VerticalAlignment="Top"
                               Header="Κράτηση">
                         <StackPanel Orientation="Vertical">
@@ -512,27 +505,23 @@
                                            Grid.Column="1"
                                            Margin="0,0,5,0" />
                                 <TextBlock Text="Σημείωση Κράτησης:"
-                                           Grid.Row="5"
+                                           Grid.Row="5" Margin="5 0"
                                            HorizontalAlignment="Left"
                                            Grid.ColumnSpan="2" />
                                 <TextBox Grid.Row="6"
                                          Grid.ColumnSpan="2"
-                                         Width="170"
+                                         Width="160"
                                          TextWrapping="Wrap"
                                          Height="65"
-                                         Margin="6,0"
+                                         Margin="5,0" HorizontalAlignment="Left"
                                          Text="{Binding BookingWr.Comment,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                                          VerticalAlignment="Bottom" />
                             </Grid>
                             <StackPanel Orientation="Horizontal">
-                                <Label Content="Δεύτερη Αναχώρηση" />
+                                <Label Content="Δεύτερη Αναχώρηση" Margin="5 0" />
                                 <CheckBox IsChecked="{Binding BookingWr.SecondDepart}"
                                           VerticalAlignment="Center" />
-                                <TextBox Text="{Binding Line,UpdateSourceTrigger=PropertyChanged}"
-                                         FontSize="13"
-                                         VerticalAlignment="Center"
-                                         Margin="0,0,5,0"
-                                         Width="30" />
+                                
                             </StackPanel>
                             <StackPanel Orientation="Horizontal"
                                         HorizontalAlignment="Center">
@@ -543,7 +532,7 @@
                             </StackPanel>
                             <ComboBox ItemsSource="{Binding Users}"
                                       SelectedIndex="{Binding SelectedUserIndex}"
-                                      DisplayMemberPath="UserName"
+                                      DisplayMemberPath="UserName" Margin="5"
                                       Visibility="{Binding Converter={StaticResource UserToVisibilityConverter},ConverterParameter=1,  Mode=OneWay}"
                                       VerticalAlignment="Center" />
                             <TextBlock Text="{Binding ErrorsInCanAddReservationToRoom}"
@@ -556,7 +545,7 @@
                         </StackPanel>
                     </GroupBox>
                 </Grid>
-                <Border BorderThickness="1"
+                <!--<Border BorderThickness="1"
                         Height="250"
                         Visibility="Collapsed"
                         VerticalAlignment="Top"
@@ -619,7 +608,7 @@
                                       IsChecked="{Binding BookingWr.DifferentDates}" />
                         </StackPanel>
                     </Grid>
-                </Border>
+                </Border>-->
                 <GroupBox Header="Πληρωμές"
                           HorizontalAlignment="Left"
                           VerticalAlignment="Top">
@@ -629,7 +618,7 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <GroupBox HorizontalAlignment="Center"
+                        <GroupBox HorizontalAlignment="Left"
                                   VerticalAlignment="Top"
                                   Header="Νέα Πληρωμή">
                             <StackPanel Orientation="Horizontal">
@@ -638,7 +627,6 @@
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center" />
                                     <TextBox Grid.Row="0"
-                                             Margin="0,5"
                                              HorizontalAlignment="Center"
                                              Grid.Column="1"
                                              Text="{Binding Payment.Amount,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
@@ -650,8 +638,7 @@
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center" />
                                     <ComboBox Grid.Row="0"
-                                              Margin="0,5"
-                                              VerticalAlignment="Center"
+                                              VerticalAlignment="Top"
                                               HorizontalAlignment="Center"
                                               SelectedIndex="{Binding Payment.PaymentMethod,NotifyOnValidationError=True}"
                                               Grid.Column="1"
@@ -664,8 +651,8 @@
                                         <ComboBoxItem>VISA</ComboBoxItem>
                                     </ComboBox>
                                 </StackPanel>
-                                <StackPanel Grid.Row="1"
-                                            Margin="5,5,0,0"
+                                <StackPanel 
+                                            Margin="5,5,0,0" VerticalAlignment="Top"
                                             Grid.Column="0"
                                             HorizontalAlignment="Stretch"
                                             Grid.ColumnSpan="2">
@@ -673,12 +660,12 @@
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center" />
                                     <TextBox Grid.Row="0"
-                                             Margin="0,0,5,-5"
+                                             Margin="0,0,5,0"
                                              HorizontalAlignment="Stretch"
                                              Grid.Column="1"
-                                             Width="140"
+                                             Width="170"
                                              TextWrapping="Wrap"
-                                             Height="40"
+                                             Height="35"
                                              Text="{Binding Payment.Comment}" />
                                 </StackPanel>
                             </StackPanel>
@@ -691,24 +678,16 @@
                                       Focusable="False"
                                       Height="142"
                                       SelectedItem="{Binding SelectedPayment}"
-                                      Width="425"
+                                      Width="370"
                                       ItemsSource="{Binding BookingWr.Payments}">
                                 <ListView.Resources>
                                     <ContextMenu x:Key="ItemContextMenu">
                                         <MenuItem Header="Διαγραφη"
                                                   Visibility="{Binding Converter={StaticResource UserToVisibilityConverter},ConverterParameter=1,  Mode=OneWay}"
                                                   Command="{Binding DataContext.DeletePaymentCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
-                                            <MenuItem.Icon>
-                                                <Image MaxHeight="20"
-                                                       Stretch="Fill" />
-                                            </MenuItem.Icon>
                                         </MenuItem>
                                         <MenuItem Header="Εκτ. Απόδειξης"
                                                   Command="{Binding DataContext.PrintRecieptCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
-                                            <MenuItem.Icon>
-                                                <Image MaxHeight="20"
-                                                       Stretch="Fill" />
-                                            </MenuItem.Icon>
                                         </MenuItem>
                                     </ContextMenu>
                                 </ListView.Resources>
@@ -721,17 +700,17 @@
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header="Ημερομηνία"
-                                                        Width="115"
-                                                        DisplayMemberBinding="{Binding Date, StringFormat='{}{0:dd/MM/yyyy-HH:mm}'}" />
+                                                        Width="95"
+                                                        DisplayMemberBinding="{Binding Date, StringFormat='{}{0:dd/MM/yy-HH:mm}'}" />
                                         <GridViewColumn Header="Ποσό"
                                                         Width="40"
                                                         DisplayMemberBinding="{Binding Amount,Converter={StaticResource FtoSConverter}}" />
                                         <GridViewColumn Header="Μέθοδος"
-                                                        Width="70" />
+                                                        Width="60" />
                                         <GridViewColumn Header="Χρήστης"
-                                                        Width="80"
+                                                        Width="55"
                                                         DisplayMemberBinding="{Binding User.UserName}" />
-                                        <GridViewColumn Header="Σημείωση"
+                                        <GridViewColumn Header="Σημείωση" Width="110"
                                                         DisplayMemberBinding="{Binding Comment}" />
                                     </GridView>
                                 </ListView.View>
@@ -813,13 +792,13 @@
                                     <GridView>
                                         <GridViewColumn Header="Περιγραφή"
                                                         Width="120"
-                                                        DisplayMemberBinding="{Binding Comment}" />
+                                                        DisplayMemberBinding="{Binding Description}" />
                                         <GridViewColumn Header="Ποσό"
                                                         Width="40"
                                                         DisplayMemberBinding="{Binding Amount,Converter={StaticResource FtoSConverter}}" />
                                  <GridViewColumn Header="Πελατης"
                                                         Width="100"
-                                                        DisplayMemberBinding="{Binding Customer.FullName}" />
+                                                        DisplayMemberBinding="{Binding Customer}" />
                                     </GridView>
                                 </ListView.View>
                             </ListView>

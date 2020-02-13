@@ -1,4 +1,4 @@
-﻿<Window x:Class="LATravelManager.UI.Views.Bansko.EditBooking_Bansko_Window"
+﻿ <Window x:Class="LATravelManager.UI.Views.Bansko.EditBooking_Bansko_Window"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -96,10 +96,10 @@
                         Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
                         HorizontalAlignment="Center" />
                 <TextBlock Text="Λόγος:" />
-                <TextBox HorizontalAlignment="Center"
-                         Width="160"
+                <TextBox HorizontalAlignment="Left"
+                         Width="140"
                          Text="{Binding BookingWr.CancelReason,UpdateSourceTrigger=PropertyChanged}"
-                         Height="43"
+                         Height="40"
                          TextWrapping="Wrap" />
             </StackPanel>
         </DataTemplate>
@@ -178,7 +178,7 @@
                               FontSize="12"
                               Height="250"
                               CanUserSortColumns="False"
-                              Width="690"
+                              Width="620"
                               CanUserDeleteRows="False"
                               EnableColumnVirtualization="False"
                               EnableRowVirtualization="False"
@@ -637,7 +637,7 @@
                                 </StackPanel>
                             </GroupBox>
                             <Border VerticalAlignment="Stretch"
-                                    Width="160"
+                                    Width="145" 
                                     HorizontalAlignment="Center"
                                     BorderThickness="0">
                                 <ContentControl Content="{Binding }">
@@ -665,7 +665,7 @@
                                       Focusable="False"
                                       Height="142"
                                       SelectedItem="{Binding SelectedPayment}"
-                                      Width="425"
+                                      Width="398"
                                       ItemsSource="{Binding BookingWr.Payments}">
                                 <ListView.Resources>
                                     <ContextMenu x:Key="ItemContextMenu">
@@ -694,8 +694,8 @@
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header="Ημερομηνία"
-                                                        Width="115"
-                                                        DisplayMemberBinding="{Binding Date, StringFormat='{}{0:dd/MM/yyyy-HH:mm}'}" />
+                                                        Width="95"
+                                                        DisplayMemberBinding="{Binding Date, StringFormat='{}{0:dd/MM/yy-HH:mm}'}" />
                                         <GridViewColumn Header="Ποσό"
                                                         Width="40"
                                                         DisplayMemberBinding="{Binding Amount,Converter={StaticResource FtoSConverter}}" />
@@ -703,7 +703,7 @@
                                                         Width="70" />
                                         <!--DisplayMemberBinding="{Binding Method, Converter={StaticResource IntToPaymentMethod}}" />-->
                                         <GridViewColumn Header="Χρήστης"
-                                                        Width="80"
+                                                        Width="70"
                                                         DisplayMemberBinding="{Binding User.UserName}" />
                                         <GridViewColumn Header="Σημείωση"
                                                         DisplayMemberBinding="{Binding Comment}" />
@@ -715,42 +715,93 @@
                 </GroupBox>
                 <StackPanel Grid.Row="1"
                             Orientation="Vertical">
-                    <TextBlock Text="Πρόσθετες Υπηρεσίες"
-                               HorizontalAlignment="Left" />
-                    <ListView Name="extras"
-                              Focusable="False"
-                              Height="142"
-                              SelectedItem="{Binding SelectedExtraService}"
-                              Width="425"
-                              ItemsSource="{Binding BookingWr.ExtraServices}">
-                        <ListView.Resources>
-                            <ContextMenu x:Key="ItemContextMenub">
-                                <MenuItem Header="Διαγραφη"
-                                          Visibility="{Binding Converter={StaticResource UserToVisibilityConverter},ConverterParameter=1,  Mode=OneWay}"
-                                          Command="{Binding DataContext.DeleteExtraServiceCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
-                                    <MenuItem.Icon>
-                                        <Image MaxHeight="20"
-                                               Stretch="Fill" />
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                            </ContextMenu>
-                        </ListView.Resources>
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="{x:Type ListViewItem}">
-                                <Setter Property="ContextMenu"
-                                        Value="{StaticResource ItemContextMenub}" />
-                            </Style>
-                        </ListView.ItemContainerStyle>
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn Header="Περιγραφή"
-                                                DisplayMemberBinding="{Binding Comment}" />
-                                <GridViewColumn Header="Ποσό"
-                                                Width="40"
-                                                DisplayMemberBinding="{Binding Amount,Converter={StaticResource FtoSConverter}}" />
-                            </GridView>
-                        </ListView.View>
-                    </ListView>
+                    <GroupBox Header="Εξτρά Υπηρεσίες"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Top">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Πελάτης:" />
+                                <Label Content="{Binding SelectedCustomer.FullName}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal"
+                                        Grid.Row="1">
+                                <StackPanel Margin="5 0 5 5"
+                                            Grid.Column="0"
+                                            HorizontalAlignment="Stretch"
+                                            Grid.ColumnSpan="2">
+                                    <TextBlock Text="Περιγραφή:"
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center" />
+                                    <TextBox Margin="0,0,5,5"
+                                             HorizontalAlignment="Stretch"
+                                             Grid.Column="1"
+                                             Width="140"
+                                             TextWrapping="Wrap"
+                                             Height="45"
+                                             Text="{Binding NewExtraService.Description}" />
+                                </StackPanel>
+                                <StackPanel  VerticalAlignment="Top">
+                                    <TextBlock Text="Ποσό:"
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center" />
+                                    <TextBox Grid.Row="0"
+                                             Margin="0 0 0 5"
+                                             HorizontalAlignment="Center"
+                                             Grid.Column="1"
+                                             Text="{Binding NewExtraService.Amount,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                             Width="50" />
+                                    <Button Content="Προσθήκη"
+                                            Command="{Binding AddExraServiceCommand}" />
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel Grid.Row="2"
+                                        Orientation="Vertical">
+                                <ListView Name="extras"
+                                          Focusable="False"
+                                          Height="142"
+                                          SelectedItem="{Binding SelectedExtraService}"
+                                          Width="270"
+                                          ItemsSource="{Binding BookingWr.ExtraServices}">
+                                    <ListView.Resources>
+                                        <ContextMenu x:Key="ItemContextMenub">
+                                            <MenuItem Header="Διαγραφη"
+                                                      Visibility="{Binding Converter={StaticResource UserToVisibilityConverter},ConverterParameter=1,  Mode=OneWay}"
+                                                      Command="{Binding DataContext.DeleteExtraServiceCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
+                                                <MenuItem.Icon>
+                                                    <Image MaxHeight="20"
+                                                           Stretch="Fill" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                        </ContextMenu>
+                                    </ListView.Resources>
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="{x:Type ListViewItem}">
+                                            <Setter Property="ContextMenu"
+                                                    Value="{StaticResource ItemContextMenub}" />
+                                        </Style>
+                                    </ListView.ItemContainerStyle>
+                                    <ListView.View>
+                                        <GridView>
+                                            <GridViewColumn Header="Περιγραφή"
+                                                            Width="120"
+                                                            DisplayMemberBinding="{Binding Description }" />
+                                            <GridViewColumn Header="Ποσό"
+                                                            Width="40"
+                                                            DisplayMemberBinding="{Binding Amount,Converter={StaticResource FtoSConverter}}" />
+                                            <GridViewColumn Header="Πελατης"
+                                                            Width="100"
+                                                            DisplayMemberBinding="{Binding Customer}" />
+                                        </GridView>
+                                    </ListView.View>
+                                </ListView>
+                            </StackPanel>
+                        </Grid>
+                    </GroupBox>
                 </StackPanel>
             </StackPanel>
             <Grid Grid.Row="1">
@@ -870,7 +921,7 @@
                                         VerticalAlignment="Center"
                                         Command="{Binding AddTransferCommand}"
                                         Margin="0,0,5,0" />
-                                <Button Content="Μονοήμερη"
+                                <Button Content="1ήμερη"
                                         VerticalAlignment="Center"
                                         Command="{Binding AddOneDayCommand}"
                                         Margin="0,0,5,0" />
@@ -1322,10 +1373,9 @@
                                 <GridViewColumn Header="Ημερομηνία">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy-HH:mm}'}"
-                                                       TextWrapping="Wrap"
+                                            <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yy-HH:mm}'}"
                                                        VerticalAlignment="Top"
-                                                       Width="100" />
+                                                       Width="85" />
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
