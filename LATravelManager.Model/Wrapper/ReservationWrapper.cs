@@ -20,7 +20,26 @@ namespace LATravelManager.Model.Wrapper
         }
 
 
+        public string CustNum => GetCustNum();
 
+        private string GetCustNum()
+        {
+            if (Booking!=null)
+            {
+                return $"Πελάτες: ({Booking.ReservationsInBooking.Sum(u => u.CustomersList.Count)}Πελ. / {Booking.ReservationsInBooking.Count}Δωμ.)";
+            }
+            if (PersonalModel!=null)
+            {
+                return $"Πελάτες: ({PersonalModel.Customers.Count}Π)";
+
+            }
+            if (ThirdPartyModel != null)
+            {
+                return $"Πελάτες: ({ThirdPartyModel.Customers.Count}Π)";
+
+            }
+            return "Πελάτες:";
+        }
 
         private string _PartnerName;
 

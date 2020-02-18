@@ -344,7 +344,7 @@
                                 <Label Content="{Binding Partner}"
                                        Grid.Row="0"
                                        Padding="2 5 5 5" />
-                                <Label Content="Πελάτες:"
+                                <Label Content="{Binding CustNum}"
                                        Grid.Row="1"
                                        Padding="2 5 5 5" />
                                 <ListView ItemsSource="{Binding AllCustomers}"

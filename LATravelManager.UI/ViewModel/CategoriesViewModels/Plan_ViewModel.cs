@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -573,6 +575,26 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
                     //    room.DailyBookingInfo.Add(item);
                     //}
                 }
+
+                List<DbEntityEntry> AddedEntities = Context.Context.ChangeTracker.Entries().Where(E => E.State == EntityState.Added).ToList();
+
+                AddedEntities.ForEach(E =>
+                {
+                    if (E.CurrentValues.PropertyNames.Contains("CreatedDate"))
+                    {
+                        E.Property("CreatedDate").CurrentValue = DateTime.Now;
+                    }
+                });
+
+                List<DbEntityEntry> EditedEntities = Context.Context.ChangeTracker.Entries().Where(E => E.State == EntityState.Modified).ToList();
+
+                EditedEntities.ForEach(E =>
+                {
+                    if (E.OriginalValues.PropertyNames.Contains("ModifiedDate"))
+                    {
+                        //   E.Property("ModifiedDate").CurrentValue = DateTime.Now;
+                    }
+                });
                 Context.Save();
                 ////foreach (var item in roomstodelte)
                 ////{
@@ -741,33 +763,33 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
             //}
             //await Context.SaveAsync();
 
-            FilteredPlanList = MergeRooms(FilteredPlanList);
+           // FilteredPlanList = MergeRooms(FilteredPlanList);
 
-            List<BookingInfoPerDay> dbitd = new List<BookingInfoPerDay>();
-            foreach (var item in FilteredPlanList)
-            {
-                if (item.Id == 72 || item.Id == 78 || item.Id == 88)
-                {
-                    foreach (var r in item.RoomWrappers)
-                    {
-                        // if (r.RoomType.Id == 8)
-                        foreach (var dbi in r.PlanDailyInfo)
-                            if (dbi.RoomState == RoomStateEnum.Available)// && dbi.Date >= new DateTime(2019, 12, 31) && dbi.Date < new DateTime(2020, 01, 7))
-                            {
-                                dbitd.Add(r.DailyBookingInfo.Where(d => d.Date == dbi.Date).FirstOrDefault());
-                            }
-                    }
-                }
-            }
-            for (int i = 0; i < dbitd.Count; i++)
-            {
-                Context.Delete(dbitd[i]);
-                if (i % 100 == 0 && Context.HasChanges())
-                {
-                    await Context.SaveAsync();
-                }
-            }
-            await Context.SaveAsync();
+            //List<BookingInfoPerDay> dbitd = new List<BookingInfoPerDay>();
+            //foreach (var item in FilteredPlanList)
+            //{
+            //    if (item.Id == 72 || item.Id == 78 || item.Id == 88)
+            //    {
+            //        foreach (var r in item.RoomWrappers)
+            //        {
+            //            // if (r.RoomType.Id == 8)
+            //            foreach (var dbi in r.PlanDailyInfo)
+            //                if (dbi.RoomState == RoomStateEnum.Available)// && dbi.Date >= new DateTime(2019, 12, 31) && dbi.Date < new DateTime(2020, 01, 7))
+            //                {
+            //                    dbitd.Add(r.DailyBookingInfo.Where(d => d.Date == dbi.Date).FirstOrDefault());
+            //                }
+            //        }
+            //    }
+            //}
+            //for (int i = 0; i < dbitd.Count; i++)
+            //{
+            //    Context.Delete(dbitd[i]);
+            //    if (i % 100 == 0 && Context.HasChanges())
+            //    {
+            //        await Context.SaveAsync();
+            //    }
+            //}
+            //await Context.SaveAsync();
 
             foreach (HotelWrapper h in FilteredPlanList)
             {
