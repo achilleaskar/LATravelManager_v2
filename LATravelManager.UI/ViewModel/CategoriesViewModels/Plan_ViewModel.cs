@@ -763,7 +763,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
             //}
             //await Context.SaveAsync();
 
-           // FilteredPlanList = MergeRooms(FilteredPlanList);
+            FilteredPlanList = MergeRooms(FilteredPlanList);
 
             //List<BookingInfoPerDay> dbitd = new List<BookingInfoPerDay>();
             //foreach (var item in FilteredPlanList)
