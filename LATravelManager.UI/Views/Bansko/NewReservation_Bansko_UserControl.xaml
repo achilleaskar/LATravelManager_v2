@@ -47,7 +47,6 @@
             </CollectionViewSource.GroupDescriptions>
         </CollectionViewSource>
     </UserControl.Resources>
-
     <ScrollViewer HorizontalScrollBarVisibility="Auto"
                   VerticalScrollBarVisibility="Auto">
         <Grid VerticalAlignment="Top"
@@ -73,7 +72,6 @@
                                         Value="Center" />
                             </Style>
                         </StackPanel.Resources>
-
                         <ListView ItemsSource="{Binding Source={StaticResource cvs}}"
                                   Grid.Row="1"
                                   Width="400"
@@ -155,11 +153,11 @@
                                                                                Foreground="Black"
                                                                                FontSize="16" />
                                                                     <TextBlock Foreground="Blue"
-                                                                               Text="(NN)" VerticalAlignment="Bottom"
+                                                                               Text="(NN)"
+                                                                               VerticalAlignment="Bottom"
                                                                                FontSize="12"
                                                                                FontWeight="Bold"
-                                                                               Margin=" 1 0 0 1"
->
+                                                                               Margin=" 1 0 0 1">
                                                                         <TextBlock.Style>
                                                                             <Style TargetType="TextBlock">
                                                                                 <Setter  Property="Visibility"
@@ -172,8 +170,7 @@
                                                                                     </DataTrigger>
                                                                                 </Style.Triggers>
                                                                             </Style>
-                                                                        </TextBlock.Style>
-                                                                    </TextBlock>
+                                                                        </TextBlock.Style></TextBlock>
                                                                     <!--Text="{Binding Converter={StaticResource RoomsLeftToHotelsConverter}}"-->
                                                                     <!--Visibility="{Binding Converter={StaticResource RoomsHotelsToVisibilityConverter}}"-->
                                                                     <!--
@@ -316,7 +313,6 @@
                             <StackPanel Orientation="Horizontal"
                                         Margin="0,5"
                                         HorizontalAlignment="Right">
-
                                 <CheckBox Content="Όλοι"
                                           IsChecked="{Binding All}"
                                           VerticalAlignment="Center"
@@ -401,13 +397,13 @@
                             <StackPanel Orientation="Horizontal"
                                         Margin="0 0 0 5"
                                         Visibility="{Binding IsPartners,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource booleanToVisibilityConverter}}">
-
                                 <TextBlock Text="Email:"
                                            VerticalAlignment="Center"
                                            HorizontalAlignment="Left" />
                                 <ComboBox ItemsSource="{Binding Emails}"
                                           DisplayMemberPath="EValue"
-                                          SelectedItem="{Binding SelectedEmail}"
+                                          IsEditable="True"
+                                          Text="{Binding BookingWr.PartnerEmail}"
                                           VerticalAlignment="Center"
                                           Width="131" />
                             </StackPanel>
@@ -424,18 +420,17 @@
                                 <TextBlock Text="Σύνολο:"
                                            HorizontalAlignment="Left" />
                                 <TextBlock Text="{Binding BookingWr.FullPrice,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                         Margin="5,0,5,5"
-                                         VerticalAlignment="Center"
-                                         MinWidth="40"
-                                         MaxWidth="60"
-                                         Grid.Column="1" />
+                                           Margin="5,0,5,5"
+                                           VerticalAlignment="Center"
+                                           MinWidth="40"
+                                           MaxWidth="60"
+                                           Grid.Column="1" />
                                 <TextBlock Text="Προμήθεια (%):"
                                            Grid.Row="1"
                                            HorizontalAlignment="Left" />
                                 <StackPanel   Grid.Row="1"
                                               Orientation="Horizontal"
                                               Grid.Column="1">
-
                                     <TextBox Text="{Binding BookingWr.Commision,Converter={StaticResource FtoSConverter},ConverterParameter=0,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                              Margin="0,0,5,5"
                                              VerticalAlignment="Center"
@@ -523,10 +518,10 @@
                                          VerticalAlignment="Bottom" />
                             </Grid>
                             <StackPanel Orientation="Horizontal">
-                                <Label Content="Δεύτερη Αναχώρηση" Margin="5 0"/>
+                                <Label Content="Δεύτερη Αναχώρηση"
+                                       Margin="5 0" />
                                 <CheckBox IsChecked="{Binding BookingWr.SecondDepart}"
                                           VerticalAlignment="Center" />
-                               
                             </StackPanel>
                             <StackPanel Orientation="Horizontal"
                                         HorizontalAlignment="Center">
@@ -538,12 +533,12 @@
                                          Margin="5 0 5 2"
                                          Width="30" />
                             </StackPanel>
-                            <ComboBox ItemsSource="{Binding Users}" Margin="5"
+                            <ComboBox ItemsSource="{Binding Users}"
+                                      Margin="5"
                                       SelectedIndex="{Binding SelectedUserIndex}"
                                       DisplayMemberPath="UserName"
                                       Visibility="{Binding Converter={StaticResource UserToVisibilityConverter},ConverterParameter=1,  Mode=OneWay}"
                                       VerticalAlignment="Center" />
-
                             <TextBlock Text="{Binding ErrorsInCanAddReservationToRoom}"
                                        HorizontalAlignment="Center"
                                        FontSize="14"
@@ -554,7 +549,6 @@
                         </StackPanel>
                     </GroupBox>
                 </Grid>
-
                 <!--<Border BorderThickness="1"
                         Height="250"
                         Visibility="Collapsed"
@@ -839,14 +833,12 @@
                               SelectedItem="{Binding SelectedCustomer}"
                               CanUserAddRows="True">
                         <DataGrid.Resources>
-
                             <Style TargetType="{x:Type ComboBox}">
                                 <Setter Property="Margin"
                                         Value="0" />
                                 <Style.Triggers>
                                     <Trigger Property="Validation.HasError"
                                              Value="True">
-
                                         <Setter Property="ToolTip"
                                                 Value="{Binding RelativeSource={RelativeSource Self},
             Path=(Validation.Errors)[0].ErrorContent}" />
@@ -1010,7 +1002,6 @@
                     </DataGrid>
                     <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Center">
-
                         <TextBlock Text="{Binding ErrorsInDatagrid}"
                                    FontSize="14"
                                    Foreground="Red"

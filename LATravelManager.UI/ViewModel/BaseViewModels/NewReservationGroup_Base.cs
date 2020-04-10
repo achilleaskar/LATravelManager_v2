@@ -278,7 +278,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         private CustomerWrapper _SelectedCustomer;
 
-        private Email _SelectedEmail;
+        private string _SelectedEmail;
 
         private ExcursionWrapper _SelectedExcursion;
 
@@ -714,29 +714,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
-        public Email SelectedEmail
-        {
-            get
-            {
-                return _SelectedEmail;
-            }
-
-            set
-            {
-                if (_SelectedEmail == value)
-                {
-                    return;
-                }
-
-                _SelectedEmail = value;
-                if (value != null && BookingWr.Partner != null)
-                {
-                    BookingWr.PartnerEmail = value.EValue;
-                }
-                RaisePropertyChanged();
-            }
-        }
-
         public ExcursionWrapper SelectedExcursion
         {
             get
@@ -789,10 +766,10 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 if (SelectedPartnerIndex >= 0 && (BookingWr.Partner == null || (BookingWr.Partner != null && BookingWr.Partner.Id != Partners[SelectedPartnerIndex].Id)))
                 {
                     BookingWr.Partner = GenericRepository.GetById<Partner>(Partners[SelectedPartnerIndex].Id);
-                    Emails = (BookingWr.Partner.Emails != null && BookingWr.Partner.Emails.Count() > 0) ? new ObservableCollection<Email>(BookingWr.Partner.Emails.Split(',').Select(e => new Email(e))) : new ObservableCollection<Email>();
+                    Emails = (BookingWr.Partner.Emails != null && BookingWr.Partner.Emails.Any()) ? new ObservableCollection<Email>(BookingWr.Partner.Emails.Split(',').Select(e => new Email(e))) : new ObservableCollection<Email>();
                     if (Emails.Count > 0)
                     {
-                        SelectedEmail = Emails[0];
+                        BookingWr.PartnerEmail = Emails[0].EValue;
                     }
                 }
                 RaisePropertyChanged();
@@ -1248,6 +1225,9 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                     SelectedCustomer = BookingWr.Customers[0];
                 }
             }
+
+            Emails = (BookingWr.IsPartners && BookingWr.Partner != null && BookingWr.Partner.Emails != null && BookingWr.Partner.Emails.Any()) ? new ObservableCollection<Email>(BookingWr.Partner.Emails.Split(',').Select(e => new Email(e))) : new ObservableCollection<Email>();
+
         }
 
         protected async Task ResetAllRefreshableDataASync(bool makeNew = false)
@@ -1302,7 +1282,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                     if (BookingWr.Id > 0 && BookingWr.IsPartners)
                     {
                         SelectedPartnerIndex = Partners.IndexOf(Partners.Where(p => p.Id == BookingWr.Partner.Id).FirstOrDefault());
-                        SelectedEmail = Emails.Where(e => e.EValue == BookingWr.PartnerEmail).FirstOrDefault();
                     }
                     else
                     {
@@ -2021,7 +2000,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
-        private async Task PrintVoucher()
+        private async Task PrintVoucher(bool send = false)
         {
             try
             {
@@ -2029,7 +2008,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
                 using (DocumentsManagement vm = new DocumentsManagement(BasicDataManager.Context))
                 {
-                    await vm.PrintSingleBookingVoucher(BookingWr);
+                    await vm.PrintSingleBookingVoucher(new List<BookingWrapper> { BookingWr }, send);
                 }
             }
             catch (Exception ex)
@@ -2216,6 +2195,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         {
             try
             {
+
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
 
                 BookingWr = await NewReservationHelper.SaveAsync(GenericRepository, Payment, BookingWr);

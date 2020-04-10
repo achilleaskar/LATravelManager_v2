@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.CommandWpf;
@@ -42,13 +44,14 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             ReservationsCollectionView = CollectionViewSource.GetDefaultView(FilteredReservations);
 
             PrintRoomingListsCommand = new RelayCommand(async () => { await PrintRoomingLists(); }, CanPrintRoomingLists);
-            PrintAllVouchersCommand = new RelayCommand(async () => { await PrintAllVouchers(); });
+            PrintAllVouchersCommand = new RelayCommand(async () => await PrintAllVouchers());
             PrintAllLettersCommand = new RelayCommand(PrintAllLetters);
             PrintListCommand = new RelayCommand(async () => { await PrintList(false); });
             PrintListRetCommand = new RelayCommand(async () => { await PrintList(true); });
             PrintBusListsCommand = new RelayCommand(async () => { await PrintBusLists(); }, EnableCheckInFilter != EnableCheckOutFilter);
             PrintTheseisCommand = new RelayCommand(async () => { await PrintTheseis(); });
             VouchersSentCommand = new RelayCommand(async () => { await VouchersSent(); });
+            SendAllVouchersCommand = new RelayCommand(async () => { await PrintAllVouchers(true); });
 
             ShowReservationsCommand = new RelayCommand<string>(async (obj) => { await ShowReservations(obj, false); }, CanShowReservations);
             ShowCanceled = new RelayCommand<string>(async (obj) => { await ShowReservations(obj, true); }, CanShowReservations);
@@ -562,7 +565,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-        public bool HasPeople => People.Count() > 0;
+        public bool HasPeople => People.Any();
 
         public bool IsOk
         {
@@ -605,6 +608,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         }
 
         public RelayCommand PrintAllLettersCommand { get; set; }
+        public RelayCommand SendAllVouchersCommand { get; set; }
 
         public RelayCommand PrintAllVouchersCommand { get; set; }
 
@@ -821,7 +825,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                               orderby pair.Key ascending
                               select pair;
 
-            if (dict.Count() > 0)
+            if (dict.Any())
             {
                 People.Add($"\"Άτομα\": {counter}");
                 foreach (KeyValuePair<string, int> entry in dict)
@@ -829,7 +833,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                     People.Add($"{entry.Key}: {entry.Value}");
                 }
             }
-            if (dictordered.Count() > 0)
+            if (dictordered.Any())
             {
                 People.Add("");
                 People.Add($"\"Hotels\": {counter}");
@@ -1405,41 +1409,68 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-        private async Task PrintAllVouchers()
+        private async Task PrintAllVouchers(bool send = false)
         {
             try
             {
+                MessengerInstance.Send(new IsBusyChangedMessage(true));
+
                 var x = await Context.GetAllCitiesAsyncSortedByName();
                 List<Bus> buses = null;
-                if (!ReservationsCollectionView.IsEmpty)
-                    buses = (await Context.GetAllBusesAsync(checkIn: ReservationsCollectionView.Cast<ReservationWrapper>().ToList().Min(t => t.Booking.CheckIn))).ToList();
-                MessengerInstance.Send(new IsBusyChangedMessage(true));
+
+                var group = ReservationsCollectionView.Cast<ReservationWrapper>().Where(r => r.Booking != null).ToList();
+                if (group.Count > 0)
+                {
+                    buses = (await Context.GetAllBusesAsync(checkIn: group.Min(t => t.Booking.CheckIn))).ToList();
+                }
 
                 List<Booking> bookings = new List<Booking>();
 
-                foreach (ReservationWrapper r in CollectionViewSource.GetDefaultView(FilteredReservations))
+                foreach (ReservationWrapper r in group)
                 {
-                    if (r.ExcursionType != ExcursionTypeEnum.Personal && !bookings.Contains(r.Booking))
+                    if (!bookings.Contains(r.Booking) && (!send || (r.Booking.IsPartners && r.Booking.Partner != null)))
                     {
                         bookings.Add((r as ReservationWrapper).Booking);
                     }
                 }
-                int coutner = 0;
 
-                foreach (Booking b in bookings)
-                {
-                    coutner += b.ReservationsInBooking.Count;
-                }
+                List<Booking> nonsend = new List<Booking>();
+                //nonsend = bookings.Where(b => b.Partner == null || string.IsNullOrEmpty(b.PartnerEmail)).ToList();
+
+                List<BookingWrapper> list = new List<BookingWrapper>();
 
                 using (DocumentsManagement vm = new DocumentsManagement(new GenericRepository()))
                 {
-                    if (bookings.Any(b => b.ReservationsInBooking.Any(r => r.CustomersList.Any(c => c.BusGo == null)))) ;
-                    {
-                    }
                     foreach (Booking b in bookings)
                     {
-                        await vm.PrintSingleBookingVoucher(new BookingWrapper(b));
+                        if (!send || (b.Partner != null && !string.IsNullOrEmpty(b.PartnerEmail)))
+                        {
+                            list.Add(new BookingWrapper(b));
+                        }
+                        else if (!b.Partner.Person)
+                        {
+                            nonsend.Add(b);
+                        }
                     }
+                    await vm.PrintVouchers(list, send);
+                }
+                if (nonsend.Count > 0)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    if (nonsend.Count == 1)
+                    {
+                        sb.Append("Δεν στάλθηκε η κράτηση:" + Environment.NewLine);
+                    }
+                    else if (nonsend.Count > 1)
+                    {
+                        sb.Append("Δεν στάλθηκαν οι κρατήσεις:" + Environment.NewLine);
+                    }
+                    foreach (var b in nonsend)
+                    {
+                        sb.Append($"{b.ReservationsInBooking[0].CustomersList[0]} από {b.Partner.Name}" + Environment.NewLine);
+                    }
+
+                    MessageBox.Show(sb.ToString());
                 }
             }
             catch (Exception ex)

@@ -407,7 +407,8 @@
                                            HorizontalAlignment="Left" />
                                 <ComboBox ItemsSource="{Binding Emails}"
                                           DisplayMemberPath="EValue"
-                                          SelectedItem="{Binding SelectedEmail}"
+                                          IsEditable="True"
+                                          Text="{Binding BookingWr.PartnerEmail}"
                                           VerticalAlignment="Center"
                                           Width="131" />
                             </StackPanel>

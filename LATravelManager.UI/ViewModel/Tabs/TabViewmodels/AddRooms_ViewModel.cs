@@ -611,7 +611,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                     dict[rw.RoomType] = count + 1;
                 }
 
-            if (dict.Count() > 0)
+            if (dict.Any())
             {
                 foreach (KeyValuePair<RoomType, int> entry in dict)
                 {

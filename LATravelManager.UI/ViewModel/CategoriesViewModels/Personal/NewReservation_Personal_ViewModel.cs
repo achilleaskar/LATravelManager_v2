@@ -41,6 +41,8 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             AddServiceCommand = new RelayCommand(AddService, CanAddService);
             ToggleDisabilityCommand = new RelayCommand(ToggleDisability, CanToggleDisability);
 
+            DeleteSelectedCustomersCommand = new RelayCommand(DeleteSelectedCustomers, CanDeleteCustomers);
+
             SaveCommand = new RelayCommand(async () => { await SaveAsync(); }, CanSave);
             Payment = new Payment();
             MainViewModel = mainViewModel;
@@ -49,6 +51,31 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 
             EditServiceCommand = new RelayCommand(EditService);
             Emails = new ObservableCollection<Email>();
+        }
+
+        public RelayCommand DeleteSelectedCustomersCommand { get; set; }
+
+
+        private bool CanDeleteCustomers()
+        {
+            return PersonalWr.CustomerWrappers.Any(c => c.IsSelected);
+        }
+        public void DeleteSelectedCustomers()
+        {
+            List<CustomerWrapper> toRemove = new List<CustomerWrapper>();
+            foreach (CustomerWrapper customer in PersonalWr.CustomerWrappers)
+            {
+                if (customer.IsSelected)
+                {
+                        toRemove.Add(customer);
+                        customer.BusGo = null;
+                        customer.BusReturn = null;
+                }
+            }
+            foreach (CustomerWrapper c in toRemove)
+            {
+                PersonalWr.CustomerWrappers.Remove(c);
+            }
         }
 
         private bool CanToggleDisability()
@@ -314,7 +341,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
                 if (SelectedPartnerIndex >= 0 && (PersonalWr.Partner == null || (PersonalWr.Partner != null && PersonalWr.Partner.Id != Partners[SelectedPartnerIndex].Id)))
                 {
                     PersonalWr.Partner = GenericRepository.GetById<Partner>(Partners[SelectedPartnerIndex].Id);
-                    Emails = (PersonalWr.Partner.Emails != null && PersonalWr.Partner.Emails.Count() > 0) ? new ObservableCollection<Email>(PersonalWr.Partner.Emails.Split(',').Select(e => new Email(e))) : new ObservableCollection<Email>();
+                    Emails = (PersonalWr.Partner.Emails != null && PersonalWr.Partner.Emails.Any()) ? new ObservableCollection<Email>(PersonalWr.Partner.Emails.Split(',').Select(e => new Email(e))) : new ObservableCollection<Email>();
                     if (Emails.Count > 0)
                     {
                         SelectedEmail = Emails[0];
@@ -597,7 +624,11 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 
         private bool CanSave()
         {
-            return AreBookingDataValid && ValidateServices() == null;
+            if (PersonalWr == null || (!HasChanges && Payment.Amount == 0) || !AreContexesFree)
+            {
+                return false;
+            }
+            return AreBookingDataValid && ValidateServices() == null ;
         }
 
         private async Task ClearBooking()

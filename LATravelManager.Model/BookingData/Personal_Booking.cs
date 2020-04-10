@@ -31,6 +31,29 @@ namespace LATravelManager.Model.BookingData
 
         #endregion Constructors
 
+
+
+
+        private bool _Group;
+
+        public bool Group
+        {
+            get
+            {
+                return _Group;
+            }
+
+            set
+            {
+                if (_Group == value)
+                {
+                    return;
+                }
+
+                _Group = value;
+                RaisePropertyChanged();
+            }
+        }
         public bool VoucherSent { get; set; }
         public bool ProformaSent { get; set; }
 

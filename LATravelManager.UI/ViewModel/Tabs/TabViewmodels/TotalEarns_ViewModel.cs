@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using System.Windows.Input;
 using GalaSoft.MvvmLight.CommandWpf;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.People;
@@ -96,7 +97,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                     return;
                 }
 
-                _Commission = value;
+                _Commission = decimal.Round(value, 2);
                 RaisePropertyChanged();
             }
         }
@@ -385,7 +386,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                     return;
                 }
 
-                _Net = value;
+                _Net = decimal.Round(value, 2);
                 RaisePropertyChanged();
             }
         }
@@ -486,7 +487,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                     return;
                 }
 
-                _Total = value;
+                _Total = decimal.Round(value,2);
                 RaisePropertyChanged();
             }
         }
@@ -583,7 +584,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         private async Task ShowIncomes()
         {
-            Total = Net = Commission = Customers = 0;
+            Mouse.OverrideCursor = Cursors.Wait;
             IncomesContext = new GenericRepository();
             List<BookingWrapper> bookings = (await IncomesContext.GetAllBookingsFiltered(
                 ExcursionIndexBookingFilter == 0 ? -1 : ((Excursion)ExcursionsIncomeCollectionView.CurrentItem).Id,
@@ -594,6 +595,8 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 EnableFromFilter ? From : CompletedIncomeFilter ? DateTime.MinValue : DateTime.Today,
                 EnableToFilter ? To : DateTime.MaxValue)).Select(b => new BookingWrapper(b)).ToList();
 
+            Total = Net = Commission = Customers = 0;
+            decimal net = 0;
             // decimal pel = 0, chara = 0, plat = 0;
 
             //foreach (var b in bookings)
@@ -630,25 +633,28 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 //        pel += b.FullPrice;
                 //    }
                 //}
-                _Total += b.FullPrice;
+                Total += b.FullPrice;
                 foreach (var r in b.ReservationsInBooking)
                 {
                     _Customers += r.CustomersList.Count;
                 }
                 if (b.IsPartners && b.NetPrice > 2)
                 {
-                    _Net += b.NetPrice;
+                    net += b.NetPrice;
                 }
                 else if (b.FullPrice > 2)
                 {
-                    _Net += b.FullPrice;
+                    net += b.FullPrice;
                 }
             }
-            _Commission = Total - Net;
+            Net = net;
+            Commission = Total - Net;
             RaisePropertyChanged(nameof(Total));
             RaisePropertyChanged(nameof(Customers));
             RaisePropertyChanged(nameof(Net));
             RaisePropertyChanged(nameof(Commission));
+            Mouse.OverrideCursor = Cursors.Arrow;
+
         }
 
         #endregion Methods

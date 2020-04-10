@@ -111,7 +111,7 @@ namespace LATravelManager.UI.Repositories
         public virtual void Delete<TEntity>(TEntity entity)
            where TEntity : BaseModel
         {
-            DbSet<TEntity> dbSet = Context.Set<TEntity>();
+            var dbSet = Context.Set<TEntity>();
             if (Context.Entry(entity).State == EntityState.Detached)
             {
                 dbSet.Attach(entity);
@@ -531,11 +531,10 @@ namespace LATravelManager.UI.Repositories
         public virtual async Task<Personal_Booking> GetFullPersonalBookingByIdAsync(int id)
         {
             return await RunTask(Context.Personal_Bookings.Where(b => b.Id == id)
+                .Include(f => f.Customers.Select(s => s.Services))
                 .Include(f => f.User)
                 .Include(f => f.Payments)
-                .Include(f => f.Customers.Select(s => s.Services))
                 .Include(f => f.Partner)
-                .Include(f => f.User)
                 .FirstOrDefaultAsync);
         }
 
@@ -671,7 +670,7 @@ namespace LATravelManager.UI.Repositories
                                                     r.State
                                                 });
 
-            if (changes.Count() > 0 || relatioships.Count > 0)
+            if (changes.Any() || relatioships.Count > 0)
             {
                 StringBuilder sb = new StringBuilder();
 
@@ -731,32 +730,32 @@ namespace LATravelManager.UI.Repositories
                             break;
                     }
 
-                    if (change.State == EntityState.Added)
-                    {
-                        // Log Added
-                    }
-                    else if (change.State == EntityState.Modified)
-                    {
-                        // Log Modified
-                        object item = change.Entity;
-                        DbPropertyValues originalValues = Context.Entry(item).OriginalValues;
-                        DbPropertyValues currentValues = Context.Entry(item).CurrentValues;
+                    //if (change.State == EntityState.Added)
+                    //{
+                    //    // Log Added
+                    //}
+                    //else if (change.State == EntityState.Modified)
+                    //{
+                    //    // Log Modified
+                    //    object item = change.Entity;
+                    //    DbPropertyValues originalValues = Context.Entry(item).OriginalValues;
+                    //    DbPropertyValues currentValues = Context.Entry(item).CurrentValues;
 
-                        foreach (string propertyName in originalValues.PropertyNames)
-                        {
-                            object original = originalValues[propertyName];
-                            object current = currentValues[propertyName];
+                    //    foreach (string propertyName in originalValues.PropertyNames)
+                    //    {
+                    //        object original = originalValues[propertyName];
+                    //        object current = currentValues[propertyName];
 
-                            Console.WriteLine("Property {0} changed from {1} to {2}",
-                         propertyName,
-                         originalValues[propertyName],
-                         currentValues[propertyName]);
-                        }
-                    }
-                    else if (change.State == EntityState.Deleted)
-                    {
-                        // log deleted
-                    }
+                    //     //   //Console.WriteLine("Property {0} changed from {1} to {2}",
+                    //     //propertyName,
+                    //     //originalValues[propertyName],
+                    //     //currentValues[propertyName]);
+                    //    }
+                    //}
+                    //else if (change.State == EntityState.Deleted)
+                    //{
+                    //    // log deleted
+                    //}
                 }
                 if (sb.Length > 0)
                 {
@@ -909,12 +908,10 @@ namespace LATravelManager.UI.Repositories
            (remainingPar == 0 || (byCheckIn && c.Services.Any(s => s.TimeGo >= checkin) && c.Services.Any(s => s.TimeGo <= checkout) || (!byCheckIn && c.CreatedDate >= checkin && c.CreatedDate <= checkout))) &&
            (completed || c.Services.Any(s => s.TimeReturn >= DateTime.Today)) &&
            ((id > 0 && c.Id == id) || (id == 0 && (common || (c.IsPartners && c.Partner.Name.StartsWith(keyword)) || c.Customers.Any(p => p.Name.StartsWith(keyword) || p.Surename.StartsWith(keyword) || p.Tel.StartsWith(keyword))))))
+           .Include(f => f.Customers.Select(s => s.Services))
            .Include(f => f.User)
-           .Include(f => f.Services)
-           .Include(f => f.Services)
-           .Include(f => f.Partner)
            .Include(f => f.Payments)
-           .Include(f => f.Customers)
+           .Include(f => f.Partner)
            .ToListAsync);
             return x;
         }

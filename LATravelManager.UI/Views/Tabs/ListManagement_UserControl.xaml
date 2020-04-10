@@ -687,8 +687,16 @@
                                                                                         Height="46"
                                                                                         BorderThickness="{Binding Thickness}"
                                                                                         Background="{Binding Color}">
+                                                                                    <Border.ContextMenu>
+                                                                                        <ContextMenu>
+                                                                                            <MenuItem Header="Μεταφορά"
+                                                                                                      Click="MenuItem_Click"
+                                                                                                      CommandParameter="{Binding}"
+                                                                                                    />
+                                                                                        </ContextMenu>
+                                                                                    </Border.ContextMenu>
                                                                                     <Border.ToolTip>
-                                                                                        <Label Content="{Binding Customer}" />
+                                                                                        <Label Content="{Binding Customer.FullName}" />
                                                                                     </Border.ToolTip>
                                                                                     <Grid>
                                                                                         <Grid.RowDefinitions>
@@ -754,8 +762,15 @@
                                                                                         Height="46"
                                                                                         BorderThickness="{Binding Thickness}"
                                                                                         Background="{Binding Color}">
+                                                                                    <Border.ContextMenu>
+                                                                                        <ContextMenu>
+                                                                                            <MenuItem Header="Μεταφορά"
+                                                                                                      Click="MenuItem_Click_1"
+                                                                                                      CommandParameter="{Binding}" />
+                                                                                        </ContextMenu>
+                                                                                    </Border.ContextMenu>
                                                                                     <Border.ToolTip>
-                                                                                        <Label Content="{Binding Customer}" />
+                                                                                        <Label Content="{Binding Customer.FullName}" />
                                                                                     </Border.ToolTip>
                                                                                     <Grid>
                                                                                         <Grid.RowDefinitions>

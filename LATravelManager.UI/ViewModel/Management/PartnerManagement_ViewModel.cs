@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using GalaSoft.MvvmLight.CommandWpf;
 using LaTravelManager.BaseTypes;
+using LATravelManager.Model.LocalModels;
 using LATravelManager.Model.People;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
@@ -15,6 +18,27 @@ namespace LATravelManager.UI.ViewModel.Management
         public PartnerManagement_ViewModel(BasicDataManager context) : base(context)
         {
             ControlName = "Διαχείριση Συνεργατών";
+            AddEmailCommand = new RelayCommand(AddEmail, CanAddEmail);
+        }
+
+        private bool CanAddEmail()
+        {
+            try
+            {
+                if (SelectedEntity == null || string.IsNullOrEmpty(SelectedEntity.NewEmail))
+                    return false;
+              
+                return new EmailAddressAttribute().IsValid(SelectedEntity.NewEmail);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private void AddEmail()
+        {
+            SelectedEntity.EmailsList.Add(new Email(SelectedEntity.NewEmail));
         }
 
         public override void ReLoad(int id = 0, MyViewModelBaseAsync previousViewModel = null)
@@ -34,5 +58,6 @@ namespace LATravelManager.UI.ViewModel.Management
                 MessengerInstance.Send(new IsBusyChangedMessage(false));
             }
         }
+        public RelayCommand AddEmailCommand { get; set; }
     }
 }

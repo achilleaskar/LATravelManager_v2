@@ -117,7 +117,7 @@ namespace LATravelManager.Model.BookingData
         //    //this.booking = booking;
         //    //this.uOW = uOW;
         //}
-        [NotMapped]
+
         public string PartnerEmail { get; set; }
 
         //public Booking()

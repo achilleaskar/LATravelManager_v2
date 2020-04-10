@@ -27,11 +27,7 @@
                                       Columns="{TemplateBinding GridView.ColumnCollection}" />
             </StackPanel>
         </ControlTemplate>
-        <Style x:Key="myHeaderStyle"
-               TargetType="{x:Type GridViewColumnHeader}">
-            <Setter Property="Visibility"
-                    Value="Collapsed" />
-        </Style>
+       
         <Style TargetType="ListViewItem">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding Path=Selected}"
@@ -47,6 +43,11 @@
             </Style.Triggers>
             <Setter Property="IsSelected"
                     Value="{Binding Selected, Mode=OneWay}" />
+        </Style>
+        <Style x:Key="myHeaderStyle"
+               TargetType="{x:Type GridViewColumnHeader}">
+            <Setter Property="Visibility"
+                    Value="Collapsed" />
         </Style>
         <DataTemplate x:Key="SidePaneListViewTemplate">
             <StackPanel Orientation="Horizontal"

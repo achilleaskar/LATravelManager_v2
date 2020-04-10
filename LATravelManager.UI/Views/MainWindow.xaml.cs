@@ -48,8 +48,9 @@ namespace LATravelManager.UI.Views
             catch (Exception ex)
             {
                 if (!ex.Message.Contains(".exe"))
-                    MessageBox.Show("Error updating:" + ex.Message + "   " + ex.InnerException != null ? ex.InnerException.Message : "");
-                throw ex;
+                    MessageBox.Show("Error updating:" + ex.Message + "   " + (ex.InnerException != null ? ex.InnerException.Message : ""));
+                else
+                    throw ex;
             }
         }
     }

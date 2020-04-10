@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using LATravelManager.Model.LocalModels;
 using LATravelManager.Model.People;
@@ -34,6 +35,31 @@ namespace LATravelManager.UI.Wrapper
         {
             get { return GetValue<string>(); }
             set { SetValue(value); }
+        }
+
+
+
+
+        private string _NewEmail;
+
+        [EmailAddress]
+        public string NewEmail
+        {
+            get
+            {
+                return _NewEmail;
+            }
+
+            set
+            {
+                if (_NewEmail == value)
+                {
+                    return;
+                }
+
+                _NewEmail = value;
+                RaisePropertyChanged();
+            }
         }
 
         private ObservableCollection<Email> _EmailsList;

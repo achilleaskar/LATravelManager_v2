@@ -635,6 +635,29 @@ namespace LATravelManager.Model.Wrapper
 
         #endregion Properties
 
+
+
+        private bool _Selected;
+
+
+        public bool Selected
+        {
+            get
+            {
+                return _Selected;
+            }
+
+            set
+            {
+                if (_Selected == value)
+                {
+                    return;
+                }
+
+                _Selected = value;
+                RaisePropertyChanged();
+            }
+        }
         #region Methods
 
         public void CalculateAmounts()
@@ -1176,9 +1199,12 @@ namespace LATravelManager.Model.Wrapper
                 }
             }
 
-            if (HB)
+            if (CustomersList!=null )
             {
+                if (CustomersList.Any(c => c.Board == 1))
                 roomname += "-HB";
+                else if (CustomersList.Any(c => c.Board == 2))
+                roomname += "-FB";
             }
 
             return roomname;
