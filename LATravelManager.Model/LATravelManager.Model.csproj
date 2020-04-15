@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LATravelManager.Model</RootNamespace>
     <AssemblyName>LATravelManager.Model</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -60,6 +60,7 @@
     <Compile Include="BookingData\ThirdParty_Booking.cs" />
     <Compile Include="Excursions\CustomerOptional.cs" />
     <Compile Include="Hotels\HotelOptions.cs" />
+    <Compile Include="NewClasses.cs" />
     <Compile Include="Notifications\Notification.cs" />
     <Compile Include="Notifications\NotifStatus.cs" />
     <Compile Include="Parea.cs" />

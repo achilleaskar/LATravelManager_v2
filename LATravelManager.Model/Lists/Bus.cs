@@ -188,7 +188,7 @@ namespace LATravelManager.Model.Lists
 
         [NotMapped]
         public List<SolidColorBrush> ColorsR { get; set; }
-
+        [MaxLength(100)]
         public string Comment
         {
             get

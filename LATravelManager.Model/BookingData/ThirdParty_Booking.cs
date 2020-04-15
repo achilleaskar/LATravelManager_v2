@@ -56,7 +56,8 @@ namespace LATravelManager.Model.BookingData
         public User User { get; set; }
 
         #endregion Properties
-
+         public DisabledInfo DisabledInfo { get; set; }
+        public PartnerInfo PartnerInfo { get; set; }
         public bool VoucherSent { get; set; }
         public bool ProformaSent { get; set; }
 

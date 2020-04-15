@@ -152,7 +152,8 @@ namespace LATravelManager.UI.Repositories
         public async Task<IEnumerable<Booking>> GetAllBookingInPeriod(DateTime minDay, DateTime maxDay, City city = null, int excursionId = -1, bool canceled = false)
         {
             int cityId = city != null ? city.Id : -1;
-            return await RunTask(Context.Bookings.Where(c => ((cityId > 0 && c.Excursion.Destinations.FirstOrDefault().Id == cityId) || (excursionId > 0 && c.Excursion.Id == excursionId)) && ((c.CheckIn <= maxDay && c.CheckIn >= minDay) || (c.CheckOut <= maxDay && c.CheckOut >= minDay)))
+            return await RunTask(Context.Bookings
+                .Where(c => ((cityId > 0 && c.Excursion.Destinations.FirstOrDefault().Id == cityId) || (excursionId > 0 && c.Excursion.Id == excursionId)) && ((c.CheckIn <= maxDay && c.CheckIn >= minDay) || (c.CheckOut <= maxDay && c.CheckOut >= minDay)))
                 .Include(f => f.Partner)
                 .Include(f => f.ExcursionDate)
                 .Include(f => f.User)

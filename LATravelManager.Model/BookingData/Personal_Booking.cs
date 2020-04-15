@@ -19,6 +19,8 @@ namespace LATravelManager.Model.BookingData
             Customers = new ObservableCollection<Customer>();
             Services = new ObservableCollection<Service>();
         }
+         public DisabledInfo DisabledInfo { get; set; }
+        public PartnerInfo PartnerInfo { get; set; }
 
         public bool Disabled { get; set; }
         public bool Reciept { get; set; }

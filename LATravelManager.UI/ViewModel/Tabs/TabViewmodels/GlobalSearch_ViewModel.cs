@@ -1712,6 +1712,26 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 ReservationsCollectionView.SortDescriptions.Add(new SortDescription("CreatedDate", ListSortDirection.Ascending));
                 CountCustomers();
                 RaisePropertyChanged(nameof(HasPeople));
+
+                int counterp = 0;
+                foreach (var res in FilteredReservations)
+                {
+                    res.CalculateAmounts();
+                    if (res.Remaining > 1)
+                    {
+                        res.Booking.Payments.Add(new Payment { Amount = res.Remaining, Comment = "autoPaid" });
+                        counterp++;
+                    }
+                    if (counterp == 10)
+                    {
+                        if (Context.HasChanges())
+                        {
+                            await Context.SaveAsync();
+                        }
+                        counterp=0;
+                    }
+                }
+                await Context.SaveAsync();
             }
             catch (Exception ex)
             {

@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LATravelManager.DataAccess</RootNamespace>
     <AssemblyName>LATravelManager.DataAccess</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -32,6 +32,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -201,6 +204,10 @@
     <Compile Include="Migrations\202002261730131_226.designer.cs">
       <DependentUpon>202002261730131_226.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202004101134319_blazor.cs" />
+    <Compile Include="Migrations\202004101134319_blazor.designer.cs">
+      <DependentUpon>202004101134319_blazor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\ContextConfiguration.cs" />
     <Compile Include="MainDataBase.cs" />
     <Compile Include="Migrations\Configuration.cs" />
@@ -208,12 +215,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\LATravelManager.Model\LATravelManager.Model.csproj">
-      <Project>{C98AFCAD-18B7-4072-999F-E285382BAFC1}</Project>
-      <Name>LATravelManager.Model</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201910201407025_10201.resx">
@@ -330,6 +331,9 @@
     <EmbeddedResource Include="Migrations\202002261730131_226.resx">
       <DependentUpon>202002261730131_226.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004101134319_blazor.resx">
+      <DependentUpon>202004101134319_blazor.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BouncyCastle">
@@ -344,6 +348,12 @@
     <PackageReference Include="MySql.Data.EntityFramework">
       <Version>8.0.19</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LATravelManager.Model\LATravelManager.Model.csproj">
+      <Project>{C98AFCAD-18B7-4072-999F-E285382BAFC1}</Project>
+      <Name>LATravelManager.Model</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

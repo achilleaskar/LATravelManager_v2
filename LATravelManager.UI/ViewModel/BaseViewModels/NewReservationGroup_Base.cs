@@ -971,11 +971,14 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                     return;
                 }
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
+                
                 RoomsManager = new RoomsManager();
                 if (BookingWr.ExcursionDate != null && BookingWr.ExcursionDate.NightStart)
                     AvailableHotels = new ObservableCollection<HotelWrapper>((await RoomsManager.GetAllAvailableRooms(BookingWr.CheckIn.AddDays(1), BookingWr.CheckOut, SelectedExcursion, false, unSavedBooking: BookingWr.Model)));
                 else
                     AvailableHotels = new ObservableCollection<HotelWrapper>((await RoomsManager.GetAllAvailableRooms(BookingWr.CheckIn, BookingWr.CheckOut, SelectedExcursion, false, unSavedBooking: BookingWr.Model)));
+               
+                
                 FilteredRoomList = new ObservableCollection<RoomWrapper>();
                 List<RoomWrapper> tmplist = new List<RoomWrapper>();
 

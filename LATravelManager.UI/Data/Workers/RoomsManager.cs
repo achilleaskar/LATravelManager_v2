@@ -4,12 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using DocumentFormat.OpenXml.Bibliography;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.LocalModels;
+using LATravelManager.Model.Locations;
 using LATravelManager.Model.Plan;
 using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Repositories;
@@ -176,7 +178,6 @@ namespace LATravelManager.UI.Data.Workers
                 MinDay = MinDay.AddDays(-10);
                 MaxDay = MaxDay.AddDays(10);
                 //mhpws edw na epairna dwmatia?
-
                 Bookings = (await GenericRepository.GetAllBookingInPeriod(MinDay, MaxDay, excursionfilter.Destinations[0])).ToList();
 
                 if (unSavedBooking != null)
@@ -207,8 +208,6 @@ namespace LATravelManager.UI.Data.Workers
                         }
                     }
                 }
-
-                List<BookingInfoPerDay> bi = new List<BookingInfoPerDay>();
 
                 List<Room> rooms = (await GenericRepository.GetAllRoomsInCityAsync(MinDay, MaxDay, excursionfilter.Destinations[0].Id));
                 foreach (var r in rooms)
