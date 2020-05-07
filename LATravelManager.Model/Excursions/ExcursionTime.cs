@@ -51,6 +51,31 @@ namespace LATravelManager.Model.Excursions
             }
         }
 
+
+
+
+        private bool _Enabled;
+
+
+        public bool Enabled
+        {
+            get
+            {
+                return _Enabled;
+            }
+
+            set
+            {
+                if (_Enabled == value)
+                {
+                    return;
+                }
+
+                _Enabled = value;
+                RaisePropertyChanged();
+            }
+        }
+
         private StartingPlace _StartingPlace;
 
         public StartingPlace StartingPlace

@@ -246,6 +246,7 @@
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
+                            <DataGridCheckBoxColumn Header="Ενεργό" Binding="{Binding Enabled}"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>

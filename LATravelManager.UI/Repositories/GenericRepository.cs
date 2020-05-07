@@ -119,6 +119,8 @@ namespace LATravelManager.UI.Repositories
             dbSet.Remove(entity);
         }
 
+       
+
         public void Dispose()
         {
             // Dispose of unmanaged resources.
@@ -1102,7 +1104,6 @@ namespace LATravelManager.UI.Repositories
                 .Include(f => f.User)
                 .Include(f => f.Payments)
                 .Include(f => f.Partner)
-                .Include(f => f.File)
                 .ToListAsync);
             return x;
         }

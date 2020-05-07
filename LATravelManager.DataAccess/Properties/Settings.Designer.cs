@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace LATravelManager.UI.Properties {
+namespace LATravelManager.DataAccess.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -26,24 +26,12 @@ namespace LATravelManager.UI.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool isTest {
+        public bool IsTest {
             get {
-                return ((bool)(this["isTest"]));
+                return ((bool)(this["IsTest"]));
             }
             set {
-                this["isTest"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string testConnString {
-            get {
-                return ((string)(this["testConnString"]));
-            }
-            set {
-                this["testConnString"] = value;
+                this["IsTest"] = value;
             }
         }
         
@@ -66,12 +54,12 @@ namespace LATravelManager.UI.Properties {
         [global::System.Configuration.DefaultSettingValueAttribute("Server=readmoreachill2.clq6srsguoz6.eu-west-3.rds.amazonaws.com;Database=readmore" +
             "_achill2;pooling=true;Uid=readmore_achill2;Pwd=986239787346;Convert Zero Datetim" +
             "e=True;  default command timeout=3600;SslMode=none;TreatTinyAsBoolean=true;")]
-        public string Setting {
+        public string TestConnString {
             get {
-                return ((string)(this["Setting"]));
+                return ((string)(this["TestConnString"]));
             }
             set {
-                this["Setting"] = value;
+                this["TestConnString"] = value;
             }
         }
     }

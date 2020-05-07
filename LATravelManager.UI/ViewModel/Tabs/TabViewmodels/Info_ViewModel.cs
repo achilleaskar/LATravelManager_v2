@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Data;
@@ -28,8 +29,80 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             ToDepartureInfo = DateTime.Today;
             FromDepartureInfo = DateTime.Today;
             ShowDepartureInfoCommand = new RelayCommand(async () => { await ShowDepartureInfo(); }, CanShowDepartureInfo);
+            ShowDepartureDaysInfoCommand = new RelayCommand(async () => { await ShowDepartureDays(); }, CanShowDepartureInfo);
             MainViewModel = mainViewModel;
             Load();
+        }
+
+        private List<DaysInfo> _AllDays;
+
+        public List<DaysInfo> AllDays
+        {
+            get
+            {
+                return _AllDays;
+            }
+
+            set
+            {
+                if (_AllDays == value)
+                {
+                    return;
+                }
+
+                _AllDays = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
+
+
+        private List<DaysInfo> _AllDaysByCount;
+
+
+        public List<DaysInfo> AllDaysByCount
+        {
+            get
+            {
+                return _AllDaysByCount;
+            }
+
+            set
+            {
+                if (_AllDaysByCount == value)
+                {
+                    return;
+                }
+
+                _AllDaysByCount = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private async Task ShowDepartureDays()
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            Context = new GenericRepository();
+            AllDays = new List<DaysInfo>();
+            Bookings = (await Context.GetAllBookingInPeriod(FromDepartureInfo, ToDepartureInfo, excursionId: SelectedFilterExcursion.Id)).ToList();
+            DaysInfo days;
+            foreach (var b in Bookings)
+            {
+                days = AllDays.FirstOrDefault(d => d.DayGo == b.CheckIn.DayOfWeek && d.DayReturn == b.CheckOut.DayOfWeek);
+                if (days == null)
+                {
+                    days = new DaysInfo { DayGo = b.CheckIn.DayOfWeek, DayReturn = b.CheckOut.DayOfWeek };
+                    AllDays.Add(days);
+                }
+                days.Count += b.ReservationsInBooking.Sum(r => r.CustomersList.Count);
+            }
+
+            AllDays = AllDays.OrderBy(f => (int)f.DayGo + 1).ToList();
+            AllDaysByCount = AllDays.OrderByDescending(f => f.Count).ToList();
+
+            Mouse.OverrideCursor = Cursors.Arrow;
         }
 
         #endregion Constructors
@@ -176,7 +249,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 _Excursions = value;
                 Excursions.Insert(0, new Excursion { ExcursionDates = new ObservableCollection<ExcursionDate> { new ExcursionDate { CheckIn = new DateTime() } }, Name = "Ολες" });
 
-                ExcursionsDepartureCollectionView = new CollectionViewSource { Source = Excursions }.View;
+                ExcursionsDepartureCollectionView = CollectionViewSource.GetDefaultView(Excursions);   //new CollectionViewSource { Source = Excursions }.View;
                 ExcursionsDepartureCollectionView.Filter = InfoExcursionsFilter;
                 ExcursionsDepartureCollectionView.SortDescriptions.Add(new SortDescription("FirstDate", ListSortDirection.Ascending));
 
@@ -271,6 +344,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         }
 
         public RelayCommand ShowDepartureInfoCommand { get; set; }
+        public RelayCommand ShowDepartureDaysInfoCommand { get; set; }
 
         public string ShowDepartureInfoError
         {
@@ -616,5 +690,25 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         }
 
         #endregion Methods
+    }
+
+    public class DaysInfo
+    {
+        public DaysInfo()
+        {
+            dateTimeInfo = cultureInfoe.DateTimeFormat;
+        }
+        public DayOfWeek DayGo { get; set; }
+        public DayOfWeek DayReturn { get; set; }
+        public int Count { get; set; }
+        public CultureInfo cultureInfoe = new CultureInfo("el-GR");
+        public DateTimeFormatInfo dateTimeInfo;
+
+        public string GoName =>dateTimeInfo.GetDayName(DayGo);
+        public string ReturnName =>dateTimeInfo.GetDayName(DayReturn);
+        public override string ToString()
+        {
+            return $"{DayGo}-{DayReturn} : {Count}";
+        }
     }
 }

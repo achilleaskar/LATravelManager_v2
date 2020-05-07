@@ -643,7 +643,7 @@ namespace LATravelManager.UI.Data.Workers
             {
                 MessageBox.Show(ex.Message);
             }
-            return Plan.OrderBy(h => h.Name).ToList(); ;
+            return Plan.OrderBy(h => h.Name).ToList();
         }
 
         private static Cell AddCellWithText(string text)
@@ -770,11 +770,12 @@ namespace LATravelManager.UI.Data.Workers
         private static bool IsOtherFree(ReservationWrapper reservation, List<HotelWrapper> plan)
         {
             foreach (HotelWrapper hotel in plan)
-                // if (hotel.Id != 21 && hotel.Id != 22 && hotel.Id != 23 && hotel.Id != 42)
-                foreach (RoomWrapper roomWr in hotel.RoomWrappers)
-                    if (roomWr.CanFit(reservation))
-                        if (roomWr.CanAddReservationToRoom(reservation, false, false))
-                            return true;
+                if (hotel.HotelCategory.Id==8)
+                    // if (hotel.Id != 21 && hotel.Id != 22 && hotel.Id != 23 && hotel.Id != 42)
+                    foreach (RoomWrapper roomWr in hotel.RoomWrappers)
+                        if (roomWr.CanFit(reservation))
+                            if (roomWr.CanAddReservationToRoom(reservation, false, false))
+                                return true;
             return false;
         }
 
@@ -813,42 +814,7 @@ namespace LATravelManager.UI.Data.Workers
             try
             {
                 int lastNight;
-                //int ik = 0;
-                //foreach (PlanDailyInfo planDailyInfo in availableroomWr.PlanDailyInfo)
-                //{
-                //    if (planDailyInfo.Date > noName.Reservation.CheckIn)
-                //    {
-                //        return false;
-                //    }
-                //    if (planDailyInfo.Date == noName.Reservation.CheckIn)
-                //    {
-                //        if (ik == 0)
-                //        {
-                //            lastNight = noName.Reservation.Nights - 1;
-                //            if (lastNight == availableroomWr.PlanDailyInfo.Count - 1)
-                //            {
-                //                return true;
-                //            }
-                //            if (availableroomWr.PlanDailyInfo[lastNight + 1].RoomState != RoomStateEnum.Available)
-                //            {
-                //                return true;
-                //            }
-                //        }
-                //        else if (planDailyInfo.RoomState != RoomStateEnum.Available)
-                //        {
-                //            lastNight = ik + noName.Reservation.Nights - 1;
-                //            if (lastNight == availableroomWr.PlanDailyInfo.Count - 1)
-                //            {
-                //                return true;
-                //            }
-                //            if (availableroomWr.PlanDailyInfo[lastNight + 1].RoomState != RoomStateEnum.Available)
-                //            {
-                //                return true;
-                //            }
-                //        }
-                //    }
-                //    ik++;
-                //}
+
                 for (int i = 0; i < availableroomWr.PlanDailyInfo.Count; i++)
                 {
                     if (availableroomWr.PlanDailyInfo[i].Date > noName.Reservation.CheckIn)
