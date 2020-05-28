@@ -10,7 +10,7 @@
         WindowStartupLocation="CenterOwner"
         Title="{Binding ControlName}"
         Closing="Window_Closing"
-        Height="450"
+        Height="500"
         Width="800">
 
     <Grid Margin="20">

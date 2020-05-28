@@ -7,7 +7,7 @@
         FontSize="14"
         mc:Ignorable="d"
         Title="{Binding ControlName}"
-        Height="450"
+        Height="500"
         Closing="Window_Closing"
         Width="800">
 

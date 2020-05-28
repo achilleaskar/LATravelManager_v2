@@ -11,6 +11,7 @@ using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Hotels;
+using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Helpers;
@@ -39,6 +40,52 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             SetNonPartnerCommand = new RelayCommand(() => { PartnerIndex = -1; }, PartnerIndex >= 0);
 
             Load();
+        }
+
+        private ObservableCollection<City> _Cities;
+
+        public ObservableCollection<City> Cities
+        {
+            get
+            {
+                return _Cities;
+            }
+
+            set
+            {
+                if (_Cities == value)
+                {
+                    return;
+                }
+
+                _Cities = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private City _SelectedCity;
+
+        public City SelectedCity
+        {
+            get
+            {
+                return _SelectedCity;
+            }
+
+            set
+            {
+                if (_SelectedCity == value)
+                {
+                    return;
+                }
+
+                _SelectedCity = value;
+                if (ReservationsCollectionView != null)
+                {
+                    ReservationsCollectionView.Refresh();
+                }
+                RaisePropertyChanged();
+            }
         }
 
         public ReservationWrapper SelectedReservation
@@ -139,10 +186,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-
-
         private decimal _Commision;
-
 
         public decimal Commision
         {
@@ -664,6 +708,9 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
                 Partners = new ObservableCollection<Partner>(MainViewModel.BasicDataManager.Partners);
                 Excursions = new ObservableCollection<Excursion>(MainViewModel.BasicDataManager.Excursions);
+                Cities = new ObservableCollection<City>(MainViewModel.BasicDataManager.Cities);
+                Cities.Insert(0, new City { Name = "Όλες" });
+                SelectedCity = Cities[0];
 
                 Bookings = new ObservableCollection<Booking>();
                 PartnerIndex = -1;
@@ -724,10 +771,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-
-
         private bool _NoVoucher;
-
 
         public bool NoVoucher
         {
@@ -753,11 +797,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-
-
-
         private bool _NoProforma;
-
 
         public bool NoProforma
         {
@@ -783,10 +823,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-
-
         private bool _NoReciept;
-
 
         public bool NoReciept
         {
@@ -811,12 +848,14 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 RaisePropertyChanged();
             }
         }
+
         private bool CustomerFilter(object item)
         {
             ReservationWrapper reservation = item as ReservationWrapper;
             var x = reservation.Contains(FilterString, false) &&
                 (!Remaining || reservation.Remaining > 3) &&
                 (!NoProforma || !reservation.ProformaSent) &&
+                (SelectedCity == null || SelectedCity.Id <= 0 || (reservation.Booking != null && reservation.Booking.Excursion != null && reservation.Booking.Excursion.Destinations.Any(d => d.Id == SelectedCity.Id)) || reservation.To.Contains(SelectedCity.Name)) &&
                 (!NoVoucher || !reservation.VoucherSent) &&
                 (!NoReciept || !reservation.Reciept) &&
                 (DepartmentIndexBookingFilter == 0 || reservation.UserWr.BaseLocation == DepartmentIndexBookingFilter) &&

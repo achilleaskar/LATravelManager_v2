@@ -160,6 +160,16 @@
                             </ComboBox>
                         </StackPanel>
                         <StackPanel>
+                            <Label Content="Πόλη:"
+                                   VerticalAlignment="Center" />
+                            <ComboBox  Width="105"
+                                       Margin="0 0 5 0"
+                                       IsSynchronizedWithCurrentItem="True"
+                                       VerticalAlignment="Center"
+                                       ItemsSource="{Binding Cities}"
+                                       SelectedItem="{Binding SelectedCity}" />
+                        </StackPanel>
+                        <StackPanel>
                             <Label Content="Εκδρομή:"
                                    VerticalAlignment="Center" />
                             <ComboBox  Width="105"
@@ -172,6 +182,7 @@
                                       Margin="0 5 0 0"
                                       IsChecked="{Binding Completed}" />
                         </StackPanel>
+                       
                     </StackPanel>
                     <Border BorderBrush="Gray"
                             BorderThickness="0 0 0 1"

@@ -973,6 +973,7 @@ namespace LATravelManager.UI.Repositories
                   .Include(f => f.Booking.Excursion)
                   .Include(f => f.Booking.Excursion.ExcursionType)
                   .Include(f => f.Booking.Payments)
+                  .Include(f => f.Booking.Payments.Select(y=>y.User))
                   .Include(f => f.Booking.ExcursionDate)
                   .Include(f => f.Room.Hotel)
                   .Include(f => f.Room.RoomType)

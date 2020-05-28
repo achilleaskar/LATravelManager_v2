@@ -11,7 +11,7 @@
         Closing="Window_Closing"
         WindowStartupLocation="CenterOwner"
         Title="{Binding ControlName}"
-        Height="470"
+        Height="500"
         Width="800">
 
     <Grid Margin="20">
