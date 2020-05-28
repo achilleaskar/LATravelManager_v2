@@ -29,19 +29,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {
     public class Cards_ViewModel : MyViewModelBase
     {
-        #region Constructors
-
-        public Cards_ViewModel(MainViewModel mainViewModel)
-        {
-            MainViewModel = mainViewModel;
-            ShowReservationsCommand = new RelayCommand<string>(async (obj) => { await ShowReservations(obj); }, CanShowReservations);
-            EditBookingCommand = new RelayCommand(async () => { await EditBooking(); }, CanEditBooking);
-            SetNonPartnerCommand = new RelayCommand(() => { PartnerIndex = -1; }, PartnerIndex >= 0);
-
-            Load();
-        }
-
-        #endregion Constructors
 
         #region Fields
 
@@ -106,6 +93,20 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         private bool _ΒyCheckIn;
 
         #endregion Fields
+
+        #region Constructors
+
+        public Cards_ViewModel(MainViewModel mainViewModel)
+        {
+            MainViewModel = mainViewModel;
+            ShowReservationsCommand = new RelayCommand<string>(async (obj) => { await ShowReservations(obj); }, CanShowReservations);
+            EditBookingCommand = new RelayCommand(async () => { await EditBooking(); }, CanEditBooking);
+            SetNonPartnerCommand = new RelayCommand(() => { PartnerIndex = -1; }, PartnerIndex >= 0);
+
+            Load();
+        }
+
+        #endregion Constructors
 
         #region Properties
 
@@ -744,18 +745,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-        private void UpdateSelectedReservation()
-        {
-            if (SelectedPayment != null && SelectedPayment.Parent != null)
-            {
-                foreach (ReservationWrapper wrapper in ReservationsCollectionView)
-                {
-                    wrapper.Selected = wrapper == SelectedPayment.Parent;
-                }
-                SelectedReservation = SelectedPayment.Parent;
-            }
-        }
-
         public ReservationWrapper SelectedReservation
         {
             get
@@ -1025,6 +1014,18 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 }
             }
             Payments = new ObservableCollection<Payment>(payments.OrderBy(p => p.Date));
+        }
+
+        private void UpdateSelectedReservation()
+        {
+            if (SelectedPayment != null && SelectedPayment.Parent != null)
+            {
+                foreach (ReservationWrapper wrapper in ReservationsCollectionView)
+                {
+                    wrapper.Selected = wrapper == SelectedPayment.Parent;
+                }
+                SelectedReservation = SelectedPayment.Parent;
+            }
         }
 
         #endregion Methods
