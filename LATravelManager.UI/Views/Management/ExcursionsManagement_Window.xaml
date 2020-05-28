@@ -10,7 +10,7 @@
         mc:Ignorable="d"
         Closing="Window_Closing"
         Title="{Binding ControlName}"
-        Height="650"
+        Height="700"
         Width="900">
     <Window.Resources>
         <converters:DateTimeToString x:Key="DateTimeToString" />
@@ -246,6 +246,7 @@
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
+                            <DataGridCheckBoxColumn Header="Ενεργό" Binding="{Binding Enabled}"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>

@@ -208,13 +208,34 @@
     <Compile Include="Migrations\202004101134319_blazor.designer.cs">
       <DependentUpon>202004101134319_blazor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202004240926388_service.cs" />
+    <Compile Include="Migrations\202004240926388_service.designer.cs">
+      <DependentUpon>202004240926388_service.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202004271413564_fixes.cs" />
+    <Compile Include="Migrations\202004271413564_fixes.designer.cs">
+      <DependentUpon>202004271413564_fixes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202005260949558_NonameHotel.cs" />
+    <Compile Include="Migrations\202005260949558_NonameHotel.designer.cs">
+      <DependentUpon>202005260949558_NonameHotel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\ContextConfiguration.cs" />
     <Compile Include="MainDataBase.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201910201407025_10201.resx">
@@ -333,6 +354,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202004101134319_blazor.resx">
       <DependentUpon>202004101134319_blazor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004240926388_service.resx">
+      <DependentUpon>202004240926388_service.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004271413564_fixes.resx">
+      <DependentUpon>202004271413564_fixes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202005260949558_NonameHotel.resx">
+      <DependentUpon>202005260949558_NonameHotel.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

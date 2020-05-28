@@ -42,7 +42,7 @@ namespace LATravelManager.Model.Locations
             }
         }
 
-        [StringLength(20)]
+        [StringLength(35)]
         public string Name { get; set; }
 
         /// <summary>

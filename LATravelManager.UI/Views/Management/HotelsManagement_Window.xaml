@@ -32,6 +32,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Label Content="Όνομα:"
                        Grid.Row="0"
@@ -72,8 +73,16 @@
                          Margin="0,5,5,5"
                          Grid.Row="4"
                          Grid.Column="1" />
+                <Label Content="NoName:"
+                       Grid.Row="5"
+                       Grid.Column="0" />
+                <CheckBox IsChecked="{Binding SelectedEntity.NoName,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0,5,5,5"
+                          VerticalAlignment="Center"
+                         Grid.Row="5"
+                         Grid.Column="1" />
                 <StackPanel Orientation="Vertical"
-                            Grid.Row="5"
+                            Grid.Row="6"
                             Grid.ColumnSpan="2">
                     <Button Content="Προσθήκη"
                             Margin="5,5,5,0"
@@ -86,7 +95,7 @@
                             Command="{Binding ClearEntityCommand}" />
                 </StackPanel>
                 <TextBlock Text="{Binding ResultMessage}"
-                           Grid.Row="6"
+                           Grid.Row="7"
                            Grid.ColumnSpan="2"
                            TextWrapping="Wrap"
                            Width="195"

@@ -30,6 +30,7 @@ using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Views.Bansko;
 using LATravelManager.UI.Views.Personal;
 using LATravelManager.UI.Views.ThirdParty;
+using Newtonsoft.Json;
 using NuGet;
 
 namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
@@ -1271,16 +1272,27 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         {
             ReservationWrapper reservation = item as ReservationWrapper;
             var x = reservation.Contains(FilterString) &&
-                (GroupIndexBookingFilter == 0 || (reservation.ExcursionType != ExcursionTypeEnum.Personal && reservation.ExcursionType != ExcursionTypeEnum.ThirdParty && ((GroupIndexBookingFilter == 1 && reservation.Booking != null && reservation.Booking.GroupBooking) || (GroupIndexBookingFilter == 2 && !reservation.Booking.GroupBooking)))) &&
+                (GroupIndexBookingFilter == 0 || (reservation.ApiData != null && ((reservation.ApiData.BookingForSearchDto.IsGroup && GroupIndexBookingFilter == 1) || (!reservation.ApiData.BookingForSearchDto.IsGroup && GroupIndexBookingFilter == 2))) || (reservation.ApiData == null && reservation.ExcursionType != ExcursionTypeEnum.Personal && reservation.ExcursionType != ExcursionTypeEnum.ThirdParty && ((GroupIndexBookingFilter == 1 && reservation.Booking != null && reservation.Booking.GroupBooking) || (GroupIndexBookingFilter == 2 && !reservation.Booking.GroupBooking)))) &&
                 (BookingIdFilter == 0 || reservation.Booking.Id == BookingIdFilter) &&
-                (!CheckInOut || ((!EnableCheckInFilter || reservation.CustomersList.Any(c => c.CheckIn == CheckIn || ((reservation.PersonalModel != null || reservation.ThirdPartyModel != null) && reservation.CheckIn == CheckIn))) &&
-                (!EnableCheckOutFilter || reservation.CustomersList.Any(c => c.CheckOut == CheckOut || ((reservation.PersonalModel != null || reservation.ThirdPartyModel != null) && reservation.CheckOut == CheckOut))))) &&
+                (!CheckInOut || ((!EnableCheckInFilter || (reservation.ApiData != null && reservation.ApiData.CheckIn == CheckIn) || (reservation.ApiData == null && reservation.CustomersList.Any(c => c.CheckIn == CheckIn || ((reservation.PersonalModel != null || reservation.ThirdPartyModel != null) && reservation.CheckIn == CheckIn)))) &&
+                (!EnableCheckOutFilter || (reservation.ApiData != null && reservation.ApiData.CheckOut == CheckOut) || (reservation.ApiData == null && reservation.CustomersList.Any(c => c.CheckOut == CheckOut || ((reservation.PersonalModel != null || reservation.ThirdPartyModel != null) && reservation.CheckOut == CheckOut)))))) &&
                 (!Remaining || reservation.Remaining > 3) &&
-                (UserIndexBookingFilter == 0 || reservation.UserWr.Id == Users[UserIndexBookingFilter - 1].Id) &&
-                (DepartmentIndexBookingFilter == 0 || reservation.UserWr.BaseLocation == DepartmentIndexBookingFilter) &&
-                (ExcursionCategoryIndexBookingFilter == 0 || (ExcursionCategoryIndexBookingFilter == 1 && reservation.Booking != null && reservation.Booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Bansko) || (ExcursionCategoryIndexBookingFilter == 2 && reservation.Booking != null && reservation.Booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Skiathos) || (ExcursionCategoryIndexBookingFilter == 3 && reservation.PersonalModel != null) || (ExcursionCategoryIndexBookingFilter == 4 && reservation.Booking != null && reservation.Booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Group) || (ExcursionCategoryIndexBookingFilter == 5 && reservation.ThirdPartyModel != null)) &&
-                (ExcursionIndexBookingFilter == 0 || (reservation.Booking != null && ExcursionsCollectionView.CurrentItem != null && ExcursionsCollectionView.CurrentItem is Excursion && reservation.Booking.Excursion != null && reservation.Booking.Excursion.Id == ((Excursion)ExcursionsCollectionView.CurrentItem).Id)) &&
-                (!Bank || (reservation.ExcursionType != ExcursionTypeEnum.Personal && reservation.ExcursionType != ExcursionTypeEnum.ThirdParty && reservation.Booking.Payments.Any(p => p.PaymentMethod > 0)) || ((reservation.ExcursionType == ExcursionTypeEnum.Personal) && reservation.PersonalModel.Payments.Any(p => p.PaymentMethod > 0)) || ((reservation.ExcursionType == ExcursionTypeEnum.ThirdParty) && reservation.ThirdPartyModel.Payments.Any(p => p.PaymentMethod > 0)));
+                (UserIndexBookingFilter == 0 || (reservation.ApiData != null && Users[UserIndexBookingFilter - 1].Name == reservation.ApiData.BookingForSearchDto.Username) || (reservation.ApiData == null && reservation.UserWr.Id == Users[UserIndexBookingFilter - 1].Id)) &&
+                (DepartmentIndexBookingFilter == 0 || (reservation.ApiData != null && reservation.ApiData.BookingForSearchDto.UserLocation == DepartmentIndexBookingFilter) || (reservation.ApiData == null && reservation.UserWr.BaseLocation == DepartmentIndexBookingFilter)) &&
+                (ExcursionCategoryIndexBookingFilter == 0 ||
+                (reservation.ApiData != null && ((ExcursionCategoryIndexBookingFilter == 1 && reservation.ApiData.BookingForSearchDto.ExcursionType == ExcursionTypeEnum.Bansko) ||
+                (ExcursionCategoryIndexBookingFilter == 2 && reservation.ApiData.BookingForSearchDto.ExcursionType == ExcursionTypeEnum.Skiathos) ||
+                (ExcursionCategoryIndexBookingFilter == 3 && reservation.ApiData.BookingForSearchDto.ExcursionType == ExcursionTypeEnum.Personal) ||
+                (ExcursionCategoryIndexBookingFilter == 4 && reservation.ApiData.BookingForSearchDto.ExcursionType == ExcursionTypeEnum.Group) ||
+                (ExcursionCategoryIndexBookingFilter == 5 && reservation.ApiData.BookingForSearchDto.ExcursionType == ExcursionTypeEnum.ThirdParty))) ||
+                (reservation.ApiData == null &&
+                ((ExcursionCategoryIndexBookingFilter == 1 && reservation.Booking != null && reservation.Booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Bansko) ||
+                (ExcursionCategoryIndexBookingFilter == 2 && reservation.Booking != null && reservation.Booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Skiathos) ||
+                (ExcursionCategoryIndexBookingFilter == 3 && reservation.PersonalModel != null) ||
+                (ExcursionCategoryIndexBookingFilter == 4 && reservation.Booking != null && reservation.Booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Group) ||
+                (ExcursionCategoryIndexBookingFilter == 5 && reservation.ThirdPartyModel != null)))) &&
+                (ExcursionIndexBookingFilter == 0 || (reservation.ApiData != null && ExcursionsCollectionView.CurrentItem != null && ExcursionsCollectionView.CurrentItem is Excursion excursiona && reservation.ApiData.BookingForSearchDto.ExcursionId == excursiona.Id) || (reservation.ApiData == null && reservation.Booking != null && ExcursionsCollectionView.CurrentItem != null && ExcursionsCollectionView.CurrentItem is Excursion excursion && reservation.Booking.Excursion != null && reservation.Booking.Excursion.Id == excursion.Id)) &&
+                (!Bank || (reservation.ApiData != null && reservation.ApiData.BookingForSearchDto.Bank) || (reservation.ApiData == null && (reservation.ExcursionType != ExcursionTypeEnum.Personal && reservation.ExcursionType != ExcursionTypeEnum.ThirdParty && reservation.Booking.Payments.Any(p => p.PaymentMethod > 0)) || ((reservation.ExcursionType == ExcursionTypeEnum.Personal) && reservation.PersonalModel.Payments.Any(p => p.PaymentMethod > 0)) || ((reservation.ExcursionType == ExcursionTypeEnum.ThirdParty) && reservation.ThirdPartyModel.Payments.Any(p => p.PaymentMethod > 0))));
             return x;
         }
 
@@ -1635,7 +1647,39 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 DateTime dateLimit = SearchBookingsHelper.GetDateLimit(parameter);
                 //if (parameter!="40")
                 //{
-                List<ReservationWrapper> list = (await Context.GetAllReservationsFiltered(ExcursionIndexBookingFilter > 0 ? (ExcursionsCollectionView.CurrentItem as Excursion).Id : 0, UserIndexBookingFilter > 0 ? Users[UserIndexBookingFilter - 1].Id : 0, Completed, ExcursionCategoryIndexBookingFilter > 0 ? ExcursionCategoryIndexBookingFilter - 1 : -1, dateLimit, EnableCheckInFilter, EnableCheckOutFilter, CheckIn, CheckOut, FromTo, CheckInOut, canceled: canceled)).Select(r => new ReservationWrapper(r)).ToList();
+                List<ReservationWrapper> list = new List<ReservationWrapper>();
+                if (parameter != "40")
+                    list = (await Context.GetAllReservationsFiltered(ExcursionIndexBookingFilter > 0 ? (ExcursionsCollectionView.CurrentItem as Excursion).Id : 0, UserIndexBookingFilter > 0 ? Users[UserIndexBookingFilter - 1].Id : 0, Completed,
+                        ExcursionCategoryIndexBookingFilter > 0 ? ExcursionCategoryIndexBookingFilter - 1 : -1, dateLimit, EnableCheckInFilter, EnableCheckOutFilter, CheckIn, CheckOut, FromTo, CheckInOut, canceled: canceled)).Select(r => new ReservationWrapper(r)).ToList();
+                else
+                    using (var client = new System.Net.Http.HttpClient())
+                    {
+
+                        //Uri uri = new Uri($"https://localhost:44372/api/bookings/GetBookingsWithMoney?excursionId={(ExcursionIndexBookingFilter > 0 ? (ExcursionsCollectionView.CurrentItem as Excursion).Id : 0)}&userId={(UserIndexBookingFilter > 0 ? Users[UserIndexBookingFilter - 1].Id : 0)}" +
+                        Uri uri = new Uri($"http://lawebapi-dev.eu-west-3.elasticbeanstalk.com/api/bookings/GetBookingsWithMoney?excursionId={(ExcursionIndexBookingFilter > 0 ? (ExcursionsCollectionView.CurrentItem as Excursion).Id : 0)}&userId={(UserIndexBookingFilter > 0 ? Users[UserIndexBookingFilter - 1].Id : 0)}" +
+                        $"&myUserBaseLocaton={StaticResources.User.BaseLocation}&completed={Completed}&category={(ExcursionCategoryIndexBookingFilter > 0 ? ExcursionCategoryIndexBookingFilter - 1 : -1)}&dateLimit={dateLimit.ToString("s", System.Globalization.CultureInfo.InvariantCulture)}" +
+                        $"&checkInb={EnableCheckInFilter}&checkoutb={EnableCheckOutFilter}&checkin={CheckIn.ToString("s", System.Globalization.CultureInfo.InvariantCulture)}&checkout={CheckOut.ToString("s", System.Globalization.CultureInfo.InvariantCulture)}" +
+                        $"&fromto={FromTo}&checkinout={CheckInOut}&canceled={canceled}&remaining={Remaining}&onlineDb=False");
+
+                        IEnumerable<BookingForSearchDto> bookings = JsonConvert.DeserializeObject<IEnumerable<BookingForSearchDto>>
+                         (await client.GetStringAsync(uri));
+
+                        foreach (var b in bookings)
+                        {
+                            foreach (var r in b.Ress)
+                            {
+                                r.BookingForSearchDto = b;
+                                list.Add(new ReservationWrapper
+                                {
+                                    ApiData = r,
+                                    Booking = new Booking { SecondDepart = b.SecondDepart, Id = b.Id },
+                                    Recieved = b.Recieved,
+                                    Remaining = b.Remaining
+                                });
+                            }
+                        }
+                    }
+
                 //}
                 //else
                 //{
@@ -1713,25 +1757,29 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 CountCustomers();
                 RaisePropertyChanged(nameof(HasPeople));
 
-                int counterp = 0;
-                foreach (var res in FilteredReservations)
-                {
-                    res.CalculateAmounts();
-                    if (res.Remaining > 1)
-                    {
-                        res.Booking.Payments.Add(new Payment { Amount = res.Remaining, Comment = "autoPaid" });
-                        counterp++;
-                    }
-                    if (counterp == 10)
-                    {
-                        if (Context.HasChanges())
-                        {
-                            await Context.SaveAsync();
-                        }
-                        counterp=0;
-                    }
-                }
-                await Context.SaveAsync();
+#if DEDUG
+
+                //int counterp = 0;
+                //foreach (var res in FilteredReservations)
+                //{
+                //    res.CalculateAmounts();
+                //    if (res.Remaining > 1)
+                //    {
+                //        res.Booking.Payments.Add(new Payment { Amount = res.Remaining });
+                //        Context.Add(new Payment { Date = DateTime.Now, Amount = res.Remaining, Comment = "autoPaid", Booking = res.Booking, User = StaticResources.User });
+                //        counterp++;
+                //    }
+                //    if (counterp == 10)
+                //    {
+                //        if (Context.HasChanges())
+                //        {
+                //            await Context.SaveAsync();
+                //        }
+                //        counterp = 0;
+                //    }
+                //}
+                //await Context.SaveAsync();
+#endif
             }
             catch (Exception ex)
             {

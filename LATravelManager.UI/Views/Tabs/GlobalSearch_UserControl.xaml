@@ -81,7 +81,7 @@
                                         Padding="5,2" />
                                 <Border BorderBrush="Gray"
                                         BorderThickness="1,0,0,0" />
-                                <Button Content="Με όνομα"
+                                <Button Content="Νεο!!"
                                         Click="Button_Click_1"
                                         Margin="5"
                                         CommandParameter="40"

@@ -1665,7 +1665,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         private bool CanMakeNoNameReservation(RoomType roomType)
         {
             if (BookingWr == null || FilteredRoomList == null || (SelectedCustomer == null && !All) || !AreBookingDataValid || !AreContexesFree ||
-                !FilteredRoomList.Any(o => o.Hotel.HotelCategory.Id == 8 && ((o.RoomType.MinCapacity >= NumOfSelectedCustomers && o.RoomType.MaxCapacity >= NumOfSelectedCustomers) || (NumOfSelectedCustomers == 1 && o.RoomType.MaxCapacity == 2))))
+                !FilteredRoomList.Any(o => o.Hotel.NoName && ((o.RoomType.MinCapacity >= NumOfSelectedCustomers && o.RoomType.MaxCapacity >= NumOfSelectedCustomers) || (NumOfSelectedCustomers == 1 && o.RoomType.MaxCapacity == 2))))
             {
                 return false;
             }

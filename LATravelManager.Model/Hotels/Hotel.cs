@@ -23,6 +23,31 @@ namespace LATravelManager.Model.Hotels
             set;
         }
 
+
+
+
+        private bool _NoName;
+
+
+        public bool NoName
+        {
+            get
+            {
+                return _NoName;
+            }
+
+            set
+            {
+                if (_NoName == value)
+                {
+                    return;
+                }
+
+                _NoName = value;
+                RaisePropertyChanged();
+            }
+        }
+
         [StringLength(50, MinimumLength = 0)]
         [DataType(DataType.EmailAddress, ErrorMessage = "Το Email δεν έχει τη σωστή μορφή")]
         [EmailAddress(ErrorMessage = "Το Email δεν έχει τη σωστή μορφή")]
@@ -33,6 +58,8 @@ namespace LATravelManager.Model.Hotels
 
         [Required(ErrorMessage = "Η κατηγορία του ξενοδοχείου απαιτείται!")]
         public HotelCategory HotelCategory { get; set; }
+
+        public HotelCategories HotelCategoryEnum { get; set; }
 
         [Required(ErrorMessage = "Το Όνομα ξενοδοχείου απαιτείται!")]
         [StringLength(40, MinimumLength = 3, ErrorMessage = "Το Όνομα ξενοδοχείου μπορεί να είναι από 3 έως 25 χαρακτήρες.")]

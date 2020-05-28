@@ -24,11 +24,11 @@ namespace LATravelManager.Model.Wrapper
 
         private string GetCustNum()
         {
-            if (Booking!=null)
+            if (Booking != null)
             {
                 return $"Πελάτες: ({Booking.ReservationsInBooking.Sum(u => u.CustomersList.Count)}Πελ. / {Booking.ReservationsInBooking.Count}Δωμ.)";
             }
-            if (PersonalModel!=null)
+            if (PersonalModel != null)
             {
                 return $"Πελάτες: ({PersonalModel.Customers.Count}Π)";
 
@@ -115,6 +115,11 @@ namespace LATravelManager.Model.Wrapper
         {
             get
             {
+                if (ApiData != null)
+                {
+                    return ApiData.CheckIn;
+                }
+
                 DateTime minValue = new DateTime();
                 DateTime maxValue = new DateTime();
 
@@ -174,6 +179,10 @@ namespace LATravelManager.Model.Wrapper
             set { _CheckOut = value; }
             get
             {
+                if (ApiData != null)
+                {
+                    return ApiData.CheckIn;
+                }
                 if (_CheckOut == null || _CheckOut.Year < 2000)
                 {
                     DateTime maxValue = new DateTime();
@@ -225,6 +234,11 @@ namespace LATravelManager.Model.Wrapper
         {
             get
             {
+
+                if (ApiData != null)
+                {
+                    return ApiData.BookingForSearchDto.Comment;
+                }
                 switch (ExcursionType)
                 {
                     case ExcursionTypeEnum.Bansko:
@@ -288,6 +302,11 @@ namespace LATravelManager.Model.Wrapper
         {
             get
             {
+                if (ApiData != null)
+                {
+                    return ApiData.BookingForSearchDto.CancelDate.HasValue ? ApiData.BookingForSearchDto.CancelDate.Value : DateTime.MinValue;
+                }
+
                 if (PersonalModel != null && PersonalModel.DisableDate != null)
                 {
                     return PersonalModel.DisableDate.Value;
@@ -308,6 +327,10 @@ namespace LATravelManager.Model.Wrapper
         {
             get
             {
+                if (ApiData != null)
+                {
+                    return ApiData.BookingForSearchDto.CancelReason;
+                }
                 if (PersonalModel != null && PersonalModel.CancelReason != null)
                 {
                     return PersonalModel.CancelReason;
@@ -328,6 +351,11 @@ namespace LATravelManager.Model.Wrapper
         {
             get
             {
+                if (ApiData != null)
+                {
+                    return ApiData.BookingForSearchDto.ExcursionType;
+                }
+
                 if (Booking != null && Booking.Excursion != null)
                     if (Booking.Excursion.Id == 2)
                     {
@@ -389,11 +417,17 @@ namespace LATravelManager.Model.Wrapper
         {
             get
             {
+                if (ApiData != null)
+                {
+                    return ApiData.Departure;
+                }
                 if (Booking != null && Booking.Excursion != null)
                     return (Booking.ExcursionDate != null && Booking.ExcursionDate.NightStart ? CheckIn.AddDays(1).ToString("dd.MM") : CheckIn.ToString("dd.MM")) + "-" + CheckOut.ToString("dd.MM");
                 return "";
             }
         }
+
+        public ReservationFullDto ApiData { get; set; }
 
         public string HotelName => GetHotelName();
         public string Locations => GetLocations();
@@ -448,7 +482,10 @@ namespace LATravelManager.Model.Wrapper
         {
             get
             {
-
+                if (ApiData != null)
+                {
+                    return ApiData.BookingForSearchDto.PartnerName;
+                }
                 if (!string.IsNullOrEmpty(PartnerName))
                 {
                     return PartnerName;
@@ -503,6 +540,11 @@ namespace LATravelManager.Model.Wrapper
         {
             get
             {
+                if (ApiData != null)
+                {
+                    return ApiData.BookingForSearchDto.Reciept;
+                }
+
                 switch (ExcursionType)
                 {
                     case ExcursionTypeEnum.Bansko:
@@ -589,6 +631,10 @@ namespace LATravelManager.Model.Wrapper
         {
             get
             {
+                if (ApiData != null)
+                {
+                    return ApiData.BookingForSearchDto.Username;
+                }
                 switch (ExcursionType)
                 {
                     case ExcursionTypeEnum.Bansko:
@@ -662,6 +708,10 @@ namespace LATravelManager.Model.Wrapper
 
         public void CalculateAmounts()
         {
+            if (ApiData != null)
+            {
+                return;
+            }
             if (ExcursionType != ExcursionTypeEnum.Personal && ExcursionType != ExcursionTypeEnum.ThirdParty)
             {
                 BookingWrapper bw = new BookingWrapper(Booking);
@@ -698,6 +748,14 @@ namespace LATravelManager.Model.Wrapper
                 return true;
             }
             key = key.ToUpper();
+            if (ApiData != null)
+            {
+               
+                 if ((!string.IsNullOrEmpty(Comment) && Comment.ToUpper().Contains(key)) || (!string.IsNullOrEmpty(HotelName) && HotelName.ToUpper().Contains(key)) || (full&&!string.IsNullOrEmpty(Partner) && Partner.ToUpper().Contains(key)))
+                {
+                    return true;
+                }
+            }
             if (ExcursionType != ExcursionTypeEnum.Personal && ExcursionType != ExcursionTypeEnum.ThirdParty)
             {
                 if (Booking == null)
@@ -883,6 +941,10 @@ namespace LATravelManager.Model.Wrapper
 
         private DateTime GetCreatedDate()
         {
+            if (ApiData != null)
+            {
+                return ApiData.Added;
+            }
             if (PersonalModel != null)
             {
                 return PersonalModel.CreatedDate;
@@ -900,6 +962,10 @@ namespace LATravelManager.Model.Wrapper
 
         private string GetDestination()
         {
+            if (ApiData != null)
+            {
+                return ApiData.BookingForSearchDto.Destination;
+            }
             switch (ExcursionType)
             {
                 case ExcursionTypeEnum.Bansko:
@@ -920,6 +986,18 @@ namespace LATravelManager.Model.Wrapper
 
         private string GetHotelName()
         {
+            if (ApiData != null)
+            {
+                return ApiData.ReservationType switch
+                {
+                    ReservationTypeEnum.NoRoom => "NO ROOM",
+                    ReservationTypeEnum.Noname => "NO NAME",
+                    ReservationTypeEnum.Transfer => "TRANSFER",
+                    ReservationTypeEnum.OneDay => "ONEDAY",
+                    _ => ApiData.RoomType
+
+                };
+            }
             if (PersonalModel != null)
             {
                 StringBuilder sb = new StringBuilder();
@@ -992,6 +1070,10 @@ namespace LATravelManager.Model.Wrapper
 
         private string GetNames()
         {
+            if (ApiData != null)
+            {
+                return ApiData.Names;
+            }
             StringBuilder sb = new StringBuilder();
             if (PersonalModel != null)
             {
@@ -1030,6 +1112,17 @@ namespace LATravelManager.Model.Wrapper
 
         private string GetRoomTypeName()
         {
+            if (ApiData != null)
+            {
+                return ApiData.ReservationType switch
+                {
+                    ReservationTypeEnum.NoRoom => "NO ROOM",
+                    ReservationTypeEnum.Transfer => "TRANSFER",
+                    ReservationTypeEnum.OneDay => "ONEDAY",
+                    _ => ApiData.RoomType
+
+                };
+            }
             string roomname = "";
 
             if (PersonalModel != null)
@@ -1199,12 +1292,12 @@ namespace LATravelManager.Model.Wrapper
                 }
             }
 
-            if (CustomersList!=null )
+            if (CustomersList != null)
             {
                 if (CustomersList.Any(c => c.Board == 1))
-                roomname += "-HB";
+                    roomname += "-HB";
                 else if (CustomersList.Any(c => c.Board == 2))
-                roomname += "-FB";
+                    roomname += "-FB";
             }
 
             return roomname;
@@ -1212,6 +1305,10 @@ namespace LATravelManager.Model.Wrapper
 
         private string GetTel()
         {
+            if (ApiData != null)
+            {
+                return ApiData.Tel;
+            }
             StringBuilder sb = new StringBuilder();
             foreach (Customer customer in CustomersList)
             {

@@ -95,6 +95,9 @@
                     <MenuItem Command="{Binding OpenOptionalsEditCommand}"
                               Header="Προαιρετικές"
                               Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}" />
+                    <MenuItem Command="{Binding ToggleTestModeCommand}"
+                              Header="{Binding TestmodeMessage}"
+                              Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}" />
                 </MenuItem>
             </Menu>
             <StackPanel HorizontalAlignment="Right"

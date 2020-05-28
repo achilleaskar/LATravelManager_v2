@@ -110,6 +110,24 @@ namespace LATravelManager.Model
         Guide = 4
     }
 
+    public enum HotelCategories
+    {
+        [Description("Σπίτι")]
+        home = 6,
+
+        [Description("Δωμάτιο")]
+        room = 7,
+
+        [Description("3 Αστέρων")]
+        star3 = 8,
+
+        [Description("4 Αστέρων")]
+        star4 = 9,
+
+        [Description("5 Αστέρων")]
+        star5 = 10,
+    };
+
     public enum HotelCategoryEnum
     {
         apart,

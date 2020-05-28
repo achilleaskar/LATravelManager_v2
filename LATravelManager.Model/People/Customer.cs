@@ -235,7 +235,7 @@ namespace LATravelManager.Model.People
         [NotMapped]
         public int ReservationId => Reservation != null ? Reservation.Id : 0;
 
-        [StringLength(30, MinimumLength = 0)]
+        [StringLength(35, MinimumLength = 0)]
         public string ReturningPlace { get; set; }
 
         [NotMapped]
@@ -299,7 +299,7 @@ namespace LATravelManager.Model.People
         public ICollection<Service> Services { get; }
 
         [Required(ErrorMessage = "Επιλέξτε σημέιο αναχώρησης")]
-        [StringLength(20)]
+        [StringLength(35)]
         public string StartingPlace { get; set; }
 
         [Required(ErrorMessage = "Το επίθετο είναι υποχρεωτικό.")]

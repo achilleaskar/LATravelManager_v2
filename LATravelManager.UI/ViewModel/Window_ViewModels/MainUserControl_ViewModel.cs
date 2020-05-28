@@ -52,7 +52,9 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             OpenVehiclesEditCommand = new RelayCommand(OpenVehiclesWindow, CanEditWindows);
             OpenOptionalsEditCommand = new RelayCommand(OpenOpionalsWindow, CanEditWindows);
 
-            NotIsOkCommand = new RelayCommand(async () => { await NotIsOk(); });
+            ToggleTestModeCommand = new RelayCommand(async () => await ToggleTestMode());
+
+            NotIsOkCommand = new RelayCommand(async () => await NotIsOk(), CanSetOk);
 
             EditBookingCommand = new RelayCommand(async () => { await EditBooking(); }, CanEditBooking);
 
@@ -65,9 +67,24 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             MainViewModel = mainViewModel;
             var x = GetaAllNotifications().ConfigureAwait(false);
 
+            TestmodeMessage = Properties.Settings.Default.isTest ? "Εναλαγή σε κανονικό" : "Εναλαγή σε test";
+
             // MessengerInstance.Register<ChangeChildViewModelMessage>(this, async vm => { await SelectedExcursionType.SetProperChildViewModel(vm.ViewModelindex); });
 
             //  MessengerInstance.Register<ExcursionCategoryChangedMessage>(this, async index => { await SetProperViewModel(); });
+        }
+
+        private bool CanSetOk()
+        {
+            return SelectedNot != null && SelectedNot.NotificaationType != NotificaationType.NoPay;
+        }
+
+        private async Task ToggleTestMode()
+        {
+            await MainViewModel.BasicDataManager.ToggleTestMode(Properties.Settings.Default.isTest);
+            TestmodeMessage = Properties.Settings.Default.isTest ? "Εναλαγή σε κανονικό" : "Εναλαγή σε test";
+            Properties.Settings.Default.Save();
+
         }
 
         private Notification _SelectedNot;
@@ -101,7 +118,6 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                     {
                         o.NotifStatus = new NotifStatus { IsOk = true, OkByUser = NotsRepository.GetById<User>(StaticResources.User.Id), OkDate = DateTime.Now };
                     }
-                    Nots.Remove(SelectedNot);
                 }
                 else if (SelectedNot.NotificaationType == NotificaationType.CheckIn && SelectedNot.Service != null && SelectedNot.Service is PlaneService ps)
                 {
@@ -116,6 +132,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             {
                 Mouse.OverrideCursor = Cursors.Wait;
                 await NotsRepository.SaveAsync();
+                Nots.Remove(SelectedNot);
                 Mouse.OverrideCursor = Cursors.Arrow;
             }
         }
@@ -198,7 +215,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
         private NavigationViewModel _NavigationViewModel;
 
-        private List<Notification> _Nots;
+        private ObservableCollection<Notification> _Nots;
 
         private ExcursionCategory_ViewModelBase _SelectedExcursionType;
 
@@ -260,6 +277,29 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
         public int IsBusyCounter { get; set; }
 
         public RelayCommand LogOutCommand { get; set; }
+        public RelayCommand ToggleTestModeCommand { get; set; }
+
+
+        private string _TestmodeMessage;
+
+        public string TestmodeMessage
+        {
+            get
+            {
+                return _TestmodeMessage;
+            }
+
+            set
+            {
+                if (_TestmodeMessage == value)
+                {
+                    return;
+                }
+
+                _TestmodeMessage = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public MainViewModel MainViewModel { get; }
 
@@ -304,7 +344,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             }
         }
 
-        public List<Notification> Nots
+        public ObservableCollection<Notification> Nots
         {
             get
             {
@@ -545,7 +585,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                     Type = NotificationType.Warning
                 });
             }
-            Nots = nots;
+            Nots = new ObservableCollection<Notification>(nots);
         }
 
         private async Task<IEnumerable<Notification>> GetNonPayersGroup(GenericRepository repository)

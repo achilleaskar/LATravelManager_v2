@@ -160,6 +160,14 @@ namespace LATravelManager.UI.Helpers
             }
         }
 
+        internal async Task ToggleTestMode(bool isTest)
+        {
+            Context.Context.ToggleTestMode(isTest);
+            Properties.Settings.Default.isTest = !isTest;
+            Properties.Settings.Default.Save();
+            await Refresh();
+        }
+
         public ObservableCollection<Excursion> Excursions
         {
             get
@@ -377,7 +385,7 @@ namespace LATravelManager.UI.Helpers
             Users = new ObservableCollection<User>(await Context.GetAllUsersAsyncSortedByUserName());
             ExcursionCategories = new ObservableCollection<ExcursionCategory>((await Context.GetAllAsync<ExcursionCategory>()).OrderBy(e => e.IndexNum));
             Excursions = new ObservableCollection<Excursion>((await Context.GetAllExcursionsAsync()).OrderBy(ex => ex, new ExcursionComparer()));
-            foreach (Excursion excursion in Excursions)
+            foreach (Excursion excursion in Excursions.Where(e => e.ExcursionDates.Any(ed => ed.CheckOut >= DateTime.Today)))
             {
                 excursion.ExcursionDates = new ObservableCollection<ExcursionDate>(excursion.ExcursionDates.OrderBy(t => t.CheckIn));
             }
