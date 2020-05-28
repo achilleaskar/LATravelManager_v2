@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Notifications;
@@ -67,7 +68,7 @@ namespace LATravelManager.Model.Services
                 RaisePropertyChanged();
             }
         }
-
+        [MaxLength(50)]
         public string CompanyInfo
         {
             get
@@ -88,7 +89,7 @@ namespace LATravelManager.Model.Services
         }
 
         public List<Customer> Customers { get; set; }
-
+        [MaxLength(50)]
         public string From
         {
             get
@@ -197,7 +198,7 @@ namespace LATravelManager.Model.Services
 
         [NotMapped]
         public string Tittle { get; set; }
-
+        [MaxLength(50)]
         public string To
         {
             get

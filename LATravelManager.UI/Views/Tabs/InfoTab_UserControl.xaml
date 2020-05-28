@@ -204,7 +204,65 @@
                     </ScrollViewer>
                 </Grid>
             </TabItem>
-
+            <TabItem Header="Ημέρες Αναχωρήσεων">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0"
+                                Orientation="Horizontal"
+                                Grid.ColumnSpan="2">
+                        <Label Content="από:" />
+                        <DatePicker Width="115"
+                                    CalendarStyle="{StaticResource styleCalendar}"
+                                    VerticalAlignment="Center"
+                                    SelectedDate="{Binding FromDepartureInfo, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" />
+                        <Label Content="Εώς:" />
+                        <DatePicker Width="115"
+                                    CalendarStyle="{StaticResource styleCalendar}"
+                                    VerticalAlignment="Center"
+                                    SelectedDate="{Binding ToDepartureInfo, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" />
+                        <Label Content="Εκδρομή:" />
+                        <ComboBox  Width="105"
+                                   Margin="0 0 5 0"
+                                   IsSynchronizedWithCurrentItem="True"
+                                   VerticalAlignment="Center"
+                                   ItemsSource="{Binding ExcursionsDepartureCollectionView}"
+                                   SelectedItem="{Binding SelectedFilterExcursion}" />
+                        <CheckBox Content="Ολοκληρωμένες"
+                                  VerticalAlignment="Center"
+                                  Margin="5 0"
+                                  IsChecked="{Binding Completed}" />
+                        <Button Content="Προβολή"
+                                Command="{Binding ShowDepartureDaysInfoCommand}"
+                                Margin="5,0" />
+                        <Label Foreground="red"
+                               Content="{Binding ShowDepartureInfoError}" />
+                    </StackPanel>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  Grid.Row="1"
+                                  VerticalAlignment="Top"
+                                  HorizontalScrollBarVisibility="Auto">
+                        <StackPanel Orientation="Horizontal">
+                            <DataGrid ItemsSource="{Binding AllDaysByCount}"
+                                      CanUserAddRows="False"
+                                      AutoGenerateColumns="False"
+                                      CanUserDeleteRows="False"
+                                      Margin="5">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Πήγαινε"
+                                                        Binding="{Binding GoName}" />
+                                    <DataGridTextColumn Header="Επιστροφή"
+                                                        Binding="{Binding ReturnName}" />
+                                    <DataGridTextColumn Header="Άτομα"
+                                                        Binding="{Binding Count}" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
             <!--<TabItem Header="Ιστορικό Ενεργειών">
                 -->
             <!--Visibility="{Binding Converter={StaticResource UserToVisibilityValueConverter},ConverterParameter=3,  Mode=OneWay}">-->

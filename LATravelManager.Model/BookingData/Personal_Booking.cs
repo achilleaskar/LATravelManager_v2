@@ -19,6 +19,8 @@ namespace LATravelManager.Model.BookingData
             Customers = new ObservableCollection<Customer>();
             Services = new ObservableCollection<Service>();
         }
+         public DisabledInfo DisabledInfo { get; set; }
+        public PartnerInfo PartnerInfo { get; set; }
 
         public bool Disabled { get; set; }
         public bool Reciept { get; set; }
@@ -31,6 +33,29 @@ namespace LATravelManager.Model.BookingData
 
         #endregion Constructors
 
+
+
+
+        private bool _Group;
+
+        public bool Group
+        {
+            get
+            {
+                return _Group;
+            }
+
+            set
+            {
+                if (_Group == value)
+                {
+                    return;
+                }
+
+                _Group = value;
+                RaisePropertyChanged();
+            }
+        }
         public bool VoucherSent { get; set; }
         public bool ProformaSent { get; set; }
 

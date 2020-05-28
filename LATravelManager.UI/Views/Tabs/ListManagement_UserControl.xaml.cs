@@ -72,5 +72,23 @@ namespace LATravelManager.UI.Views.Tabs
             datagrid.Columns[7].Visibility = System.Windows.Visibility.Visible;
             datagrid.Columns[8].Visibility = System.Windows.Visibility.Collapsed;
         }
+
+        private void MenuItem_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (!(sender is MenuItem menuitem) || !(menuitem.DataContext is Seat seat))
+            {
+                return;
+            }
+            ((ListManagement_ViewModel)DataContext).SelectedBus.ChangeSeat(seat,false);
+        }
+
+        private void MenuItem_Click_1(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (!(sender is MenuItem menuitem) || !(menuitem.DataContext is Seat seat))
+            {
+                return;
+            }
+            ((ListManagement_ViewModel)DataContext).SelectedBus.ChangeSeat(seat, true);
+        }
     }
 }

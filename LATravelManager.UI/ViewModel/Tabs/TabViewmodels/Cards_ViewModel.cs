@@ -11,7 +11,6 @@ using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Hotels;
-using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Helpers;
@@ -30,6 +29,71 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {
     public class Cards_ViewModel : MyViewModelBase
     {
+
+        #region Fields
+
+        private decimal _Available;
+
+        private ObservableCollection<Booking> _Bookings;
+
+        private ICollectionView _BookingsCollectionView;
+
+        private bool _ByCreated;
+
+        private DateTime _CheckIn;
+
+        private DateTime _CheckOut;
+
+        private decimal _Commision;
+
+        private bool _Completed;
+
+        private GenericRepository _Context;
+
+        private int _DepartmentIndexBookingFilter;
+
+        private int _ExcursionCategoryIndexBookingFilter;
+
+        private int _ExcursionIndexBookingFilter;
+
+        private ObservableCollection<Excursion> _Excursions;
+
+        private ICollectionView _ExcursionsCollectionView;
+
+        private ObservableCollection<ReservationWrapper> _FilteredReservations;
+
+        private string _FilterString;
+
+        private bool _IsOk = true;
+
+        private bool _NoProforma;
+
+        private bool _NoReciept;
+
+        private bool _NoVoucher;
+
+        private int _PartnerIndex = -1;
+
+        private ObservableCollection<Partner> _Partners;
+
+        private ObservableCollection<Payment> _Payments;
+
+        private bool _Remaining;
+
+        private decimal _RemainingA;
+
+        private Excursion _SelectedExcursionFilter;
+
+        private Payment _SelectedPayment;
+
+        private ReservationWrapper _SelectedReservation;
+
+        private decimal _Total;
+
+        private bool _ΒyCheckIn;
+
+        #endregion Fields
+
         #region Constructors
 
         public Cards_ViewModel(MainViewModel mainViewModel)
@@ -42,109 +106,9 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             Load();
         }
 
-        private ObservableCollection<City> _Cities;
+        #endregion Constructors
 
-        public ObservableCollection<City> Cities
-        {
-            get
-            {
-                return _Cities;
-            }
-
-            set
-            {
-                if (_Cities == value)
-                {
-                    return;
-                }
-
-                _Cities = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private City _SelectedCity;
-
-        public City SelectedCity
-        {
-            get
-            {
-                return _SelectedCity;
-            }
-
-            set
-            {
-                if (_SelectedCity == value)
-                {
-                    return;
-                }
-
-                _SelectedCity = value;
-                if (ReservationsCollectionView != null)
-                {
-                    ReservationsCollectionView.Refresh();
-                }
-                RaisePropertyChanged();
-            }
-        }
-
-        public ReservationWrapper SelectedReservation
-        {
-            get
-            {
-                return _SelectedReservation;
-            }
-
-            set
-            {
-                if (_SelectedReservation == value)
-                {
-                    return;
-                }
-
-                _SelectedReservation = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private async Task EditBooking()
-        {
-            try
-            {
-                Mouse.OverrideCursor = Cursors.Wait;
-
-                if (SelectedReservation.ExcursionType == ExcursionTypeEnum.Personal)
-                {
-                    NewReservation_Personal_ViewModel viewModel = new NewReservation_Personal_ViewModel(MainViewModel);
-                    await viewModel.LoadAsync(SelectedReservation.PersonalModel.Id);
-                    MessengerInstance.Send(new OpenChildWindowCommand(new EditPersonalBooking_Window(), viewModel));
-                }
-                else if (SelectedReservation.ExcursionType == ExcursionTypeEnum.ThirdParty)
-                {
-                    NewReservation_ThirdParty_VIewModel viewModel = new NewReservation_ThirdParty_VIewModel(MainViewModel);
-                    await viewModel.LoadAsync(SelectedReservation.ThirdPartyModel.Id);
-                    MessengerInstance.Send(new OpenChildWindowCommand(new Edit_ThirdParty_Booking_Window(), viewModel));
-                }
-                else
-                {
-                    NewReservation_Group_ViewModel viewModel = new NewReservation_Group_ViewModel(MainViewModel);
-                    await viewModel.LoadAsync(SelectedReservation.Booking.Id);
-                    MessengerInstance.Send(new OpenChildWindowCommand(new EditBooking_Bansko_Window(), viewModel));
-                }
-                Mouse.OverrideCursor = Cursors.Arrow;
-            }
-            catch (Exception ex)
-            {
-                MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
-            }
-        }
-
-        private bool CanEditBooking()
-        {
-            return SelectedReservation != null;
-        }
-
-        private decimal _Available;
+        #region Properties
 
         public decimal Available
         {
@@ -165,103 +129,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-        private decimal _RemainingA;
-
-        public decimal RemainingA
-        {
-            get
-            {
-                return _RemainingA;
-            }
-
-            set
-            {
-                if (_RemainingA == value)
-                {
-                    return;
-                }
-
-                _RemainingA = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private decimal _Commision;
-
-        public decimal Commision
-        {
-            get
-            {
-                return _Commision;
-            }
-
-            set
-            {
-                if (_Commision == value)
-                {
-                    return;
-                }
-
-                _Commision = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private decimal _Total;
-
-        public decimal Total
-        {
-            get
-            {
-                return _Total;
-            }
-
-            set
-            {
-                if (_Total == value)
-                {
-                    return;
-                }
-
-                _Total = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        #endregion Constructors
-
-        #region Fields
-
-        private ObservableCollection<Booking> _Bookings;
-
-        private ICollectionView _BookingsCollectionView;
-
-        private DateTime _CheckIn;
-        private DateTime _CheckOut;
-        private bool _Completed;
-
-        private GenericRepository _Context;
-
-        private int _DepartmentIndexBookingFilter;
-        private int _ExcursionCategoryIndexBookingFilter;
-        private int _ExcursionIndexBookingFilter;
-        private ObservableCollection<Excursion> _Excursions;
-
-        private ICollectionView _ExcursionsCollectionView;
-
-        private ObservableCollection<ReservationWrapper> _FilteredReservations;
-        private string _FilterString;
-        private bool _IsOk = true;
-
-        private int _PartnerIndex = -1;
-        private ObservableCollection<Partner> _Partners;
-
-        private Excursion _SelectedExcursionFilter;
-
-        #endregion Fields
-
-        #region Properties
-
         public ObservableCollection<Booking> Bookings
         {
             get
@@ -277,6 +144,64 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 }
 
                 _Bookings = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool ByCheckIn
+        {
+            get
+            {
+                return _ΒyCheckIn;
+            }
+
+            set
+            {
+                if (_ΒyCheckIn == value)
+                {
+                    return;
+                }
+
+                _ΒyCheckIn = value;
+                if (ReservationsCollectionView != null && ReservationsCollectionView.SortDescriptions != null)
+                {
+                    ReservationsCollectionView.SortDescriptions.Clear();
+                    ReservationsCollectionView.SortDescriptions.Add(new SortDescription("PartnerName", ListSortDirection.Ascending));
+
+                    if (ByCheckIn)
+                        ReservationsCollectionView.SortDescriptions.Add(new SortDescription("CheckIn", ListSortDirection.Ascending));
+                    else
+                        ReservationsCollectionView.SortDescriptions.Add(new SortDescription("CreatedDate", ListSortDirection.Ascending));
+                }
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool ByCreated
+        {
+            get
+            {
+                return _ByCreated;
+            }
+
+            set
+            {
+                if (_ByCreated == value)
+                {
+                    return;
+                }
+
+                _ByCreated = value;
+                if (ReservationsCollectionView != null && ReservationsCollectionView.SortDescriptions != null)
+                {
+                    ReservationsCollectionView.SortDescriptions.Clear();
+                    ReservationsCollectionView.SortDescriptions.Add(new SortDescription("PartnerName", ListSortDirection.Ascending));
+
+                    if (ByCheckIn)
+                        ReservationsCollectionView.SortDescriptions.Add(new SortDescription("CheckIn", ListSortDirection.Ascending));
+                    else
+                        ReservationsCollectionView.SortDescriptions.Add(new SortDescription("CreatedDate", ListSortDirection.Ascending));
+                }
                 RaisePropertyChanged();
             }
         }
@@ -315,6 +240,25 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 }
 
                 _CheckOut = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal Commision
+        {
+            get
+            {
+                return _Commision;
+            }
+
+            set
+            {
+                if (_Commision == value)
+                {
+                    return;
+                }
+
+                _Commision = value;
                 RaisePropertyChanged();
             }
         }
@@ -377,10 +321,14 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 if (ReservationsCollectionView != null)
                 {
                     ReservationsCollectionView.Refresh();
+                    UpdatePayments();
+
                     CalculateAmounts();
                 }
             }
         }
+
+        public RelayCommand EditBookingCommand { get; set; }
 
         public int ExcursionCategoryIndexBookingFilter
         {
@@ -400,6 +348,8 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 if (ReservationsCollectionView != null)
                 {
                     ReservationsCollectionView.Refresh();
+                    UpdatePayments();
+
                     CalculateAmounts();
                 }
                 RaisePropertyChanged();
@@ -424,6 +374,8 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 if (ReservationsCollectionView != null)
                 {
                     ReservationsCollectionView.Refresh();
+                    UpdatePayments();
+
                     CalculateAmounts();
                 }
                 RaisePropertyChanged();
@@ -516,6 +468,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 if (ReservationsCollectionView != null)
                 {
                     ReservationsCollectionView.Refresh();
+                    UpdatePayments();
                     CalculateAmounts();
                 }
                 RaisePropertyChanged();
@@ -542,6 +495,84 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         }
 
         public MainViewModel MainViewModel { get; }
+
+        public bool NoProforma
+        {
+            get
+            {
+                return _NoProforma;
+            }
+
+            set
+            {
+                if (_NoProforma == value)
+                {
+                    return;
+                }
+
+                _NoProforma = value;
+                if (ReservationsCollectionView != null)
+                {
+                    ReservationsCollectionView.Refresh();
+                    UpdatePayments();
+
+                    CalculateAmounts();
+                }
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool NoReciept
+        {
+            get
+            {
+                return _NoReciept;
+            }
+
+            set
+            {
+                if (_NoReciept == value)
+                {
+                    return;
+                }
+
+                _NoReciept = value;
+                if (ReservationsCollectionView != null)
+                {
+                    ReservationsCollectionView.Refresh();
+                    UpdatePayments();
+
+                    CalculateAmounts();
+                }
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool NoVoucher
+        {
+            get
+            {
+                return _NoVoucher;
+            }
+
+            set
+            {
+                if (_NoVoucher == value)
+                {
+                    return;
+                }
+
+                _NoVoucher = value;
+                if (ReservationsCollectionView != null)
+                {
+                    ReservationsCollectionView.Refresh();
+                    UpdatePayments();
+
+                    CalculateAmounts();
+                }
+                RaisePropertyChanged();
+            }
+        }
 
         public int PartnerIndex
         {
@@ -577,6 +608,70 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 }
 
                 _Partners = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public ObservableCollection<Payment> Payments
+        {
+            get
+            {
+                return _Payments;
+            }
+
+            set
+            {
+                if (_Payments == value)
+                {
+                    return;
+                }
+
+                _Payments = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool Remaining
+        {
+            get
+            {
+                return _Remaining;
+            }
+
+            set
+            {
+                if (_Remaining == value)
+                {
+                    return;
+                }
+
+                _Remaining = value;
+                if (ReservationsCollectionView != null)
+                {
+                    ReservationsCollectionView.Refresh();
+                    UpdatePayments();
+
+                    CalculateAmounts();
+                }
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal RemainingA
+        {
+            get
+            {
+                return _RemainingA;
+            }
+
+            set
+            {
+                if (_RemainingA == value)
+                {
+                    return;
+                }
+
+                _RemainingA = value;
                 RaisePropertyChanged();
             }
         }
@@ -630,73 +725,69 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-        public RelayCommand<string> ShowReservationsCommand { get; set; }
-        public RelayCommand EditBookingCommand { get; set; }
+        public Payment SelectedPayment
+        {
+            get
+            {
+                return _SelectedPayment;
+            }
+
+            set
+            {
+                if (_SelectedPayment == value)
+                {
+                    return;
+                }
+
+                _SelectedPayment = value;
+                RaisePropertyChanged();
+                UpdateSelectedReservation();
+            }
+        }
+
+        public ReservationWrapper SelectedReservation
+        {
+            get
+            {
+                return _SelectedReservation;
+            }
+
+            set
+            {
+                if (_SelectedReservation == value)
+                {
+                    return;
+                }
+
+                _SelectedReservation = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public RelayCommand SetNonPartnerCommand { get; set; }
 
+        public RelayCommand<string> ShowReservationsCommand { get; set; }
+
+        public decimal Total
+        {
+            get
+            {
+                return _Total;
+            }
+
+            set
+            {
+                if (_Total == value)
+                {
+                    return;
+                }
+
+                _Total = value;
+                RaisePropertyChanged();
+            }
+        }
+
         #endregion Properties
-
-        private bool _ΒyCheckIn;
-
-        private bool _ByCreated;
-
-        public bool ByCreated
-        {
-            get
-            {
-                return _ByCreated;
-            }
-
-            set
-            {
-                if (_ByCreated == value)
-                {
-                    return;
-                }
-
-                _ByCreated = value;
-                if (ReservationsCollectionView != null && ReservationsCollectionView.SortDescriptions != null)
-                {
-                    ReservationsCollectionView.SortDescriptions.Clear();
-                    ReservationsCollectionView.SortDescriptions.Add(new SortDescription("PartnerName", ListSortDirection.Ascending));
-
-                    if (ByCheckIn)
-                        ReservationsCollectionView.SortDescriptions.Add(new SortDescription("CheckIn", ListSortDirection.Ascending));
-                    else
-                        ReservationsCollectionView.SortDescriptions.Add(new SortDescription("CreatedDate", ListSortDirection.Ascending));
-                }
-                RaisePropertyChanged();
-            }
-        }
-
-        public bool ByCheckIn
-        {
-            get
-            {
-                return _ΒyCheckIn;
-            }
-
-            set
-            {
-                if (_ΒyCheckIn == value)
-                {
-                    return;
-                }
-
-                _ΒyCheckIn = value;
-                if (ReservationsCollectionView != null && ReservationsCollectionView.SortDescriptions != null)
-                {
-                    ReservationsCollectionView.SortDescriptions.Clear();
-                    ReservationsCollectionView.SortDescriptions.Add(new SortDescription("PartnerName", ListSortDirection.Ascending));
-
-                    if (ByCheckIn)
-                        ReservationsCollectionView.SortDescriptions.Add(new SortDescription("CheckIn", ListSortDirection.Ascending));
-                    else
-                        ReservationsCollectionView.SortDescriptions.Add(new SortDescription("CreatedDate", ListSortDirection.Ascending));
-                }
-                RaisePropertyChanged();
-            }
-        }
 
         #region Methods
 
@@ -708,9 +799,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
                 Partners = new ObservableCollection<Partner>(MainViewModel.BasicDataManager.Partners);
                 Excursions = new ObservableCollection<Excursion>(MainViewModel.BasicDataManager.Excursions);
-                Cities = new ObservableCollection<City>(MainViewModel.BasicDataManager.Cities);
-                Cities.Insert(0, new City { Name = "Όλες" });
-                SelectedCity = Cities[0];
 
                 Bookings = new ObservableCollection<Booking>();
                 PartnerIndex = -1;
@@ -733,6 +821,25 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         {
         }
 
+        private void CalculateAmounts()
+        {
+            Total = RemainingA = Available = 0;
+            foreach (ReservationWrapper res in ReservationsCollectionView)
+            {
+                Total += res.FullPrice;
+                RemainingA += res.Remaining;
+                if (res.Booking != null && res.Booking.IsPartners)
+                {
+                    Commision += res.Booking.Commision;
+                }
+            }
+        }
+
+        private bool CanEditBooking()
+        {
+            return SelectedReservation != null;
+        }
+
         private bool CanShowReservations(string arg)
         {
             return IsOk;
@@ -744,118 +851,12 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             return Completed || excursion.ExcursionDates.Any(d => d.CheckOut >= DateTime.Today) || excursion.Id == 0;
         }
 
-        private bool _Remaining;
-        private ReservationWrapper _SelectedReservation;
-
-        public bool Remaining
-        {
-            get
-            {
-                return _Remaining;
-            }
-
-            set
-            {
-                if (_Remaining == value)
-                {
-                    return;
-                }
-
-                _Remaining = value;
-                if (ReservationsCollectionView != null)
-                {
-                    ReservationsCollectionView.Refresh();
-                    CalculateAmounts();
-                }
-                RaisePropertyChanged();
-            }
-        }
-
-        private bool _NoVoucher;
-
-        public bool NoVoucher
-        {
-            get
-            {
-                return _NoVoucher;
-            }
-
-            set
-            {
-                if (_NoVoucher == value)
-                {
-                    return;
-                }
-
-                _NoVoucher = value;
-                if (ReservationsCollectionView != null)
-                {
-                    ReservationsCollectionView.Refresh();
-                    CalculateAmounts();
-                }
-                RaisePropertyChanged();
-            }
-        }
-
-        private bool _NoProforma;
-
-        public bool NoProforma
-        {
-            get
-            {
-                return _NoProforma;
-            }
-
-            set
-            {
-                if (_NoProforma == value)
-                {
-                    return;
-                }
-
-                _NoProforma = value;
-                if (ReservationsCollectionView != null)
-                {
-                    ReservationsCollectionView.Refresh();
-                    CalculateAmounts();
-                }
-                RaisePropertyChanged();
-            }
-        }
-
-        private bool _NoReciept;
-
-        public bool NoReciept
-        {
-            get
-            {
-                return _NoReciept;
-            }
-
-            set
-            {
-                if (_NoReciept == value)
-                {
-                    return;
-                }
-
-                _NoReciept = value;
-                if (ReservationsCollectionView != null)
-                {
-                    ReservationsCollectionView.Refresh();
-                    CalculateAmounts();
-                }
-                RaisePropertyChanged();
-            }
-        }
-
         private bool CustomerFilter(object item)
         {
             ReservationWrapper reservation = item as ReservationWrapper;
             var x = reservation.Contains(FilterString, false) &&
                 (!Remaining || reservation.Remaining > 3) &&
                 (!NoProforma || !reservation.ProformaSent) &&
-                (SelectedCity == null || SelectedCity.Id <= 0 || (reservation.Booking != null && reservation.Booking.Excursion != null && reservation.Booking.Excursion.Destinations.Any(d => d.Id == SelectedCity.Id)) || reservation.To.Contains(SelectedCity.Name)) &&
                 (!NoVoucher || !reservation.VoucherSent) &&
                 (!NoReciept || !reservation.Reciept) &&
                 (DepartmentIndexBookingFilter == 0 || reservation.UserWr.BaseLocation == DepartmentIndexBookingFilter) &&
@@ -864,11 +865,45 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             return x;
         }
 
+        private async Task EditBooking()
+        {
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                if (SelectedReservation.ExcursionType == ExcursionTypeEnum.Personal)
+                {
+                    NewReservation_Personal_ViewModel viewModel = new NewReservation_Personal_ViewModel(MainViewModel);
+                    await viewModel.LoadAsync(SelectedReservation.PersonalModel.Id);
+                    MessengerInstance.Send(new OpenChildWindowCommand(new EditPersonalBooking_Window(), viewModel));
+                }
+                else if (SelectedReservation.ExcursionType == ExcursionTypeEnum.ThirdParty)
+                {
+                    NewReservation_ThirdParty_VIewModel viewModel = new NewReservation_ThirdParty_VIewModel(MainViewModel);
+                    await viewModel.LoadAsync(SelectedReservation.ThirdPartyModel.Id);
+                    MessengerInstance.Send(new OpenChildWindowCommand(new Edit_ThirdParty_Booking_Window(), viewModel));
+                }
+                else
+                {
+                    NewReservation_Group_ViewModel viewModel = new NewReservation_Group_ViewModel(MainViewModel);
+                    await viewModel.LoadAsync(SelectedReservation.Booking.Id);
+                    MessengerInstance.Send(new OpenChildWindowCommand(new EditBooking_Bansko_Window(), viewModel));
+                }
+                Mouse.OverrideCursor = Cursors.Arrow;
+            }
+            catch (Exception ex)
+            {
+                MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
+            }
+        }
+
         private void ExcursionsCollectionView_CurrentChanged(object sender, EventArgs e)
         {
             if (ReservationsCollectionView != null)
             {
                 ReservationsCollectionView.Refresh();
+                UpdatePayments();
+
                 CalculateAmounts();
             }
             SelectedExcursionFilter = ExcursionsCollectionView.CurrentItem as Excursion;
@@ -934,7 +969,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 FilteredReservations = new ObservableCollection<ReservationWrapper>(listr);
                 Parallel.ForEach(FilteredReservations, wr => { wr.CalculateAmounts(); _ = wr.Partner; });
                 ReservationsCollectionView = CollectionViewSource.GetDefaultView(FilteredReservations);
-
+                UpdatePayments();
                 CalculateAmounts();
             }
             catch (Exception ex)
@@ -948,17 +983,48 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-        private void CalculateAmounts()
+        private void UpdatePayments()
         {
-            Total = RemainingA = Available = 0;
-            foreach (ReservationWrapper res in ReservationsCollectionView)
+            List<Payment> payments = new List<Payment>();
+            foreach (ReservationWrapper p in ReservationsCollectionView)
             {
-                Total += res.FullPrice;
-                RemainingA += res.Remaining;
-                if (res.Booking != null && res.Booking.IsPartners)
+                if (p.Booking != null && p.Booking.Payments != null)
                 {
-                    Commision += res.Booking.Commision;
+                    foreach (var pa in p.Booking.Payments)
+                    {
+                        pa.Parent = p;
+                        payments.Add(pa);
+                    }
                 }
+                else if (p.PersonalModel != null && p.PersonalModel.Payments != null)
+                {
+                    foreach (var pa in p.PersonalModel.Payments)
+                    {
+                        pa.Parent = p;
+                        payments.Add(pa);
+                    }
+                }
+                else if (p.ThirdPartyModel != null && p.ThirdPartyModel.Payments != null)
+                {
+                    foreach (var pa in p.ThirdPartyModel.Payments)
+                    {
+                        pa.Parent = p;
+                        payments.Add(pa);
+                    }
+                }
+            }
+            Payments = new ObservableCollection<Payment>(payments.OrderBy(p => p.Date));
+        }
+
+        private void UpdateSelectedReservation()
+        {
+            if (SelectedPayment != null && SelectedPayment.Parent != null)
+            {
+                foreach (ReservationWrapper wrapper in ReservationsCollectionView)
+                {
+                    wrapper.Selected = wrapper == SelectedPayment.Parent;
+                }
+                SelectedReservation = SelectedPayment.Parent;
             }
         }
 

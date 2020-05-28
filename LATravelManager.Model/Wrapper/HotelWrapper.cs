@@ -41,6 +41,12 @@ namespace LATravelManager.UI.Wrapper
             set { SetValue(value); }
         }
 
+        public bool NoName
+        {
+            get { return GetValue<bool>(); }
+            set { SetValue(value); }
+        }
+
         public HotelCategory HotelCategory
         {
             get { return GetValue<HotelCategory>(); }

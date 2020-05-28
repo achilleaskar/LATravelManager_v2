@@ -664,7 +664,10 @@ namespace LATravelManager.Model.Wrapper
             Recieved = _Recieved;
 
             foreach (var c in Customers)
+            {
+                if(c.Price>1)
                 total += c.Price;
+            }
 
             foreach (var e in ExtraServices)
                 extra = e.Amount;

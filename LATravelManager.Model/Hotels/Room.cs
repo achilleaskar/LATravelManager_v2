@@ -53,6 +53,7 @@ namespace LATravelManager.Model.Hotels
         [Required]
         public Hotel Hotel { get; set; }
 
+        [MaxLength(50)]
         public string Note { get; set; }
 
         public ObservableCollection<Option> Options { get; set; }

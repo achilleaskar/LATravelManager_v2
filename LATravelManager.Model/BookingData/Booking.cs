@@ -26,7 +26,8 @@ namespace LATravelManager.Model.BookingData
         #endregion Constructors
 
         #region Properties
-
+        public DisabledInfo DisabledInfo { get; set; }
+        public PartnerInfo PartnerInfo { get; set; }
         // public int LeaderDriver => GetHigher(); ReservationsInBooking.OrderByDescending(r=> r.CustomersList.OrderByDescending(c=>c.LeaderDriver).First().LeaderDriver).Select;
 
         public bool GroupBooking { get; set; }
@@ -77,7 +78,7 @@ namespace LATravelManager.Model.BookingData
         //    //FullPrice = tmpBooking.FullPrice;
         //    CalculateRemainingAmount();
         //}
-
+        [MaxLength(300)]
         public string Comment { get; set; }
         public decimal Commision { get; set; }
         public string Dates => CheckIn.ToString("dd/MM") + "-" + CheckOut.ToString("dd/MM");
@@ -117,7 +118,7 @@ namespace LATravelManager.Model.BookingData
         //    //this.booking = booking;
         //    //this.uOW = uOW;
         //}
-        [NotMapped]
+
         public string PartnerEmail { get; set; }
 
         //public Booking()

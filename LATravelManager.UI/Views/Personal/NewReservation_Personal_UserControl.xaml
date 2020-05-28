@@ -106,17 +106,6 @@
         </Style>
         <Style x:Key="RowStyle"
                TargetType="{x:Type DataGridRow}">
-            <!--<Style.Triggers>
-                <Trigger Property="Validation.HasError"
-                         Value="true">
-                    <Setter Property="BorderThickness"
-                            Value="1" />
-                    <Setter Property="BorderBrush"
-                            Value="Red" />
-                    <Setter Property="ToolTip"
-                            Value="{Binding (Validation.Errors)[0].ErrorContent, RelativeSource={RelativeSource Self}}" />
-                </Trigger>
-            </Style.Triggers>-->
             <Setter Property="IsSelected"
                     Value="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" />
         </Style>
@@ -185,6 +174,17 @@
                                         Value="0" />
                             </Style>
                         </DataGrid.Resources>
+                        <DataGrid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Διαγραφη"
+                                          Command="{Binding DeleteSelectedCustomersCommand}">
+                                    <MenuItem.Icon>
+                                        <Image MaxHeight="20"
+                                               Stretch="Fill" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
                         <DataGrid.RowStyle>
                             <StaticResource ResourceKey="RowStyle" />
                         </DataGrid.RowStyle>
@@ -208,6 +208,7 @@
                                                 MinWidth="80"
                                                 MaxWidth="200"
                                                 Binding="{Binding Tel, UpdateSourceTrigger=PropertyChanged}" />
+                            
                             <DataGridTemplateColumn Header="Αναχώρηση"
                                                     Width="100"
                                                     CellStyle="{StaticResource DataGridCellStyle}">
@@ -223,6 +224,12 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Τιμή"
+                                                Width="55"
+                                                FontWeight="DemiBold"
+                                                FontSize="14"
+                                                Visibility="{Binding DataContext.PersonalWr.Group, Converter={StaticResource booleanToVisibilityConverter}, Source={x:Reference dummyElement}}"
+                                                Binding="{Binding Price, Converter={StaticResource FtoSConverter}, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" />
                             <DataGridTemplateColumn Header="Γέννηση"
                                                     Width="Auto"
                                                     CellStyle="{StaticResource DataGridCellStyle}">
@@ -234,25 +241,6 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridComboBoxColumn Header="Ηλικία"
-                                                    ItemsSource="{x:Static helpers:StaticResources.AgesList}">
-                                <DataGridComboBoxColumn.ElementStyle>
-                                    <Style TargetType="{x:Type ComboBox}">
-                                        <Setter Property="SelectedIndex"
-                                                Value="{Binding Age, UpdateSourceTrigger=PropertyChanged}" />
-                                        <Setter Property="Foreground"
-                                                Value="{Binding SelectedIndex, ConverterParameter=12, Converter={StaticResource SelectedIndexToForegroundConverter}, RelativeSource={RelativeSource Self}, UpdateSourceTrigger=PropertyChanged}" />
-                                    </Style>
-                                </DataGridComboBoxColumn.ElementStyle>
-                                <DataGridComboBoxColumn.EditingElementStyle>
-                                    <Style TargetType="{x:Type ComboBox}">
-                                        <Setter Property="SelectedIndex"
-                                                Value="{Binding Age, UpdateSourceTrigger=PropertyChanged}" />
-                                        <Setter Property="Foreground"
-                                                Value="{Binding SelectedIndex, ConverterParameter=12, Converter={StaticResource SelectedIndexToForegroundConverter}, RelativeSource={RelativeSource Self}, UpdateSourceTrigger=PropertyChanged}" />
-                                    </Style>
-                                </DataGridComboBoxColumn.EditingElementStyle>
-                            </DataGridComboBoxColumn>
                             <DataGridTextColumn Header="Passport Id"
                                                 MaxWidth="200"
                                                 Binding="{Binding PassportNum,UpdateSourceTrigger=PropertyChanged}" />
@@ -280,7 +268,7 @@
                             </DataGridTemplateColumn>
                             <DataGridTextColumn Header="Email"
                                                 MaxWidth="100"
-                                                Binding="{Binding Email, UpdateSourceTrigger=PropertyChanged}"/>
+                                                Binding="{Binding Email, UpdateSourceTrigger=PropertyChanged}" />
                             <DataGridTemplateColumn Header="Πάσο"
                                                     Width="70">
                                 <DataGridTemplateColumn.CellTemplate>
@@ -579,6 +567,18 @@
                                               IsChecked="{Binding PersonalWr.Reciept,UpdateSourceTrigger=PropertyChanged}"
                                               VerticalAlignment="Center" />
                                 </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock HorizontalAlignment="Left"
+                                               Margin="11 0 5 0"
+                                               VerticalAlignment="Center"
+                                               Text="Group" />
+                                    <CheckBox IsChecked="{Binding PersonalWr.Group,UpdateSourceTrigger=PropertyChanged}"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Center" 
+                                              Checked="CheckBox_Checked"
+                                              Unchecked="CheckBox_Checked"/>
+                                </StackPanel>
+                                <Separator />
                                 <StackPanel Orientation="Horizontal"
                                             Margin="0,5,0,0"
                                             Visibility="{Binding PersonalWr.IsPartners,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource booleanToVisibilityConverter}}">

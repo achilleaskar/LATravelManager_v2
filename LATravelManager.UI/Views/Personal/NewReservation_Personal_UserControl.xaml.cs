@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using LATravelManager.UI.ViewModel.CategoriesViewModels.Personal;
 
 namespace LATravelManager.UI.Views.Personal
 {
@@ -99,6 +100,11 @@ namespace LATravelManager.UI.Views.Personal
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+        }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            ((NewReservation_Personal_ViewModel)DataContext).PersonalWr.RaisePropertyChanged();
         }
     }
 }

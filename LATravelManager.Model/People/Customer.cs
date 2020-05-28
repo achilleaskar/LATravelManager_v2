@@ -38,11 +38,53 @@ namespace LATravelManager.Model.People
         private int _SeatNumRet;
 
         private string _Surename;
+        private bool _IsSelected;
 
         #endregion Fields
 
-        #region Properties
 
+
+        private bool _Selected;
+
+        [NotMapped]
+        public bool Selected
+        {
+            get
+            {
+                return _Selected;
+            }
+
+            set
+            {
+                if (_Selected == value)
+                {
+                    return;
+                }
+
+                _Selected = value;
+                RaisePropertyChanged();
+            }
+        }
+        #region Properties
+        [NotMapped]
+        public bool IsSelected
+        {
+            get
+            {
+                return _IsSelected;
+            }
+
+            set
+            {
+                if (_IsSelected == value)
+                {
+                    return;
+                }
+
+                _IsSelected = value;
+                RaisePropertyChanged();
+            }
+        }
         [Range(0, 18)]
         public int Age { get; set; }
 
@@ -193,7 +235,7 @@ namespace LATravelManager.Model.People
         [NotMapped]
         public int ReservationId => Reservation != null ? Reservation.Id : 0;
 
-        [StringLength(30, MinimumLength = 0)]
+        [StringLength(35, MinimumLength = 0)]
         public string ReturningPlace { get; set; }
 
         [NotMapped]
@@ -257,7 +299,7 @@ namespace LATravelManager.Model.People
         public ICollection<Service> Services { get; }
 
         [Required(ErrorMessage = "Επιλέξτε σημέιο αναχώρησης")]
-        [StringLength(20)]
+        [StringLength(35)]
         public string StartingPlace { get; set; }
 
         [Required(ErrorMessage = "Το επίθετο είναι υποχρεωτικό.")]

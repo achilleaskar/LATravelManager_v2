@@ -63,5 +63,10 @@ namespace LATravelManager.Model.LocalModels
                 return error;
             }
         }
+
+        public override string ToString()
+        {
+            return EValue;
+        }
     }
 }

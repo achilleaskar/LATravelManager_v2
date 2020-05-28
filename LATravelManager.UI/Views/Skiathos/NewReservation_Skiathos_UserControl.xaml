@@ -326,10 +326,10 @@
                                         VerticalAlignment="Center"
                                         Command="{Binding PutCustomersInRoomCommand}"
                                         Margin="0,0,5,0" />
-                                <!--<Button Content="Noname"
+                                <Button Content="Noname"
                                         VerticalAlignment="Center"
                                         Command="{Binding BookRoomNoNameCommand}"
-                                        Margin="0,0,5,0" />-->
+                                        Margin="0,0,5,0" />
                                 <Button Content="OverBook"
                                         VerticalAlignment="Center"
                                         Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
@@ -407,7 +407,8 @@
                                            HorizontalAlignment="Left" />
                                 <ComboBox ItemsSource="{Binding Emails}"
                                           DisplayMemberPath="EValue"
-                                          SelectedItem="{Binding SelectedEmail}"
+                                          IsEditable="True"
+                                          Text="{Binding BookingWr.PartnerEmail}"
                                           VerticalAlignment="Center"
                                           Width="131" />
                             </StackPanel>

@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Windows.Media;
 using LATravelManager.Model.People;
+using LATravelManager.Model.Wrapper;
 
 namespace LATravelManager.Model.BookingData
 {
@@ -350,6 +351,54 @@ namespace LATravelManager.Model.BookingData
 
         #region Methods
 
+
+
+
+
+
+
+        private ReservationWrapper _Parent;
+
+        [NotMapped]
+        public ReservationWrapper Parent
+        {
+            get
+            {
+                return _Parent;
+            }
+
+            set
+            {
+                if (_Parent == value)
+                {
+                    return;
+                }
+
+                _Parent = value;
+                RaisePropertyChanged();
+            }
+        }
+        private bool _Selected;
+
+        [NotMapped]
+        public bool Selected
+        {
+            get
+            {
+                return _Selected;
+            }
+
+            set
+            {
+                if (_Selected == value)
+                {
+                    return;
+                }
+
+                _Selected = value;
+                RaisePropertyChanged();
+            }
+        }
         //        _AmountString = value;
         public string GetPaymentMethod()
         {
@@ -359,19 +408,19 @@ namespace LATravelManager.Model.BookingData
                     return "ΜΕΤΡΗΤΑ";
 
                 case 1:
-                    return "ΤΡ. ΚΑΤΑΘΕΣΗ(ΠΕΙΡΑΩΣ)";
+                    return "ΤΡ. ΚΑΤΑΘΕΣΗ (ΠΕΙΡΑΩΣ)";
 
                 case 2:
-                    return "ΤΡ. ΚΑΤΑΘΕΣΗ(ΕΘΝΙΚΗ)";
+                    return "ΤΡ. ΚΑΤΑΘΕΣΗ (ΕΘΝΙΚΗ)";
 
                 case 3:
-                    return "ΤΡ. ΚΑΤΑΘΕΣΗ(EUROBANK)";
+                    return "ΤΡ. ΚΑΤΑΘΕΣΗ (EUROBANK)";
 
                 case 4:
-                    return "ΤΡ. ΚΑΤΑΘΕΣΗ(ALPHABANK)";
+                    return "ΤΡ. ΚΑΤΑΘΕΣΗ (ALPHABANK)";
 
                 case 5:
-                    return "ΠΙΣΤΩΤΙΚΗ ΚΑΡΤΑ(POS)";
+                    return "ΠΙΣΤΩΤΙΚΗ ΚΑΡΤΑ (POS)";
 
                 default:
                     return "ERROR";
@@ -440,6 +489,38 @@ namespace LATravelManager.Model.BookingData
             return base.ToString();
         }
 
+
+        public string PartnerName => GetPartnerName();
+
+        private string GetPartnerName()
+        {
+
+            if (Booking != null)
+            {
+                if (Booking.Partner != null)
+                {
+                    return Booking.Partner.Name;
+                }
+                return "";
+            }
+            if (Personal_Booking != null)
+            {
+                if (Personal_Booking != null)
+                {
+                    return Personal_Booking.Partner.Name;
+                }
+                return "";
+            }
+            if (ThirdParty_Booking != null)
+            {
+                if (ThirdParty_Booking.Partner != null)
+                {
+                    return ThirdParty_Booking.Partner.Name;
+                }
+                return "";
+            }
+            return "";
+        }
         #endregion Methods
     }
 }

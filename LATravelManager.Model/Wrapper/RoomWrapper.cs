@@ -147,7 +147,7 @@ namespace LATravelManager.UI.Wrapper
                     return false;
             var state = datesNeeded[datesNeeded.Count - 1].RoomState;
             var statestart = datesNeeded[0].RoomState;
-            if ((state == RoomStateEnum.Allotment || state == RoomStateEnum.Available) && (statestart == RoomStateEnum.Allotment || statestart == RoomStateEnum.Available))
+            if ((state == RoomStateEnum.Allotment || state == RoomStateEnum.Available || state == RoomStateEnum.NotAvailable || state == RoomStateEnum.MovableNoName) && (statestart == RoomStateEnum.Allotment || statestart == RoomStateEnum.Available || statestart == RoomStateEnum.NotAvailable || statestart == RoomStateEnum.MovableNoName))
             {
                 return true;
             }

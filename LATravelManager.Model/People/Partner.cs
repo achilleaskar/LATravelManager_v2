@@ -6,6 +6,7 @@ namespace LATravelManager.Model.People
 {
     public class Partner : EditTracker, INamed
     {
+        [MaxLength(400)]
         public string Emails { get; set; }
 
         #region Properties

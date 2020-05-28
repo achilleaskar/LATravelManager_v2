@@ -1,4 +1,5 @@
-﻿using LATravelManager.Model.Lists;
+﻿using System.ComponentModel.DataAnnotations;
+using LATravelManager.Model.Lists;
 using LATravelManager.Model.People;
 
 namespace LATravelManager.Model.Excursions
@@ -79,6 +80,7 @@ namespace LATravelManager.Model.Excursions
             }
         }
 
+        [MaxLength(50)]
         public string Note
         {
             get

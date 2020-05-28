@@ -120,7 +120,7 @@ public class NewReservationHelper : ViewModelBase
                 customer.HotelName = "ONEDAY";
                 customer.RoomTypeName = "ONEDAY";
                 customer.RoomNumber = "OD" + (booking.ReservationsInBooking.Count + 1);
-                if (booking.ReservationsInBooking.Count() % 2 == 0)
+                if (booking.ReservationsInBooking.Count % 2 == 0)
                     customer.RoomColor = new SolidColorBrush(Colors.LightPink);
                 else
                     customer.RoomColor = new SolidColorBrush(Colors.LightBlue);
@@ -268,11 +268,22 @@ public class NewReservationHelper : ViewModelBase
 
     public async Task<BookingWrapper> SaveAsync(GenericRepository context, Payment Payment, BookingWrapper BookingWr)
     {
-        if (Payment.Amount > 0)
+        if (Payment != null && BookingWr != null && Payment.Amount > 0)
         {
             BookingWr.Payments.Add(new Payment { Amount = Payment.Amount, Comment = Payment.Comment, Date = DateTime.Now, PaymentMethod = Payment.PaymentMethod, User = await context.GetByIdAsync<User>(StaticResources.User.Id), Checked = (Payment.PaymentMethod == 0 || Payment.PaymentMethod == 5) ? (bool?)false : null });
         }
-        if (BookingWr.Id == 0)
+        if (BookingWr != null && BookingWr.IsPartners && BookingWr.Partner != null && !string.IsNullOrEmpty(BookingWr.PartnerEmail))
+        {
+            if (string.IsNullOrEmpty(BookingWr.Partner.Emails) )
+            {
+                BookingWr.Partner.Emails += BookingWr.PartnerEmail;
+            }
+            else if (!BookingWr.Partner.Emails.Contains(BookingWr.PartnerEmail))
+            {
+                BookingWr.Partner.Emails += "," + BookingWr.PartnerEmail;
+            }
+        }
+        if (BookingWr != null && BookingWr.Id == 0)
         {
             context.Add(BookingWr.Model);
         }

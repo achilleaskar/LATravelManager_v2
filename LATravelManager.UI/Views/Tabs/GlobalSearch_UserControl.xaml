@@ -16,7 +16,7 @@
         <converters:FloadToStringValueConverter x:Key="FtoSConverter" />
         <converters:ReturnsToDateConverter x:Key="ReturnsToDateConverter" />
     </UserControl.Resources>
-    <Grid>
+    <Grid Name="papa">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -81,7 +81,7 @@
                                         Padding="5,2" />
                                 <Border BorderBrush="Gray"
                                         BorderThickness="1,0,0,0" />
-                                <Button Content="Με όνομα"
+                                <Button Content="Νεο!!"
                                         Click="Button_Click_1"
                                         Margin="5"
                                         CommandParameter="40"
@@ -373,14 +373,22 @@
                 <Button Content="RoomingLists"
                         Margin="5,0"
                         VerticalAlignment="Bottom"
+                        Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
                         Command="{Binding PrintRoomingListsCommand}" />
                 <Button Content="Vouchers"
                         Margin="5,0"
+                        Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
                         VerticalAlignment="Bottom"
                         Command="{Binding PrintAllVouchersCommand}" />
+                <Button Content="SendVouchers"
+                        Margin="5,0"
+                        Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
+                        VerticalAlignment="Bottom"
+                        Command="{Binding SendAllVouchersCommand}" />
                 <Button Content="Letters"
                         VerticalAlignment="Bottom"
                         Margin="5,0"
+                        Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
                         Command="{Binding PrintAllLettersCommand}" />
                 <Button Content="List"
                         VerticalAlignment="Bottom"
@@ -388,6 +396,7 @@
                         Command="{Binding PrintListCommand}" />
                 <Button Content="List Ret"
                         VerticalAlignment="Bottom"
+                        Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
                         Margin="5,0"
                         Command="{Binding PrintListRetCommand}" />
                 <Button Content="Bus Lists"
@@ -403,8 +412,16 @@
                         Margin="5,0"
                         Click="Button_Click"
                         Command="{Binding ShowCanceled}" />
+                <Button Content="Test"
+                        VerticalAlignment="Bottom"
+                        Margin="5,0"
+                        Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}"
+                        
+                        Click="Button_Click_2"
+                       />
                 <Button Content="Sent Vchrs"
                         VerticalAlignment="Bottom"
+                        Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
                         Margin="5,0"
                         Command="{Binding VouchersSentCommand}" />
             </StackPanel>

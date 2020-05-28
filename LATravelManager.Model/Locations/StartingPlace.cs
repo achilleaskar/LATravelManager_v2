@@ -22,6 +22,7 @@ namespace LATravelManager.Model.Locations
         /// Sets and gets the Details property.
         /// Changes to that property's value raise the PropertyChanged event.
         /// </summary>
+        [MaxLength(50)]
         public string Details
         {
             get
@@ -41,7 +42,7 @@ namespace LATravelManager.Model.Locations
             }
         }
 
-        [StringLength(20)]
+        [StringLength(35)]
         public string Name { get; set; }
 
         /// <summary>

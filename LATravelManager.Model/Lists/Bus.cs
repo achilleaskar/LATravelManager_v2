@@ -26,6 +26,8 @@ namespace LATravelManager.Model.Lists
             Hotels = new ObservableCollection<Counter>();
             Customers = new ObservableCollection<Customer>();
             ClearBusCommand = new RelayCommand(ClearBus, CanClearBus);
+            ChangeSeatCommand = new RelayCommand<object>((obj) => ChangeSeat(obj, false), CanChangeSeat);
+            ChangeSeatRetCommand = new RelayCommand<object>((obj) => ChangeSeat(obj, true), CanChangeSeat);
             RemoveCustomerCommand = new RelayCommand<int>(RemoveCustomer, SelectedCustomer != null);
             SetSeatsCommand = new RelayCommand(() => { CreateBusView(false); });
             ColorsR = new List<SolidColorBrush>
@@ -43,6 +45,88 @@ namespace LATravelManager.Model.Lists
             Manual = false;
             BusView = new BusView();
             // RecalculateCustomers();
+        }
+
+        public Seat GetSeat(int num, bool retur)
+        {
+            if (!retur)
+                foreach (var row in BusView.Seires)
+                {
+                    foreach (var seat in row.Seats)
+                    {
+                        if (seat.Number == num)
+                        {
+                            return seat;
+                        }
+                    }
+                }
+            else
+                foreach (var row in BusViewReturn.Seires)
+                {
+                    foreach (var seat in row.Seats)
+                    {
+                        if (seat.Number == num)
+                        {
+                            return seat;
+                        }
+                    }
+                }
+
+            return null;
+        }
+
+        private int _SelectedSeat;
+
+        [NotMapped]
+        public int SelectedSeat
+        {
+            get
+            {
+                return _SelectedSeat;
+            }
+
+            set
+            {
+                if (_SelectedSeat == value)
+                {
+                    return;
+                }
+
+                _SelectedSeat = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private bool CanChangeSeat(object seato)
+        {
+            if (seato is Seat seat)
+            {
+                return true;
+            }
+            else
+                return false;
+        }
+
+        public void ChangeSeat(object seato, bool ret)
+        {
+            if (seato is Seat seat)
+            {
+                Seat newSeat = GetSeat(SelectedSeat, ret);
+                if (seat != null && seat.Customer != null && newSeat.Customer == null)
+                {
+                    newSeat.Customer = seat.Customer;
+                    seat.Customer = null;
+                    if (ret)
+                        newSeat.Customer.SeatNumRet = newSeat.Number;
+                    else
+                        newSeat.Customer.SeatNum = newSeat.Number;
+                }
+                else
+                {
+                    MessageBox.Show("Den xwrane");
+                    return;
+                }
+            }
         }
 
         #endregion Constructors
@@ -104,7 +188,7 @@ namespace LATravelManager.Model.Lists
 
         [NotMapped]
         public List<SolidColorBrush> ColorsR { get; set; }
-
+        [MaxLength(100)]
         public string Comment
         {
             get
@@ -250,6 +334,8 @@ namespace LATravelManager.Model.Lists
         public int RemainingSeats => Vehicle != null ? Vehicle.SeatsPassengers - Customers.Where(y => y.LeaderDriver == 0).ToList().Count : 0;
 
         public RelayCommand<int> RemoveCustomerCommand { get; }
+        public RelayCommand<object> ChangeSeatCommand { get; }
+        public RelayCommand<object> ChangeSeatRetCommand { get; }
         public RelayCommand SetSeatsCommand { get; }
 
         [NotMapped]
@@ -847,7 +933,7 @@ namespace LATravelManager.Model.Lists
                 if (sender is Seat s)
                 {
                     s.RaisePropertyChanged();
-                    RaisePropertyChanged("Seats");
+                    RaisePropertyChanged(nameof(Seats));
                 }
             }
         }

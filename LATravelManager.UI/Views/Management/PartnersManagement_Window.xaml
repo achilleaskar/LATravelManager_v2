@@ -12,7 +12,6 @@
         Closing="Window_Closing"
         Height="500"
         Width="800">
-
     <Grid Margin="20">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -29,6 +28,7 @@
                     <ColumnDefinition Width="100" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -54,25 +54,39 @@
                        Grid.Row="2"
                        Padding="5 0"
                        Grid.Column="0" />
+                <StackPanel Orientation="Horizontal"
+                            Grid.Row="3"
+                            Grid.ColumnSpan="2">
+                    <TextBox Text="{Binding SelectedEntity.NewEmail,UpdateSourceTrigger=PropertyChanged}"
+                             VerticalAlignment="Center"
+                             Margin="5"
+                             Width="155" />
+                    <Button VerticalAlignment="Center"
+                            HorizontalAlignment="Right"
+                            Height="22"
+                            Width="22"
+                            Command="{Binding AddEmailCommand}">
+                        <iconPacks:PackIconFontAwesome Kind="PlusSolid"
+                                                       VerticalAlignment="Center" />
+                    </Button>
+                </StackPanel>
                 <DataGrid ItemsSource="{Binding SelectedEntity.EmailsList}"
-                          Grid.Row="3"
+                          Grid.Row="4"
                           AutoGenerateColumns="False"
-                          Width="180"
                           Margin="5 0"
                           Grid.Column="0"
                           Height="130"
-                          CanUserAddRows="True"
                           Grid.ColumnSpan="2">
-
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Email"
+                                            Width="180"
                                             ElementStyle="{StaticResource DataGridColumnStyle}"
                                             EditingElementStyle="{StaticResource DataGridEditingColumnStyle}"
                                             Binding="{Binding EValue,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" />
                     </DataGrid.Columns>
                 </DataGrid>
                 <StackPanel Orientation="Vertical"
-                            Grid.Row="4"
+                            Grid.Row="5"
                             Grid.ColumnSpan="2">
                     <Button Content="Προσθήκη"
                             Margin="5,5,5,0"
@@ -85,7 +99,7 @@
                             Command="{Binding ClearEntityCommand}" />
                 </StackPanel>
                 <TextBlock Text="{Binding ResultMessage}"
-                           Grid.Row="5"
+                           Grid.Row="6"
                            Grid.ColumnSpan="2"
                            TextWrapping="Wrap"
                            HorizontalAlignment="Left" />
@@ -134,15 +148,15 @@
                         Command="{Binding RemoveEntityCommand}" />
             </Grid>
         </GroupBox>
-        <StackPanel
-                  Grid.Column="1">
+        <StackPanel Grid.Column="1">
             <TextBlock Text="Ειδικές οδηγίες" />
             <TextBox  VerticalAlignment="Stretch"
-                      TextWrapping="Wrap" Height="325"
-                  Margin="0 0 0 0"
-                  AcceptsReturn="True"
-                  Text="{Binding SelectedEntity.Note,UpdateSourceTrigger=PropertyChanged}"
-                     HorizontalAlignment="Stretch" />
+                      TextWrapping="Wrap"
+                      Height="325"
+                      Margin="0 0 0 0"
+                      AcceptsReturn="True"
+                      Text="{Binding SelectedEntity.Note,UpdateSourceTrigger=PropertyChanged}"
+                      HorizontalAlignment="Stretch" />
         </StackPanel>
     </Grid>
 </Window>

@@ -28,6 +28,8 @@ namespace LATravelManager.Model.Excursions
 
         #region Properties
 
+        public int SecondDepartMinDiff { get; set; }
+
         public virtual ObservableCollection<City> Destinations { get; set; }
 
         public bool DiscountsExist { get; set; }

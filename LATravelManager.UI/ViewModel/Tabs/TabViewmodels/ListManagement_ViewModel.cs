@@ -560,6 +560,10 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
                 _StartSeat = value;
                 RaisePropertyChanged();
+                if (SelectedBus != null)
+                {
+                    SelectedBus.SelectedSeat = value;
+                }
             }
         }
 
@@ -579,6 +583,10 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
                 _StartSeatRet = value;
                 RaisePropertyChanged();
+                if (SelectedBus != null)
+                {
+                    SelectedBus.SelectedSeat = value;
+                }
             }
         }
 
@@ -973,33 +981,33 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-        private Seat GetSeat(int num, bool retur)
-        {
-            if (!retur)
-                foreach (var row in SelectedBus.BusView.Seires)
-                {
-                    foreach (var seat in row.Seats)
-                    {
-                        if (seat.Number == num)
-                        {
-                            return seat;
-                        }
-                    }
-                }
-            else
-                foreach (var row in SelectedBus.BusViewReturn.Seires)
-                {
-                    foreach (var seat in row.Seats)
-                    {
-                        if (seat.Number == num)
-                        {
-                            return seat;
-                        }
-                    }
-                }
+        //private Seat GetSeat(int num, bool retur)
+        //{
+        //    if (!retur)
+        //        foreach (var row in SelectedBus.BusView.Seires)
+        //        {
+        //            foreach (var seat in row.Seats)
+        //            {
+        //                if (seat.Number == num)
+        //                {
+        //                    return seat;
+        //                }
+        //            }
+        //        }
+        //    else
+        //        foreach (var row in SelectedBus.BusViewReturn.Seires)
+        //        {
+        //            foreach (var seat in row.Seats)
+        //            {
+        //                if (seat.Number == num)
+        //                {
+        //                    return seat;
+        //                }
+        //            }
+        //        }
 
-            return null;
-        }
+        //    return null;
+        //}
 
         private void LeaderDriver(int obj)
         {
@@ -1031,7 +1039,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 List<Seat> seats = new List<Seat>();
                 for (int i = 0; i < (new BookingWrapper(customer.Reservation.Booking)).Customers.Count; i++)
                 {
-                    Seat seat = GetSeat(StartSeat + i, false);
+                    Seat seat = SelectedBus.GetSeat(StartSeat + i, false);
                     if (seat != null && seat.Customer == null)
                     {
                         seats.Add(seat);
@@ -1063,7 +1071,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 List<Seat> seats = new List<Seat>();
                 for (int i = 0; i < (new BookingWrapper(customer.Reservation.Booking)).Customers.Count; i++)
                 {
-                    Seat seat = GetSeat(StartSeatRet + i, true);
+                    Seat seat = SelectedBus.GetSeat(StartSeatRet + i, true);
                     if (seat != null && seat.Customer == null)
                     {
                         seats.Add(seat);

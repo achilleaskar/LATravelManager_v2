@@ -14,67 +14,6 @@ namespace LATravelManager.Model.Wrapper
 {
     public class Personal_BookingWrapper : ModelWrapper<Personal_Booking>
     {
-        [NotMapped]
-        public string PartnerEmail
-        {
-            get
-            {
-                return _PartnerEmail;
-            }
-
-            set
-            {
-                if (_PartnerEmail == value)
-                {
-                    return;
-                }
-
-                _PartnerEmail = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public bool CanShowDirections => Partner != null && !string.IsNullOrEmpty(Partner.Note);
-
-        public string CancelReason
-        {
-            get { return GetValue<string>(); }
-            set { SetValue(value); }
-        }
-
-        public bool Disabled
-        {
-            get { return GetValue<bool>(); }
-            set { SetValue(value); }
-        } public bool VoucherSent
-        {
-            get { return GetValue<bool>(); }
-            set { SetValue(value); }
-        }
-        public bool ProformaSent
-        {
-            get { return GetValue<bool>(); }
-            set { SetValue(value); }
-        }
-
-        public bool Reciept
-        {
-            get { return GetValue<bool>(); }
-            set { SetValue(value); }
-        }
-
-        public DateTime? DisableDate
-        {
-            get { return GetValue<DateTime?>(); }
-            set { SetValue(value); }
-        }
-
-        public User DisabledBy
-        {
-            get { return GetValue<User>(); }
-            set { SetValue(value); }
-        }
-
         #region Constructors
 
         public Personal_BookingWrapper() : this(new Personal_Booking())
@@ -84,6 +23,10 @@ namespace LATravelManager.Model.Wrapper
         public Personal_BookingWrapper(Personal_Booking model) : base(model)
         {
             CustomerWrappers = new ObservableCollection<CustomerWrapper>(Customers.Select(c => new CustomerWrapper(c)));
+            foreach (CustomerWrapper customer in CustomerWrappers)
+            {
+                customer.PropertyChanged += EntityViewModelPropertyChanged;
+            }
             CustomerWrappers.CollectionChanged += Customers_CollectionChanged;
             Payments.CollectionChanged += Payments_CollectionChanged;
             Services.CollectionChanged += Services_CollectionChanged;
@@ -91,74 +34,25 @@ namespace LATravelManager.Model.Wrapper
             CalculateRemainingAmount();
         }
 
-        private void Services_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            //if (e.Action == NotifyCollectionChangedAction.Remove)
-            //{
-            //    foreach (Service service in e.OldItems)
-            //    {
-            //        //Removed items
-            //        service.PropertyChanged -= EntityViewModelPropertyChanged;
-            //    }
-            //}
-            //else if (e.Action == NotifyCollectionChangedAction.Add)
-            //{
-            //    foreach (Service service in e.NewItems)
-            //    {
-            //        if (service.Id == 0)
-            //        {
-            //            IdCounter--;
-            //            service.Id = --IdCounter;
-            //        }
-            //        service.PropertyChanged += EntityViewModelPropertyChanged;
-            //    }
-            //}
-            CalculateRemainingAmount();
-        }
-
-        public decimal ExtraProfit
-        {
-            get
-            {
-                return GetValue<decimal>();
-            }
-
-            set
-            {
-                SetValue(value);
-                CalculateRemainingAmount();
-                RaisePropertyChanged();
-            }
-        }
-
         #endregion Constructors
-
-        private string _ErrorsInCanSaveBooking;
-
-        public string ErrorsInCanSaveBooking
-        {
-            get
-            {
-                return _ErrorsInCanSaveBooking;
-            }
-
-            set
-            {
-                if (_ErrorsInCanSaveBooking == value)
-                {
-                    return;
-                }
-
-                _ErrorsInCanSaveBooking = value;
-                RaisePropertyChanged();
-            }
-        }
 
         #region Fields
 
+        private ObservableCollection<CustomerWrapper> _CustomerWrappers;
+
+        private string _ErrorsInCanSaveBooking;
+
         private decimal _FullPrice;
+
         private decimal _NetPrice;
+
+        private string _PartnerEmail;
+
         private decimal _Remaining;
+
+        private decimal _ServiceProfit;
+
+        private decimal _TotalProfit;
 
         #endregion Fields
 
@@ -166,13 +60,25 @@ namespace LATravelManager.Model.Wrapper
 
         public bool Calculating { get; private set; }
 
+        public string CancelReason
+        {
+            get { return GetValue<string>(); }
+            set { SetValue(value); }
+        }
+
+        public bool CanShowDirections => Partner != null && !string.IsNullOrEmpty(Partner.Note);
+
         public string Comment
         {
             get { return GetValue<string>(); }
             set { SetValue(value); }
         }
 
-        private ObservableCollection<CustomerWrapper> _CustomerWrappers;
+        public ObservableCollection<Customer> Customers
+        {
+            get { return GetValue<ObservableCollection<Customer>>(); }
+            set { SetValue(value); }
+        }
 
         public ObservableCollection<CustomerWrapper> CustomerWrappers
         {
@@ -193,10 +99,56 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
-        public ObservableCollection<Customer> Customers
+        public bool Disabled
         {
-            get { return GetValue<ObservableCollection<Customer>>(); }
+            get { return GetValue<bool>(); }
             set { SetValue(value); }
+        }
+
+        public DateTime? DisableDate
+        {
+            get { return GetValue<DateTime?>(); }
+            set { SetValue(value); }
+        }
+
+        public User DisabledBy
+        {
+            get { return GetValue<User>(); }
+            set { SetValue(value); }
+        }
+
+        public string ErrorsInCanSaveBooking
+        {
+            get
+            {
+                return _ErrorsInCanSaveBooking;
+            }
+
+            set
+            {
+                if (_ErrorsInCanSaveBooking == value)
+                {
+                    return;
+                }
+
+                _ErrorsInCanSaveBooking = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal ExtraProfit
+        {
+            get
+            {
+                return GetValue<decimal>();
+            }
+
+            set
+            {
+                SetValue(value);
+                CalculateRemainingAmount();
+                RaisePropertyChanged();
+            }
         }
 
         public decimal FullPrice
@@ -219,112 +171,223 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
-        internal string GetDestinations()
+        public int IdCounter { get; set; }
+
+        public bool IsNotPartners => !IsPartners;
+
+        public bool IsPartners
         {
-            StringBuilder sb = new StringBuilder();
-            string hotels = string.Empty, planes = string.Empty, ferrys = string.Empty, guides = string.Empty, transfers = string.Empty, optionals = string.Empty;
-            string tmp;
-            foreach (var s in Services)
+            get { return GetValue<bool>(); }
+
+            set
             {
-                if (s is HotelService hs)
-                {
-                    tmp = hs.City != null ? hs.City.Name : "";
-                    if (tmp.Length > 1 && !hotels.Contains(tmp))
-                        hotels += tmp + "-";
-                }
+                SetValue(value);
+                RaisePropertyChanged(nameof(IsNotPartners));
             }
-            hotels = hotels.TrimEnd('-');
-            if (!string.IsNullOrEmpty(hotels))
+        }
+
+        public string Names => GetNames();
+
+        public decimal NetPrice
+        {
+            get
             {
-                sb.Append(hotels);
-                return sb.ToString().ToUpper();
-            }
-            foreach (var s in Services)
-            {
-                if (s is PlaneService ps)
-                {
-                    tmp = ps.To ?? "";
-                    if (tmp.Length > 1 && !planes.Contains(tmp))
-                        planes += tmp + "-";
-                }
-            }
-            planes = planes.TrimEnd('-');
-            if (!string.IsNullOrEmpty(planes))
-            {
-                sb.Append(planes);
+                return _NetPrice;
             }
 
-            foreach (var s in Services)
+            set
             {
-                if (s is FerryService ps)
+                if (_NetPrice == value)
                 {
-                    tmp = ps.To ?? "";
-                    if (tmp.Length > 1 && !ferrys.Contains(tmp))
-                        ferrys += tmp + "-";
+                    return;
+                }
+
+                _NetPrice = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public Partner Partner
+        {
+            get { return GetValue<Partner>(); }
+            set
+            {
+                SetValue(value);
+                RaisePropertyChanged("CanShowDirections");
+            }
+        }
+
+        [NotMapped]
+        public string PartnerEmail
+        {
+            get
+            {
+                return _PartnerEmail;
+            }
+
+            set
+            {
+                if (_PartnerEmail == value)
+                {
+                    return;
+                }
+
+                _PartnerEmail = value;
+                RaisePropertyChanged();
+            }
+        }
+        public ObservableCollection<Payment> Payments
+        {
+            get { return GetValue<ObservableCollection<Payment>>(); }
+        }
+
+        public bool PhoneMissing { get; private set; }
+
+        public bool ProformaSent
+        {
+            get { return GetValue<bool>(); }
+            set { SetValue(value); }
+        }
+
+        public bool Reciept
+        {
+            get { return GetValue<bool>(); }
+            set { SetValue(value); }
+        }
+
+        public bool Group
+        {
+            get { return GetValue<bool>(); }
+            set { SetValue(value); }
+        }
+
+
+        public decimal Recieved
+        {
+            get
+            {
+                decimal recieved = 0;
+                foreach (Payment payment in Payments)
+                    recieved += payment.Amount;
+                return recieved;
+            }
+        }
+
+        public decimal Remaining
+        {
+            get
+            {
+                return _Remaining;
+            }
+
+            set
+            {
+                if (_Remaining == value)
+                {
+                    return;
+                }
+
+                if (Math.Abs(_Remaining - value) > 0.01m)
+                {
+                    _Remaining = Math.Round(value, 1);
+                    RaisePropertyChanged();
                 }
             }
-            ferrys = ferrys.TrimEnd('-');
-            if (!string.IsNullOrEmpty(ferrys))
+        }
+
+        public decimal ServiceProfit
+        {
+            get
             {
-                if (sb.Length > 1)
-                    sb.Append("-");
-                sb.Append(ferrys);
+                return _ServiceProfit;
             }
+
+            set
+            {
+                if (_ServiceProfit == value)
+                {
+                    return;
+                }
+
+                _ServiceProfit = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public ObservableCollection<Service> Services
+        {
+            get { return GetValue<ObservableCollection<Service>>(); }
+        }
+
+        public decimal TotalProfit
+        {
+            get
+            {
+                return _TotalProfit;
+            }
+
+            set
+            {
+                if (_TotalProfit == value)
+                {
+                    return;
+                }
+
+                _TotalProfit = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public User User
+        {
+            get { return GetValue<User>(); }
+            set { SetValue(value); }
+        }
+
+        public bool VoucherSent
+        {
+            get { return GetValue<bool>(); }
+            set { SetValue(value); }
+        }
+
+        #endregion Properties
+
+        #region Methods
+
+
+        public void CalculateRemainingAmount()
+        {
+          
+            if (Calculating)
+            {
+                return;
+            }
+            decimal tmpNet = 0, tmpProfit = 0;
             foreach (var s in Services)
             {
-                if (s is GuideService ps)
+                tmpNet += s.NetPrice;
+                tmpProfit += s.Profit;
+            }
+
+            NetPrice = tmpNet;
+            ServiceProfit = tmpProfit;
+            if (Group)
+            {
+                Calculating = true;
+                if (Customers.Count == 0)
                 {
-                    tmp = ps.From ?? "";
-                    if (tmp.Length > 1 && !guides.Contains(tmp))
-                        guides += tmp + "-";
+                    ExtraProfit = 0 - NetPrice;
                 }
-            }
-            guides = guides.TrimEnd('-');
-            if (!string.IsNullOrEmpty(guides))
-            {
-                if (sb.Length > 1)
-                    sb.Append("-");
-                sb.Append(guides);
-            }
-            foreach (var s in Services)
-            {
-                if (s is TransferService ps)
+                else
                 {
-                    tmp = ps.To ?? "";
-                    if (tmp.Length > 1 && !transfers.Contains(tmp))
-                        transfers += tmp + "-";
+
+                    ExtraProfit = Customers.Where(r=>r.Price>0).Sum(c => c.Price) - NetPrice - ServiceProfit;
                 }
+                Calculating = false;
             }
-            transfers = transfers.TrimEnd('-');
-            if (!string.IsNullOrEmpty(transfers))
-            {
-                if (sb.Length > 1)
-                    sb.Append("-");
-                sb.Append(transfers);
-            }
-            foreach (var s in Services)
-            {
-                if (s is OptionalService ps)
-                {
-                    tmp = ps.From ?? "";
-                    if (tmp.Length > 1 && !optionals.Contains(tmp))
-                        optionals += tmp + "-";
-                }
-            }
-            optionals = optionals.TrimEnd('-');
-            if (!string.IsNullOrEmpty(optionals))
-            {
-                if (sb.Length > 1)
-                    sb.Append("-");
-                sb.Append(optionals);
-            }
-            if (sb.Length > 1)
-            {
-                sb.Append(".");
-            }
-            else
-                return "";
-            return sb.ToString().ToUpper(); ;
+            TotalProfit = ServiceProfit + ExtraProfit;
+            FullPrice = NetPrice + TotalProfit;
+            Remaining = FullPrice - Recieved;
         }
 
         public string GetPacketDescription()
@@ -446,220 +509,6 @@ namespace LATravelManager.Model.Wrapper
             return sb.ToString().ToUpper(); ;
         }
 
-        public int IdCounter { get; set; }
-
-        public bool IsNotPartners => !IsPartners;
-
-        public bool IsPartners
-        {
-            get { return GetValue<bool>(); }
-
-            set
-            {
-                SetValue(value);
-                RaisePropertyChanged(nameof(IsNotPartners));
-            }
-        }
-
-        public string Names => GetNames();
-
-        public decimal NetPrice
-        {
-            get
-            {
-                return _NetPrice;
-            }
-
-            set
-            {
-                if (_NetPrice == value)
-                {
-                    return;
-                }
-
-                _NetPrice = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public Partner Partner
-        {
-            get { return GetValue<Partner>(); }
-            set
-            {
-                SetValue(value);
-                RaisePropertyChanged("CanShowDirections");
-            }
-        }
-
-        public ObservableCollection<Payment> Payments
-        {
-            get { return GetValue<ObservableCollection<Payment>>(); }
-        }
-
-        public ObservableCollection<Service> Services
-        {
-            get { return GetValue<ObservableCollection<Service>>(); }
-        }
-
-        public decimal Recieved
-        {
-            get
-            {
-                decimal recieved = 0;
-                foreach (Payment payment in Payments)
-                    recieved += payment.Amount;
-                return recieved;
-            }
-        }
-
-        public decimal Remaining
-        {
-            get
-            {
-                return _Remaining;
-            }
-
-            set
-            {
-                if (_Remaining == value)
-                {
-                    return;
-                }
-
-                if (Math.Abs(_Remaining - value) > 0.01m)
-                {
-                    _Remaining = Math.Round(value, 1);
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        public User User
-        {
-            get { return GetValue<User>(); }
-            set { SetValue(value); }
-        }
-
-        #endregion Properties
-
-        #region Methods
-
-        private decimal _ServiceProfit;
-
-        public decimal ServiceProfit
-        {
-            get
-            {
-                return _ServiceProfit;
-            }
-
-            set
-            {
-                if (_ServiceProfit == value)
-                {
-                    return;
-                }
-
-                _ServiceProfit = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public void CalculateRemainingAmount()
-        {
-            decimal tmpNet = 0, tmpProfit = 0;
-            foreach (var s in Services)
-            {
-                tmpNet += s.NetPrice;
-                tmpProfit += s.Profit;
-            }
-
-            NetPrice = tmpNet;
-            ServiceProfit = tmpProfit;
-            TotalProfit = ServiceProfit + ExtraProfit;
-            FullPrice = NetPrice + TotalProfit;
-            Remaining = FullPrice - Recieved;
-        }
-
-        private decimal _TotalProfit;
-        private string _PartnerEmail;
-
-        public decimal TotalProfit
-        {
-            get
-            {
-                return _TotalProfit;
-            }
-
-            set
-            {
-                if (_TotalProfit == value)
-                {
-                    return;
-                }
-
-                _TotalProfit = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public bool PhoneMissing { get; private set; }
-
-        private void Customers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == NotifyCollectionChangedAction.Remove)
-            {
-                foreach (CustomerWrapper customer in e.OldItems)
-                {
-                    //Removed items
-                    customer.PropertyChanged -= EntityViewModelPropertyChanged;
-                    Customers.Remove(customer.Model);
-                }
-            }
-            else if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-                foreach (CustomerWrapper customer in e.NewItems)
-                {
-                    if (customer.Id == 0)
-                    {
-                        IdCounter--;
-                        customer.Id = --IdCounter;
-                        Customers.Add(customer.Model);
-                    }
-                    customer.PropertyChanged += EntityViewModelPropertyChanged;
-                }
-            }
-        }
-
-        private void EntityViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(Customer.Services))
-            {
-                RaisePropertyChanged(nameof(Customers));
-            }
-            else if (e.PropertyName == nameof(Service.NetPrice) || e.PropertyName == nameof(Service.Profit))
-            {
-                CalculateRemainingAmount();
-            }
-        }
-
-        private string GetNames()
-        {
-            StringBuilder sb = new StringBuilder();
-            foreach (Customer customer in Customers)
-            {
-                sb.Append(customer.Surename + " " + customer.Name + ", ");
-            }
-            return sb.ToString().TrimEnd(',', ' ');
-        }
-
-        private void Payments_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            RaisePropertyChanged(nameof(Recieved));
-            CalculateRemainingAmount();
-        }
-
         public string ValidatePersonalBooking()
         {
             PhoneMissing = true;
@@ -695,6 +544,190 @@ namespace LATravelManager.Model.Wrapper
             }
 
             return null;
+        }
+
+        internal string GetDestinations()
+        {
+            StringBuilder sb = new StringBuilder();
+            string hotels = string.Empty, planes = string.Empty, ferrys = string.Empty, guides = string.Empty, transfers = string.Empty, optionals = string.Empty;
+            string tmp;
+            foreach (var s in Services)
+            {
+                if (s is HotelService hs)
+                {
+                    tmp = hs.City != null ? hs.City.Name : "";
+                    if (tmp.Length > 1 && !hotels.Contains(tmp))
+                        hotels += tmp + "-";
+                }
+            }
+            hotels = hotels.TrimEnd('-');
+            if (!string.IsNullOrEmpty(hotels))
+            {
+                sb.Append(hotels);
+                return sb.ToString().ToUpper();
+            }
+            foreach (var s in Services)
+            {
+                if (s is PlaneService ps)
+                {
+                    tmp = ps.To ?? "";
+                    if (tmp.Length > 1 && !planes.Contains(tmp))
+                        planes += tmp + "-";
+                }
+            }
+            planes = planes.TrimEnd('-');
+            if (!string.IsNullOrEmpty(planes))
+            {
+                sb.Append(planes);
+            }
+
+            foreach (var s in Services)
+            {
+                if (s is FerryService ps)
+                {
+                    tmp = ps.To ?? "";
+                    if (tmp.Length > 1 && !ferrys.Contains(tmp))
+                        ferrys += tmp + "-";
+                }
+            }
+            ferrys = ferrys.TrimEnd('-');
+            if (!string.IsNullOrEmpty(ferrys))
+            {
+                if (sb.Length > 1)
+                    sb.Append("-");
+                sb.Append(ferrys);
+            }
+            foreach (var s in Services)
+            {
+                if (s is GuideService ps)
+                {
+                    tmp = ps.From ?? "";
+                    if (tmp.Length > 1 && !guides.Contains(tmp))
+                        guides += tmp + "-";
+                }
+            }
+            guides = guides.TrimEnd('-');
+            if (!string.IsNullOrEmpty(guides))
+            {
+                if (sb.Length > 1)
+                    sb.Append("-");
+                sb.Append(guides);
+            }
+            foreach (var s in Services)
+            {
+                if (s is TransferService ps)
+                {
+                    tmp = ps.To ?? "";
+                    if (tmp.Length > 1 && !transfers.Contains(tmp))
+                        transfers += tmp + "-";
+                }
+            }
+            transfers = transfers.TrimEnd('-');
+            if (!string.IsNullOrEmpty(transfers))
+            {
+                if (sb.Length > 1)
+                    sb.Append("-");
+                sb.Append(transfers);
+            }
+            foreach (var s in Services)
+            {
+                if (s is OptionalService ps)
+                {
+                    tmp = ps.From ?? "";
+                    if (tmp.Length > 1 && !optionals.Contains(tmp))
+                        optionals += tmp + "-";
+                }
+            }
+            optionals = optionals.TrimEnd('-');
+            if (!string.IsNullOrEmpty(optionals))
+            {
+                if (sb.Length > 1)
+                    sb.Append("-");
+                sb.Append(optionals);
+            }
+            if (sb.Length > 1)
+            {
+                sb.Append(".");
+            }
+            else
+                return "";
+            return sb.ToString().ToUpper(); ;
+        }
+
+        private void Customers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                foreach (CustomerWrapper customer in e.OldItems)
+                {
+                    //Removed items
+                    customer.PropertyChanged -= EntityViewModelPropertyChanged;
+                    Customers.Remove(customer.Model);
+                }
+            }
+            else if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (CustomerWrapper customer in e.NewItems)
+                {
+                    if (customer.Id == 0)
+                    {
+                        IdCounter--;
+                        customer.Id = --IdCounter;
+                        Customers.Add(customer.Model);
+                    }
+                    customer.PropertyChanged += EntityViewModelPropertyChanged;
+                }
+            }
+        }
+
+        private void EntityViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+                RaisePropertyChanged(nameof(Customers));
+            if (e.PropertyName == nameof(Service.NetPrice) || e.PropertyName == nameof(Service.Profit)|| e.PropertyName == nameof(Customer.Price))
+            {
+                CalculateRemainingAmount();
+            }
+        }
+
+        private string GetNames()
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (Customer customer in Customers)
+            {
+                sb.Append(customer.Surename + " " + customer.Name + ", ");
+            }
+            return sb.ToString().TrimEnd(',', ' ');
+        }
+
+        private void Payments_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            RaisePropertyChanged(nameof(Recieved));
+            CalculateRemainingAmount();
+        }
+
+        private void Services_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            //if (e.Action == NotifyCollectionChangedAction.Remove)
+            //{
+            //    foreach (Service service in e.OldItems)
+            //    {
+            //        //Removed items
+            //        service.PropertyChanged -= EntityViewModelPropertyChanged;
+            //    }
+            //}
+            //else if (e.Action == NotifyCollectionChangedAction.Add)
+            //{
+            //    foreach (Service service in e.NewItems)
+            //    {
+            //        if (service.Id == 0)
+            //        {
+            //            IdCounter--;
+            //            service.Id = --IdCounter;
+            //        }
+            //        service.PropertyChanged += EntityViewModelPropertyChanged;
+            //    }
+            //}
+            CalculateRemainingAmount();
         }
 
         #endregion Methods

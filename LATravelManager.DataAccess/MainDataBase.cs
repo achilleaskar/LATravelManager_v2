@@ -20,7 +20,8 @@ namespace LATravelManager.DataAccess
     {
         #region Constructors
 
-        public MainDatabase() : base(normal)
+        public MainDatabase() : base(Properties.Settings.Default.IsTest ? test : normal)
+        // public MainDatabase() : base(test)
         {
             Configuration.ValidateOnSaveEnabled = false;
 
@@ -32,6 +33,7 @@ namespace LATravelManager.DataAccess
         #region Fields
 
         private const string normal = "Server=server19.cretaforce.gr;Database=readmore_achill2;pooling=true;Uid=readmore_achill2;Pwd=986239787346;Convert Zero Datetime=True; CharSet=utf8; default command timeout=3600;SslMode=none;";
+        private const string test = "Server=readmoreachill2.clq6srsguoz6.eu-west-3.rds.amazonaws.com;Database=readmore_achill2;pooling=true;Uid=readmore_achill2;Pwd=986239787346;Convert Zero Datetime=True;  default command timeout=3600;SslMode=none;TreatTinyAsBoolean=true;";
 
         #endregion Fields
 
@@ -80,6 +82,12 @@ namespace LATravelManager.DataAccess
             base.OnModelCreating(modelBuilder);
             // SetExecutionStrategy(MySqlProviderInvariantName.ProviderName, () => new MySqlExecutionStrategy());
             //modelBuilder.Properties<TimeSpan>().Configure(c => c.HasColumnType("time"));
+        }
+
+        public void ToggleTestMode(bool isTest)
+        {
+            Properties.Settings.Default.IsTest = !isTest;
+            Properties.Settings.Default.Save();
         }
 
         #endregion Methods

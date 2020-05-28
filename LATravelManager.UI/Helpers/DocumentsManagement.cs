@@ -453,86 +453,99 @@ namespace LATravelManager.UI.Helpers
             PrintContract(booking);
         }
 
-        public async Task PrintSingleBookingVoucher(BookingWrapper booking)
+        public async Task PrintSingleBookingVoucher(List<BookingWrapper> bookings, bool send)
         {
-            foreach (Reservation res in booking.ReservationsInBooking)
+            if (bookings == null || bookings.Count == 0)
             {
-                if (res.ReservationType == ReservationTypeEnum.Noname && !Nonamemess)
+                return;
+            }
+            foreach (var booking in bookings)
+            {
+                foreach (Reservation res in booking.ReservationsInBooking)
                 {
-                    MessageBox.Show("Παρακαλώ τοποθετήστε τα NO NAME");
-                    Nonamemess = true;
-                }
-                else if (res.ReservationType == ReservationTypeEnum.NoRoom)
-                {
-                    MessageBox.Show("Error");
-                }
-                //else if (res.ReservationType == Reservation.ReservationTypeEnum.Overbooked)
-                //{
-                //    MessageBox.Show("Παρακαλώ τοποθετήστε τα OVER");
-                //}
-                else if (res.ReservationType == ReservationTypeEnum.Transfer && !Tranmess)
-                {
-                    MessageBox.Show("Η κράτηση είναι TRANSFER");
-                    Tranmess = true;
+                    if (res.ReservationType == ReservationTypeEnum.Noname && !Nonamemess)
+                    {
+                        MessageBox.Show("Παρακαλώ τοποθετήστε τα NO NAME");
+                        Nonamemess = true;
+                    }
+                    else if (res.ReservationType == ReservationTypeEnum.NoRoom)
+                    {
+                        MessageBox.Show("Error");
+                    }
+                    else if (res.ReservationType == ReservationTypeEnum.Transfer && !Tranmess)
+                    {
+                        MessageBox.Show("Η κράτηση είναι TRANSFER");
+                        Tranmess = true;
+                    }
                 }
             }
-            await PrintVoucher(booking);
+
+            await PrintVouchers(bookings, send);
         }
 
-        public async Task PrintVoucher(BookingWrapper booking)
+        public async Task PrintVouchers(List<BookingWrapper> bookings, bool send)
         {
             string outputpath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-
+            EmailsManager mailManager = new EmailsManager();
             ReservationWrapper resWrapper;
-            foreach (Reservation res in booking.ReservationsInBooking)
+            if (bookings == null || bookings.Count == 0)
             {
-                resWrapper = new ReservationWrapper(res);
-                if (res.ReservationType == ReservationTypeEnum.Noname)
+                return;
+            }
+            foreach (var booking in bookings)
+            {
+                foreach (Reservation res in booking.ReservationsInBooking)
                 {
-                    // MessageBox.Show("Παρακαλώ τοποθετήστε τα NO NAME");
-                    continue;
-                }
-                else if (res.ReservationType == ReservationTypeEnum.NoRoom)
-                {
-                    // MessageBox.Show("Error");
-                    continue;
-                }
-                //else if (res.ReservationType == Reservation.ReservationTypeEnum.Overbooked)
-                //{
-                //    MessageBox.Show("Παρακαλώ τοποθετήστε τα OVER");
-                //}
-                else if (res.ReservationType == ReservationTypeEnum.Transfer)
-                {
-                    // MessageBox.Show("Η κράτηση είναι TRANSFER");
-                    continue;
-                }
-                else if (res.ReservationType == ReservationTypeEnum.OneDay)
-                {
-                    // MessageBox.Show("Η κράτηση είναι TRANSFER");
-                    continue;
-                }
-
-                try
-                {
-                    string VoucherFilename;
-                    if (booking.IsPartners)
+                    resWrapper = new ReservationWrapper(res);
+                    if (res.ReservationType == ReservationTypeEnum.Noname && !Nonamemess)
                     {
-                        VoucherFilename = string.Format(@"\{0}_{1}_{2}_{3}_{4}_Voucher.docx", (resWrapper.CustomersList.OrderBy(cc => cc.Id)).ToList()[0].Surename, resWrapper.HotelName, resWrapper.RoomTypeNameByNum, booking.Partner.Name, resWrapper.Id);
+                        MessageBox.Show("Παρακαλώ τοποθετήστε τα NO NAME");
+                        Nonamemess = true;
+                        continue;
                     }
-                    else
+                    else if (res.ReservationType == ReservationTypeEnum.NoRoom)
                     {
-                        VoucherFilename = string.Format(@"\{0}_{1}_{2}_{3}_Voucher.docx", (resWrapper.CustomersList.OrderBy(cc => cc.Id)).ToList()[0].Surename, resWrapper.HotelName, resWrapper.RoomTypeNameByNum, resWrapper.Id);
+                        MessageBox.Show("Error");
+                        continue;
                     }
-                    Directory.CreateDirectory(outputpath + @"\Vouchers");
-                    folderNameVouchers = CreateFolder(resWrapper.CheckIn, @"\Vouchers\", booking.Excursion.Name);
+                    else if (res.ReservationType == ReservationTypeEnum.Transfer && !Tranmess)
+                    {
+                        MessageBox.Show("Η κράτηση είναι TRANSFER");
+                        Tranmess = true;
+                        continue;
+                    }
+                    else if (res.ReservationType == ReservationTypeEnum.OneDay)
+                    {
+                        MessageBox.Show("Η κράτηση είναι Μονοήμερη");
+                        continue;
+                    }
 
-                    Regex rgx = new Regex("[^a-zA-Z0-9\\ ._-]");
-                    VoucherFilename = rgx.Replace(VoucherFilename, "");
-                    await CreateWordVoucher(folderNameVouchers + VoucherFilename, resWrapper, booking);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
+                    try
+                    {
+                        string VoucherFilename;
+                        if (booking.IsPartners)
+                        {
+                            VoucherFilename = string.Format(@"\{0}_{1}_{2}_{3}_{4}_Voucher.docx", (resWrapper.CustomersList.OrderBy(cc => cc.Id)).ToList()[0].Surename, resWrapper.HotelName, resWrapper.RoomTypeNameByNum, booking.Partner.Name, resWrapper.Id);
+                        }
+                        else
+                        {
+                            VoucherFilename = string.Format(@"\{0}_{1}_{2}_{3}_Voucher.docx", (resWrapper.CustomersList.OrderBy(cc => cc.Id)).ToList()[0].Surename, resWrapper.HotelName, resWrapper.RoomTypeNameByNum, resWrapper.Id);
+                        }
+                        Directory.CreateDirectory(outputpath + @"\Vouchers");
+                        folderNameVouchers = CreateFolder(resWrapper.CheckIn, @"\Vouchers\", booking.Excursion.Name);
+
+                        Regex rgx = new Regex("[^a-zA-Z0-9\\ ._-]");
+                        VoucherFilename = rgx.Replace(VoucherFilename, "");
+                        if (send)
+                        {
+                        }
+                        else
+                            await CreateWordVoucher(folderNameVouchers + VoucherFilename, resWrapper, booking, send);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
                 }
             }
         }
@@ -1452,7 +1465,7 @@ namespace LATravelManager.UI.Helpers
             }
         }
 
-        private async Task CreateWordVoucher(string saveAs, ReservationWrapper reservationWr, BookingWrapper booking)
+        private async Task<string> CreateWordVoucher(string saveAs, ReservationWrapper reservationWr, BookingWrapper booking, bool send)
         {
             string fileName = "";
 
@@ -1642,12 +1655,15 @@ namespace LATravelManager.UI.Helpers
                         AddImageToBody(wordDoc, mainPart.GetIdOfPart(imagePart));
                     }
                     wordDoc.Close();
+                    return saveAs;
+
                     //Process.Start(saveAs);
                 }
                 catch (Exception)
                 {
                 }
             }
+            return "";
         }
 
         #endregion Methods
