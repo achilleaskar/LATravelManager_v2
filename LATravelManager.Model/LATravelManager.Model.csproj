@@ -63,12 +63,15 @@
     <Compile Include="BookingData\ThirdParty_Booking.cs" />
     <Compile Include="Excursions\CustomerOptional.cs" />
     <Compile Include="Hotels\HotelOptions.cs" />
+    <Compile Include="Hotels\PricingPeriod.cs" />
     <Compile Include="JsonBool.cs" />
     <Compile Include="NewClasses.cs" />
     <Compile Include="Notifications\Notification.cs" />
     <Compile Include="Notifications\NotifStatus.cs" />
     <Compile Include="Parea.cs" />
     <Compile Include="People\CustomerNeededValues.cs" />
+    <Compile Include="Pricing\ChildEtcPrices.cs" />
+    <Compile Include="Pricing\HotelPricing.cs" />
     <Compile Include="Thesi.cs" />
     <Compile Include="CustomFile.cs" />
     <Compile Include="EnumDescriptionTypeConverter.cs" />

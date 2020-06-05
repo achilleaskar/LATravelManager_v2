@@ -220,6 +220,10 @@
     <Compile Include="Migrations\202005260949558_NonameHotel.designer.cs">
       <DependentUpon>202005260949558_NonameHotel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202006021033156_pricing.cs" />
+    <Compile Include="Migrations\202006021033156_pricing.designer.cs">
+      <DependentUpon>202006021033156_pricing.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\ContextConfiguration.cs" />
     <Compile Include="MainDataBase.cs" />
     <Compile Include="Migrations\Configuration.cs" />
@@ -363,6 +367,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202005260949558_NonameHotel.resx">
       <DependentUpon>202005260949558_NonameHotel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202006021033156_pricing.resx">
+      <DependentUpon>202006021033156_pricing.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

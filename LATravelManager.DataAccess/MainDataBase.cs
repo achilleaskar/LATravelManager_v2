@@ -21,7 +21,7 @@ namespace LATravelManager.DataAccess
         #region Constructors
 
         public MainDatabase() : base(Properties.Settings.Default.IsTest ? test : normal)
-        // public MainDatabase() : base(test)
+        //public MainDatabase() : base("Server=localhost;Database=readmore_achill2;pooling=true;Uid=root;Pwd=Tr6981001676;Convert Zero Datetime=True;  default command timeout=3600;SslMode=none;TreatTinyAsBoolean=true;")
         {
             Configuration.ValidateOnSaveEnabled = false;
 
@@ -40,6 +40,7 @@ namespace LATravelManager.DataAccess
         #region Properties
 
         public DbSet<Airline> Airlines { get; set; }
+        public DbSet<PricingPeriod> PricingPeriods { get; set; }
         public DbSet<BookingInfoPerDay> BookingInfosPerDay { get; set; }
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<Bus> Buses { get; set; }

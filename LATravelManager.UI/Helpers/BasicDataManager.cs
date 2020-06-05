@@ -78,6 +78,11 @@ namespace LATravelManager.UI.Helpers
             }
         }
 
+        internal async Task GetAllPrices()
+        {
+           await  Context.UpdatePrices();
+        }
+
         public ObservableCollection<Bus> Buses
         {
             get

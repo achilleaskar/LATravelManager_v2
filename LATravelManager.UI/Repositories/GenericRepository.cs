@@ -119,7 +119,7 @@ namespace LATravelManager.UI.Repositories
             dbSet.Remove(entity);
         }
 
-       
+
 
         public void Dispose()
         {
@@ -543,7 +543,15 @@ namespace LATravelManager.UI.Repositories
 
         public bool HasChanges()
         {
-            return Context.ChangeTracker.HasChanges();
+            try
+            {
+                return Context.ChangeTracker.HasChanges();
+            }
+            catch (Exception)
+            {
+
+            }
+            return false;
         }
 
         public bool IsAnyInRoom(int roomId)
@@ -579,6 +587,10 @@ namespace LATravelManager.UI.Repositories
 
         public async Task SaveAsync()
         {
+            if (!Context.ChangeTracker.HasChanges())
+            {
+                return;
+            }
             Mouse.OverrideCursor = Cursors.Wait;
             List<DbEntityEntry> AddedEntities = Context.ChangeTracker.Entries().Where(E => E.State == EntityState.Added).ToList();
 
@@ -973,7 +985,7 @@ namespace LATravelManager.UI.Repositories
                   .Include(f => f.Booking.Excursion)
                   .Include(f => f.Booking.Excursion.ExcursionType)
                   .Include(f => f.Booking.Payments)
-                  .Include(f => f.Booking.Payments.Select(y=>y.User))
+                  .Include(f => f.Booking.Payments.Select(y => y.User))
                   .Include(f => f.Booking.ExcursionDate)
                   .Include(f => f.Room.Hotel)
                   .Include(f => f.Room.RoomType)
@@ -1520,6 +1532,24 @@ namespace LATravelManager.UI.Repositories
             {
                 IsContextAvailable = true;
             }
+        }
+
+        internal async Task UpdatePrices()
+        {
+            var x = await Context.PricingPeriods
+              .Where(p => (p.Parted && p.ToB >= DateTime.Today) || (!p.Parted && p.To > DateTime.Today))
+              .Include(p => p.ChilndEtcPrices.Transfer)
+              .Include(p => p.HotelPricings.Select(h => h.Hotel))
+              .ToListAsync();
+        }
+
+        internal async Task<List<Hotel>> GetAllHotelsWithRooms(int cityid, PricingPeriod selectedPeriodP)
+        {
+            return await RunTask(Context.Hotels
+                .Where(h => h.City.Id == cityid &&
+                h.Rooms.Any(r => r.DailyBookingInfo.Any(d => (d.Date >= selectedPeriodP.From && d.Date <= selectedPeriodP.To) ||
+                (selectedPeriodP.Parted && d.Date >= selectedPeriodP.FromB && d.Date <= selectedPeriodP.ToB))))
+                .ToListAsync);
         }
 
         #endregion Methods

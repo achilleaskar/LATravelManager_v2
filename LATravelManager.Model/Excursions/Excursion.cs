@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Windows.Documents;
+using LATravelManager.Model.Hotels;
 using LATravelManager.Model.Lists;
 using LATravelManager.Model.Locations;
 
@@ -15,6 +18,7 @@ namespace LATravelManager.Model.Excursions
         {
             ExcursionDates = new ObservableCollection<ExcursionDate>();
             Destinations = new ObservableCollection<City>();
+            Periods = new ObservableCollection<PricingPeriod>();
         }
 
         public ObservableCollection<Bus> Buses { get; set; }
@@ -80,6 +84,27 @@ namespace LATravelManager.Model.Excursions
                 }
 
                 _Deactivated = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private ObservableCollection<PricingPeriod> _Periods;
+
+        public ObservableCollection<PricingPeriod> Periods
+        {
+            get
+            {
+                return _Periods;
+            }
+
+            set
+            {
+                if (_Periods == value)
+                {
+                    return;
+                }
+
+                _Periods = value;
                 RaisePropertyChanged();
             }
         }

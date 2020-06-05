@@ -18,7 +18,7 @@
     <Grid Margin="20"
           HorizontalAlignment="Center">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="390" />
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -30,88 +30,12 @@
                      Grid.Column="0"
                      HorizontalAlignment="Center"
                      VerticalAlignment="Center">
-                <Grid VerticalAlignment="Center">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <Label Content="Όνομα:"
-                           Grid.Row="0"
-                           Grid.Column="0" />
-                    <TextBox Text="{Binding SelectedEntity.Name,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
-                             Margin="5 5 0 5"
-                             Grid.Row="0"
-                             Width="185"
-                             HorizontalAlignment="Left"
-                             Grid.Column="1" />
-                    <Label Content="Τύπος:"
-                           Grid.Row="1"
-                           Grid.Column="0" />
-                    <ComboBox ItemsSource="{Binding ExcursionCategories}"
-                              DisplayMemberPath="Name"
-                              MinWidth="150"
-                              SelectedValue="{Binding SelectedEntity.ExcursionType, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
-                              Margin="5"
-                              HorizontalAlignment="Left"
-                              Grid.Row="1"
-                              Grid.Column="1" />
-                    <TextBlock Text="Επιλεγμένες Πόλεις:"
-                               Grid.Row="2" />
-                    <ListView Grid.Row="3"
-                              ItemsSource="{Binding SelectedEntity.Destinations,ValidatesOnDataErrors=True}"
-                              SelectedItem="{Binding SelectedCity}"
-                              DisplayMemberPath="Name"
-                              Height="100" />
-                    <StackPanel Grid.Row="3"
-                                Grid.Column="1">
-                        <StackPanel Orientation="Horizontal">
-                            <ComboBox ItemsSource="{Binding Cities}"
-                                      SelectedItem="{Binding SelectedCityToAdd}"
-                                      DisplayMemberPath="Name"
-                                      VerticalAlignment="Center"
-                                      Margin="5"
-                                      Width="150"
-                                      IsEditable="True" />
-                            <Button HorizontalAlignment="Right"
-                                    Padding="3,4,3,3"
-                                    Cursor="Hand"
-                                    VerticalAlignment="Center"
-                                    Command="{Binding OpenCitiesEditCommand}">
-                                <iconPacks:PackIconFontAwesome Kind="PlusSolid"
-                                                               VerticalAlignment="Center" />
-                            </Button>
-                        </StackPanel>
-                        <Button Content="Προσθήκη"
-                                Margin="5"
-                                Command="{Binding AddCityCommand}" />
-                        <Button Content="Αφαίρεση"
-                                Margin="5"
-                                Command="{Binding RemoveCityCommand}" />
-                    </StackPanel>
-                    <TextBlock Text="Ημερομηνίες:"
-                               Grid.Row="4" />
-                    <ListView Grid.Row="5"
-                              Width="180"
-                              ItemsSource="{Binding SelectedEntity.ExcursionDates,ValidatesOnDataErrors=True}"
-                              SelectedItem="{Binding SelectedDate}"
-                              DisplayMemberPath="Name"
-                              Height="160" />
-                    <Grid Grid.Row="5"
-                          HorizontalAlignment="Left"
-                          Margin="0 0 5 0"
-                          Grid.Column="1">
+                <StackPanel>
+                    <Grid VerticalAlignment="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -119,85 +43,185 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="120" />
-                        </Grid.ColumnDefinitions>
-                        <Label Content="Check In:"
-                               Grid.Row="0" />
-                        <DatePicker Grid.Row="0"
-                                    SelectedDate="{Binding SelectedDate.CheckIn,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                    VerticalAlignment="Center"
-                                    Grid.Column="1" />
-                        <Label Content="Check Out:"
+                        <Label Content="Όνομα:"
+                               Grid.Row="0"
+                               Grid.Column="0" />
+                        <TextBox Text="{Binding SelectedEntity.Name,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="5 5 0 5"
+                                 Grid.Row="0"
+                                 Width="185"
+                                 HorizontalAlignment="Left"
+                                 Grid.Column="1" />
+                        <Label Content="Τύπος:"
                                Grid.Row="1"
                                Grid.Column="0" />
-                        <DatePicker Grid.Row="1"
-                                    SelectedDate="{Binding SelectedDate.CheckOut,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                    VerticalAlignment="Center"
-                                    Grid.Column="1" />
-                        <Label Content="Όνομα:"
-                               Grid.Row="2"
-                               Width="Auto"
-                               Margin="0"
-                               Grid.Column="0" />
-                        <TextBox Text="{Binding SelectedDate.Name,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                 Grid.Row="2"
-                                 Grid.Column="1" />
-                        <CheckBox Content="Βραδινή"
+                        <ComboBox ItemsSource="{Binding ExcursionCategories}"
+                                  DisplayMemberPath="Name"
+                                  MinWidth="150"
+                                  SelectedValue="{Binding SelectedEntity.ExcursionType, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
                                   Margin="5"
-                                  HorizontalAlignment="Right"
-                                  IsChecked="{Binding SelectedDate.NightStart}"
-                                  Grid.Row="3"
-                                  Grid.ColumnSpan="2" />
-                        <Button Content="Προσθήκη"
-                                Margin="5 0 0 5"
-                                Grid.Row="4"
-                                Grid.ColumnSpan="2"
-                                Command="{Binding AddDateCommand}" />
-                        <Button Content="Αφαίρεση"
-                                Margin="5 5 0 5"
-                                Grid.Row="5"
-                                Grid.ColumnSpan="2"
-                                Command="{Binding RemoveDateCommand}" />
+                                  HorizontalAlignment="Left"
+                                  Grid.Row="1"
+                                  Grid.Column="1" />
+                        <TextBlock Text="Επιλεγμένες Πόλεις:"
+                                   Grid.Row="2" />
+                        <ListView Grid.Row="3"
+                                  ItemsSource="{Binding SelectedEntity.Destinations,ValidatesOnDataErrors=True}"
+                                  SelectedItem="{Binding SelectedCity}"
+                                  DisplayMemberPath="Name"
+                                  Height="100" />
+                        <StackPanel Grid.Row="3"
+                                    Grid.Column="1">
+                            <StackPanel Orientation="Horizontal">
+                                <ComboBox ItemsSource="{Binding Cities}"
+                                          SelectedItem="{Binding SelectedCityToAdd}"
+                                          DisplayMemberPath="Name"
+                                          VerticalAlignment="Center"
+                                          Margin="5"
+                                          Width="150"
+                                          IsEditable="True" />
+                                <Button HorizontalAlignment="Right"
+                                        Padding="3,4,3,3"
+                                        Cursor="Hand"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding OpenCitiesEditCommand}">
+                                    <iconPacks:PackIconFontAwesome Kind="PlusSolid"
+                                                                   VerticalAlignment="Center" />
+                                </Button>
+                            </StackPanel>
+                            <Button Content="Προσθήκη"
+                                    Margin="5"
+                                    Command="{Binding AddCityCommand}" />
+                            <Button Content="Αφαίρεση"
+                                    Margin="5"
+                                    Command="{Binding RemoveCityCommand}" />
+                        </StackPanel>
+                        <TextBlock Text="Ημερομηνίες:"
+                                   Grid.Row="4" />
+                        <ListView Grid.Row="5"
+                                  Width="180"
+                                  ItemsSource="{Binding SelectedEntity.ExcursionDates,ValidatesOnDataErrors=True}"
+                                  SelectedItem="{Binding SelectedDate}"
+                                  DisplayMemberPath="Name"
+                                  Height="160" />
+                        <Grid Grid.Row="5"
+                              HorizontalAlignment="Left"
+                              Margin="0 0 5 0"
+                              Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="120" />
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Check In:"
+                                   Grid.Row="0" />
+                            <DatePicker Grid.Row="0"
+                                        SelectedDate="{Binding SelectedDate.CheckIn,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                        VerticalAlignment="Center"
+                                        Grid.Column="1" />
+                            <Label Content="Check Out:"
+                                   Grid.Row="1"
+                                   Grid.Column="0" />
+                            <DatePicker Grid.Row="1"
+                                        SelectedDate="{Binding SelectedDate.CheckOut,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                        VerticalAlignment="Center"
+                                        Grid.Column="1" />
+                            <Label Content="Όνομα:"
+                                   Grid.Row="2"
+                                   Width="Auto"
+                                   Margin="0"
+                                   Grid.Column="0" />
+                            <TextBox Text="{Binding SelectedDate.Name,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                     Grid.Row="2"
+                                     Grid.Column="1" />
+                            <CheckBox Content="Βραδινή"
+                                      Margin="5"
+                                      HorizontalAlignment="Right"
+                                      IsChecked="{Binding SelectedDate.NightStart}"
+                                      Grid.Row="3"
+                                      Grid.ColumnSpan="2" />
+                            <Button Content="Προσθήκη"
+                                    Margin="5 0 0 5"
+                                    Grid.Row="4"
+                                    Grid.ColumnSpan="2"
+                                    Command="{Binding AddDateCommand}" />
+                            <Button Content="Αφαίρεση"
+                                    Margin="5 5 0 5"
+                                    Grid.Row="5"
+                                    Grid.ColumnSpan="2"
+                                    Command="{Binding RemoveDateCommand}" />
+                        </Grid>
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="6"
+                                    Grid.ColumnSpan="2">
+                            <Label Content="Ταυτότ.:" />
+                            <CheckBox IsChecked="{Binding SelectedEntity.PassportNeeded,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                      VerticalAlignment="Center" />
+                            <Label Content="Ημερ. Γεν. :" />
+                            <CheckBox IsChecked="{Binding SelectedEntity.DOBNeeded,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                      VerticalAlignment="Center" />
+                            <Label Content="Πασο:" />
+                            <CheckBox IsChecked="{Binding SelectedEntity.DiscountsExist,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                      VerticalAlignment="Center" />
+                            <Label Content="Group:" />
+                            <CheckBox IsChecked="{Binding SelectedEntity.FixedDates,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                      VerticalAlignment="Center" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="7"
+                                    Grid.ColumnSpan="2">
+                            <Label Content="Λεοφορείο:" />
+                            <CheckBox IsChecked="{Binding SelectedEntity.IncludesBus,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                      VerticalAlignment="Center" />
+                            <Label Content="Αεροπλάνο:" />
+                            <CheckBox IsChecked="{Binding SelectedEntity.IncludesPlane,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                      VerticalAlignment="Center" />
+                            <Label Content="Πλοίο:" />
+                            <CheckBox IsChecked="{Binding SelectedEntity.IncludesShip,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                      VerticalAlignment="Center" />
+                        </StackPanel>
                     </Grid>
-                    <StackPanel Orientation="Horizontal"
-                                Grid.Row="6"
-                                Grid.ColumnSpan="2">
-                        <Label Content="Ταυτότ.:" />
-                        <CheckBox IsChecked="{Binding SelectedEntity.PassportNeeded,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                  VerticalAlignment="Center" />
-                        <Label Content="Ημερ. Γεν. :" />
-                        <CheckBox IsChecked="{Binding SelectedEntity.DOBNeeded,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                  VerticalAlignment="Center" />
-                        <Label Content="Πασο:" />
-                        <CheckBox IsChecked="{Binding SelectedEntity.DiscountsExist,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                  VerticalAlignment="Center" />
-                        <Label Content="Group:" />
-                        <CheckBox IsChecked="{Binding SelectedEntity.FixedDates,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                  VerticalAlignment="Center" />
+                    <StackPanel Orientation="Vertical"
+                                Grid.Row="1">
+                        <CheckBox Content="Απενεργοποιημένη εδρομή"
+                                  HorizontalAlignment="Right"
+                                  Margin="5"
+                                  IsChecked="{Binding SelectedEntity.Deactivated}" />
+                        <Button Content="Προσθήκη"
+                                Margin="5,5,5,0"
+                                Command="{Binding AddEntityCommand}" />
+                        <Button Content="Αποθήκευση Αλλαγών"
+                                Margin="5,5,5,0"
+                                Command="{Binding SaveChangesCommand}" />
+                        <Button Content="Καθαρισμός"
+                                Margin="5,5,5,0"
+                                Command="{Binding ClearEntityCommand}" />
+                        <TextBlock Text="{Binding ResultMessage}"
+                                   Grid.Row="9"
+                                   Grid.ColumnSpan="2"
+                                   TextWrapping="Wrap"
+                                   HorizontalAlignment="Center" />
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal"
-                                Grid.Row="7"
-                                Grid.ColumnSpan="2">
-                        <Label Content="Λεοφορείο:" />
-                        <CheckBox IsChecked="{Binding SelectedEntity.IncludesBus,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                  VerticalAlignment="Center" />
-                        <Label Content="Αεροπλάνο:" />
-                        <CheckBox IsChecked="{Binding SelectedEntity.IncludesPlane,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                  VerticalAlignment="Center" />
-                        <Label Content="Πλοίο:" />
-                        <CheckBox IsChecked="{Binding SelectedEntity.IncludesShip,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                  VerticalAlignment="Center" />
-                    </StackPanel>
-                </Grid>
+                </StackPanel>
             </TabItem>
             <TabItem Header="Ώρες">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Left">
@@ -215,7 +239,7 @@
                                 CommandParameter="1"
                                 Margin="5"
                                 FontSize="12" />
-                        <Button Content="Ενημέρωση'"
+                        <Button Content="Ενημέρωση"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
                                 Command="{Binding AddTimesCommand}"
@@ -225,7 +249,6 @@
                     <DataGrid CanUserSortColumns="True"
                               Grid.Row="1"
                               HorizontalAlignment="Stretch"
-                              VerticalAlignment="Stretch"
                               CanUserAddRows="False"
                               CanUserDeleteRows="False"
                               AutoGenerateColumns="False"
@@ -235,7 +258,7 @@
                                                 IsReadOnly="True"
                                                 Width="150"
                                                 Binding="{Binding StartingPlace}" />
-                            <DataGridTextColumn Header="Όλοι"
+                            <DataGridTextColumn Header="Ώρα"
                                                 Width="80"
                                                 CanUserResize="True"
                                                 Binding="{Binding Time,Converter={StaticResource DateTimeToString},ConverterParameter=t}">
@@ -246,33 +269,271 @@
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
-                            <DataGridCheckBoxColumn Header="Ενεργό" Binding="{Binding Enabled}"/>
+                            <DataGridCheckBoxColumn Header="Ενεργό"
+                                                    Binding="{Binding Enabled,UpdateSourceTrigger=PropertyChanged}" />
+                            <DataGridTextColumn Header="Επιβάρυνση"
+                                                Binding="{Binding ExtraAmmount,UpdateSourceTrigger=PropertyChanged}" />
                         </DataGrid.Columns>
                     </DataGrid>
+                    <StackPanel Orientation="Vertical"
+                                VerticalAlignment="Bottom"
+                                Grid.Row="2">
+                        <CheckBox Content="Απενεργοποιημένη εδρομή"
+                                  HorizontalAlignment="Right"
+                                  Margin="5"
+                                  IsChecked="{Binding SelectedEntity.Deactivated}" />
+                        <Button Content="Προσθήκη"
+                                Margin="5,5,5,0"
+                                Command="{Binding AddEntityCommand}" />
+                        <Button Content="Αποθήκευση Αλλαγών"
+                                Margin="5,5,5,0"
+                                Command="{Binding SaveChangesCommand}" />
+                        <Button Content="Καθαρισμός"
+                                Margin="5,5,5,0"
+                                Command="{Binding ClearEntityCommand}" />
+                        <TextBlock Text="{Binding ResultMessage}"
+                                   Grid.Row="9"
+                                   Grid.ColumnSpan="2"
+                                   TextWrapping="Wrap"
+                                   HorizontalAlignment="Center" />
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Περίοδοι">
+                <StackPanel Margin="5">
+                    <GroupBox Header="Επεξεργασία"
+                              HorizontalAlignment="Center">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="85" />
+                                <ColumnDefinition Width="120" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Label Content="Όνομα:"
+                                   Grid.Row="0"
+                                   Grid.Column="0" />
+                            <TextBox Text="{Binding SelectedPeriod.Name,UpdateSourceTrigger=PropertyChanged}"
+                                     Grid.Row="0"
+                                     Grid.Column="1" />
+                            <Label Content="Από:"
+                                   Grid.Row="1"
+                                   Grid.Column="0" />
+                            <DatePicker SelectedDate="{Binding SelectedPeriod.From,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                                        Margin="0,5,5,5"
+                                        Grid.Row="1"
+                                        Grid.Column="1" />
+                            <Label Content="Έως:"
+                                   Grid.Row="2"
+                                   Grid.Column="0" />
+                            <DatePicker SelectedDate="{Binding SelectedPeriod.To,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                                        Margin="0,5,5,5"
+                                        Grid.Row="2"
+                                        Grid.Column="1" />
+                            <Label Content="Διπλο:"
+                                   Grid.Row="3"
+                                   Grid.Column="0" />
+                            <CheckBox IsChecked="{Binding SelectedPeriod.Parted}"
+                                      Grid.Row="3"
+                                      Margin="0,5,5,5"
+                                      Grid.Column="1" />
+                            <Label Content="ΑπόB:"
+                                   Grid.Row="4"
+                                   Grid.Column="0" />
+                            <DatePicker SelectedDate="{Binding SelectedPeriod.FromB,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                                        Margin="0,5,5,5"
+                                        Grid.Row="4"
+                                        Grid.Column="1" />
+                            <Label Content="ΈωςB:"
+                                   Grid.Row="5"
+                                   Grid.Column="0" />
+                            <DatePicker SelectedDate="{Binding SelectedPeriod.ToB,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                                        Margin="0,5,5,5"
+                                        Grid.Row="5"
+                                        Grid.Column="1" />
+                            <StackPanel Orientation="Vertical"
+                                        Grid.Row="6"
+                                        Grid.ColumnSpan="2">
+                                <Button Content="Προσθήκη"
+                                        Margin="5,5,5,0"
+                                        Command="{Binding AddPeriodCommand}" />
+                                <Button Content="Αποθήκευση Αλλαγών"
+                                        Margin="5,5,5,0"
+                                        Command="{Binding SavePeriodChangesCommand}" />
+                                <Button Content="Καθαρισμός"
+                                        Margin="5,5,5,0"
+                                        Command="{Binding ClearPeriodCommand}" />
+                            </StackPanel>
+                            <TextBlock Text="{Binding PeriodResultMessage}"
+                                       Grid.Row="7"
+                                       Grid.ColumnSpan="2"
+                                       TextWrapping="Wrap"
+                                       Width="195"
+                                       Margin="5"
+                                       HorizontalAlignment="Left" />
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox Header="Καταχωρημένες Περίοδοι"
+                              HorizontalAlignment="Center">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <DataGrid ItemsSource="{Binding SelectedEntity.Periods}"
+                                      Width="395"
+                                      Grid.Row="1"
+                                      VerticalAlignment="Stretch"
+                                      AutoGenerateColumns="False"
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      SelectedItem="{Binding SelectedPeriod}">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Απο"
+                                                        Binding="{Binding From,StringFormat='{}{0:dd/MM/yyyy}'}"
+                                                        IsReadOnly="True"
+                                                        Width="85" />
+                                    <DataGridTextColumn Header="Έως"
+                                                        Width="85"
+                                                        IsReadOnly="True"
+                                                        Binding="{Binding To,StringFormat='{}{0:dd/MM/yyyy}'}" />
+                                    <DataGridCheckBoxColumn Header="Διπλό"
+                                                            IsReadOnly="True"
+                                                            Binding="{Binding Parted,UpdateSourceTrigger=PropertyChanged}" />
+                                    <DataGridTextColumn Header="ΑποB:"
+                                                        Binding="{Binding FromB,StringFormat='{}{0:dd/MM/yyyy}'}"
+                                                        IsReadOnly="True"
+                                                        Width="85" />
+                                    <DataGridTextColumn Header="ΈωςB"
+                                                        Width="85"
+                                                        IsReadOnly="True"
+                                                        Binding="{Binding ToB,StringFormat='{}{0:dd/MM/yyyy}'}" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            <Button Content="Διαγραφη"
+                                    Grid.Row="2"
+                                    HorizontalAlignment="Right"
+                                    Margin="5"
+                                    VerticalAlignment="Bottom"
+                                    Command="{Binding RemovePeriodCommand}" />
+                        </Grid>
+                    </GroupBox>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Τιμές">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="120" />
+                        <ColumnDefinition Width="120" />
+                        <ColumnDefinition Width="120" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Vertical">
+                        <Label Content="Εκπτώσεις" />
+                        <Label Content="Περίοδος:"
+                               Grid.Row="0"
+                               Grid.Column="0" />
+                    </StackPanel>
+                    <ComboBox ItemsSource="{Binding SelectedEntity.Periods,UpdateSourceTrigger=PropertyChanged}"
+                              SelectedItem="{Binding SelectedPeriodP,UpdateSourceTrigger=PropertyChanged}"
+                              Grid.Row="0"
+                              VerticalAlignment="Bottom"
+                              DisplayMemberPath="Name"
+                              Grid.Column="1" />
+                    <Label Content="6-12 (-%):"
+                           Grid.Row="1"
+                           Grid.Column="0" />
+                    <TextBox Text="{Binding SelectedPeriodP.ChilndEtcPrices.Under12,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                             Margin="0,5,5,5"
+                             Grid.Row="1"
+                             Grid.Column="1" />
+                    <Label Content="12-18 (-%):"
+                           Grid.Row="2"
+                           Grid.Column="0" />
+                    <TextBox Text="{Binding  SelectedPeriodP.ChilndEtcPrices.Under18,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                             Grid.Row="2"
+                             Margin="0,5,5,5"
+                             Grid.Column="1" />
+                    <Label Content="OnlyStay (-€):"
+                           Grid.Row="3"
+                           Grid.Column="0" />
+                    <TextBox Text="{Binding SelectedPeriodP.ChilndEtcPrices.OnlyStayDiscount,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                             Margin="0,5,5,5"
+                             Grid.Row="3"
+                             Grid.Column="1" />
+                    <Label Content="Μονόκλινο (+€):"
+                           Grid.Row="4"
+                           Grid.Column="0" />
+                    <TextBox Text="{Binding  SelectedPeriodP.ChilndEtcPrices.Single,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                             Margin="0,5,5,5"
+                             Grid.Row="4"
+                             Grid.Column="1" />
+                    <DataGrid ItemsSource="{Binding HotelPricings}"
+                              Width="595"
+                              Grid.Row="5" Grid.ColumnSpan="3"
+                              VerticalAlignment="Stretch"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Ονομα"
+                                                Binding="{Binding Name}"
+                                                SortDirection="Ascending"
+                                                IsReadOnly="True"
+                                                Width="150" />
+                            <DataGridTextColumn Header="2"
+                                                Binding="{Binding N2}"
+                                                Width="30" />
+                            <DataGridTextColumn Header="3"
+                                                Binding="{Binding N3}"
+                                                Width="30" />
+                            <DataGridTextColumn Header="4"
+                                                Binding="{Binding N4}"
+                                                Width="30" />
+                            <DataGridTextColumn Header="5"
+                                                Binding="{Binding N5}"
+                                                Width="30" />
+                            <DataGridTextColumn Header="6"
+                                                Binding="{Binding N6}"
+                                                Width="30" />
+                            <DataGridTextColumn Header="7"
+                                                Binding="{Binding N7}"
+                                                Width="30" />
+                            <DataGridTextColumn Header="8"
+                                                Binding="{Binding N8}"
+                                                Width="30" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <StackPanel Grid.Row="6" Grid.ColumnSpan="3"
+                                Orientation="Vertical">
+                        <Button Content="Προσθήκη Νέων"
+                                Margin="5,5,5,0"
+                                Command="{Binding AddNewHotelsCommand}" />
+                        <Button Content="Αποθήκευση Αλλαγών"
+                                Margin="5,5,5,0"
+                                Command="{Binding SavePriceChangesChangesCommand}" />
+                    </StackPanel>
                 </Grid>
             </TabItem>
         </TabControl>
-        <StackPanel Orientation="Vertical"
-                    Grid.Row="1">
-            <CheckBox Content="Απενεργοποιημένη εδρομή"
-                      HorizontalAlignment="Right"
-                      Margin="5"
-                      IsChecked="{Binding SelectedEntity.Deactivated}" />
-            <Button Content="Προσθήκη"
-                    Margin="5,5,5,0"
-                    Command="{Binding AddEntityCommand}" />
-            <Button Content="Αποθήκευση Αλλαγών"
-                    Margin="5,5,5,0"
-                    Command="{Binding SaveChangesCommand}" />
-            <Button Content="Καθαρισμός"
-                    Margin="5,5,5,0"
-                    Command="{Binding ClearEntityCommand}" />
-            <TextBlock Text="{Binding ResultMessage}"
-                       Grid.Row="9"
-                       Grid.ColumnSpan="2"
-                       TextWrapping="Wrap"
-                       HorizontalAlignment="Center" />
-        </StackPanel>
         <GroupBox Header="Καταχωρημένες Εκδρομές"
                   Grid.Column="1"
                   Grid.RowSpan="2"
@@ -288,13 +549,23 @@
                           VerticalAlignment="Center"
                           Margin="5 0"
                           IsChecked="{Binding ShowFinished}" />
-                <Button HorizontalAlignment="Right"
-                        Cursor="Hand"
-                        Command="{Binding UpdateEntitiesCommand}">
-                    <iconPacks:PackIconFontAwesome Kind="SyncSolid"
-                                                   VerticalAlignment="Center"
-                                                   Margin="5" />
-                </Button>
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Right">
+                    <Button HorizontalAlignment="Right"
+                            Cursor="Hand"
+                            Command="{Binding UpdateEntitiesCommand}">
+                        <iconPacks:PackIconFontAwesome Kind="SyncSolid"
+                                                       VerticalAlignment="Center"
+                                                       Margin="5" />
+                    </Button>
+                    <Button HorizontalAlignment="Right"
+                            Cursor="Hand"
+                            Command="{Binding UpdatePricesCommand}">
+                        <iconPacks:PackIconFontAwesome Kind="DollarSignSolid"
+                                                       VerticalAlignment="Center"
+                                                       Margin="5" />
+                    </Button>
+                </StackPanel>
                 <DataGrid ItemsSource="{Binding MainCollection}"
                           MaxWidth="490"
                           Grid.Row="1"

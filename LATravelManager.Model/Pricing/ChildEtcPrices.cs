@@ -1,98 +1,73 @@
-﻿using System;
-using LATravelManager.Model.Locations;
+﻿using LATravelManager.Model.Hotels;
 
-namespace LATravelManager.Model.Excursions
+namespace LATravelManager.Model.Pricing
 {
-    public class ExcursionTime : BaseModel
+    public class ChildEtcPrices : BaseModel
     {
-        public ExcursionTime()
+
+        public ChildEtcPrices()
         {
+            Transfer = new HotelPricing() ;
         }
+        private int _Under12;
 
-        private TimeSpan _Time;
-
-        public TimeSpan Time
+        public int Under12
         {
             get
             {
-                return _Time;
+                return _Under12;
             }
 
             set
             {
-                if (_Time == value)
+                if (_Under12 == value)
                 {
                     return;
                 }
 
-                _Time = value;
+                _Under12 = value;
                 RaisePropertyChanged();
             }
         }
 
-        private City _From;
+        private int _Under18;
 
-        public City From
+        public int Under18
         {
             get
             {
-                return _From;
+                return _Under18;
             }
 
             set
             {
-                if (_From == value)
+                if (_Under18 == value)
                 {
                     return;
                 }
 
-                _From = value;
+                _Under18 = value;
                 RaisePropertyChanged();
             }
         }
 
+        private int _OnlyStayDiscount;
 
-
-
-        private bool _Enabled;
-
-
-        public bool Enabled
+        public int OnlyStayDiscount
         {
             get
             {
-                return _Enabled;
+                return _OnlyStayDiscount;
             }
 
             set
             {
-                if (_Enabled == value)
+                if (_OnlyStayDiscount == value)
                 {
                     return;
                 }
 
-                _Enabled = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private StartingPlace _StartingPlace;
-
-        public StartingPlace StartingPlace
-        {
-            get
-            {
-                return _StartingPlace;
-            }
-
-            set
-            {
-                if (_StartingPlace == value)
-                {
-                    return;
-                }
-
-                _StartingPlace = value;
+                _OnlyStayDiscount = value;
                 RaisePropertyChanged();
             }
         }
@@ -100,24 +75,45 @@ namespace LATravelManager.Model.Excursions
 
 
 
-        private int _ExtraAmmount;
+        private int _Single;
 
 
-        public int ExtraAmmount
+        public int Single
         {
             get
             {
-                return _ExtraAmmount;
+                return _Single;
             }
 
             set
             {
-                if (_ExtraAmmount == value)
+                if (_Single == value)
                 {
                     return;
                 }
 
-                _ExtraAmmount = value;
+                _Single = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private HotelPricing _Transfer;
+
+        public HotelPricing Transfer
+        {
+            get
+            {
+                return _Transfer;
+            }
+
+            set
+            {
+                if (_Transfer == value)
+                {
+                    return;
+                }
+
+                _Transfer = value;
                 RaisePropertyChanged();
             }
         }

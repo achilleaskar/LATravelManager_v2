@@ -1,15 +1,18 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using GalaSoft.MvvmLight.CommandWpf;
+﻿using GalaSoft.MvvmLight.CommandWpf;
 using LaTravelManager.BaseTypes;
 using LATravelManager.Model.Excursions;
+using LATravelManager.Model.Hotels;
 using LATravelManager.Model.Locations;
+using LATravelManager.Model.Pricing;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.Views.Management;
 using LATravelManager.UI.Wrapper;
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace LaTravelManager.ViewModel.Management
 {
@@ -24,9 +27,215 @@ namespace LaTravelManager.ViewModel.Management
             RemoveDateCommand = new RelayCommand(RemoveDate, CanRemoveDate);
             RemoveCityCommand = new RelayCommand(RemoveCity, CanRemoveCity);
             AddCityCommand = new RelayCommand(AddCity, CanAddCity);
+
+            AddPeriodCommand = new RelayCommand(AddPeriod, CanAddPeriod);
+            ClearPeriodCommand = new RelayCommand(CleanPeriod, CanCleanPeriod);
+            SavePeriodChangesCommand = new RelayCommand(SavePeriodChanges, CanSavePeriodChanges);
+            RemovePeriodCommand = new RelayCommand(RemovePeriod, CanRemovePeriod);
+            UpdatePricesCommand = new RelayCommand(async () => { await ReloadPrices(); }, true);
+
+            SavePriceChangesChangesCommand = new RelayCommand(SavePriceChanges, BasicDataManager.HasChanges());
+            AddNewHotelsCommand = new RelayCommand(async () => await AddNewHotels(), SelectedEntity != null && SelectedPeriodP != null);
+
             AddDateCommand = new RelayCommand(AddDate, CanAddDate);
             AddTimesCommand = new RelayCommand(AddTimes, CanAddTimes);
             AddHalfHourCommand = new RelayCommand<int>(AddHalfHour);
+            SelectedPeriod = new PricingPeriod();
+        }
+
+        private async Task AddNewHotels()
+        {
+            var hotels = await BasicDataManager.Context.GetAllHotelsWithRooms(SelectedEntity.Destinations[0].Id, SelectedPeriodP);
+            foreach (var hotel in hotels)
+            {
+                if (!SelectedPeriodP.HotelPricings.Any(h => h.Hotel.Id == hotel.Id))
+                {
+                    SelectedPeriodP.HotelPricings.Add(new HotelPricing { Hotel = hotel });
+                }
+            }
+            UpdateHotels();
+        }
+
+        private async void SavePriceChanges()
+        {
+            try
+            {
+                MessengerInstance.Send(new IsBusyChangedMessage(true));
+                await BasicDataManager.SaveAsync();
+            }
+            catch (Exception ex)
+            {
+                MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
+            }
+            finally
+            {
+                MessengerInstance.Send(new IsBusyChangedMessage(false));
+            }
+        }
+
+        private bool CanSavePriceChanges()
+        {
+            throw new NotImplementedException();
+        }
+
+        private async Task ReloadPrices()
+        {
+            await ReloadEntities();
+            await BasicDataManager.GetAllPrices();
+        }
+
+        private bool CanRemovePeriod()
+        {
+            return SelectedPeriod != null && SelectedPeriod.Id > 0;
+        }
+
+        private PricingPeriod _SelectedPeriodP;
+
+        public PricingPeriod SelectedPeriodP
+        {
+            get
+            {
+                return _SelectedPeriodP;
+            }
+
+            set
+            {
+                if (_SelectedPeriodP == value)
+                {
+                    return;
+                }
+
+                _SelectedPeriodP = value;
+                UpdateHotels();
+                RaisePropertyChanged();
+            }
+        }
+
+        private void UpdateHotels()
+        {
+            if (SelectedPeriodP != null)
+            {
+                HotelPricings = new ObservableCollection<HotelPricing>(SelectedPeriodP.HotelPricings);
+                if (!HotelPricings.Contains(SelectedPeriodP.ChilndEtcPrices.Transfer))
+                {
+                    HotelPricings.Insert(0, SelectedPeriodP.ChilndEtcPrices.Transfer);
+                }
+            }
+        }
+
+        private ObservableCollection<HotelPricing> _HotelPricings;
+
+        public ObservableCollection<HotelPricing> HotelPricings
+        {
+            get
+            {
+                return _HotelPricings;
+            }
+
+            set
+            {
+                if (_HotelPricings == value)
+                {
+                    return;
+                }
+
+                _HotelPricings = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private void RemovePeriod()
+        {
+            try
+            {
+                SelectedEntity.Periods.Remove(SelectedPeriod);
+                SelectedPeriod = new PricingPeriod();
+            }
+            catch (Exception ex)
+            {
+                MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
+            }
+        }
+
+        private bool CanSavePeriodChanges()
+        {
+            return BasicDataManager.HasChanges() && SelectedPeriod != null && SelectedPeriodIsOk();
+        }
+
+        private async void SavePeriodChanges()
+        {
+            try
+            {
+                MessengerInstance.Send(new IsBusyChangedMessage(true));
+                await BasicDataManager.SaveAsync();
+                PeriodResultMessage = "Όι αλλαγές απόθηκεύτηκαν επιτυχώς";
+            }
+            catch (Exception ex)
+            {
+                MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
+            }
+            finally
+            {
+                MessengerInstance.Send(new IsBusyChangedMessage(false));
+            }
+        }
+
+        private bool CanCleanPeriod()
+        {
+            return SelectedPeriod != null;
+        }
+
+        private void CleanPeriod()
+        {
+            SelectedPeriod = new PricingPeriod();
+            PeriodResultMessage = "";
+        }
+
+        private bool CanAddPeriod()
+        {
+            return SelectedPeriod != null && SelectedPeriodIsOk() && SelectedPeriod.Id == 0;
+        }
+
+        public bool SelectedPeriodIsOk()
+        {
+            return SelectedPeriod != null && SelectedPeriod.To > SelectedPeriod.From &&
+                (!SelectedPeriod.Parted ||
+                (SelectedPeriod.FromB > SelectedPeriod.To && SelectedPeriod.ToB > SelectedPeriod.FromB));
+        }
+
+        private string _PeriodResultMessage;
+
+        public string PeriodResultMessage
+        {
+            get
+            {
+                return _PeriodResultMessage;
+            }
+
+            set
+            {
+                if (_PeriodResultMessage == value)
+                {
+                    return;
+                }
+
+                _PeriodResultMessage = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private void AddPeriod()
+        {
+            try
+            {
+                SelectedEntity.Periods.Add(SelectedPeriod);
+                PeriodResultMessage = "Η περίοδος προστέθηκε επιτυχώς";
+                RemovePeriodCommand.RaiseCanExecuteChanged();
+            }
+            catch (Exception ex)
+            {
+                MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
+            }
         }
 
         private void AddHalfHour(int obj)
@@ -86,6 +295,35 @@ namespace LaTravelManager.ViewModel.Management
         #endregion Fields
 
         #region Properties
+
+        public RelayCommand AddPeriodCommand { get; set; }
+        public RelayCommand UpdatePricesCommand { get; set; }
+        public RelayCommand SavePeriodChangesCommand { get; set; }
+        public RelayCommand AddNewHotelsCommand { get; set; }
+        public RelayCommand SavePriceChangesChangesCommand { get; set; }
+        public RelayCommand ClearPeriodCommand { get; set; }
+        public RelayCommand RemovePeriodCommand { get; set; }
+
+        private PricingPeriod _SelectedPeriod;
+
+        public PricingPeriod SelectedPeriod
+        {
+            get
+            {
+                return _SelectedPeriod;
+            }
+
+            set
+            {
+                if (_SelectedPeriod == value)
+                {
+                    return;
+                }
+
+                _SelectedPeriod = value;
+                RaisePropertyChanged();
+            }
+        }
 
         /// <summary>
         /// Adds the selected city to the excursion Destinations
@@ -231,7 +469,7 @@ namespace LaTravelManager.ViewModel.Management
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
 
-                MainCollection = new ObservableCollection<ExcursionWrapper>(BasicDataManager.Excursions.Where(c => ShowFinished || c.ExcursionDates.Any(d => d.CheckIn >= DateTime.Today)).Select(c => new ExcursionWrapper(c)));
+                MainCollection = new ObservableCollection<ExcursionWrapper>(BasicDataManager.Excursions.Where(c => ShowFinished || c.ExcursionDates.Any(d => d.Id > 0 && d.CheckOut >= DateTime.Today)).Select(c => new ExcursionWrapper(c)));
 
                 Cities = BasicDataManager.Cities;
                 ExcursionCategories = BasicDataManager.ExcursionCategories;

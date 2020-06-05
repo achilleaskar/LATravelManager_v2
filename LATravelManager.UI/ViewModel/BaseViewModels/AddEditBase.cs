@@ -257,7 +257,7 @@ namespace LaTravelManager.BaseTypes
             ResultMessage = "";
         }
 
-        private async Task ReloadEntities()
+        protected async Task ReloadEntities()
         {
             try
             {

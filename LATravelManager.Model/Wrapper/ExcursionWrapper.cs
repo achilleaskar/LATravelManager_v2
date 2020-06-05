@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using LATravelManager.Model.Excursions;
+using LATravelManager.Model.Hotels;
 using LATravelManager.Model.Locations;
 using LATravelManager.Model.Wrapper;
 
@@ -68,6 +69,14 @@ namespace LATravelManager.UI.Wrapper
         public ObservableCollection<City> Destinations
         {
             get { return GetValue<ObservableCollection<City>>(); }
+            set { SetValue(value); }
+        }
+
+
+
+        public ObservableCollection<PricingPeriod> Periods
+        {
+            get { return GetValue<ObservableCollection<PricingPeriod>>(); }
             set { SetValue(value); }
         }
 
