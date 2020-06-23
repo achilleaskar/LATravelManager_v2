@@ -16,12 +16,8 @@ namespace LATravelManager.Model.Wrapper
 {
     public class BookingWrapper : ModelWrapper<Booking>
     {
-        #region Constructors
 
-        public string Nights
-        {
-            get { return $"{(int)(CheckOut - CheckIn).TotalDays} νύχτες"; }
-        }
+        #region Constructors
 
         public BookingWrapper() : this(new Booking())
         {
@@ -38,98 +34,51 @@ namespace LATravelManager.Model.Wrapper
             InitializeBookingWrapper(v);
         }
 
-        private void ExtraServices_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            CalculateRemainingAmount();
-        }
-
         #endregion Constructors
 
         #region Fields
 
+        public bool PhoneMissing;
+
         private ObservableCollection<CustomerWrapper> _Customers;
+
+        private ICollectionView _CustomersCV;
+
         private bool _DateChanged = false;
+
+        private string _DatesError;
+
+        private int _Extras;
+
+        private decimal _FIxedCommision;
+
+        private bool _FreeDatesBool;
+
         private decimal _FullPrice;
+
+        private bool _Loaded;
+
         private decimal _Recieved;
+
         private decimal _Remaining;
+
         private bool Calculating;
+
         private int IdCounter;
 
         #endregion Fields
 
         #region Properties
 
-        private ICollectionView _CustomersCV;
-
-        public ICollectionView CustomersCV
+        public string CancelReason
         {
-            get
-            {
-                return _CustomersCV;
-            }
-
-            set
-            {
-                if (_CustomersCV == value)
-                {
-                    return;
-                }
-
-                _CustomersCV = value;
-                RaisePropertyChanged();
-            }
+            get { return GetValue<string>(); }
+            set { SetValue(value); }
         }
 
-        private string ValidateToDatetime()
+        public ObservableCollection<ChangeInBooking> ChangesInBooking
         {
-            if (CheckOut < DateTime.Now)
-            {
-                return "Η επιλεγμένη ημερομηνία επιστροφής έχει παρέλθει!";
-            }
-            if (CheckOut < CheckIn)
-            {
-                return "Η επιλεγμένη ημερομηνία επιστροφής είναι νωρίτερα από την ημερομηνία έναρξης.";
-            }
-            //if (CheckOut == CheckIn)
-            //{
-            //    return "Η ημερομηνία επιστροφής δεν΄μπορεί να είναι η ίδια με την ημερομηνία έναρξης.";
-            //}
-            if ((CheckOut.DayOfWeek == DayOfWeek.Monday || CheckOut.DayOfWeek == DayOfWeek.Tuesday || CheckOut.DayOfWeek == DayOfWeek.Friday) && !FreeDatesBool)
-            {
-                return "Επιτρεπόμενες μέρες επιστροφής μόνο Τετάρτη, Πέμπτη, Σάββατο και Κυριακή!";
-            }
-            return null;
-        }
-
-        private bool _FreeDatesBool;
-
-        public bool FreeDatesBool
-        {
-            get { return _FreeDatesBool; }
-            set
-            {
-                if (_FreeDatesBool == value)
-                {
-                    return;
-                }
-                _FreeDatesBool = value;
-                RaisePropertyChanged();
-                ValidateFromDatetime();
-                ValidateToDatetime();
-            }
-        }
-
-        private string ValidateFromDatetime()
-        {
-            if (CheckIn < DateTime.Now.AddDays(-1) && !FreeDatesBool)
-            {
-                return "Η επιλεγμένη ημερομηνία έναρξης έχει παρέλθει.";
-            }
-            if ((CheckIn.DayOfWeek == DayOfWeek.Monday || CheckIn.DayOfWeek == DayOfWeek.Tuesday || CheckIn.DayOfWeek == DayOfWeek.Friday) && !FreeDatesBool)
-            {
-                return "Επιτρεπόμενες μέρες αναχώρησης μόνο Τετάρτη, Πέμπτη, Σάββατο και Κυριακή!";
-            }
-            return null;
+            get { return GetValue<ObservableCollection<ChangeInBooking>>(); }
         }
 
         public DateTime CheckIn
@@ -187,48 +136,6 @@ namespace LATravelManager.Model.Wrapper
             set { SetValue(value); }
         }
 
-        public bool Disabled
-        {
-            get { return GetValue<bool>(); }
-            set { SetValue(value); }
-        }
-
-        public bool GroupBooking
-        {
-            get { return GetValue<bool>(); }
-            set { SetValue(value); }
-        }
-
-        public bool VoucherSent
-        {
-            get { return GetValue<bool>(); }
-            set { SetValue(value); }
-        }
-
-        public bool RoomingListIncluded
-        {
-            get { return GetValue<bool>(); }
-            set { SetValue(value); }
-        }
-
-        public DateTime? DisableDate
-        {
-            get { return GetValue<DateTime?>(); }
-            set { SetValue(value); }
-        }
-
-        public User DisabledBy
-        {
-            get { return GetValue<User>(); }
-            set { SetValue(value); }
-        }
-
-        public string CancelReason
-        {
-            get { return GetValue<string>(); }
-            set { SetValue(value); }
-        }
-
         public decimal Commision
         {
             get { return GetValue<decimal>(); }
@@ -272,6 +179,503 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
+        public ICollectionView CustomersCV
+        {
+            get
+            {
+                return _CustomersCV;
+            }
+
+            set
+            {
+                if (_CustomersCV == value)
+                {
+                    return;
+                }
+
+                _CustomersCV = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool DateChanged
+        {
+            get
+            {
+                return _DateChanged;
+            }
+
+            set
+            {
+                if (_DateChanged == value)
+                {
+                    return;
+                }
+
+                _DateChanged = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string DatesError
+        {
+            get { return _DatesError; }
+            set
+            {
+                if (_DatesError == value)
+                {
+                    return;
+                }
+                _DatesError = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool DifferentDates
+        {
+            get { return GetValue<bool>(); }
+            set
+            {
+                SetValue(value);
+                foreach (CustomerWrapper c in Customers)
+                {
+                    c.CheckIn = CheckIn;
+                    c.CheckOut = CheckOut;
+                }
+            }
+        }
+
+        public bool Disabled
+        {
+            get { return GetValue<bool>(); }
+            set { SetValue(value); }
+        }
+
+        public DateTime? DisableDate
+        {
+            get { return GetValue<DateTime?>(); }
+            set { SetValue(value); }
+        }
+
+        public User DisabledBy
+        {
+            get { return GetValue<User>(); }
+            set { SetValue(value); }
+        }
+
+        public decimal EPSILON { get; private set; } = 0.001m;
+
+        public Excursion Excursion
+        {
+            get { return GetValue<Excursion>(); }
+            set { SetValue(value); }
+        }
+
+        public ExcursionDate ExcursionDate
+        {
+            get { return GetValue<ExcursionDate>(); }
+            set
+            {
+                SetValue(value);
+                CheckIn = value.CheckIn;
+                CheckOut = value.CheckOut;
+            }
+        }
+
+        public int Extras
+        {
+            get
+            {
+                return _Extras;
+            }
+
+            set
+            {
+                if (_Extras == value)
+                {
+                    return;
+                }
+                if (Math.Abs(Extras - value) > 0.01m)
+                    _Extras = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public ObservableCollection<ExtraService> ExtraServices
+        {
+            get { return GetValue<ObservableCollection<ExtraService>>(); }
+        }
+
+        public decimal FIxedCommision
+        {
+            get
+            {
+                return _FIxedCommision;
+            }
+
+            set
+            {
+                if (_FIxedCommision == value)
+                {
+                    return;
+                }
+
+                if (Math.Abs(value - _FIxedCommision) >= 0.01m)
+                {
+                    _FIxedCommision = Math.Round(value, 2);
+                    Commision = Math.Round(_FIxedCommision * 100 / (FullPrice - Extras), 2);
+                }
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool FreeDatesBool
+        {
+            get { return _FreeDatesBool; }
+            set
+            {
+                if (_FreeDatesBool == value)
+                {
+                    return;
+                }
+                _FreeDatesBool = value;
+                RaisePropertyChanged();
+                ValidateFromDatetime();
+                ValidateToDatetime();
+            }
+        }
+
+        public decimal FullPrice
+        {
+            get
+            {
+                return _FullPrice;
+            }
+
+            set
+            {
+                if (_FullPrice == value)
+                {
+                    return;
+                }
+
+                if (Math.Abs(FullPrice - value) > 0.01m)
+                    _FullPrice = value;
+                RaisePropertyChanged();
+                //if (IsPartners)
+                //{
+                //    if (Commision > 0)
+                //    {
+                //        NetPrice = Math.Round(FullPrice * (1 - (Commision / 100)), 2);
+                //    }
+                //    else if (Commision == 0)
+                //    {
+                //        NetPrice = FullPrice;
+                //    }
+                //    else
+                //    {
+                //        NetPrice = 0;
+                //    }
+                //}
+                // CalculateRemainingAmount();
+            }
+        }
+
+        public bool GroupBooking
+        {
+            get { return GetValue<bool>(); }
+            set { SetValue(value); }
+        }
+
+        public bool HasManyReservations
+        {
+            get
+            {
+                return ReservationsInBooking.Count > 1;
+            }
+        }
+
+        public bool IsGroup => Excursion != null && Excursion.ExcursionType.Category == ExcursionTypeEnum.Group && Excursion.FixedDates;
+
+        public bool IsNotGroup => !IsGroup;
+
+        public bool IsNotPartners => !IsPartners;
+
+        public bool IsPartners
+        {
+            get { return GetValue<bool>(); }
+
+            set
+            {
+                SetValue(value);
+
+                if (!value)
+                {
+                    Partner = null;
+
+                    Calculating = true;
+                    if (FullPrice >= 0 && Customers.Count > 0)
+                    {
+                        decimal tmpPrice = Math.Round(FullPrice / Customers.Count, 2);
+                        foreach (CustomerWrapper customer in Customers)
+                            customer.Price = tmpPrice;
+                    }
+                    Calculating = false;
+                }
+
+                CalculateRemainingAmount();
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(IsNotPartners));
+            }
+        }
+
+        public bool Loaded
+        {
+            get
+            {
+                return _Loaded;
+            }
+
+            set
+            {
+                if (_Loaded == value)
+                {
+                    return;
+                }
+
+                _Loaded = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string Locations => GetLocations();
+
+        public string Names => GetNames();
+
+        public decimal NetPrice
+        {
+            get { return GetValue<decimal>(); }
+            set
+            {
+                if (Math.Abs(NetPrice - value) > 0.01m)
+                {
+                    SetValue(value);
+                    if (FullPrice - Extras > 0)
+                    {
+                        Commision = 100 * (FullPrice - NetPrice) / (FullPrice - Extras);
+                        // Commision = 100 * (FullPrice - NetPrice) / FullPrice;
+                        //FullPrice = (Commision == 100) ? 0 : Math.Round(value / (1 - (Commision / 100)), 2);
+                        CalculateRemainingAmount();
+                    }
+                }
+            }
+        }
+
+        public string Nights
+        {
+            get { return $"{(int)(CheckOut - CheckIn).TotalDays} νύχτες"; }
+        }
+        public Partner Partner
+        {
+            get { return GetValue<Partner>(); }
+            set
+            {
+                SetValue(value);
+                CalculateRemainingAmount();
+            }
+        }
+
+        public string PartnerEmail
+        {
+            get { return GetValue<string>(); }
+            set { SetValue(value); }
+        }
+
+        public ObservableCollection<Payment> Payments
+        {
+            get { return GetValue<ObservableCollection<Payment>>(); }
+        }
+
+        public bool Reciept
+        {
+            get { return GetValue<bool>(); }
+            set { SetValue(value); }
+        }
+
+        public decimal Recieved
+        {
+            set
+            {
+                if (value != _Recieved)
+                {
+                    _Recieved = value;
+                }
+                RaisePropertyChanged();
+            }
+
+            get
+            {
+                return _Recieved;
+            }
+        }
+
+        public decimal Remaining
+        {
+            get
+            {
+                return _Remaining;
+            }
+
+            set
+            {
+                if (_Remaining == value)
+                {
+                    return;
+                }
+
+                if (Math.Abs(_Remaining - value) > 0.01m)
+                {
+                    _Remaining = Math.Round(value, 2);
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public ObservableCollection<Reservation> ReservationsInBooking
+        {
+            get { return GetValue<ObservableCollection<Reservation>>(); }
+        }
+
+        public bool RoomingListIncluded
+        {
+            get { return GetValue<bool>(); }
+            set { SetValue(value); }
+        }
+
+        public bool SecondDepart
+        {
+            get { return GetValue<bool>(); }
+            set { SetValue(value); }
+        }
+
+        public User User
+        {
+            get { return GetValue<User>(); }
+            set { SetValue(value); }
+        }
+
+        public bool VoucherSent
+        {
+            get { return GetValue<bool>(); }
+            set { SetValue(value); }
+        }
+
+        #endregion Properties
+
+        #region Methods
+
+        public bool AreDatesValid()
+        {
+            return CheckIn.Year > 2010 && CheckOut.Year > 2010 && (ExcursionDate != null || (Excursion != null && (Excursion.ExcursionType.Category != ExcursionTypeEnum.Group || !Excursion.FixedDates)));
+        }
+
+        public void CalculateRemainingAmount()
+        {
+            if (!Loaded)
+                return;
+            decimal total = 0;
+            int extra = 0;
+
+            _Recieved = 0;
+
+            foreach (var p in Payments)
+                _Recieved += p.Amount;
+            Recieved = _Recieved;
+
+            foreach (var c in Customers)
+            {
+                if (c.Price > 1)
+                    total += c.Price;
+            }
+
+            foreach (var e in ExtraServices)
+                extra = e.Amount;
+            Extras = extra;
+
+            FullPrice = total + Extras;
+
+            if (IsPartners)
+            {
+                if (FullPrice - Extras > 0)
+                {
+                    if (Commision > 0)
+                        NetPrice = FullPrice - (FullPrice - Extras) * Commision / 100;
+                    else
+                        NetPrice = FullPrice;
+                }
+                if (Partner != null && Partner.Person)
+                {
+                    Remaining = FullPrice - Recieved;
+                    if (FullPrice > 0 && Commision > 0 && NetPrice > 0 && FIxedCommision == 0)
+                        FIxedCommision = FullPrice - NetPrice;
+                }
+                else
+                    Remaining = NetPrice - Recieved;
+                if (Commision > 0 && FullPrice > 0)
+                    FIxedCommision = FullPrice - NetPrice;
+            }
+            else
+                Remaining = FullPrice - Recieved;
+
+        }
+
+        public bool Contains(string key)
+        {
+            if (string.IsNullOrEmpty(key))
+            {
+                return true;
+            }
+            key = key.ToLower();
+            if (Comment.ToLower().Contains(key) || (IsPartners && Partner.Name.ToLower().Contains(key)))
+            {
+                return true;
+            }
+            key = key.ToUpper();
+            foreach (CustomerWrapper c in Customers)
+            {
+                if (c.Name.ToUpper().StartsWith(key) || c.Surename.ToUpper().StartsWith(key) || (c.Tel != null && c.Tel.StartsWith(key)) || c.Comment.ToUpper().Contains(key) || (c.Email != null && c.Email.ToUpper().StartsWith(key))
+                    || c.PassportNum.ToUpper().StartsWith(key) || c.StartingPlace.ToUpper().StartsWith(key))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        //ΤΟΔΟ
+        public void EntityViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(CustomerWrapper.Price) && !Calculating)
+                CalculateRemainingAmount();
+
+            //afto einai gia otan vazw atoma apo arxeio thelw vazontas topothesia ston prwto na paei se olus
+            if (e.PropertyName == nameof(CustomerWrapper.StartingPlace))
+                if (Customers.Count > 0)
+                {
+                    if (!string.IsNullOrEmpty(Customers[0].StartingPlace))
+                    {
+                        foreach (CustomerWrapper customer in Customers)
+                        {
+                            if (string.IsNullOrEmpty(customer.StartingPlace))
+                            {
+                                customer.StartingPlace = Customers[0].StartingPlace;
+                            }
+                        }
+                    }
+                }
+            RaisePropertyChanged(nameof(Customers));
+        }
+
         public string GetPacketDescription()
         {
             if (Excursion != null)
@@ -284,6 +688,97 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
+        public string ValidateBooking()
+        {
+            PhoneMissing = true;
+            foreach (CustomerWrapper customer in Customers)
+            {
+                if (PhoneMissing)
+                {
+                    if (IsPartners || (customer.Tel != null && customer.Tel.Length >= 10))
+                    {
+                        PhoneMissing = false;
+                    }
+                }
+                if (customer.HasErrors)
+                {
+                    return customer.GetFirstError();
+                }
+            }
+            if (Customers.Count <= 0)
+            {
+                return "Προσθέστε Πελάτες!";
+            }
+            if (PhoneMissing && !IsPartners)
+            {
+                return "Παρακαλώ προσθέστε έστω έναν αριθμό τηλεφώνου!";
+            }
+            if (IsPartners && NetPrice <= 0)
+            {
+                return "Δέν έχετε ορίσει ΝΕΤ τιμή!";
+            }
+            if (IsPartners && Partner == null)
+            {
+                return "Δέν έχετε επιλέξει συνεργάτη";
+            }
+            if (Excursion != null && Excursion.ExcursionType.Category == ExcursionTypeEnum.Group && Excursion.ExcursionDates == null)
+            {
+                return "Παρακαλώ επιλέξτε ημερομηνίες";
+            }
+
+            return null;
+        }
+
+        private void Customers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                foreach (CustomerWrapper customer in e.OldItems)
+                {
+                    //Removed items
+                    customer.PropertyChanged -= EntityViewModelPropertyChanged;
+                }
+            }
+            else if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                if (Customers.Count > 1)
+                {
+                    if (Math.Abs(Customers[Customers.Count - 1].Price) < 0.001m)
+                    {
+                        Customers[Customers.Count - 1].Price = Customers[0].Price;
+                    }
+                    if (string.IsNullOrEmpty(Customers[Customers.Count - 1].StartingPlace))
+                    {
+                        Customers[Customers.Count - 1].StartingPlace = Customers[0].StartingPlace;
+                    }
+                }
+
+                foreach (CustomerWrapper customer in e.NewItems)
+                {
+                    if (customer.Id == 0)
+                    {
+                        IdCounter--;
+                        customer.Id = --IdCounter;
+                    }
+                    customer.PropertyChanged += EntityViewModelPropertyChanged;
+                }
+            }
+            CalculateRemainingAmount();
+
+            //if (IsPartners && FullPrice > 0 && Customers.Count > 0)
+            //{
+            //    var tmpPrice = FullPrice / Customers.Count;
+            //    foreach (Customer customer in Customers)
+            //    {
+            //        customer.Price = tmpPrice;
+            //    }
+            //}
+        }
+
+        private void ExtraServices_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            CalculateRemainingAmount();
+        }
         private string GetHotels()
         {
             List<string> hotels = new List<string>();
@@ -337,487 +832,6 @@ namespace LATravelManager.Model.Wrapper
             {
                 return "ERROR";
             }
-        }
-
-        public bool DateChanged
-        {
-            get
-            {
-                return _DateChanged;
-            }
-
-            set
-            {
-                if (_DateChanged == value)
-                {
-                    return;
-                }
-
-                _DateChanged = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public bool DifferentDates
-        {
-            get { return GetValue<bool>(); }
-            set
-            {
-                SetValue(value);
-                foreach (CustomerWrapper c in Customers)
-                {
-                    c.CheckIn = CheckIn;
-                    c.CheckOut = CheckOut;
-                }
-            }
-        }
-
-        public Excursion Excursion
-        {
-            get { return GetValue<Excursion>(); }
-            set { SetValue(value); }
-        }
-
-        public ExcursionDate ExcursionDate
-        {
-            get { return GetValue<ExcursionDate>(); }
-            set
-            {
-                SetValue(value);
-                CheckIn = value.CheckIn;
-                CheckOut = value.CheckOut;
-            }
-        }
-
-        public decimal FullPrice
-        {
-            get
-            {
-                return _FullPrice;
-            }
-
-            set
-            {
-                if (_FullPrice == value)
-                {
-                    return;
-                }
-
-                if (Math.Abs(FullPrice - value) > 0.01m)
-                    _FullPrice = value;
-                RaisePropertyChanged();
-                //if (IsPartners)
-                //{
-                //    if (Commision > 0)
-                //    {
-                //        NetPrice = Math.Round(FullPrice * (1 - (Commision / 100)), 2);
-                //    }
-                //    else if (Commision == 0)
-                //    {
-                //        NetPrice = FullPrice;
-                //    }
-                //    else
-                //    {
-                //        NetPrice = 0;
-                //    }
-                //}
-                // CalculateRemainingAmount();
-            }
-        }
-
-        public bool HasManyReservations
-        {
-            get
-            {
-                return ReservationsInBooking.Count > 1;
-            }
-        }
-
-        public bool IsGroup => Excursion != null && Excursion.ExcursionType.Category == ExcursionTypeEnum.Group && Excursion.FixedDates;
-
-        public bool IsNotGroup => !IsGroup;
-
-        public bool IsNotPartners => !IsPartners;
-
-        public bool IsPartners
-        {
-            get { return GetValue<bool>(); }
-
-            set
-            {
-                SetValue(value);
-
-                if (!value)
-                {
-                    Partner = null;
-
-                    Calculating = true;
-                    if (FullPrice >= 0 && Customers.Count > 0)
-                    {
-                        decimal tmpPrice = Math.Round(FullPrice / Customers.Count, 2);
-                        foreach (CustomerWrapper customer in Customers)
-                            customer.Price = tmpPrice;
-                    }
-                    Calculating = false;
-                }
-
-                CalculateRemainingAmount();
-                RaisePropertyChanged();
-                RaisePropertyChanged(nameof(IsNotPartners));
-            }
-        }
-
-        private int _Extras;
-
-        public int Extras
-        {
-            get
-            {
-                return _Extras;
-            }
-
-            set
-            {
-                if (_Extras == value)
-                {
-                    return;
-                }
-                if (Math.Abs(Extras - value) > 0.01m)
-                    _Extras = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public string Locations => GetLocations();
-
-        public string Names => GetNames();
-
-        public decimal NetPrice
-        {
-            get { return GetValue<decimal>(); }
-            set
-            {
-                if (Math.Abs(NetPrice - value) > 0.01m)
-                {
-                    SetValue(value);
-                    if (FullPrice - Extras > 0)
-                    {
-                        Commision = 100 * (FullPrice - NetPrice) / (FullPrice - Extras);
-                        // Commision = 100 * (FullPrice - NetPrice) / FullPrice;
-                        //FullPrice = (Commision == 100) ? 0 : Math.Round(value / (1 - (Commision / 100)), 2);
-                        CalculateRemainingAmount();
-                    }
-                }
-            }
-        }
-
-        public Partner Partner
-        {
-            get { return GetValue<Partner>(); }
-            set
-            {
-                SetValue(value);
-                CalculateRemainingAmount();
-            }
-        }
-
-        public bool Reciept
-        {
-            get { return GetValue<bool>(); }
-            set { SetValue(value); }
-        }
-
-        public ObservableCollection<Payment> Payments
-        {
-            get { return GetValue<ObservableCollection<Payment>>(); }
-        }
-
-        public ObservableCollection<ExtraService> ExtraServices
-        {
-            get { return GetValue<ObservableCollection<ExtraService>>(); }
-        }
-
-        public decimal Recieved
-        {
-            set
-            {
-                if (value != _Recieved)
-                {
-                    _Recieved = value;
-                }
-                RaisePropertyChanged();
-            }
-
-            get
-            {
-                return _Recieved;
-            }
-        }
-
-        public decimal Remaining
-        {
-            get
-            {
-                return _Remaining;
-            }
-
-            set
-            {
-                if (_Remaining == value)
-                {
-                    return;
-                }
-
-                if (Math.Abs(_Remaining - value) > 0.01m)
-                {
-                    _Remaining = Math.Round(value, 2);
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        public ObservableCollection<Reservation> ReservationsInBooking
-        {
-            get { return GetValue<ObservableCollection<Reservation>>(); }
-        }
-
-        public ObservableCollection<ChangeInBooking> ChangesInBooking
-        {
-            get { return GetValue<ObservableCollection<ChangeInBooking>>(); }
-        }
-
-        public bool SecondDepart
-        {
-            get { return GetValue<bool>(); }
-            set { SetValue(value); }
-        }
-
-        public User User
-        {
-            get { return GetValue<User>(); }
-            set { SetValue(value); }
-        }
-
-        public string PartnerEmail
-        {
-            get { return GetValue<string>(); }
-            set { SetValue(value); }
-        }
-
-        #endregion Properties
-
-        private string _DatesError;
-
-        public string DatesError
-        {
-            get { return _DatesError; }
-            set
-            {
-                if (_DatesError == value)
-                {
-                    return;
-                }
-                _DatesError = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        #region Methods
-
-        public bool AreDatesValid()
-        {
-            return CheckIn.Year > 2010 && CheckOut.Year > 2010 && (ExcursionDate != null || (Excursion != null && (Excursion.ExcursionType.Category != ExcursionTypeEnum.Group || !Excursion.FixedDates)));
-        }
-
-        private bool _Loaded;
-
-        public bool Loaded
-        {
-            get
-            {
-                return _Loaded;
-            }
-
-            set
-            {
-                if (_Loaded == value)
-                {
-                    return;
-                }
-
-                _Loaded = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public void CalculateRemainingAmount()
-        {
-            if (!Loaded)
-                return;
-            decimal total = 0;
-            int extra = 0;
-
-            _Recieved = 0;
-
-            foreach (var p in Payments)
-                _Recieved += p.Amount;
-            Recieved = _Recieved;
-
-            foreach (var c in Customers)
-            {
-                if(c.Price>1)
-                total += c.Price;
-            }
-
-            foreach (var e in ExtraServices)
-                extra = e.Amount;
-            Extras = extra;
-
-            FullPrice = total + Extras;
-
-            if (IsPartners)
-            {
-                if (FullPrice - Extras > 0)
-                {
-                    if (Commision > 0)
-                        NetPrice = FullPrice - (FullPrice - Extras) * Commision / 100;
-                    else
-                        NetPrice = FullPrice;
-                }
-                if (Partner != null && Partner.Person)
-                {
-                    Remaining = FullPrice - Recieved;
-                    if (FullPrice > 0 && Commision > 0 && NetPrice > 0 && FIxedCommision == 0)
-                        FIxedCommision = FullPrice - NetPrice;
-                }
-                else
-                    Remaining = NetPrice - Recieved;
-                if (FIxedCommision == 0 && Commision > 0 && FullPrice > 0)
-                    FIxedCommision = FullPrice - NetPrice;
-            }
-            else
-                Remaining = FullPrice - Recieved;
-
-        }
-
-        private decimal _FIxedCommision;
-
-        public decimal FIxedCommision
-        {
-            get
-            {
-                return _FIxedCommision;
-            }
-
-            set
-            {
-                if (_FIxedCommision == value)
-                {
-                    return;
-                }
-
-                if (Math.Abs(value - _FIxedCommision) >= 0.01m)
-                {
-                    _FIxedCommision = Math.Round(value, 2);
-                    Commision = Math.Round(_FIxedCommision * 100 / (FullPrice - Extras), 2);
-                }
-                RaisePropertyChanged();
-            }
-        }
-
-        public decimal EPSILON { get; private set; } = 0.001m;
-
-        public bool Contains(string key)
-        {
-            if (string.IsNullOrEmpty(key))
-            {
-                return true;
-            }
-            key = key.ToLower();
-            if (Comment.ToLower().Contains(key) || (IsPartners && Partner.Name.ToLower().Contains(key)))
-            {
-                return true;
-            }
-            key = key.ToUpper();
-            foreach (CustomerWrapper c in Customers)
-            {
-                if (c.Name.ToUpper().StartsWith(key) || c.Surename.ToUpper().StartsWith(key) || (c.Tel != null && c.Tel.StartsWith(key)) || c.Comment.ToUpper().Contains(key) || (c.Email != null && c.Email.ToUpper().StartsWith(key))
-                    || c.PassportNum.ToUpper().StartsWith(key) || c.StartingPlace.ToUpper().StartsWith(key))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        //ΤΟΔΟ
-        public void EntityViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(CustomerWrapper.Price) && !Calculating)
-                CalculateRemainingAmount();
-
-            //afto einai gia otan vazw atoma apo arxeio thelw vazontas topothesia ston prwto na paei se olus
-            if (e.PropertyName == nameof(CustomerWrapper.StartingPlace))
-                if (Customers.Count > 0)
-                {
-                    if (!string.IsNullOrEmpty(Customers[0].StartingPlace))
-                    {
-                        foreach (CustomerWrapper customer in Customers)
-                        {
-                            if (string.IsNullOrEmpty(customer.StartingPlace))
-                            {
-                                customer.StartingPlace = Customers[0].StartingPlace;
-                            }
-                        }
-                    }
-                }
-            RaisePropertyChanged(nameof(Customers));
-        }
-
-        private void Customers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == NotifyCollectionChangedAction.Remove)
-            {
-                foreach (CustomerWrapper customer in e.OldItems)
-                {
-                    //Removed items
-                    customer.PropertyChanged -= EntityViewModelPropertyChanged;
-                }
-            }
-            else if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-                if (Customers.Count > 1)
-                {
-                    if (Math.Abs(Customers[Customers.Count - 1].Price) < 0.001m)
-                    {
-                        Customers[Customers.Count - 1].Price = Customers[0].Price;
-                    }
-                    if (string.IsNullOrEmpty(Customers[Customers.Count - 1].StartingPlace))
-                    {
-                        Customers[Customers.Count - 1].StartingPlace = Customers[0].StartingPlace;
-                    }
-                }
-
-                foreach (CustomerWrapper customer in e.NewItems)
-                {
-                    if (customer.Id == 0)
-                    {
-                        IdCounter--;
-                        customer.Id = --IdCounter;
-                    }
-                    customer.PropertyChanged += EntityViewModelPropertyChanged;
-                }
-            }
-            CalculateRemainingAmount();
-
-            //if (IsPartners && FullPrice > 0 && Customers.Count > 0)
-            //{
-            //    var tmpPrice = FullPrice / Customers.Count;
-            //    foreach (Customer customer in Customers)
-            //    {
-            //        customer.Price = tmpPrice;
-            //    }
-            //}
         }
 
         private string GetLocations()
@@ -1018,49 +1032,41 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
-        public bool PhoneMissing;
-
-        public string ValidateBooking()
+        private string ValidateFromDatetime()
         {
-            PhoneMissing = true;
-            foreach (CustomerWrapper customer in Customers)
+            if (CheckIn < DateTime.Now.AddDays(-1) && !FreeDatesBool)
             {
-                if (PhoneMissing)
-                {
-                    if (IsPartners || (customer.Tel != null && customer.Tel.Length >= 10))
-                    {
-                        PhoneMissing = false;
-                    }
-                }
-                if (customer.HasErrors)
-                {
-                    return customer.GetFirstError();
-                }
+                return "Η επιλεγμένη ημερομηνία έναρξης έχει παρέλθει.";
             }
-            if (Customers.Count <= 0)
+            if ((CheckIn.DayOfWeek == DayOfWeek.Monday || CheckIn.DayOfWeek == DayOfWeek.Tuesday || CheckIn.DayOfWeek == DayOfWeek.Friday) && !FreeDatesBool)
             {
-                return "Προσθέστε Πελάτες!";
+                return "Επιτρεπόμενες μέρες αναχώρησης μόνο Τετάρτη, Πέμπτη, Σάββατο και Κυριακή!";
             }
-            if (PhoneMissing && !IsPartners)
-            {
-                return "Παρακαλώ προσθέστε έστω έναν αριθμό τηλεφώνου!";
-            }
-            if (IsPartners && NetPrice <= 0)
-            {
-                return "Δέν έχετε ορίσει ΝΕΤ τιμή!";
-            }
-            if (IsPartners && Partner == null)
-            {
-                return "Δέν έχετε επιλέξει συνεργάτη";
-            }
-            if (Excursion != null && Excursion.ExcursionType.Category == ExcursionTypeEnum.Group && Excursion.ExcursionDates == null)
-            {
-                return "Παρακαλώ επιλέξτε ημερομηνίες";
-            }
+            return null;
+        }
 
+        private string ValidateToDatetime()
+        {
+            if (CheckOut < DateTime.Now)
+            {
+                return "Η επιλεγμένη ημερομηνία επιστροφής έχει παρέλθει!";
+            }
+            if (CheckOut < CheckIn)
+            {
+                return "Η επιλεγμένη ημερομηνία επιστροφής είναι νωρίτερα από την ημερομηνία έναρξης.";
+            }
+            //if (CheckOut == CheckIn)
+            //{
+            //    return "Η ημερομηνία επιστροφής δεν΄μπορεί να είναι η ίδια με την ημερομηνία έναρξης.";
+            //}
+            if ((CheckOut.DayOfWeek == DayOfWeek.Monday || CheckOut.DayOfWeek == DayOfWeek.Tuesday || CheckOut.DayOfWeek == DayOfWeek.Friday) && !FreeDatesBool)
+            {
+                return "Επιτρεπόμενες μέρες επιστροφής μόνο Τετάρτη, Πέμπτη, Σάββατο και Κυριακή!";
+            }
             return null;
         }
 
         #endregion Methods
+
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using LATravelManager.Model.Locations;
 
 namespace LATravelManager.Model.Hotels
@@ -73,6 +74,31 @@ namespace LATravelManager.Model.Hotels
         public string Tel { get; set; }
 
         #endregion Properties
+
+
+
+
+        private bool _IsExpanded;
+
+        [NotMapped]
+        public bool IsExpanded
+        {
+            get
+            {
+                return _IsExpanded;
+            }
+
+            set
+            {
+                if (_IsExpanded == value)
+                {
+                    return;
+                }
+
+                _IsExpanded = value;
+                RaisePropertyChanged();
+            }
+        }
 
         #region Methods
 

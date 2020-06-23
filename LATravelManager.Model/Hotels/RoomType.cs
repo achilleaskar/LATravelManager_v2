@@ -25,6 +25,55 @@ namespace LATravelManager.Model.Hotels
 
         #endregion Fields
 
+
+
+        public string NoNamesNNamed =>Named>0?$"{freeRooms+Named} / {freeRooms} NN ":$"{freeRooms} NN";
+
+
+        private int _Named;
+
+        [NotMapped]
+        public int Named
+        {
+            get
+            {
+                return _Named;
+            }
+
+            set
+            {
+                if (_Named == value)
+                {
+                    return;
+                }
+
+                _Named = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private bool _IsExpanded;
+
+        [NotMapped]
+        public bool IsExpanded
+        {
+            get
+            {
+                return _IsExpanded;
+            }
+
+            set
+            {
+                if (_IsExpanded == value)
+                {
+                    return;
+                }
+
+                _IsExpanded = value;
+                RaisePropertyChanged();
+            }
+        }
+
         [NotMapped]
         public int freeRooms { get; set; }
 

@@ -16,6 +16,19 @@ namespace LATravelManager.UI.Converters
             return "( " + ((freeRooms < item.ItemCount) ? freeRooms : item.ItemCount) + " Προς κράτηση )";
         }
 
+        //public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        //{
+        //    if (value == null)
+        //        return "err";
+        //    CollectionViewGroup hotel = value as CollectionViewGroup;
+        //    ReadOnlyObservableCollection<object> roomtypes = hotel.Items;
+        //    foreach (var rt in roomtypes)
+        //    {
+        //        var x = rt;
+        //    }
+        //    return "( ";// + ((freeRooms < item.ItemCount) ? freeRooms : item.ItemCount) + " Προς κράτηση )";
+        //}
+
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
 
         #endregion Methods

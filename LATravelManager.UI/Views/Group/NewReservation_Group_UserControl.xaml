@@ -74,7 +74,8 @@
                                         Value="Center" />
                             </Style>
                         </StackPanel.Resources>
-                        <ListView ItemsSource="{Binding Source={StaticResource cvs}}"
+                        <StackPanel Orientation="Horizontal">
+                            <ListView ItemsSource="{Binding Source={StaticResource cvs}}"
                                   Grid.Row="1"
                                   Width="400"
                                   HorizontalAlignment="Left"
@@ -138,11 +139,11 @@
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate>
-                                                        <Expander IsExpanded="False">
+                                                            <Expander IsExpanded="{Binding Name.IsExpanded}">
                                                             <Expander.Header>
                                                                 <!--IsEnabled="{Binding Converter={StaticResource RoomsLeftToVisibilityConverter}}">-->
                                                                 <StackPanel Orientation="Horizontal">
-                                                                    <TextBlock Text="{Binding ItemCount}"
+                                                                    <TextBlock Text="{Binding Converter={StaticResource RoomTypeToRoomsLeftConverter}}"
                                                                                FontSize="16"
                                                                                Foreground="Green"
                                                                                FontWeight="Bold"
@@ -177,8 +178,8 @@
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate>
-                                                        <Expander IsExpanded="False"
-                                                                  Margin="23 0 0 0">
+                                                            <Expander IsExpanded="{Binding Name.IsExpanded}"
+                                                                      Margin="23 0 0 0">
                                                             <Expander.Header>
                                                                 <!--IsEnabled="{Binding Converter={StaticResource RoomsLeftToVisibilityConverter}}">-->
                                                                 <StackPanel Orientation="Horizontal">
@@ -235,6 +236,30 @@
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>
+                            <DataGrid ItemsSource="{Binding RoomTypesCount}"
+                                      HorizontalAlignment="Left"
+                                      Height="227"
+                                      Margin="5 0 0 0"
+                                      AutoGenerateColumns="False"
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      IsReadOnly="True"
+                                      Grid.ColumnSpan="2"
+                                      IsSynchronizedWithCurrentItem="True">
+                                <DataGrid.InputBindings>
+                                    <MouseBinding MouseAction="LeftDoubleClick"
+                                                  Command="{Binding DoubleClickRoomTypeCommand}" />
+                                </DataGrid.InputBindings>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="#"
+                                                        Width="55"
+                                                        Binding="{Binding NoNamesNNamed}" />
+                                    <DataGridTextColumn Header="Τύπος"
+                                                        Width="65"
+                                                        Binding="{Binding Name}" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
                         <StackPanel>
                             <StackPanel Orientation="Horizontal">
                                 <StackPanel Orientation="Horizontal"

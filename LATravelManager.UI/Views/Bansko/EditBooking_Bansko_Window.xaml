@@ -1,4 +1,4 @@
-﻿ <Window x:Class="LATravelManager.UI.Views.Bansko.EditBooking_Bansko_Window"
+﻿<Window x:Class="LATravelManager.UI.Views.Bansko.EditBooking_Bansko_Window"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -637,7 +637,7 @@
                                 </StackPanel>
                             </GroupBox>
                             <Border VerticalAlignment="Stretch"
-                                    Width="145" 
+                                    Width="145"
                                     HorizontalAlignment="Center"
                                     BorderThickness="0">
                                 <ContentControl Content="{Binding }">
@@ -814,288 +814,314 @@
                           Grid.Row="0"
                           Grid.Column="0"
                           VerticalAlignment="Top">
-                    <StackPanel>
-                        <StackPanel.Resources>
-                            <Style TargetType="ComboBox">
-                                <Setter Property="MinWidth"
-                                        Value="50" />
-                                <Setter Property="Width"
-                                        Value="110" />
-                                <Setter Property="VerticalAlignment"
-                                        Value="Center" />
-                            </Style>
-                        </StackPanel.Resources>
+                
                         <StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <StackPanel Orientation="Horizontal"
-                                            Visibility="{Binding BookingWr.IsNotGroup,Converter={StaticResource booleanToVisibilityConverter}}">
-                                    <StackPanel>
-                                        <Label Content="Check In:"
-                                               Padding="0" />
-                                        <DatePicker SelectedDate="{Binding BookingWr.CheckIn}"
-                                                    IsEnabled="{Binding CanEditDates}"
-                                                    Margin="0,0,5,0" />
-                                    </StackPanel>
-                                    <StackPanel>
-                                        <Label Content="Check Out:"
-                                               Padding="0" />
-                                        <DatePicker SelectedDate="{Binding BookingWr.CheckOut}"
-                                                    IsEnabled="{Binding CanEditDates}" />
-                                    </StackPanel>
-                                </StackPanel>
-                                <StackPanel Visibility="{Binding BookingWr.IsGroup,Converter={StaticResource booleanToVisibilityConverter}}">
-                                    <Label Content="Ημερομηνίες:"
-                                           Padding="0" />
-                                    <ComboBox ItemsSource="{Binding BookingWr.Excursion.ExcursionDates}"
-                                              Width="130"
-                                              VerticalAlignment="Center"
-                                              SelectedItem="{Binding BookingWr.ExcursionDate}" />
-                                </StackPanel>
-                                <StackPanel Margin="5,0,5,0">
-                                    <Label Content="Ξενοδοχείο:"
-                                           Padding="0"
-                                           VerticalAlignment="Center" />
-                                    <ComboBox MinWidth="45"
-                                              Width="90"
-                                              x:Name="FilterSelectedHotelComboBox"
-                                              SelectedIndex="{Binding SelectedHotelIndex}"
-                                              VerticalAlignment="Center">
-                                        <ComboBox.Resources>
-                                            <CollectionViewSource x:Key="HotelsList"
-                                                                  Source="{Binding Hotels}" />
-                                        </ComboBox.Resources>
-                                        <ComboBox.ItemsSource>
-                                            <CompositeCollection>
-                                                <ComboBoxItem Content="Όλα" />
-                                                <CollectionContainer Collection="{Binding Source={StaticResource HotelsList}}" />
-                                            </CompositeCollection>
-                                        </ComboBox.ItemsSource>
-                                    </ComboBox>
-                                </StackPanel>
-                                <StackPanel>
-                                    <Label VerticalAlignment="Center"
-                                           Padding="0"
-                                           Content="Τύπος Δωματίου:" />
-                                    <ComboBox VerticalAlignment="Center"
-                                              Width="90"
-                                              SelectedIndex="{Binding SelectedRoomTypeIndex}">
-                                        <ComboBox.Resources>
-                                            <CollectionViewSource x:Key="RoomTypesList"
-                                                                  Source="{Binding RoomTypes}" />
-                                        </ComboBox.Resources>
-                                        <ComboBox.ItemsSource>
-                                            <CompositeCollection>
-                                                <ComboBoxItem Content="Όλα" />
-                                                <CollectionContainer Collection="{Binding Source={StaticResource RoomTypesList}}" />
-                                            </CompositeCollection>
-                                        </ComboBox.ItemsSource>
-                                    </ComboBox>
-                                </StackPanel>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal"
-                                        Margin="0,5"
-                                        HorizontalAlignment="Right">
-                                <CheckBox Content="Όλοι"
-                                          IsChecked="{Binding All}"
-                                          VerticalAlignment="Center"
-                                          Margin="5" />
-                                <Button Content="Προβολή"
-                                        IsDefault="True"
-                                        VerticalAlignment="Center"
-                                        Command="{Binding ShowFilteredRoomsCommand}"
-                                        Margin="5,0" />
-                                <Button Content="Τοποθέτηση"
-                                        VerticalAlignment="Center"
-                                        Command="{Binding PutCustomersInRoomCommand}"
-                                        Margin="0,0,5,0" />
-                                <Button Content="Noname"
-                                        VerticalAlignment="Center"
-                                        Command="{Binding BookRoomNoNameCommand}"
-                                        Margin="0,0,5,0" />
-                                <Button Content="OverBook"
-                                        VerticalAlignment="Center"
-                                        Command="{Binding OverBookHotelCommand}"
-                                        Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
-                                        Margin="0,0,5,0"></Button>
-                                <Button Content="Transfer"
-                                        VerticalAlignment="Center"
-                                        Command="{Binding AddTransferCommand}"
-                                        Margin="0,0,5,0" />
-                                <Button Content="1ήμερη"
-                                        VerticalAlignment="Center"
-                                        Command="{Binding AddOneDayCommand}"
-                                        Margin="0,0,5,0" />
-                                <Button Cursor="Hand"
-                                        Command="{Binding UpdateAllCommand}"
-                                        HorizontalAlignment="Left">
-                                    <iconPacks:PackIconFontAwesome Kind="SyncSolid"
-                                                                   VerticalAlignment="Center"
-                                                                   Margin="2" />
-                                </Button>
-                            </StackPanel>
-                        </StackPanel>
-                        <ListView ItemsSource="{Binding Source={StaticResource cvs}}"
-                                  Grid.Row="1"
-                                  Width="400"
-                                  HorizontalAlignment="Left"
-                                  Height="320"
-                                  SelectedItem="{Binding SelectedRoom, UpdateSourceTrigger=PropertyChanged}"
-                                  Grid.ColumnSpan="2">
-                            <ListView.Resources>
-                                <Style TargetType="{x:Type ListViewItem}">
-                                    <Setter Property="IsSelected"
-                                            Value="{Binding IsSelected}" />
-                                    <Setter Property="Foreground"
-                                            Value="{Binding Color}" />
-                                    <EventSetter Event="Control.MouseDoubleClick"
-                                                 Handler="ListView_MouseDoubleClick" />
-                                    <!--<Setter Property="Foreground"
-                                            Value="{Binding Converter={StaticResource BrushColorConverter}}" />-->
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Path=IsSelected}"
-                                                     Value="True">
-                                            <Setter Property="Background"
-                                                    Value="LightSkyBlue" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=IsSelected}"
-                                                     Value="False">
-                                            <Setter Property="Background"
-                                                    Value="Transparent" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
+                            <StackPanel.Resources>
+                                <Style TargetType="ComboBox">
+                                    <Setter Property="MinWidth"
+                                            Value="50" />
+                                    <Setter Property="Width"
+                                            Value="110" />
+                                    <Setter Property="VerticalAlignment"
+                                            Value="Center" />
                                 </Style>
-                            </ListView.Resources>
-                            <ListView.View>
-                                <GridView>
-                                    <GridViewColumn Header="Ξενοδοχείο"
-                                                    Width="120"
-                                                    DisplayMemberBinding="{Binding Hotel.Name}" />
-                                    <GridViewColumn Header="Τύπος Δωματίου"
-                                                    Width="120"
-                                                    DisplayMemberBinding="{Binding RoomType.Name}" />
-                                    <GridViewColumn Header="Σημείωση"
-                                                    Width="120"
-                                                    DisplayMemberBinding="{Binding Note}">
-                                        <GridViewColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding Note}"
-                                                           Foreground="{Binding Converter={StaticResource BrushColorConverter}}" />
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                    </GridViewColumn>
-                                </GridView>
-                            </ListView.View>
-                            <ListView.GroupStyle>
-                                <GroupStyle>
-                                    <GroupStyle.ContainerStyle>
-                                        <Style TargetType="{x:Type GroupItem}">
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate>
-                                                        <Expander IsExpanded="False">
-                                                            <Expander.Header>
-                                                                <!--IsEnabled="{Binding Converter={StaticResource RoomsLeftToVisibilityConverter}}">-->
-                                                                <StackPanel Orientation="Horizontal">
-                                                                    <TextBlock Text="{Binding ItemCount}"
-                                                                               FontSize="16"
-                                                                               Foreground="Green"
-                                                                               FontWeight="Bold"
-                                                                               VerticalAlignment="Top"
-                                                                               FontStyle="Italic"
-                                                                               Margin="0,0,10,0" />
-                                                                    <TextBlock Text="{Binding Name}"
-                                                                               FontWeight="Bold"
-                                                                               VerticalAlignment="Top"
-                                                                               Foreground="Black"
-                                                                               FontSize="16" />
-                                                                    <TextBlock Foreground="Black"
-                                                                               Margin="10 0"
-                                                                               FontSize="14"
-                                                                               TextWrapping="Wrap"
-                                                                               Width="310"
-                                                                               VerticalAlignment="Center" />
-                                                                    <!--Text="{Binding Converter={StaticResource RoomsLeftToHotelsConverter}}"-->
-                                                                    <!--Visibility="{Binding Converter={StaticResource RoomsHotelsToVisibilityConverter}}"-->
-                                                                    <!--
+                            </StackPanel.Resources>
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <StackPanel Orientation="Horizontal"
+                                                Visibility="{Binding BookingWr.IsNotGroup,Converter={StaticResource booleanToVisibilityConverter}}">
+                                        <StackPanel>
+                                            <Label Content="Check In:"
+                                                   Padding="0" />
+                                            <DatePicker SelectedDate="{Binding BookingWr.CheckIn}"
+                                                        IsEnabled="{Binding CanEditDates}"
+                                                        Margin="0,0,5,0" />
+                                        </StackPanel>
+                                        <StackPanel>
+                                            <Label Content="Check Out:"
+                                                   Padding="0" />
+                                            <DatePicker SelectedDate="{Binding BookingWr.CheckOut}"
+                                                        IsEnabled="{Binding CanEditDates}" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <StackPanel Visibility="{Binding BookingWr.IsGroup,Converter={StaticResource booleanToVisibilityConverter}}">
+                                        <Label Content="Ημερομηνίες:"
+                                               Padding="0" />
+                                        <ComboBox ItemsSource="{Binding BookingWr.Excursion.ExcursionDates}"
+                                                  Width="130"
+                                                  VerticalAlignment="Center"
+                                                  SelectedItem="{Binding BookingWr.ExcursionDate}" />
+                                    </StackPanel>
+                                    <StackPanel Margin="5,0,5,0">
+                                        <Label Content="Ξενοδοχείο:"
+                                               Padding="0"
+                                               VerticalAlignment="Center" />
+                                        <ComboBox MinWidth="45"
+                                                  Width="90"
+                                                  x:Name="FilterSelectedHotelComboBox"
+                                                  SelectedIndex="{Binding SelectedHotelIndex}"
+                                                  VerticalAlignment="Center">
+                                            <ComboBox.Resources>
+                                                <CollectionViewSource x:Key="HotelsList"
+                                                                      Source="{Binding Hotels}" />
+                                            </ComboBox.Resources>
+                                            <ComboBox.ItemsSource>
+                                                <CompositeCollection>
+                                                    <ComboBoxItem Content="Όλα" />
+                                                    <CollectionContainer Collection="{Binding Source={StaticResource HotelsList}}" />
+                                                </CompositeCollection>
+                                            </ComboBox.ItemsSource>
+                                        </ComboBox>
+                                    </StackPanel>
+                                    <StackPanel>
+                                        <Label VerticalAlignment="Center"
+                                               Padding="0"
+                                               Content="Τύπος Δωματίου:" />
+                                        <ComboBox VerticalAlignment="Center"
+                                                  Width="90"
+                                                  SelectedIndex="{Binding SelectedRoomTypeIndex}">
+                                            <ComboBox.Resources>
+                                                <CollectionViewSource x:Key="RoomTypesList"
+                                                                      Source="{Binding RoomTypes}" />
+                                            </ComboBox.Resources>
+                                            <ComboBox.ItemsSource>
+                                                <CompositeCollection>
+                                                    <ComboBoxItem Content="Όλα" />
+                                                    <CollectionContainer Collection="{Binding Source={StaticResource RoomTypesList}}" />
+                                                </CompositeCollection>
+                                            </ComboBox.ItemsSource>
+                                        </ComboBox>
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,5"
+                                            HorizontalAlignment="Right">
+                                    <CheckBox Content="Όλοι"
+                                              IsChecked="{Binding All}"
+                                              VerticalAlignment="Center"
+                                              Margin="5" />
+                                    <Button Content="Προβολή"
+                                            IsDefault="True"
+                                            VerticalAlignment="Center"
+                                            Command="{Binding ShowFilteredRoomsCommand}"
+                                            Margin="5,0" />
+                                    <Button Content="Τοποθέτηση"
+                                            VerticalAlignment="Center"
+                                            Command="{Binding PutCustomersInRoomCommand}"
+                                            Margin="0,0,5,0" />
+                                    <Button Content="Noname"
+                                            VerticalAlignment="Center"
+                                            Command="{Binding BookRoomNoNameCommand}"
+                                            Margin="0,0,5,0" />
+                                    <Button Content="OverBook"
+                                            VerticalAlignment="Center"
+                                            Command="{Binding OverBookHotelCommand}"
+                                            Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
+                                            Margin="0,0,5,0"></Button>
+                                    <Button Content="Transfer"
+                                            VerticalAlignment="Center"
+                                            Command="{Binding AddTransferCommand}"
+                                            Margin="0,0,5,0" />
+                                    <Button Content="1ήμερη"
+                                            VerticalAlignment="Center"
+                                            Command="{Binding AddOneDayCommand}"
+                                            Margin="0,0,5,0" />
+                                    <Button Cursor="Hand"
+                                            Command="{Binding UpdateAllCommand}"
+                                            HorizontalAlignment="Left">
+                                        <iconPacks:PackIconFontAwesome Kind="SyncSolid"
+                                                                       VerticalAlignment="Center"
+                                                                       Margin="2" />
+                                    </Button>
+                                </StackPanel>
+                            </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <ListView ItemsSource="{Binding Source={StaticResource cvs}}"
+                                      Width="400"
+                                      HorizontalAlignment="Left"
+                                      Height="320"
+                                      SelectedItem="{Binding SelectedRoom, UpdateSourceTrigger=PropertyChanged}">
+                                <ListView.Resources>
+                                    <Style TargetType="{x:Type ListViewItem}">
+                                        <Setter Property="IsSelected"
+                                                Value="{Binding IsSelected}" />
+                                        <Setter Property="Foreground"
+                                                Value="{Binding Color}" />
+                                        <EventSetter Event="Control.MouseDoubleClick"
+                                                     Handler="ListView_MouseDoubleClick" />
+                                        <!--<Setter Property="Foreground"
+                                            Value="{Binding Converter={StaticResource BrushColorConverter}}" />-->
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Path=IsSelected}"
+                                                         Value="True">
+                                                <Setter Property="Background"
+                                                        Value="LightSkyBlue" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Path=IsSelected}"
+                                                         Value="False">
+                                                <Setter Property="Background"
+                                                        Value="Transparent" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ListView.Resources>
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Header="Ξενοδοχείο"
+                                                        Width="120"
+                                                        DisplayMemberBinding="{Binding Hotel.Name}" />
+                                        <GridViewColumn Header="Τύπος Δωματίου"
+                                                        Width="120"
+                                                        DisplayMemberBinding="{Binding RoomType.Name}" />
+                                        <GridViewColumn Header="Σημείωση"
+                                                        Width="120"
+                                                        DisplayMemberBinding="{Binding Note}">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Note}"
+                                                               Foreground="{Binding Converter={StaticResource BrushColorConverter}}" />
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                    </GridView>
+                                </ListView.View>
+                                <ListView.GroupStyle>
+                                    <GroupStyle>
+                                        <GroupStyle.ContainerStyle>
+                                            <Style TargetType="{x:Type GroupItem}">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate>
+                                                            <Expander IsExpanded="{Binding Name.IsExpanded}">
+                                                                <Expander.Header>
+                                                                    <!--IsEnabled="{Binding Converter={StaticResource RoomsLeftToVisibilityConverter}}">-->
+                                                                    <StackPanel Orientation="Horizontal">
+                                                                        <TextBlock Text="{Binding ItemCount}"
+                                                                                   FontSize="16"
+                                                                                   Foreground="Green"
+                                                                                   FontWeight="Bold"
+                                                                                   VerticalAlignment="Top"
+                                                                                   FontStyle="Italic"
+                                                                                   Margin="0,0,10,0" />
+                                                                        <TextBlock Text="{Binding Name}"
+                                                                                   FontWeight="Bold"
+                                                                                   VerticalAlignment="Top"
+                                                                                   Foreground="Black"
+                                                                                   FontSize="16" />
+                                                                        <TextBlock Foreground="Black"
+                                                                                   Margin="10 0"
+                                                                                   FontSize="14"
+                                                                                   TextWrapping="Wrap"
+                                                                                   Width="310"
+                                                                                   VerticalAlignment="Center" />
+                                                                        <!--Text="{Binding Converter={StaticResource RoomsLeftToHotelsConverter}}"-->
+                                                                        <!--Visibility="{Binding Converter={StaticResource RoomsHotelsToVisibilityConverter}}"-->
+                                                                        <!--
                                                                     <Button Content="No Name"
                                                                             Command="{Binding DataContext.BookRoomNoNameCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}, Mode=FindAncestor}}"
                                                                             CommandParameter="{Binding Name}"
                                                                             Margin="5,0" />-->
-                                                                </StackPanel>
-                                                            </Expander.Header>
-                                                            <ItemsPresenter />
-                                                        </Expander>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Style>
-                                    </GroupStyle.ContainerStyle>
-                                </GroupStyle>
-                                <GroupStyle>
-                                    <GroupStyle.ContainerStyle>
-                                        <Style TargetType="{x:Type GroupItem}">
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate>
-                                                        <Expander IsExpanded="False"
-                                                                  Margin="23 0 0 0">
-                                                            <Expander.Header>
-                                                                <!--IsEnabled="{Binding Converter={StaticResource RoomsLeftToVisibilityConverter}}">-->
-                                                                <StackPanel Orientation="Horizontal">
-                                                                    <TextBlock Text="{Binding ItemCount}"
-                                                                               FontSize="14"
-                                                                               Width="25"
-                                                                               Foreground="Blue"
-                                                                               FontWeight="Bold"
-                                                                               VerticalAlignment="Top"
-                                                                               FontStyle="Italic" />
-                                                                    <TextBlock Text="{Binding Name}"
-                                                                               FontWeight="Bold"
-                                                                               VerticalAlignment="Top"
-                                                                               Foreground="Black"
-                                                                               FontSize="14" />
-                                                                    <TextBlock Text="{Binding Name.Capacity,StringFormat='({0} pax)'}"
-                                                                               FontWeight="Bold"
-                                                                               Margin=" 10 0 0 0 "
-                                                                               VerticalAlignment="Top"
-                                                                               Foreground="Green"
-                                                                               FontSize="14" />
-                                                                    <!--<TextBlock Foreground="Blue"
+                                                                    </StackPanel>
+                                                                </Expander.Header>
+                                                                <ItemsPresenter />
+                                                            </Expander>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </GroupStyle.ContainerStyle>
+                                    </GroupStyle>
+                                    <GroupStyle>
+                                        <GroupStyle.ContainerStyle>
+                                            <Style TargetType="{x:Type GroupItem}">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate>
+                                                            <Expander IsExpanded="{Binding Name.IsExpanded}"
+                                                                      Margin="23 0 0 0">
+                                                                <Expander.Header>
+                                                                    <!--IsEnabled="{Binding Converter={StaticResource RoomsLeftToVisibilityConverter}}">-->
+                                                                    <StackPanel Orientation="Horizontal">
+                                                                        <TextBlock Text="{Binding ItemCount}"
+                                                                                   FontSize="14"
+                                                                                   Width="25"
+                                                                                   Foreground="Blue"
+                                                                                   FontWeight="Bold"
+                                                                                   VerticalAlignment="Top"
+                                                                                   FontStyle="Italic" />
+                                                                        <TextBlock Text="{Binding Name}"
+                                                                                   FontWeight="Bold"
+                                                                                   VerticalAlignment="Top"
+                                                                                   Foreground="Black"
+                                                                                   FontSize="14" />
+                                                                        <TextBlock Text="{Binding Name.Capacity,StringFormat='({0} pax)'}"
+                                                                                   FontWeight="Bold"
+                                                                                   Margin=" 10 0 0 0 "
+                                                                                   VerticalAlignment="Top"
+                                                                                   Foreground="Green"
+                                                                                   FontSize="14" />
+                                                                        <!--<TextBlock Foreground="Blue"
                                                                                Margin="10 0"
                                                                                FontSize="14"
                                                                                TextWrapping="Wrap"
                                                                                Width="310"
                                                                                VerticalAlignment="Center" />-->
-                                                                    <!--Text="{Binding Converter={StaticResource RoomsLeftToHotelsConverter}}"-->
-                                                                    <!--Visibility="{Binding Converter={StaticResource RoomsHotelsToVisibilityConverter}}"-->
-                                                                    <!--
+                                                                        <!--Text="{Binding Converter={StaticResource RoomsLeftToHotelsConverter}}"-->
+                                                                        <!--Visibility="{Binding Converter={StaticResource RoomsHotelsToVisibilityConverter}}"-->
+                                                                        <!--
                                                                     <Button Content="No Name"
                                                                             Command="{Binding DataContext.BookRoomNoNameCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}, Mode=FindAncestor}}"
                                                                             CommandParameter="{Binding Name}"
                                                                             Margin="5,0" />-->
-                                                                </StackPanel>
-                                                            </Expander.Header>
-                                                            <ItemsPresenter />
-                                                        </Expander>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Style>
-                                    </GroupStyle.ContainerStyle>
-                                </GroupStyle>
-                            </ListView.GroupStyle>
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid Margin="2">
-                                        <Grid.InputBindings>
-                                            <MouseBinding Gesture="LeftDoubleClick" />
-                                            <!--Command="{Binding RoomDoubleClickedCommand}" />-->
-                                        </Grid.InputBindings>
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
+                                                                    </StackPanel>
+                                                                </Expander.Header>
+                                                                <ItemsPresenter />
+                                                            </Expander>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </GroupStyle.ContainerStyle>
+                                    </GroupStyle>
+                                </ListView.GroupStyle>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="2">
+                                            <Grid.InputBindings>
+                                                <MouseBinding Gesture="LeftDoubleClick" />
+                                                <!--Command="{Binding RoomDoubleClickedCommand}" />-->
+                                            </Grid.InputBindings>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                            <DataGrid ItemsSource="{Binding RoomTypesCount}"
+                                      HorizontalAlignment="Left"
+                                      Height="320"
+                                      Margin="5 0 0 0"
+                                      AutoGenerateColumns="False"
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      IsReadOnly="True"
+                                      Grid.ColumnSpan="2"
+                                      IsSynchronizedWithCurrentItem="True">
+                                <DataGrid.InputBindings>
+                                    <MouseBinding MouseAction="LeftDoubleClick"
+                                                  Command="{Binding DoubleClickRoomTypeCommand}" />
+                                </DataGrid.InputBindings>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="#"
+                                                        Width="55"
+                                                        Binding="{Binding NoNamesNNamed}" />
+                                    <DataGridTextColumn Header="Τύπος"
+                                                        Width="65"
+                                                        Binding="{Binding Name}" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
                     </StackPanel>
+                       
+                
                 </GroupBox>
                 <Grid HorizontalAlignment="Left"
                       VerticalAlignment="Top"

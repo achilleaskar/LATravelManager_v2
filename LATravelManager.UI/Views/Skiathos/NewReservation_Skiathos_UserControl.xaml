@@ -73,165 +73,191 @@
                                         Value="Center" />
                             </Style>
                         </StackPanel.Resources>
-                        <ListView ItemsSource="{Binding Source={StaticResource cvs}}"
-                                  Grid.Row="1"
-                                  Width="460"
-                                  HorizontalAlignment="Left"
-                                  Height="230"
-                                  SelectedItem="{Binding SelectedRoom, UpdateSourceTrigger=PropertyChanged}"
-                                  Grid.ColumnSpan="2">
-                            <ListView.Resources>
-                                <Style TargetType="{x:Type ListViewItem}">
-                                    <Setter Property="IsSelected"
-                                            Value="{Binding IsSelected}" />
-                                    <EventSetter Event="Control.MouseDoubleClick"
-                                                 Handler="ListView_MouseDoubleClick" />
-                                    <!--<Setter Property="Foreground"
+                        <StackPanel Orientation="Horizontal">
+                            <ListView ItemsSource="{Binding Source={StaticResource cvs}}"
+                                      Grid.Row="1"
+                                      Width="460"
+                                      HorizontalAlignment="Left"
+                                      Height="230"
+                                      SelectedItem="{Binding SelectedRoom, UpdateSourceTrigger=PropertyChanged}"
+                                      Grid.ColumnSpan="2">
+                                <ListView.Resources>
+                                    <Style TargetType="{x:Type ListViewItem}">
+                                        <Setter Property="IsSelected"
+                                                Value="{Binding IsSelected}" />
+                                        <EventSetter Event="Control.MouseDoubleClick"
+                                                     Handler="ListView_MouseDoubleClick" />
+                                        <!--<Setter Property="Foreground"
                                             Value="{Binding Converter={StaticResource BrushColorConverter}}" />-->
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Path=IsSelected}"
-                                                     Value="True">
-                                            <Setter Property="Background"
-                                                    Value="LightSkyBlue" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=IsSelected}"
-                                                     Value="False">
-                                            <Setter Property="Background"
-                                                    Value="Transparent" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </ListView.Resources>
-                            <ListView.View>
-                                <GridView>
-                                    <GridViewColumn Header="Ξενοδοχείο"
-                                                    Width="100"
-                                                    DisplayMemberBinding="{Binding Hotel.Name}" />
-                                    <GridViewColumn Header="Χωρητικ."
-                                                    Width="60"
-                                                    DisplayMemberBinding="{Binding RoomType.Capacity}" />
-                                    <GridViewColumn Header="Σημείωση"
-                                                    Width="120"
-                                                    DisplayMemberBinding="{Binding Note}">
-                                        <GridViewColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding Note}"
-                                                           Foreground="{Binding Converter={StaticResource BrushColorConverter}}" />
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                    </GridViewColumn>
-                                </GridView>
-                            </ListView.View>
-                            <ListView.GroupStyle>
-                                <GroupStyle>
-                                    <GroupStyle.ContainerStyle>
-                                        <Style TargetType="{x:Type GroupItem}">
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate>
-                                                        <Expander IsExpanded="False">
-                                                            <Expander.Header>
-                                                                <!--IsEnabled="{Binding Converter={StaticResource RoomsLeftToVisibilityConverter}}">-->
-                                                                <StackPanel Orientation="Horizontal">
-                                                                    <TextBlock Text="{Binding ItemCount}"
-                                                                               FontSize="16"
-                                                                               Foreground="Green"
-                                                                               FontWeight="Bold"
-                                                                               VerticalAlignment="Top"
-                                                                               FontStyle="Italic"
-                                                                               Margin="0,0,10,0" />
-                                                                    <TextBlock Text="{Binding Name}"
-                                                                               FontWeight="Bold"
-                                                                               VerticalAlignment="Top"
-                                                                               Foreground="Black"
-                                                                               FontSize="16" />
-                                                                    <TextBlock Foreground="Black"
-                                                                               Margin="10 0"
-                                                                               FontSize="14"
-                                                                               TextWrapping="Wrap"
-                                                                               Width="310"
-                                                                               VerticalAlignment="Center" />
-                                                                    <!--Text="{Binding Converter={StaticResource RoomsLeftToHotelsConverter}}"-->
-                                                                    <!--Visibility="{Binding Converter={StaticResource RoomsHotelsToVisibilityConverter}}"-->
-                                                                    <!--
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Path=IsSelected}"
+                                                         Value="True">
+                                                <Setter Property="Background"
+                                                        Value="LightSkyBlue" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Path=IsSelected}"
+                                                         Value="False">
+                                                <Setter Property="Background"
+                                                        Value="Transparent" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ListView.Resources>
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Header="Ξενοδοχείο"
+                                                        Width="100"
+                                                        DisplayMemberBinding="{Binding Hotel.Name}" />
+                                        <GridViewColumn Header="Χωρητικ."
+                                                        Width="60"
+                                                        DisplayMemberBinding="{Binding RoomType.Capacity}" />
+                                        <GridViewColumn Header="Σημείωση"
+                                                        Width="120"
+                                                        DisplayMemberBinding="{Binding Note}">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Note}"
+                                                               Foreground="{Binding Converter={StaticResource BrushColorConverter}}" />
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                    </GridView>
+                                </ListView.View>
+                                <ListView.GroupStyle>
+                                    <GroupStyle>
+                                        <GroupStyle.ContainerStyle>
+                                            <Style TargetType="{x:Type GroupItem}">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate>
+                                                            <Expander IsExpanded="{Binding Name.IsExpanded}">
+                                                                <Expander.Header>
+                                                                    <!--IsEnabled="{Binding Converter={StaticResource RoomsLeftToVisibilityConverter}}">-->
+                                                                    <StackPanel Orientation="Horizontal">
+                                                                        <TextBlock Text="{Binding ItemCount}"
+                                                                                   FontSize="16"
+                                                                                   Foreground="Green"
+                                                                                   FontWeight="Bold"
+                                                                                   VerticalAlignment="Top"
+                                                                                   FontStyle="Italic"
+                                                                                   Margin="0,0,10,0" />
+                                                                        <TextBlock Text="{Binding Name}"
+                                                                                   FontWeight="Bold"
+                                                                                   VerticalAlignment="Top"
+                                                                                   Foreground="Black"
+                                                                                   FontSize="16" />
+                                                                        <TextBlock Foreground="Black"
+                                                                                   Margin="10 0"
+                                                                                   FontSize="14"
+                                                                                   TextWrapping="Wrap"
+                                                                                   Width="310"
+                                                                                   VerticalAlignment="Center" />
+                                                                        <!--Text="{Binding Converter={StaticResource RoomsLeftToHotelsConverter}}"-->
+                                                                        <!--Visibility="{Binding Converter={StaticResource RoomsHotelsToVisibilityConverter}}"-->
+                                                                        <!--
                                                                     <Button Content="No Name"
                                                                             Command="{Binding DataContext.BookRoomNoNameCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}, Mode=FindAncestor}}"
                                                                             CommandParameter="{Binding Name}"
                                                                             Margin="5,0" />-->
-                                                                </StackPanel>
-                                                            </Expander.Header>
-                                                            <ItemsPresenter />
-                                                        </Expander>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Style>
-                                    </GroupStyle.ContainerStyle>
-                                </GroupStyle>
-                                <GroupStyle>
-                                    <GroupStyle.ContainerStyle>
-                                        <Style TargetType="{x:Type GroupItem}">
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate>
-                                                        <Expander IsExpanded="False"
-                                                                  Margin="23 0 0 0">
-                                                            <Expander.Header>
-                                                                <!--IsEnabled="{Binding Converter={StaticResource RoomsLeftToVisibilityConverter}}">-->
-                                                                <StackPanel Orientation="Horizontal">
-                                                                    <TextBlock Text="{Binding ItemCount}"
-                                                                               FontSize="14"
-                                                                               Width="25"
-                                                                               Foreground="Blue"
-                                                                               FontWeight="Bold"
-                                                                               VerticalAlignment="Top"
-                                                                               FontStyle="Italic" />
-                                                                    <TextBlock Text="{Binding Name}"
-                                                                               FontWeight="Bold"
-                                                                               VerticalAlignment="Top"
-                                                                               Foreground="Black"
-                                                                               FontSize="14" />
-                                                                    <TextBlock Text="{Binding Name.Capacity,StringFormat='({0} pax)'}"
-                                                                               FontWeight="Bold"
-                                                                               Margin=" 10 0 0 0 "
-                                                                               VerticalAlignment="Top"
-                                                                               Foreground="Green"
-                                                                               FontSize="14" />
-                                                                    <!--<TextBlock Foreground="Blue"
+                                                                    </StackPanel>
+                                                                </Expander.Header>
+                                                                <ItemsPresenter />
+                                                            </Expander>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </GroupStyle.ContainerStyle>
+                                    </GroupStyle>
+                                    <GroupStyle>
+                                        <GroupStyle.ContainerStyle>
+                                            <Style TargetType="{x:Type GroupItem}">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate>
+                                                            <Expander IsExpanded="{Binding Name.IsExpanded}"
+                                                                      Margin="23 0 0 0">
+                                                                <Expander.Header>
+                                                                    <!--IsEnabled="{Binding Converter={StaticResource RoomsLeftToVisibilityConverter}}">-->
+                                                                    <StackPanel Orientation="Horizontal">
+                                                                        <TextBlock Text="{Binding ItemCount}"
+                                                                                   FontSize="14"
+                                                                                   Width="25"
+                                                                                   Foreground="Blue"
+                                                                                   FontWeight="Bold"
+                                                                                   VerticalAlignment="Top"
+                                                                                   FontStyle="Italic" />
+                                                                        <TextBlock Text="{Binding Name}"
+                                                                                   FontWeight="Bold"
+                                                                                   VerticalAlignment="Top"
+                                                                                   Foreground="Black"
+                                                                                   FontSize="14" />
+                                                                        <TextBlock Text="{Binding Name.Capacity,StringFormat='({0} pax)'}"
+                                                                                   FontWeight="Bold"
+                                                                                   Margin=" 10 0 0 0 "
+                                                                                   VerticalAlignment="Top"
+                                                                                   Foreground="Green"
+                                                                                   FontSize="14" />
+                                                                        <!--<TextBlock Foreground="Blue"
                                                                                Margin="10 0"
                                                                                FontSize="14"
                                                                                TextWrapping="Wrap"
                                                                                Width="310"
                                                                                VerticalAlignment="Center" />-->
-                                                                    <!--Text="{Binding Converter={StaticResource RoomsLeftToHotelsConverter}}"-->
-                                                                    <!--Visibility="{Binding Converter={StaticResource RoomsHotelsToVisibilityConverter}}"-->
-                                                                    <!--
+                                                                        <!--Text="{Binding Converter={StaticResource RoomsLeftToHotelsConverter}}"-->
+                                                                        <!--Visibility="{Binding Converter={StaticResource RoomsHotelsToVisibilityConverter}}"-->
+                                                                        <!--
                                                                     <Button Content="No Name"
                                                                             Command="{Binding DataContext.BookRoomNoNameCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}, Mode=FindAncestor}}"
                                                                             CommandParameter="{Binding Name}"
                                                                             Margin="5,0" />-->
-                                                                </StackPanel>
-                                                            </Expander.Header>
-                                                            <ItemsPresenter />
-                                                        </Expander>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Style>
-                                    </GroupStyle.ContainerStyle>
-                                </GroupStyle>
-                            </ListView.GroupStyle>
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid Margin="2">
-                                        <Grid.InputBindings>
-                                            <MouseBinding Gesture="LeftDoubleClick" />
-                                            <!--Command="{Binding RoomDoubleClickedCommand}" />-->
-                                        </Grid.InputBindings>
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
+                                                                    </StackPanel>
+                                                                </Expander.Header>
+                                                                <ItemsPresenter />
+                                                            </Expander>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </GroupStyle.ContainerStyle>
+                                    </GroupStyle>
+                                </ListView.GroupStyle>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="2">
+                                            <Grid.InputBindings>
+                                                <MouseBinding Gesture="LeftDoubleClick" />
+                                                <!--Command="{Binding RoomDoubleClickedCommand}" />-->
+                                            </Grid.InputBindings>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                            <DataGrid ItemsSource="{Binding RoomTypesCount}"
+                                      HorizontalAlignment="Left"
+                                      Height="227"
+                                      Margin="5 0 0 0"
+                                      SelectedItem="{Binding SelectedRoomTypeCount}"
+                                      AutoGenerateColumns="False"
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      IsReadOnly="True"
+                                      Grid.ColumnSpan="2"
+                                      IsSynchronizedWithCurrentItem="True">
+                                <DataGrid.InputBindings>
+                                    <MouseBinding MouseAction="LeftDoubleClick"
+                                                  Command="{Binding DoubleClickRoomTypeCommand}" />
+                                </DataGrid.InputBindings>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="#"
+                                                        Width="55"
+                                                        Binding="{Binding NoNamesNNamed}" />
+                                    <DataGridTextColumn Header="Τύπος"
+                                                        Width="65"
+                                                        Binding="{Binding Name}" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
                         <StackPanel>
                             <StackPanel Orientation="Horizontal">
                                 <StackPanel>
@@ -316,7 +342,6 @@
                                            TextWrapping="Wrap"
                                            Foreground="Red"
                                            Width="138" />
-
                                 <Button Content="Προβολή"
                                         IsDefault="True"
                                         VerticalAlignment="Center"
@@ -425,18 +450,17 @@
                                 <TextBlock Text="Σύνολο:"
                                            HorizontalAlignment="Left" />
                                 <TextBlock Text="{Binding BookingWr.FullPrice,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                         Margin="5,0,5,5"
-                                         VerticalAlignment="Center"
-                                         MinWidth="40"
-                                         MaxWidth="60"
-                                         Grid.Column="1" />
+                                           Margin="5,0,5,5"
+                                           VerticalAlignment="Center"
+                                           MinWidth="40"
+                                           MaxWidth="60"
+                                           Grid.Column="1" />
                                 <TextBlock Text="Προμήθεια (%):"
                                            Grid.Row="1"
                                            HorizontalAlignment="Left" />
                                 <StackPanel   Grid.Row="1"
                                               Orientation="Horizontal"
                                               Grid.Column="1">
-
                                     <TextBox Text="{Binding BookingWr.Commision,Converter={StaticResource FtoSConverter},ConverterParameter=0,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                              Margin="0,0,5,5"
                                              VerticalAlignment="Center"

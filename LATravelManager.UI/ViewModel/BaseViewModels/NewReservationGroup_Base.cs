@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Data;
-using System.Windows.Input;
-using System.Windows.Media;
-using DocumentFormat.OpenXml.Packaging;
+﻿using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using GalaSoft.MvvmLight.CommandWpf;
 using LATravelManager.Model;
@@ -27,11 +16,92 @@ using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Views.Universal;
 using LATravelManager.UI.Wrapper;
 using Microsoft.Win32;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Logical;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Data;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace LATravelManager.UI.ViewModel.BaseViewModels
 {
     public abstract class NewReservationGroup_Base : MyViewModelBaseAsync
     {
+        #region Fields
+
+        private readonly string[] ValidateRoomsProperties =
+                {
+            nameof(BookingWr),nameof(Payment)
+        };
+
+        private bool _All = true;
+
+        private ObservableCollection<HotelWrapper> _AvailableHotels;
+
+        private string _BookedMessage = string.Empty;
+
+        private BookingWrapper _BookingWrapper;
+
+        private ObservableCollection<Email> _Emails;
+
+        private string _ErrorsInCanAddReservationToRoom = string.Empty;
+
+        private string _ErrorsInDatagrid = string.Empty;
+
+        private ObservableCollection<RoomWrapper> _FilteredRoomList;
+
+        private ObservableCollection<RoomTypeWrapper> _FilteredRoomTypesList;
+
+        private bool _HB = false;
+
+        private ObservableCollection<Hotel> _Hotels;
+
+        private int _Line;
+
+        private ExtraService _NewExtraService;
+
+        private int _NoNames;
+
+        private int _NumOfSelectedCustomers;
+
+        private bool _OnlyStay = false;
+
+        private ObservableCollection<Partner> _Partners;
+
+        private Payment _Payment = new Payment();
+
+        private ObservableCollection<RoomType> _RoomTypes;
+
+        private CustomerWrapper _SelectedCustomer;
+
+        private string _SelectedEmail;
+
+        private ExcursionWrapper _SelectedExcursion;
+
+        private ExtraService _SelectedExtraService;
+
+        private int _SelectedHotelIndex;
+
+        private int _SelectedPartnerIndex = -1;
+
+        private Payment _SelectedPayment;
+
+        private RoomWrapper _SelectedRoom;
+
+        private int _SelectedRoomTypeIndex;
+
+        private int _SelectedUserIndex;
+
+        private ObservableCollection<User> _Users;
+
+        #endregion Fields
+
         #region Constructors
 
         public NewReservationGroup_Base(MainViewModel mainViewModel)
@@ -64,6 +134,8 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             AddTransferCommand = new RelayCommand(AddTransfer, CanAddTransfer);
             AddOneDayCommand = new RelayCommand(AddOneDay, CanAddOneDay);
 
+            DoubleClickRoomTypeCommand = new RelayCommand(ExpandRooms, CanExpand);
+
             ManagePartnersCommand = new RelayCommand(ManagePartners);
 
             SaveCommand = new RelayCommand(async () => { await SaveAsync(); }, CanSave);
@@ -83,246 +155,70 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
 
 
-        private ExtraService _NewExtraService;
+
+        private RoomType _SelectedRoomTypeCount;
 
 
-        public ExtraService NewExtraService
+        public RoomType SelectedRoomTypeCount
         {
             get
             {
-                return _NewExtraService;
+                return _SelectedRoomTypeCount;
             }
 
             set
             {
-                if (_NewExtraService == value)
+                if (_SelectedRoomTypeCount == value)
                 {
                     return;
                 }
 
-                _NewExtraService = value;
+                _SelectedRoomTypeCount = value;
                 RaisePropertyChanged();
             }
         }
-
-        private void AddExtraService()
+        private bool CanExpand()
         {
-            BookingWr.ExtraServices.Add(new ExtraService
+            return SelectedRoomTypeCount != null;
+        }
+
+        private void ExpandRooms()
+        {
+            if (SelectedRoomTypeCount != null && FilteredRoomList.Count > 0)
             {
-                Description = NewExtraService.Description,
-                Amount = NewExtraService.Amount,
-                Customer = SelectedCustomer.Model
-            });
-            BookingWr.CalculateRemainingAmount();
-        }
-
-        private bool CanAddExtraservice()
-        {
-            return !string.IsNullOrEmpty(NewExtraService.Description) &&
-                NewExtraService.Description.Length > 3 &&
-                SelectedCustomer != null;
-
-        }
-
-        private bool CanDeleteCustomers()
-        {
-            return BookingWr.Customers.Any(c => c.IsSelected);
-        }
-
-        public bool CanEditDates => BookingWr != null && BookingWr.ReservationsInBooking != null && BookingWr.ReservationsInBooking.Count == 0;
-
-        private bool CanToggleDisability()
-        {
-            return BookingWr != null && !string.IsNullOrEmpty(BookingWr.CancelReason);
-        }
-
-        private void ToggleDisability()
-        {
-            if (BookingWr.Disabled)
-            {
-                BookingWr.Disabled = false;
-            }
-            else
-            {
-                BookingWr.DisableDate = DateTime.Now;
-                BookingWr.DisabledBy = GenericRepository.GetById<User>(StaticResources.User.Id);
-                BookingWr.Disabled = true;
-                foreach (var c in BookingWr.Customers)
+                foreach (var room in FilteredRoomList)
                 {
-                    c.BusGo = null;
-                    c.BusReturn = null;
+                    room.Hotel.IsExpanded = false;
                 }
-            }
-        }
-
-        private void ShowAlernatives()
-        {
-            var vm = new Availabilities_ViewModel(AvailableHotels, BookingWr.CheckIn, BookingWr.CheckOut, (SelectedRoomTypeIndex == 0 ? null : RoomTypes[SelectedRoomTypeIndex - 1]), (SelectedHotelIndex == 0 ? null : Hotels[SelectedHotelIndex - 1]));
-            Availabilities_Window window = new Availabilities_Window
-            {
-                DataContext = vm
-            };
-            window.ShowDialog();
-        }
-
-        private bool CanShowAltairnatives()
-        {
-            return AvailableHotels != null && FilteredRoomList != null;
-        }
-
-        private bool CanAddOneDay()
-        {
-            if (BookingWr == null || !AreContexesFree || BookingWr.CheckIn != BookingWr.CheckOut)
-            {
-                return false;
-            }
-
-            if (!BookingWr.AreDatesValid())
-            {
-                ErrorsInCanAddReservationToRoom = "Παρακαλώ επιλέξτε Ημερομηνίες";
-                return false;
-            }
-            if (AreCustomersLeft && !All)
-            {
-                ErrorsInCanAddReservationToRoom = "Παρακαλώ επιλέξτε Πελάτες";
-                return false;
-            }
-
-            if (ValidateBooking() != null)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        private void AddOneDay()
-        {
-            try
-            {
-                MessengerInstance.Send(new IsBusyChangedMessage(true));
-
-                NewReservationHelper.AddOneDay(BookingWr, All);
-                if (All)
+                foreach (var room in FilteredRoomList)
                 {
-                    FilteredRoomList.Clear();
+                    if (room.RoomType == SelectedRoomTypeCount)
+                    {
+                        room.Hotel.IsExpanded = true;
+                    }
                 }
-                else
+                foreach (var roomtype in RoomTypesCount)
                 {
-                    ShowFilteredRoomsCommand.Execute(null);
+                    roomtype.IsExpanded = false;
                 }
-                SaveCommand.RaiseCanExecuteChanged();
+                SelectedRoomTypeCount.IsExpanded = true;
             }
-            catch (Exception ex)
-            {
-                MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
-            }
-            finally
-            {
-                MessengerInstance.Send(new IsBusyChangedMessage(false));
-            }
-        }
-
-        private void PrintReciept()
-        {
-            if (DocumentsManagement == null)
-            {
-                DocumentsManagement = new DocumentsManagement(GenericRepository);
-            }
-            if (SelectedCustomer == null)
-            {
-                MessageBox.Show("Παρακαλώ επιλέξτε πελάτη");
-                return;
-            }
-            DocumentsManagement.PrintPaymentsReciept(SelectedPayment, SelectedCustomer.Model);
         }
 
         #endregion Constructors
 
-        #region Fields
-
-        private readonly string[] ValidateRoomsProperties =
-                {
-            nameof(BookingWr),nameof(Payment)
-        };
-
-        public RelayCommand PrintRecieptCommand { get; set; }
-
-        public DocumentsManagement DocumentsManagement { get; set; }
-
-        private bool _All = true;
-        private ObservableCollection<HotelWrapper> _AvailableHotels;
-        private string _BookedMessage = string.Empty;
-        private BookingWrapper _BookingWrapper;
-        private ObservableCollection<Email> _Emails;
-
-        private string _ErrorsInCanAddReservationToRoom = string.Empty;
-
-        private string _ErrorsInDatagrid = string.Empty;
-
-        private ObservableCollection<RoomWrapper> _FilteredRoomList;
-
-        private bool _HB = false;
-
-        private ObservableCollection<Hotel> _Hotels;
-
-        private int _Line;
-
-        private bool _OnlyStay = false;
-
-        private ObservableCollection<Partner> _Partners;
-
-        private Payment _Payment = new Payment();
-
-        private ObservableCollection<RoomType> _RoomTypes;
-
-        private CustomerWrapper _SelectedCustomer;
-
-        private string _SelectedEmail;
-
-        private ExcursionWrapper _SelectedExcursion;
-
-        private int _SelectedHotelIndex;
-
-        private int _SelectedPartnerIndex = -1;
-
-        private Payment _SelectedPayment;
-
-        private RoomWrapper _SelectedRoom;
-
-        private int _SelectedRoomTypeIndex;
-
-        private int _SelectedUserIndex;
-
-        private ObservableCollection<User> _Users;
-
-        private int _NumOfSelectedCustomers;
-
-        public int NumOfSelectedCustomers
-        {
-            get { return _NumOfSelectedCustomers; }
-            set
-            {
-                if (_NumOfSelectedCustomers == value)
-                {
-                    return;
-                }
-
-                _NumOfSelectedCustomers = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        #endregion Fields
-
         #region Properties
 
         public RelayCommand AddCustomerCommand { get; set; }
+        public RelayCommand DoubleClickRoomTypeCommand { get; set; }
+
+        public RelayCommand AddExraServiceCommand { get; set; }
 
         public RelayCommand AddFromFileCommand { get; set; }
 
-        public RelayCommand AddTransferCommand { get; set; }
         public RelayCommand AddOneDayCommand { get; set; }
+
+        public RelayCommand AddTransferCommand { get; set; }
 
         public bool All
         {
@@ -437,12 +333,19 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         public RelayCommand<RoomType> BookRoomNoNameCommand { get; set; }
 
+        public bool CanEditDates => BookingWr != null && BookingWr.ReservationsInBooking != null && BookingWr.ReservationsInBooking.Count == 0;
+
         public RelayCommand CheckOutCommand { get; set; }
 
         public RelayCommand ClearBookingCommand { get; set; }
 
-        public RelayCommand DeletePaymentCommand { get; set; }
         public RelayCommand DeleteExtraServiceCommand { get; set; }
+
+        public RelayCommand DeletePaymentCommand { get; set; }
+
+        public RelayCommand DeleteSelectedCustomersCommand { get; set; }
+
+        public DocumentsManagement DocumentsManagement { get; set; }
 
         public ObservableCollection<Email> Emails
         {
@@ -514,6 +417,27 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
+        public ObservableCollection<RoomTypeWrapper> FilteredRoomTypesList
+        {
+            get
+            {
+                return _FilteredRoomTypesList;
+            }
+
+            set
+            {
+                if (_FilteredRoomTypesList == value)
+                {
+                    return;
+                }
+
+                _FilteredRoomTypesList = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public GenericRepository GenericRepository { get; set; }
+
         public bool HB
         {
             get
@@ -550,6 +474,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         }
 
         public bool IsAnyReservationResSelected => SelectedCustomer != null && SelectedCustomer.Reservation != null;
+
         public bool IsAnyResSelected => SelectedCustomer != null && SelectedCustomer.Reservation != null;
 
         public bool IsPartners
@@ -592,7 +517,61 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         }
 
         public RelayCommand ManagePartnersCommand { get; set; }
+
+        public ExtraService NewExtraService
+        {
+            get
+            {
+                return _NewExtraService;
+            }
+
+            set
+            {
+                if (_NewExtraService == value)
+                {
+                    return;
+                }
+
+                _NewExtraService = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public NewReservationHelper NewReservationHelper { get; set; }
+
+        public int NoNames
+        {
+            get
+            {
+                return _NoNames;
+            }
+
+            set
+            {
+                if (_NoNames == value)
+                {
+                    return;
+                }
+
+                _NoNames = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public int NumOfSelectedCustomers
+        {
+            get { return _NumOfSelectedCustomers; }
+            set
+            {
+                if (_NumOfSelectedCustomers == value)
+                {
+                    return;
+                }
+
+                _NumOfSelectedCustomers = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public bool OnlyStay
         {
@@ -673,9 +652,15 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         }
 
         public RelayCommand PrintContractCommand { get; set; }
+
+        public RelayCommand PrintRecieptCommand { get; set; }
+
         public RelayCommand PrintVoucherCommand { get; set; }
+
         public RelayCommand PutCustomersInRoomCommand { get; set; }
+
         public RelayCommand ReadNextLineCommand { get; set; }
+
         public RoomsManager RoomsManager { get; set; }
 
         public ObservableCollection<RoomType> RoomTypes
@@ -695,7 +680,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         }
 
         public RelayCommand SaveCommand { get; set; }
-        public RelayCommand ToggleDisabilityCommand { get; set; }
 
         public CustomerWrapper SelectedCustomer
         {
@@ -729,6 +713,32 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 }
 
                 _SelectedExcursion = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public ExtraService SelectedExtraService
+        {
+            get
+            {
+                return _SelectedExtraService;
+            }
+
+            set
+            {
+                if (_SelectedExtraService == value)
+                {
+                    return;
+                }
+
+                _SelectedExtraService = value;
+                if (BookingWr != null && SelectedExtraService.Customer != null && BookingWr.Customers.Any(c => c.Id == SelectedExtraService.Customer.Id))
+                {
+                    foreach (var cu in BookingWr.Customers)
+                    {
+                        cu.IsSelected = cu.Id == SelectedExtraService.Customer.Id;
+                    }
+                }
                 RaisePropertyChanged();
             }
         }
@@ -776,34 +786,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
-        private ExtraService _SelectedExtraService;
-
-        public ExtraService SelectedExtraService
-        {
-            get
-            {
-                return _SelectedExtraService;
-            }
-
-            set
-            {
-                if (_SelectedExtraService == value)
-                {
-                    return;
-                }
-
-                _SelectedExtraService = value;
-                if (BookingWr != null && SelectedExtraService.Customer != null && BookingWr.Customers.Any(c => c.Id == SelectedExtraService.Customer.Id))
-                {
-                    foreach (var cu in BookingWr.Customers)
-                    {
-                        cu.IsSelected = cu.Id == SelectedExtraService.Customer.Id;
-                    }
-                }
-                RaisePropertyChanged();
-            }
-        }
-
         public Payment SelectedPayment
         {
             get => _SelectedPayment;
@@ -816,27 +798,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 }
 
                 _SelectedPayment = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private ObservableCollection<RoomTypeWrapper> _FilteredRoomTypesList;
-
-        public ObservableCollection<RoomTypeWrapper> FilteredRoomTypesList
-        {
-            get
-            {
-                return _FilteredRoomTypesList;
-            }
-
-            set
-            {
-                if (_FilteredRoomTypesList == value)
-                {
-                    return;
-                }
-
-                _FilteredRoomTypesList = value;
                 RaisePropertyChanged();
             }
         }
@@ -895,12 +856,13 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
-        public RelayCommand ShowFilteredRoomsCommand { get; set; }
-        public GenericRepository GenericRepository { get; set; }
-        public RelayCommand UpdateAllCommand { get; set; }
-        public RelayCommand AddExraServiceCommand { get; set; }
-        public RelayCommand DeleteSelectedCustomersCommand { get; set; }
         public RelayCommand ShowAltairnativesCommand { get; set; }
+
+        public RelayCommand ShowFilteredRoomsCommand { get; set; }
+
+        public RelayCommand ToggleDisabilityCommand { get; set; }
+
+        public RelayCommand UpdateAllCommand { get; set; }
 
         public ObservableCollection<User> Users
         {
@@ -923,6 +885,27 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         #endregion Properties
 
         #region Methods
+
+        private HashSet<RoomType> _RoomTypesCount;
+
+        public HashSet<RoomType> RoomTypesCount
+        {
+            get
+            {
+                return _RoomTypesCount;
+            }
+
+            set
+            {
+                if (_RoomTypesCount == value)
+                {
+                    return;
+                }
+
+                _RoomTypesCount = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public void DeleteSelectedCustomers()
         {
@@ -971,27 +954,26 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                     return;
                 }
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
-                
+
                 RoomsManager = new RoomsManager();
                 if (BookingWr.ExcursionDate != null && BookingWr.ExcursionDate.NightStart)
                     AvailableHotels = new ObservableCollection<HotelWrapper>((await RoomsManager.GetAllAvailableRooms(BookingWr.CheckIn.AddDays(1), BookingWr.CheckOut, SelectedExcursion, false, unSavedBooking: BookingWr.Model)));
                 else
                     AvailableHotels = new ObservableCollection<HotelWrapper>((await RoomsManager.GetAllAvailableRooms(BookingWr.CheckIn, BookingWr.CheckOut, SelectedExcursion, false, unSavedBooking: BookingWr.Model)));
-               
-                
-                FilteredRoomList = new ObservableCollection<RoomWrapper>();
-                List<RoomWrapper> tmplist = new List<RoomWrapper>();
 
+                FilteredRoomList = new ObservableCollection<RoomWrapper>();
+                List<HotelWithRooms> tmplist = new List<HotelWithRooms>();
+                HotelWithRooms hotelwr;
                 int allotmentDays = 0;
                 bool addThis, isfree;
 
                 foreach (HotelWrapper hotel in AvailableHotels)
                 {
+                    hotelwr = new HotelWithRooms { Rooms = new List<RoomWrapper>() };
                     foreach (RoomWrapper room in hotel.RoomWrappers)
                     {
                         allotmentDays = 0;
                         isfree = addThis = true;
-
                         foreach (PlanDailyInfo day in room.PlanDailyInfo)
                         {
                             if (day.Date < BookingWr.CheckIn && (BookingWr.ExcursionDate == null || !BookingWr.ExcursionDate.NightStart))
@@ -1019,7 +1001,12 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                             //}
                         }
                         if (isfree)
-                            room.RoomType.freeRooms++;
+                        {
+                            if (hotel.NoName)
+                                room.RoomType.freeRooms++;
+                            else
+                                room.RoomType.Named++;
+                        }
                         addThis &= SelectedHotelIndex == 0 || hotel.Id == Hotels[SelectedHotelIndex - 1].Id;
 
                         //todelete
@@ -1044,23 +1031,52 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                                 room.LocalNote = "";
                             }
 
-                            tmplist.Add(room);
+                            hotelwr.Rooms.Add(room);
                             ValidateRoom(room);
-                            if (room.Hotel.HotelCategory.Id == 8)
+                            if (room.Hotel.NoName)
                             {
                                 NoNames++;
                             }
                         }
                     }
+                    if (hotelwr.Rooms.Count > 0)
+                    {
+                        tmplist.Add(hotelwr);
+                    }
                 }
+
+                List<RoomWrapper> rooms = new List<RoomWrapper>();
+
+                RoomTypesCount = new HashSet<RoomType>();
+
+                foreach (var item in tmplist)
+                {
+                    foreach (var room in item.Rooms)
+                    {
+                        if (!room.Hotel.NoName || (rooms.Where(r => r.Hotel == room.Hotel && r.RoomType == room.RoomType).Count() < room.RoomType.freeRooms))
+                        {
+                            rooms.Add(room);
+                            RoomTypesCount.Add(room.RoomType);
+                        }
+                    }
+                }
+                RoomTypesCount = new HashSet<RoomType>(RoomTypesCount.OrderBy(r => r.MinCapacity).ThenBy(t => t.MaxCapacity));
+
                 //TODO an mporei na fygei
 
-                FilteredRoomList = new ObservableCollection<RoomWrapper>(tmplist.OrderBy(f => f.Hotel.Name).ThenBy(t => t.RoomType.MaxCapacity).ThenByDescending(r => r.Rating).ToList());
+                //foreach (var hotel in tmplist)
+                //{
+                //    foreach (var roomtype in hotel.)
+                //    {
+                //    }
+                //}
+
+                FilteredRoomList = new ObservableCollection<RoomWrapper>(rooms.OrderBy(f => f.Hotel.Name).ThenBy(t => t.RoomType.MaxCapacity).ThenByDescending(r => r.Rating).ToList());
                 CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(FilteredRoomList);
-                //PropertyGroupDescription groupDescription = new PropertyGroupDescription(nameof(RoomType));
                 //PropertyGroupDescription groupDescriptionb = new PropertyGroupDescription(nameof(Hotel));
-                //view.GroupDescriptions.Add(groupDescription);
+                //PropertyGroupDescription groupDescription = new PropertyGroupDescription(nameof(RoomType));
                 //view.GroupDescriptions.Add(groupDescriptionb);
+                //view.GroupDescriptions.Add(groupDescription);
                 RaisePropertyChanged(nameof(FilteredRoomList));
             }
             //try
@@ -1161,38 +1177,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
-        private void ValidateRoom(RoomWrapper room)
-        {
-            int rating = 0;
-            var before = room.PlanDailyInfo.FirstOrDefault(d => d.Date == BookingWr.CheckIn.AddDays(-1));
-            var after = room.PlanDailyInfo.FirstOrDefault(d => d.Date == BookingWr.CheckOut);
-            if (before == null || before.RoomState != RoomStateEnum.Available)
-            {
-                rating++;
-            }
-            else if (before.RoomState == RoomStateEnum.Available)
-            {
-                before = room.PlanDailyInfo.FirstOrDefault(d => d.Date == BookingWr.CheckIn.AddDays(-2));
-                if (before == null || before.RoomState != RoomStateEnum.Available)
-                {
-                    rating -= 4;
-                }
-            }
-            if (after == null || after.RoomState != RoomStateEnum.Available)
-            {
-                rating++;
-            }
-            else if (after.RoomState == RoomStateEnum.Available)
-            {
-                after = room.PlanDailyInfo.FirstOrDefault(d => d.Date == BookingWr.CheckOut.AddDays(1));
-                if (after == null || after.RoomState != RoomStateEnum.Available)
-                {
-                    rating -= 4;
-                }
-            }
-            room.Rating = ((before != null && before.RoomState != RoomStateEnum.Available) ? 1 : 0) + ((after != null && after.RoomState != RoomStateEnum.Available) ? 1 : 0);
-        }
-
         protected async Task<Booking> CreateNewBooking()
         {
             var booki = new Booking { CheckIn = BookingWr != null ? BookingWr.CheckIn : DateTime.Today, CheckOut = BookingWr != null ? BookingWr.CheckOut : DateTime.Today.AddDays(3) };
@@ -1230,7 +1214,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
 
             Emails = (BookingWr.IsPartners && BookingWr.Partner != null && BookingWr.Partner.Emails != null && BookingWr.Partner.Emails.Any()) ? new ObservableCollection<Email>(BookingWr.Partner.Emails.Split(',').Select(e => new Email(e))) : new ObservableCollection<Email>();
-
         }
 
         protected async Task ResetAllRefreshableDataASync(bool makeNew = false)
@@ -1300,6 +1283,17 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                     MessengerInstance.Send(new IsBusyChangedMessage(false));
                 }
             }
+        }
+
+        private void AddExtraService()
+        {
+            BookingWr.ExtraServices.Add(new ExtraService
+            {
+                Description = NewExtraService.Description,
+                Amount = NewExtraService.Amount,
+                Customer = SelectedCustomer.Model
+            });
+            BookingWr.CalculateRemainingAmount();
         }
 
         private void AddFromFile()
@@ -1448,136 +1442,31 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
-        private string ToLatin(string innerText)
+        private void AddOneDay()
         {
-            string toReturn = string.Empty;
-            string str = innerText.ToUpper();
-            for (int i = 0; i < str.Length; i++)
+            try
             {
-                char c = str[i];
-                if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == ' ')
-                    toReturn += c;
+                MessengerInstance.Send(new IsBusyChangedMessage(true));
+
+                NewReservationHelper.AddOneDay(BookingWr, All);
+                if (All)
+                {
+                    FilteredRoomList.Clear();
+                }
                 else
                 {
-                    switch ((int)c)
-                    {
-                        case '-':
-                        case '_':
-                            toReturn += ' ';
-                            break;
-
-                        case 'Α':
-                        case 902:
-                            toReturn += 'A';
-                            break;
-
-                        case 'Β':
-                            toReturn += 'V';
-                            break;
-
-                        case 'Γ':
-                            toReturn += 'G';
-                            break;
-
-                        case 'Δ':
-                            toReturn += 'D';
-                            break;
-
-                        case 'Ε':
-                        case 'Έ':
-                            toReturn += 'E';
-                            break;
-
-                        case 'Ζ':
-                            toReturn += 'Z';
-                            break;
-
-                        case 'Η':
-                        case 'Ή':
-                        case 'Ι':
-                        case 'Ί':
-                            toReturn += 'I';
-                            break;
-
-                        case 'Υ':
-                        case 'Ύ':
-                            if (i > 0 && (str[i - 1] == 'Ο' || str[i - 1] == 'Ό'))
-                                toReturn += 'Y';
-                            else
-                                toReturn += 'I';
-                            break;
-
-                        case 'Θ':
-                            toReturn += 'T';
-                            toReturn += 'H';
-                            break;
-
-                        case 'Κ':
-                            toReturn += 'K';
-                            break;
-
-                        case 'Λ':
-                            toReturn += 'L';
-                            break;
-
-                        case 'Μ':
-                            toReturn += 'M';
-                            break;
-
-                        case 'Ν':
-                            toReturn += 'N';
-                            break;
-
-                        case 'Ξ':
-                            toReturn += 'K';
-                            toReturn += 'S';
-                            break;
-
-                        case 'Ο':
-                        case 'Ό':
-                        case 'Ω':
-                        case 'Ώ':
-                            toReturn += 'O';
-                            break;
-
-                        case 'Π':
-                            toReturn += 'P';
-                            break;
-
-                        case 'Ρ':
-                            toReturn += 'R';
-                            break;
-
-                        case 'Σ':
-                            toReturn += 'S';
-                            break;
-
-                        case 'Τ':
-                            toReturn += 'T';
-                            break;
-
-                        case 'Φ':
-                            toReturn += 'F';
-                            break;
-
-                        case 'Χ':
-                            toReturn += 'X';
-                            break;
-
-                        case 'Ψ':
-                            toReturn += 'P';
-                            toReturn += 'S';
-                            break;
-
-                        default:
-                            break;
-                    }
+                    ShowFilteredRoomsCommand.Execute(null);
                 }
-                if (toReturn.Any(c1 => (c1 < 'A' && c1 > 'Z') && c1 != ' ' && c1 != '_' && c1 != '-'))
-                {
-                }
+                SaveCommand.RaiseCanExecuteChanged();
             }
-            return toReturn.Trim();
+            catch (Exception ex)
+            {
+                MessengerInstance.Send(new ShowExceptionMessage_Message(ex.Message));
+            }
+            finally
+            {
+                MessengerInstance.Send(new IsBusyChangedMessage(false));
+            }
         }
 
         private void AddRandomCustomer()
@@ -1623,6 +1512,39 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
+        private bool CanAddExtraservice()
+        {
+            return !string.IsNullOrEmpty(NewExtraService.Description) &&
+                NewExtraService.Description.Length > 3 &&
+                SelectedCustomer != null;
+        }
+
+        private bool CanAddOneDay()
+        {
+            if (BookingWr == null || !AreContexesFree || BookingWr.CheckIn != BookingWr.CheckOut)
+            {
+                return false;
+            }
+
+            if (!BookingWr.AreDatesValid())
+            {
+                ErrorsInCanAddReservationToRoom = "Παρακαλώ επιλέξτε Ημερομηνίες";
+                return false;
+            }
+            if (AreCustomersLeft && !All)
+            {
+                ErrorsInCanAddReservationToRoom = "Παρακαλώ επιλέξτε Πελάτες";
+                return false;
+            }
+
+            if (ValidateBooking() != null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         private bool CanAddTransfer()
         {//TODO xrizei veltiwshs
             if (BookingWr == null || !AreContexesFree)
@@ -1652,9 +1574,9 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             return SelectedCustomer != null && SelectedCustomer.Handled;
         }
 
-        private bool CanDeletePayment()
+        private bool CanDeleteCustomers()
         {
-            return SelectedPayment != null && AreContexesFree;
+            return BookingWr.Customers.Any(c => c.IsSelected);
         }
 
         private bool CanDeleteExtraservice()
@@ -1662,36 +1584,22 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             return SelectedExtraService != null && AreContexesFree;
         }
 
+        private bool CanDeletePayment()
+        {
+            return SelectedPayment != null && AreContexesFree;
+        }
+
         private bool CanMakeNoNameReservation(RoomType roomType)
         {
             if (BookingWr == null || FilteredRoomList == null || (SelectedCustomer == null && !All) || !AreBookingDataValid || !AreContexesFree ||
-                !FilteredRoomList.Any(o => o.Hotel.NoName && ((o.RoomType.MinCapacity >= NumOfSelectedCustomers && o.RoomType.MaxCapacity >= NumOfSelectedCustomers) || (NumOfSelectedCustomers == 1 && o.RoomType.MaxCapacity == 2))))
+                !FilteredRoomList.Any(o => o.Hotel.NoName &&
+                ((o.RoomType.MinCapacity <= NumOfSelectedCustomers && o.RoomType.MaxCapacity >= NumOfSelectedCustomers)
+                || (NumOfSelectedCustomers == 1 && o.RoomType.MaxCapacity == 2))))
             {
                 return false;
             }
 
             return true;
-        }
-
-        private int _NoNames;
-
-        public int NoNames
-        {
-            get
-            {
-                return _NoNames;
-            }
-
-            set
-            {
-                if (_NoNames == value)
-                {
-                    return;
-                }
-
-                _NoNames = value;
-                RaisePropertyChanged();
-            }
         }
 
         private bool CanOverBookHotel()
@@ -1768,6 +1676,11 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             return AreBookingDataValid && ValidateReservations() == null;
         }
 
+        private bool CanShowAltairnatives()
+        {
+            return AvailableHotels != null && FilteredRoomList != null;
+        }
+
         private bool CanShowFilteredRooms()
         {
             if (BookingWr == null || !AreContexesFree)
@@ -1775,6 +1688,11 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 return false;
             }
             return SelectedHotelIndex >= 0 && SelectedRoomTypeIndex >= 0 && BookingWr != null && BookingWr.AreDatesValid();
+        }
+
+        private bool CanToggleDisability()
+        {
+            return BookingWr != null && !string.IsNullOrEmpty(BookingWr.CancelReason);
         }
 
         private bool CanUpdateAll()
@@ -1886,14 +1804,14 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             RaisePropertyChanged(nameof(CanEditDates));
         }
 
-        private void DeletePayment()
-        {
-            GenericRepository.Delete(SelectedPayment);
-        }
-
         private void DeleteExtraService()
         {
             GenericRepository.Delete(SelectedExtraService);
+        }
+
+        private void DeletePayment()
+        {
+            GenericRepository.Delete(SelectedPayment);
         }
 
         private string GetBookingDataValidationError(string propertyName)
@@ -2001,6 +1919,20 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(false));
             }
+        }
+
+        private void PrintReciept()
+        {
+            if (DocumentsManagement == null)
+            {
+                DocumentsManagement = new DocumentsManagement(GenericRepository);
+            }
+            if (SelectedCustomer == null)
+            {
+                MessageBox.Show("Παρακαλώ επιλέξτε πελάτη");
+                return;
+            }
+            DocumentsManagement.PrintPaymentsReciept(SelectedPayment, SelectedCustomer.Model);
         }
 
         private async Task PrintVoucher(bool send = false)
@@ -2198,7 +2130,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         {
             try
             {
-
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
 
                 BookingWr = await NewReservationHelper.SaveAsync(GenericRepository, Payment, BookingWr);
@@ -2216,6 +2147,167 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(false));
             }
+        }
+
+        private void ShowAlernatives()
+        {
+            var vm = new Availabilities_ViewModel(AvailableHotels, BookingWr.CheckIn, BookingWr.CheckOut, (SelectedRoomTypeIndex == 0 ? null : RoomTypes[SelectedRoomTypeIndex - 1]), (SelectedHotelIndex == 0 ? null : Hotels[SelectedHotelIndex - 1]));
+            Availabilities_Window window = new Availabilities_Window
+            {
+                DataContext = vm
+            };
+            window.ShowDialog();
+        }
+
+        private void ToggleDisability()
+        {
+            if (BookingWr.Disabled)
+            {
+                BookingWr.Disabled = false;
+            }
+            else
+            {
+                BookingWr.DisableDate = DateTime.Now;
+                BookingWr.DisabledBy = GenericRepository.GetById<User>(StaticResources.User.Id);
+                BookingWr.Disabled = true;
+                foreach (var c in BookingWr.Customers)
+                {
+                    c.BusGo = null;
+                    c.BusReturn = null;
+                }
+            }
+        }
+
+        private string ToLatin(string innerText)
+        {
+            string toReturn = string.Empty;
+            string str = innerText.ToUpper();
+            for (int i = 0; i < str.Length; i++)
+            {
+                char c = str[i];
+                if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == ' ')
+                    toReturn += c;
+                else
+                {
+                    switch ((int)c)
+                    {
+                        case '-':
+                        case '_':
+                            toReturn += ' ';
+                            break;
+
+                        case 'Α':
+                        case 902:
+                            toReturn += 'A';
+                            break;
+
+                        case 'Β':
+                            toReturn += 'V';
+                            break;
+
+                        case 'Γ':
+                            toReturn += 'G';
+                            break;
+
+                        case 'Δ':
+                            toReturn += 'D';
+                            break;
+
+                        case 'Ε':
+                        case 'Έ':
+                            toReturn += 'E';
+                            break;
+
+                        case 'Ζ':
+                            toReturn += 'Z';
+                            break;
+
+                        case 'Η':
+                        case 'Ή':
+                        case 'Ι':
+                        case 'Ί':
+                            toReturn += 'I';
+                            break;
+
+                        case 'Υ':
+                        case 'Ύ':
+                            if (i > 0 && (str[i - 1] == 'Ο' || str[i - 1] == 'Ό'))
+                                toReturn += 'Y';
+                            else
+                                toReturn += 'I';
+                            break;
+
+                        case 'Θ':
+                            toReturn += 'T';
+                            toReturn += 'H';
+                            break;
+
+                        case 'Κ':
+                            toReturn += 'K';
+                            break;
+
+                        case 'Λ':
+                            toReturn += 'L';
+                            break;
+
+                        case 'Μ':
+                            toReturn += 'M';
+                            break;
+
+                        case 'Ν':
+                            toReturn += 'N';
+                            break;
+
+                        case 'Ξ':
+                            toReturn += 'K';
+                            toReturn += 'S';
+                            break;
+
+                        case 'Ο':
+                        case 'Ό':
+                        case 'Ω':
+                        case 'Ώ':
+                            toReturn += 'O';
+                            break;
+
+                        case 'Π':
+                            toReturn += 'P';
+                            break;
+
+                        case 'Ρ':
+                            toReturn += 'R';
+                            break;
+
+                        case 'Σ':
+                            toReturn += 'S';
+                            break;
+
+                        case 'Τ':
+                            toReturn += 'T';
+                            break;
+
+                        case 'Φ':
+                            toReturn += 'F';
+                            break;
+
+                        case 'Χ':
+                            toReturn += 'X';
+                            break;
+
+                        case 'Ψ':
+                            toReturn += 'P';
+                            toReturn += 'S';
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+                if (toReturn.Any(c1 => (c1 < 'A' && c1 > 'Z') && c1 != ' ' && c1 != '_' && c1 != '-'))
+                {
+                }
+            }
+            return toReturn.Trim();
         }
 
         private async Task UpdateAll()
@@ -2268,21 +2360,65 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             return null;
         }
 
+        private void ValidateRoom(RoomWrapper room)
+        {
+            int rating = 0;
+            var before = room.PlanDailyInfo.FirstOrDefault(d => d.Date == BookingWr.CheckIn.AddDays(-1));
+            var after = room.PlanDailyInfo.FirstOrDefault(d => d.Date == BookingWr.CheckOut);
+            if (before == null || before.RoomState != RoomStateEnum.Available)
+            {
+                rating++;
+            }
+            else if (before.RoomState == RoomStateEnum.Available)
+            {
+                before = room.PlanDailyInfo.FirstOrDefault(d => d.Date == BookingWr.CheckIn.AddDays(-2));
+                if (before == null || before.RoomState != RoomStateEnum.Available)
+                {
+                    rating -= 4;
+                }
+            }
+            if (after == null || after.RoomState != RoomStateEnum.Available)
+            {
+                rating++;
+            }
+            else if (after.RoomState == RoomStateEnum.Available)
+            {
+                after = room.PlanDailyInfo.FirstOrDefault(d => d.Date == BookingWr.CheckOut.AddDays(1));
+                if (after == null || after.RoomState != RoomStateEnum.Available)
+                {
+                    rating -= 4;
+                }
+            }
+            room.Rating = ((before != null && before.RoomState != RoomStateEnum.Available) ? 1 : 0) + ((after != null && after.RoomState != RoomStateEnum.Available) ? 1 : 0);
+        }
+
         #endregion Methods
-    }
-
-    public class RoomTypeWrapper
-    {
-        public RoomType RoomType { get; set; }
-        public int RoomsCounter { get; set; }
-        public int AvailableRooms { get; set; }
-
-        public ObservableCollection<RoomsInHotel> Hotels { get; set; }
     }
 
     public class RoomsInHotel
     {
+        #region Properties
+
         public Hotel Hotel { get; set; }
+        public List<RoomWrapper> Rooms { get; set; }
+
+        #endregion Properties
+    }
+
+    public class RoomTypeWrapper
+    {
+        #region Properties
+
+        public int AvailableRooms { get; set; }
+        public ObservableCollection<RoomsInHotel> Hotels { get; set; }
+        public int RoomsCounter { get; set; }
+        public RoomType RoomType { get; set; }
+
+        #endregion Properties
+    }
+
+    public class HotelWithRooms
+    {
         public List<RoomWrapper> Rooms { get; set; }
     }
 }

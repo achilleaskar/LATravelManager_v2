@@ -245,6 +245,7 @@ namespace LATravelManager.UI.Wrapper
             }
         }
 
+
         public RoomType RoomType
         {
             get { return GetValue<RoomType>(); }
