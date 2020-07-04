@@ -674,7 +674,7 @@ namespace LATravelManager.UI.Helpers
             {
                 myWorksheet.Cells["E4"].Value = "Passport";
                 myWorksheet.Cells["F4"].Value = "Ημ. Γεν";
-                myWorksheet.Cells["G4"].Value = "";
+                myWorksheet.Cells["G4"].Value = "Τηλέφωνο";
                 myWorksheet.Cells["H4"].Value = "";
                 myWorksheet.Cells["I4"].Value = "";
                 myWorksheet.Cells["J4"].Value = "";
@@ -732,6 +732,10 @@ namespace LATravelManager.UI.Helpers
                                 {
                                     myWorksheet.Cells["E" + lineNum].Value = customer.PassportNum ?? "";
                                     myWorksheet.Cells["F" + lineNum].Value = customer.DOB != null && customer.DOB.Value.Year > 1800 ? customer.DOB.Value.ToString("dd/MM/yy") : "";
+                                    if (customer.Tel != null && (customer.Tel.StartsWith("69", StringComparison.Ordinal) || customer.Tel.StartsWith("+", StringComparison.Ordinal) || (customer.Tel.StartsWith("00", StringComparison.Ordinal) && customer.Tel.Length > 10 && customer.Tel.Length < 16)))
+                                    {
+                                        myWorksheet.Cells["G" + lineNum].Value = customer.Tel;
+                                    }
                                 }
                                 lineNum++;
                             }
