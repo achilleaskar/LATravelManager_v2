@@ -719,7 +719,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                     }
                     else
                     {
-                        if (option.Airline.Checkin != 0 && option.TimeGo > DateTime.Now &&
+                        if (option.TimeGo > DateTime.Now &&
                            (option.TimeGo - DateTime.Now).TotalHours <= 48)
                         {
                             reply.Add(new Notification { Details = $"Ίσως άνοιξε το CheckIn {option.From}-{option.To} του {(option.Personal_Booking.Customers.Count > 0 ? option.Personal_Booking.Customers.ToList()[0].ToString() : option.Id.ToString())}", NotificaationType = NotificaationType.CheckIn, ReservationWrapper = new ReservationWrapper { PersonalModel = new Personal_BookingWrapper(option.Personal_Booking) }, Service = option });
