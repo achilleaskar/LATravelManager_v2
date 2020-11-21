@@ -18,6 +18,10 @@ namespace LATravelManager.UI.Converters
             {
                 return ts.ToString(@"hh\:mm");
             }
+            if (value == null)
+            {
+                return "";
+            }
             return "Error";
         }
 

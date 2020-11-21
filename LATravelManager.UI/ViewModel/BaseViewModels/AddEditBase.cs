@@ -270,10 +270,7 @@ namespace LaTravelManager.BaseTypes
 
                 await BasicDataManager.Refresh();
                 await BasicDataManager.LoadAsync();
-                if (SelectedEntity.Id > 0)
-                {
                     SelectedEntity = new TWrapper();
-                }
                 ReLoad();
                 ResultMessage = "Η ενημέρωση ολοκληρώθηκε!";
             }

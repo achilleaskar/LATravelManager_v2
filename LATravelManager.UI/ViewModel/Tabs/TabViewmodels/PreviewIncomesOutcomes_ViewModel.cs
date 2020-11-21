@@ -396,9 +396,9 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             Excursions = new ObservableCollection<Excursion>(MainViewModel.BasicDataManager.Excursions.Where(i => i.Id > 0));
             Buses = new ObservableCollection<Bus>();
             Users = MainViewModel.BasicDataManager.Users;
-            Total = $"Σύνολο: {  (0).ToString("C2")}";
-            Incomes = $"Έσοδα:  {  0.ToString("C2")}";
-            Outcomes = $"Έξοδα:  { 0.ToString("C2")}";
+            Total = $"Σύνολο: {  0:C2}";
+            Incomes = $"Έσοδα:  {  0:C2}";
+            Outcomes = $"Έξοδα:  { 0:C2}";
         }
 
         public override void Reload()
@@ -444,9 +444,9 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                     incomes += tran.Amount;
             }
 
-            Total = $"Σύνολο: {  (incomes - outcomes).ToString("C2")}";
-            Incomes = $"Έσοδα:  {  incomes.ToString("C2")}";
-            Outcomes = $"Έξοδα:  { outcomes.ToString("C2")}";
+            Total = $"Σύνολο: {  incomes - outcomes:C2}";
+            Incomes = $"Έσοδα:  {  incomes:C2}";
+            Outcomes = $"Έξοδα:  { outcomes:C2}";
             Mouse.OverrideCursor = Cursors.Arrow;
         }
 

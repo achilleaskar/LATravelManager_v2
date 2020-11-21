@@ -38,8 +38,14 @@ namespace LATravelManager.UI.ViewModel.Parents
 
         private async Task ReloadExcursions()
         {
-            await BasicDataManager.Refresh();
-            Load();
+            await MainViewModel.LoadAsync();
+           // await BasicDataManager.Refresh();
+           // Load();
+            if (SelectedChildViewModel is NewReservationGroup_Base g && g.BookingWr != null)
+            {
+                g.BookingWr.RaisePropertyChanged(nameof(g.BookingWr.IsGroup));
+                g.BookingWr.RaisePropertyChanged(nameof(g.BookingWr.IsNotGroup));
+            }
         }
 
         public bool Enable => SelectedExcursion != null || SelectedChildViewModel is GlobalSearch_ViewModel || SelectedChildViewModel is Info_ViewModel;

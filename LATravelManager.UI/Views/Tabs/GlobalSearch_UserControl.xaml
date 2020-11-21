@@ -437,7 +437,7 @@
                   LoadingRow="DataGrid_LoadingRow"
                   CanUserDeleteRows="False"
                   IsReadOnly="True"
-                  CanUserReorderColumns="False"
+                  CanUserReorderColumns="True"
                   AutoGenerateColumns="False"
                   ItemsSource="{Binding FilteredReservations,UpdateSourceTrigger=PropertyChanged}"
                   SelectedItem="{Binding SelectedReservation,UpdateSourceTrigger=PropertyChanged}">
@@ -447,6 +447,12 @@
                               Command="{Binding DataContext.EditBookingCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}">
                         <MenuItem.Icon>
                             <iconPacks:PackIconFontAwesome Kind="EditRegular" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Απόκρυψη Επιλεγμένων"
+                              Command="{Binding DataContext.HideSelectedCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}">
+                        <MenuItem.Icon>
+                            <iconPacks:PackIconFontAwesome Kind="EyeSlashRegular" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Header="Διαγραφή Δωματίου"
@@ -469,6 +475,9 @@
                        BasedOn="{StaticResource {x:Type DataGridRow}}">
                     <Setter Property="ContextMenu"
                             Value="{StaticResource reservationContextSubMenu}" />
+                    <Setter Property="IsSelected"
+                            Value="{Binding Selected, Mode=TwoWay,
+                        UpdateSourceTrigger=PropertyChanged}" />
                     <EventSetter Event="MouseDoubleClick"
                                  Handler="ListView_MouseDoubleClick" />
                 </Style>
@@ -559,6 +568,9 @@
                 <DataGridTextColumn Header="Ημερομηνία Κρ."
                                     Width="190"
                                     Binding="{Binding Createddate,StringFormat='{}{0:dd/MM/yy}'}" />
+                <DataGridTextColumn Header="Κόστος"
+                                    Width="190"
+                                    Binding="{Binding Expenses,Converter={StaticResource FtoSConverter } }" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

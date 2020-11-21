@@ -69,7 +69,7 @@ public class NewReservationHelper : ViewModelBase
                 customer.Handled = true;
                 customer.RoomNumber = "NN" + (booking.ReservationsInBooking.Count + 1).ToString();
                 customer.HotelName = "NO NAME";
-                if (booking.ReservationsInBooking.Count() % 2 == 0)
+                if (booking.ReservationsInBooking.Count % 2 == 0)
                     customer.RoomColor = new SolidColorBrush(Colors.LightPink);
                 else
                     customer.RoomColor = new SolidColorBrush(Colors.LightBlue);
@@ -172,7 +172,7 @@ public class NewReservationHelper : ViewModelBase
                 customer.Handled = true;
                 customer.HotelName = newRes.Hotel.Name;
                 customer.RoomNumber = "OB" + (bookingWr.ReservationsInBooking.Count + 1).ToString();
-                if (bookingWr.ReservationsInBooking.Count() % 2 == 0)
+                if (bookingWr.ReservationsInBooking.Count % 2 == 0)
                     customer.RoomColor = new SolidColorBrush(Colors.LightPink);
                 else
                     customer.RoomColor = new SolidColorBrush(Colors.LightBlue);
@@ -225,7 +225,7 @@ public class NewReservationHelper : ViewModelBase
                 customer.RoomNumber = (booking.ReservationsInBooking.Count + 1).ToString();
                 customer.HotelName = newResWr.Room.Hotel.Name;
                 customer.RoomTypeName = newResWr.Room.RoomType.Name;
-                if (booking.ReservationsInBooking.Count() % 2 == 0)
+                if (booking.ReservationsInBooking.Count % 2 == 0)
                     customer.RoomColor = new SolidColorBrush(Colors.LightPink);
                 else
                     customer.RoomColor = new SolidColorBrush(Colors.LightBlue);
@@ -323,7 +323,7 @@ public class NewReservationHelper : ViewModelBase
                 customer.HotelName = "TRANSFER";
                 customer.RoomTypeName = "TRANSFER";
                 customer.RoomNumber = "TRNS" + (booking.ReservationsInBooking.Count + 1);
-                if (booking.ReservationsInBooking.Count() % 2 == 0)
+                if (booking.ReservationsInBooking.Count % 2 == 0)
                     customer.RoomColor = new SolidColorBrush(Colors.LightPink);
                 else
                     customer.RoomColor = new SolidColorBrush(Colors.LightBlue);

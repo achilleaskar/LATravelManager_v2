@@ -444,6 +444,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
                 _Templates = value;
                 RaisePropertyChanged();
+                SetProperViewModel();
             }
         }
 
@@ -577,14 +578,14 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             nots.AddRange(await GetNonPayersPersonal(NotsRepository));
             nots.AddRange(await GetNonPayersThirdParty(NotsRepository));
 
-            foreach (var not in nots)
-            {
-                notificationManager.Show(new NotificationContent
-                {
-                    Message = not.Details,
-                    Type = NotificationType.Warning
-                });
-            }
+            //foreach (var not in nots)
+            //{
+            //    notificationManager.Show(new NotificationContent
+            //    {
+            //        Message = not.Details,
+            //        Type = NotificationType.Warning
+            //    });
+            //}
             Nots = new ObservableCollection<Notification>(nots);
         }
 
@@ -797,6 +798,14 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
         private void SetProperViewModel()
         {
+            if (Templates == null)
+            {
+                return;
+            }
+            if (SelectedTemplateIndex < 0)
+            {
+                SelectedTemplateIndex = 1;
+            }
             if (SelectedTemplateIndex < Templates.Count)
             {
                 int index = -1;

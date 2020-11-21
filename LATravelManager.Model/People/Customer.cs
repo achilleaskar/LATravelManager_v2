@@ -27,6 +27,9 @@ namespace LATravelManager.Model.People
 
         #region Fields
 
+        public Personal_Booking Personal_Booking { get; set; }
+        public ThirdParty_Booking ThirdParty_Booking { get; set; }
+
         private int _Board;
 
         private string _HotelName;

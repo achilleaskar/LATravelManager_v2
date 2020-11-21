@@ -1,5 +1,20 @@
-﻿using System;
+﻿using AutoMapper;
+using LATravelManager.DataAccess;
+using LATravelManager.Model;
+using LATravelManager.Model.BookingData;
+using LATravelManager.Model.DTOS;
+using LATravelManager.Model.Excursions;
+using LATravelManager.Model.Hotels;
+using LATravelManager.Model.Lists;
+using LATravelManager.Model.Locations;
+using LATravelManager.Model.People;
+using LATravelManager.Model.Services;
+using LATravelManager.Model.Wrapper;
+using LATravelManager.UI.Helpers;
+using LATravelManager.UI.ViewModel.Window_ViewModels;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Data.Entity.Core;
 using System.Data.Entity.Core.Objects;
@@ -9,17 +24,6 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using LATravelManager.DataAccess;
-using LATravelManager.Model;
-using LATravelManager.Model.BookingData;
-using LATravelManager.Model.Excursions;
-using LATravelManager.Model.Hotels;
-using LATravelManager.Model.Lists;
-using LATravelManager.Model.Locations;
-using LATravelManager.Model.People;
-using LATravelManager.Model.Services;
-using LATravelManager.Model.Wrapper;
-using LATravelManager.UI.Helpers;
 
 namespace LATravelManager.UI.Repositories
 {
@@ -71,14 +75,17 @@ namespace LATravelManager.UI.Repositories
     {
         #region Constructors
 
-        public GenericRepository(bool Nochanges = false)
+        public GenericRepository(bool Nochanges = false, MainViewModel mainViewModel = null)
         {
             Context = new MainDatabase();
             if (Nochanges == true)
                 Context.Configuration.AutoDetectChangesEnabled = false;
             //Context.Database.Log = Console.Write;
             IsContextAvailable = true;
+            this.mainViewModel = mainViewModel;
         }
+
+
 
         #endregion Constructors
 
@@ -89,6 +96,7 @@ namespace LATravelManager.UI.Repositories
         private readonly DateTime limit = DateTime.Today.AddDays(2);
 
         private volatile Task lastTask;
+        private MainViewModel mainViewModel;
 
         #endregion Fields
 
@@ -118,8 +126,6 @@ namespace LATravelManager.UI.Repositories
             }
             dbSet.Remove(entity);
         }
-
-
 
         public void Dispose()
         {
@@ -427,6 +433,14 @@ namespace LATravelManager.UI.Repositories
                 .ToListAsync);
         }
 
+        public async Task<Excursion> GetFullExcursionByIdAsync(int Id)
+        {
+            return await RunTask(Context.Excursions.Where(e => e.Id == Id)
+                .Include(e => e.ExcursionDates)
+                .Include(e=>e.ExcursionType)
+                .FirstOrDefaultAsync);
+        }
+
         public async Task<List<Room>> GetAllRoomsInCityAsync(DateTime minDay, DateTime maxDay, int cityId, int selectedRoomTypeId = 0)
         {
             return await RunTask(Context.Rooms.Where(x => x.Hotel.City.Id == cityId
@@ -515,6 +529,10 @@ namespace LATravelManager.UI.Repositories
 
         public virtual async Task<Booking> GetFullBookingByIdAsync(int id)
         {
+            await RunTask(Context.Bookings.Where(b => b.Id == id)
+                .Include(f => f.Transactions).FirstOrDefaultAsync);
+
+
             return await RunTask(Context.Bookings.Where(b => b.Id == id)
             .Include(f => f.Partner)
                 .Include(f => f.User)
@@ -549,7 +567,6 @@ namespace LATravelManager.UI.Repositories
             }
             catch (Exception)
             {
-
             }
             return false;
         }
@@ -703,23 +720,29 @@ namespace LATravelManager.UI.Repositories
                         sb.Append($"Ο Συνεργάτης άλλαξε από '{(par[1].Item1 as Partner).Name}' σε '{(par[0].Item1 as Partner).Name}', ");
                     }
 
-                    var cust = relatioships.Where(r => r.Item1 is Customer && r.Item2 is Reservation).ToList();
+                    var exc = relatioships.Where(r => r.Item1 is Booking && r.Item2 is Excursion).ToList();
+                    if (exc.Count == 2)
+                    {
+                        sb.Append($"Η κράτηση μεταφέρθηκε απο '{(exc[1].Item2 as Excursion).Name}' σε '{(exc[0].Item2 as Excursion).Name}', ");
+                    }
+
+                    var cust = relatioships.Where(r => r.Item2 is Customer && r.Item1 is Reservation).ToList();
                     foreach (var c in cust)
                     {
-                        if (!cust.Any(c1 => c1.Item1 is Customer cus && cus.Id == (c.Item1 as Customer).Id))
+                        //if (!cust.Any(c1 => c1.Item2 is Customer cus && cus.Id == (c.Item2 as Customer).Id))
                         {
-                            var reswr = new ReservationWrapper(c.Item2 as Reservation);
-                            if (c.Item3 == EntityState.Deleted)
-                                sb.Append($"Διαγράφηκε ο πελάτης'{c.Item1 as Customer}' απο '{reswr.RoomTypeName}' στο '{reswr.HotelName}', ");
-                            else if (c.Item3 == EntityState.Added)
-                                sb.Append($"Προστέθηκε ο πελάτης'{c.Item1 as Customer}', ");
+                            var reswr = new ReservationWrapper(c.Item1 as Reservation);
+                            if (c.Item3 == EntityState.Deleted && !cust.Any(c1 => c1.Item2 == c.Item2 && c1.Item3 == EntityState.Added))
+                                sb.Append($"Διαγράφηκε ο πελάτης'{c.Item2 as Customer}' από '{reswr.RoomTypeName}' στο '{reswr.HotelName}', ");
+                            else if (c.Item3 == EntityState.Added && !cust.Any(c1 => c1.Item2 == c.Item2 && c1.Item3 == EntityState.Deleted))
+                                sb.Append($"Προστέθηκε ο πελάτης'{c.Item2 as Customer}', ");
                         }
                     }
 
-                    var res = relatioships.Where(r => r.Item1 is Reservation && r.Item2 is Booking).ToList();
+                    var res = relatioships.Where(r => r.Item2 is Reservation && r.Item1 is Booking).ToList();
                     foreach (var r in res)
                     {
-                        var reswr = new ReservationWrapper(r.Item1 as Reservation);
+                        var reswr = new ReservationWrapper(r.Item2 as Reservation);
                         if (r.Item3 == EntityState.Deleted)
                             sb.Append($"Διαγράφηκε '{reswr.Model.LastRoomtype}' δωμάτιο στο '{reswr.Model.LastHotel}' με τους πελάτες '{reswr.Model.LastCustomers}', ");
                         else if (r.Item3 == EntityState.Added)
@@ -799,7 +822,8 @@ namespace LATravelManager.UI.Repositories
                 .Include(f => f.User)
                 .Include(f => f.Excursion)
                 .Include(f => f.ReservationsInBooking.Select(i => i.CustomersList))
-                .Include(f => f.ReservationsInBooking.Select(i => i.Room.Hotel))
+                // .Include(f => f.ReservationsInBooking.Select(i => i.Room.Hotel))
+                .Include(f => f.Transactions)
                 .Where(r => r.Disabled == canceled)
                 .ToListAsync);
         }
@@ -967,31 +991,156 @@ namespace LATravelManager.UI.Repositories
 
         internal async Task<List<Reservation>> GetAllReservationsFiltered(int excursionId, int userId, bool completed, int category, DateTime dateLimit, bool checkInb, bool checkoutb, DateTime checkin, DateTime checkout, bool fromto, bool checkinout, bool canceled = false)
         {
+            //List<BookingDTO> b = await RunTask(Context.Bookings
+            //      .Where(c =>
+            //      c.ReservationsInBooking.Any(r => r.CreatedDate >= dateLimit) &&
+            //      (category < 0 || (int)c.Excursion.ExcursionType.Category == category) &&
+            //      (excursionId == 0 || c.Excursion.Id == excursionId) &&
+            //      (userId == 0 || c.User.Id == userId) &&
+            //      (!checkinout || ((!checkInb || c.CheckIn == checkin) && (!checkoutb || c.CheckOut == checkout))) &&
+            //      (!fromto || ((!checkInb || c.CheckIn >= checkin) && (!checkoutb || c.CheckIn <= checkout))) &&
+            //      (StaticResources.User.BaseLocation == 1 || c.Partner.Id != 219) &&
+            //      (completed || c.CheckOut >= DateTime.Today) &&
+            //      c.Disabled == canceled)
+            //      .Select(c => new BookingDTO
+            //      {
+            //          CheckIn = c.CheckIn,
+            //          CheckOut = c.CheckOut,
+            //          CreatedDate = c.CreatedDate,
+            //          IsPartners = c.IsPartners,
+            //          Commision = c.Commision,
+            //          Reciept = c.Reciept,
+            //          SecondDepart = c.SecondDepart,
+            //          DisableDate = c.DisableDate,
+            //          GroupBooking = c.GroupBooking,
+            //          ExcursionDate = c.ExcursionDate,
+            //          Comment = c.Comment,
+            //          CancelReason = c.CancelReason,
+            //          Id = c.Id,
+            //          DifferentDates = c.DifferentDates,
+            //          Excursion = c.Excursion,
+            //          ExcursionType = c.Excursion.ExcursionType,
+            //          Partner = c.Partner,
+            //          User = c.User,
+            //          ReservationsInBooking = c.ReservationsInBooking.Select(r => new ReservationDTO
+            //          {
+            //              CreatedDate = r.CreatedDate,
+            //              Id = r.Id,
+            //              ReservationType = r.ReservationType,
+            //              HotelID = r.Room.Hotel.Id,
+            //              OBHotelID = r.Hotel.Id,
+            //              NoNameRoomType = r.NoNameRoomType,
+            //              CustomersList = r.CustomersList.Select(cu => new CustomerDTO
+            //              {
+            //                  CheckIn = cu.CheckIn,
+            //                  CheckOut = cu.CheckOut,
+            //                  StartingPlace = cu.StartingPlace,
+            //                  Name = cu.Name,
+            //                  Surename = cu.Surename,
+            //                  Tel = cu.Tel,
+            //                  Price = cu.Price
+            //              }).ToList()
+            //          }).ToList(),
+            //          Payments = c.Payments.Select(p => new PaymentDTO
+            //          {
+            //              Amount = p.Amount,
+            //              Date = p.Date,
+            //              PaymentMethod = p.PaymentMethod,
+            //              Outgoing = p.Outgoing
+            //          }).ToList(),
+            //          ExtraServices = c.ExtraServices.Select(e => new ExtraServiceDTO
+            //          {
+            //              Amount = e.Amount,
+            //          }).ToList(),
+            //          Transactions = c.ExtraServices.Select(e => new TransactionDTO
+            //          {
+            //              Amount = e.Amount,
+            //          }).ToList()
+
+            //      })
+            //      .ToListAsync, 50);
+
+            //if (mainViewModel != null)
+            //    foreach (var bo in b)
+            //    {
+            //        bo.Excursion.ExcursionType = bo.ExcursionType;
+            //        foreach (var item in bo.ReservationsInBooking)
+            //        {
+
+            //            if (item.HotelID != null && item.HotelID > 0)
+            //            {
+            //                item.Room = new Room { Hotel = mainViewModel.BasicDataManager.Hotels.FirstOrDefault(h => h.Id == item.HotelID) };
+            //            }
+            //            else if (item.OBHotelID != null && item.OBHotelID > 0)
+            //            {
+            //                item.Hotel = mainViewModel.BasicDataManager.Hotels.FirstOrDefault(h => h.Id == item.OBHotelID);
+            //            }
+            //        }
+            //    }
+
+            //var res = new List<Reservation>();
+
+            //var config = new MapperConfiguration(cfg =>
+            //{
+            //    cfg.CreateMap<Booking, BookingDTO>().ReverseMap();
+            //    cfg.CreateMap<Customer, CustomerDTO>().ReverseMap();
+            //    cfg.CreateMap<ExtraService, ExtraServiceDTO>().ReverseMap();
+            //    cfg.CreateMap<Payment, PaymentDTO>().ReverseMap();
+            //    cfg.CreateMap<Reservation, ReservationDTO>().ReverseMap();
+            //    cfg.CreateMap<Transaction, ReservationDTO>().ReverseMap();
+            //});
+            //var mapper = new Mapper(config);
+
+            //foreach (var book in mapper.Map<List<Booking>>(b))
+            //{
+            //    foreach (var r in book.ReservationsInBooking)
+            //    {
+            //        r.Booking = book;
+            //        res.Add(r);
+            //    }
+            //}
+
+            //return res;
+
+            await RunTask(Context.Reservations
+                .Where(c =>
+                c.Booking.ReservationsInBooking.Any(r => r.CreatedDate >= dateLimit) &&
+                (category >= 0 ? (int)c.Booking.Excursion.ExcursionType.Category == category : true) &&
+                (excursionId == 0 || c.Booking.Excursion.Id == excursionId) &&
+                (userId == 0 || c.Booking.User.Id == userId) &&
+                (!checkinout || ((!checkInb || c.Booking.CheckIn == checkin) && (!checkoutb || c.Booking.CheckOut == checkout))) &&
+                (!fromto || ((!checkInb || c.Booking.CheckIn >= checkin) && (!checkoutb || c.Booking.CheckIn <= checkout))) &&
+                (StaticResources.User.BaseLocation == 1 || c.Booking.Partner.Id != 219) &&
+                (completed || c.Booking.CheckOut >= DateTime.Today) &&
+                c.Booking.Disabled == canceled)
+                .Include(f => f.Booking.Transactions)
+                .ToListAsync);
+
             return await RunTask(Context.Reservations
-                  .Where(c =>
-                  c.Booking.ReservationsInBooking.Any(r => r.CreatedDate >= dateLimit) &&
-                  (category >= 0 ? (int)c.Booking.Excursion.ExcursionType.Category == category : true) &&
-                  (excursionId == 0 || c.Booking.Excursion.Id == excursionId) &&
-                  (userId == 0 || c.Booking.User.Id == userId) &&
-                  (!checkinout || ((!checkInb || c.Booking.CheckIn == checkin) && (!checkoutb || c.Booking.CheckOut == checkout))) &&
-                  (!fromto || ((!checkInb || c.Booking.CheckIn >= checkin) && (!checkoutb || c.Booking.CheckIn <= checkout))) &&
-                  (StaticResources.User.BaseLocation == 1 || c.Booking.Partner.Id != 219) &&
-                  (completed || c.Booking.CheckOut >= DateTime.Today) &&
-                  c.Booking.Disabled == canceled)
-                  .Include(f => f.Booking)
-                  .Include(f => f.CustomersList)
-                  .Include(f => f.Booking.User)
-                  .Include(f => f.Booking.Partner)
-                  .Include(f => f.Booking.Excursion)
-                  .Include(f => f.Booking.Excursion.ExcursionType)
-                  .Include(f => f.Booking.Payments)
-                  .Include(f => f.Booking.Payments.Select(y => y.User))
-                  .Include(f => f.Booking.ExcursionDate)
-                  .Include(f => f.Room.Hotel)
-                  .Include(f => f.Room.RoomType)
-                  .Include(f => f.Hotel)
-                  .Include(f => f.Booking.ExtraServices)
-                  .ToListAsync, 50);
+            .Where(c =>
+            c.Booking.ReservationsInBooking.Any(r => r.CreatedDate >= dateLimit) &&
+            (category >= 0 ? (int)c.Booking.Excursion.ExcursionType.Category == category : true) &&
+            (excursionId == 0 || c.Booking.Excursion.Id == excursionId) &&
+            (userId == 0 || c.Booking.User.Id == userId) &&
+            (!checkinout || ((!checkInb || c.Booking.CheckIn == checkin) && (!checkoutb || c.Booking.CheckOut == checkout))) &&
+            (!fromto || ((!checkInb || c.Booking.CheckIn >= checkin) && (!checkoutb || c.Booking.CheckIn <= checkout))) &&
+            (StaticResources.User.BaseLocation == 1 || c.Booking.Partner.Id != 219) &&
+            (completed || c.Booking.CheckOut >= DateTime.Today) &&
+            c.Booking.Disabled == canceled)
+            .Include(f => f.Booking)
+            .Include(f => f.CustomersList)
+            .Include(f => f.Booking.User)
+            .Include(f => f.Booking.Partner)
+            .Include(f => f.Booking.Excursion)
+            .Include(f => f.Booking.Excursion.ExcursionType)
+            .Include(f => f.Booking.Payments)
+            .Include(f => f.Booking.Payments.Select(y => y.User))
+            .Include(f => f.Booking.ExcursionDate)
+            .Include(f => f.Room.Hotel)
+            .Include(f => f.Room.RoomType)
+            .Include(f => f.Hotel)
+            .Include(f => f.Booking.ExtraServices)
+            .ToListAsync, 50);
 
             //return await RunTask(Context.Reservations
             //     .Where(c =>
@@ -1270,37 +1419,38 @@ namespace LATravelManager.UI.Repositories
                     {
                         case nameof(Booking.CancelReason):
                             if (original is string s1 && !string.IsNullOrEmpty(s1))
-                                sb.Append($"Λόγος ακύρωσης από '{original.ToString()}' σε '{current.ToString()}', ");
+                                sb.Append($"Λόγος ακύρωσης από '{original}' σε '{current}', ");
                             break;
 
                         case nameof(Booking.CheckIn):
-                            sb.Append($"CheckIn από '{((DateTime)original).ToString("dd/MM/yyyy")}' σε '{b.CheckIn.ToString("dd/MM/yyyy")}', ");
+                            sb.Append($"CheckIn από '{(DateTime)original:dd/MM/yyyy}' σε '{b.CheckIn:dd/MM/yyyy}', ");
                             break;
 
                         case nameof(Booking.CheckOut):
-                            sb.Append($"CheckOut από '{((DateTime)original).ToString("dd/MM/yyyy")}' σε '{b.CheckOut.ToString("dd/MM/yyyy")}', ");
+                            sb.Append($"CheckOut από '{(DateTime)original:dd/MM/yyyy}' σε '{b.CheckOut:dd/MM/yyyy}', ");
                             break;
 
                         case nameof(Booking.Comment):
                             if (original is string s2 && !string.IsNullOrEmpty(s2))
-                                sb.Append($"Σχόλιο κράτησης από '{original.ToString()}' σε '{current.ToString()}', ");
-                            else if (original is string s3 && string.IsNullOrEmpty(s3))
-                            {
-                                sb.Append($"Νέο σχόλιο κράτησης '{current.ToString()}', ");
-                            }
+                                if (current is string cu && string.IsNullOrEmpty(cu))
+                                    sb.Append($"Το σχόλιο '{original}' διαγράφηκε, ");
+                                else
+                                    sb.Append($"Σχόλιο κράτησης από '{original}' σε '{current}', ");
+                            else if (current is string cu && !string.IsNullOrEmpty(cu))
+                                sb.Append($"Νέο σχόλιο κράτησης '{current}', ");
                             break;
 
                         case nameof(Booking.Commision):
                             if (original is decimal d1 && b.IsPartners && (bool)change.OriginalValues[nameof(Booking.IsPartners)])
-                                sb.Append($"Προμήθεια συνεργάτη από '{d1.ToString("0.##")}' σε '{b.Commision.ToString("0.##")}', ");
+                                sb.Append($"Προμήθεια συνεργάτη από '{d1:0.##}' σε '{b.Commision:0.##}', ");
                             break;
 
                         case nameof(Booking.DifferentDates):
                             if (current is bool d)
                                 if (d)
-                                    sb.Append($"Πλέον οι πελάτες ΕΧΟΥΝ διαφορετικές ημερομηνίες, ");
+                                    sb.Append($"Πλέον οι πελάτες ΈΧΟΥΝ διαφορετικές ημερομηνίες, ");
                                 else
-                                    sb.Append($"Πλέον οι πελάτες ΔΕΝ ΕΧΟΥΝ διαφορετικές ημερομηνίες, ");
+                                    sb.Append($"Πλέον οι πελάτες ΔΕΝ ΈΧΟΥΝ διαφορετικές ημερομηνίες, ");
                             break;
 
                         case nameof(Booking.Disabled):
@@ -1310,10 +1460,10 @@ namespace LATravelManager.UI.Repositories
                                 else
                                     sb.Append($"Η κράτηση επανενεργοποιήθηκε, ");
                             break;
-
+                            
                         case nameof(Booking.ExcursionDate):
                             if (original is ExcursionDate ed)
-                                sb.Append($"Ημέρομηνίες Εκδρομής από '{ed.Name}' σε '{b.ExcursionDate.Name}', ");
+                                sb.Append($"Ημερομηνίες Εκδρομής από '{ed.Name}' σε '{b.ExcursionDate.Name}', ");
                             break;
 
                         case nameof(Booking.IsPartners):
@@ -1321,14 +1471,13 @@ namespace LATravelManager.UI.Repositories
                                 if (ip)
                                     sb.Append($"Η κράτηση είναι πλέον συνεργάτη, ");
                                 else if (relatioships.Any(r => r.Item1 is Partner && r.Item3 == EntityState.Deleted))
-                                    sb.Append($"Η κράτηση ΔΕΝ είναι πλέον συνεργάτη. Ηταν '{(relatioships.Where(r => r.Item1 is Partner && r.Item3 == EntityState.Deleted).FirstOrDefault().Item1 as Partner).Name}' " +
-                                        $"με προμήθεια '{((decimal)change.OriginalValues[nameof(Booking.Commision)]).ToString("0.##\\%")}'" +
-                                        $" και ΝΕΤ τιμή'{((decimal)change.OriginalValues[nameof(Booking.NetPrice)]).ToString("0.##€")}', ");
+                                    sb.Append($"Η κράτηση ΔΕΝ είναι πλέον συνεργάτη. Ήταν '{(relatioships.Where(r => r.Item1 is Partner && r.Item3 == EntityState.Deleted).FirstOrDefault().Item1 as Partner).Name}' " +
+                                        $"με προμήθεια '{(decimal)change.OriginalValues[nameof(Booking.Commision)]:0.##\\%}'");
                             break;
 
                         case nameof(Booking.NetPrice):
                             if (original is decimal d2 && ((bool)change.OriginalValues[nameof(Booking.IsPartners)]) && b.IsPartners)
-                                sb.Append($"Net τιμή από '{d2.ToString("0.##€")}' σε '{b.NetPrice.ToString("0.##€")}', ");
+                                sb.Append($"Net τιμή από '{d2:0.##€}' σε '{b.NetPrice:0.##€}', ");
                             break;
 
                         case nameof(Booking.PartnerEmail):
@@ -1347,9 +1496,9 @@ namespace LATravelManager.UI.Repositories
                         case nameof(Booking.SecondDepart):
                             if (current is bool sd)
                                 if (sd)
-                                    sb.Append($"Είναι πλέον δέυτερη αναχώρηση, ");
+                                    sb.Append($"Είναι πλέον δεύτερη αναχώρηση, ");
                                 else
-                                    sb.Append($"Δέν είναι πλέον δέυτερη αναχώρηση, ");
+                                    sb.Append($"Δεν είναι πλέον δεύτερη αναχώρηση, ");
                             break;
 
                         default:
@@ -1427,7 +1576,7 @@ namespace LATravelManager.UI.Repositories
 
                         case nameof(Customer.Price):
                             if (!c.Reservation.Booking.IsPartners)
-                                sb.Append($"Τιμή  του '{c}' από '{((decimal)original).ToString("0.##€")}' σε '{c.Price.ToString("0.##€")}', ");
+                                sb.Append($"Τιμή  του '{c}' από '{(decimal)original:0.##€}' σε '{c.Price:0.##€}', ");
                             break;
 
                         case nameof(Customer.ReturningPlace):
@@ -1536,8 +1685,9 @@ namespace LATravelManager.UI.Repositories
 
         internal async Task UpdatePrices()
         {
+            DateTime limit = DateTime.Today.AddMonths(-6);
             var x = await Context.PricingPeriods
-              .Where(p => (p.Parted && p.ToB >= DateTime.Today) || (!p.Parted && p.To > DateTime.Today))
+              .Where(p => (p.Parted && p.ToB >= limit) || (!p.Parted && p.To > limit))
               .Include(p => p.ChilndEtcPrices.Transfer)
               .Include(p => p.HotelPricings.Select(h => h.Hotel))
               .ToListAsync();
@@ -1550,6 +1700,26 @@ namespace LATravelManager.UI.Repositories
                 h.Rooms.Any(r => r.DailyBookingInfo.Any(d => (d.Date >= selectedPeriodP.From && d.Date <= selectedPeriodP.To) ||
                 (selectedPeriodP.Parted && d.Date >= selectedPeriodP.FromB && d.Date <= selectedPeriodP.ToB))))
                 .ToListAsync);
+        }
+
+        internal async Task<List<Customer>> FindCustomerByTel(string tel)
+        {
+            return await RunTask(Context.Customers.Where(c => c.Tel.Contains(tel))
+                .ToListAsync);
+        }
+        internal async Task<List<Customer>> FindCustomerBySurename(string surename)
+        {
+            return await RunTask(Context.Customers.Where(c => c.Surename.Contains(surename))
+                .ToListAsync);
+        }
+
+        internal async Task<Customer> GetFullCustomerByID(int id)
+        {
+            return await RunTask(Context.Customers.Where(c => c.Id == id)
+                .Include(c => c.Reservation.Booking.ReservationsInBooking)
+                .Include(c => c.Personal_Booking.Customers)
+                .Include(c => c.ThirdParty_Booking.Customers)
+                .FirstOrDefaultAsync);
         }
 
         #endregion Methods

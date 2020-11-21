@@ -203,6 +203,7 @@
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
                                     <Label Content="Τζίρος"
                                            Grid.Row="0"
@@ -227,6 +228,12 @@
                                            Grid.Column="0" />
                                     <Label Content="{Binding Customers, StringFormat=c2}"
                                            Grid.Row="3"
+                                           Grid.Column="1" />
+                                    <Label Content="Έξοδα"
+                                           Grid.Row="4"
+                                           Grid.Column="0" />
+                                    <Label Content="{Binding Expenses, Converter={StaticResource FtoSConverter}}"
+                                           Grid.Row="4"
                                            Grid.Column="1" />
                                 </Grid>
                             </GroupBox>

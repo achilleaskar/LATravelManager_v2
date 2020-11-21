@@ -19,11 +19,37 @@ namespace LATravelManager.Model.BookingData
             ExtraServices = new ObservableCollection<ExtraService>();
             ReservationsInBooking = new ObservableCollection<Reservation>();
             ChangesInBooking = new ObservableCollection<ChangeInBooking>();
+            Transactions = new ObservableCollection<Transaction>();
             CheckIn = DateTime.Today;
             CheckOut = DateTime.Today.AddDays(3);
         }
 
         #endregion Constructors
+
+
+
+
+        private ObservableCollection<Transaction> _Transactions;
+
+
+        public ObservableCollection<Transaction> Transactions
+        {
+            get
+            {
+                return _Transactions;
+            }
+
+            set
+            {
+                if (_Transactions == value)
+                {
+                    return;
+                }
+
+                _Transactions = value;
+                RaisePropertyChanged();
+            }
+        }
 
         #region Properties
         public DisabledInfo DisabledInfo { get; set; }
@@ -129,12 +155,12 @@ namespace LATravelManager.Model.BookingData
         //    ReservationsInBooking.CollectionChanged += ReservationsCollectionChanged;
         //    CheckIn = DateTime.Today;
         //}
-        public ICollection<Payment> Payments { get; }
+        public ObservableCollection<Payment> Payments { get; set; }
 
-        public ICollection<ExtraService> ExtraServices { get; }
+        public ObservableCollection<ExtraService> ExtraServices { get; set; }
 
         public bool Reciept { get; set; }
-        public ObservableCollection<Reservation> ReservationsInBooking { get; }
+        public ObservableCollection<Reservation> ReservationsInBooking { get; set; }
 
         public bool SecondDepart { get; set; }
 

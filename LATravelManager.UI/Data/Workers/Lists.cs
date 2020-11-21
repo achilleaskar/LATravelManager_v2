@@ -347,7 +347,7 @@ namespace LATravelManager.UI.Data.Workers
         {
             int lineNum;
             Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\RoomingLists");
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\RoomingLists\" + $"Rooming List {From.ToString("dd.MM")}-{To.ToString("dd.MM")}" + ".xlsx";
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\RoomingLists\" + $"Rooming List {From:dd.MM}-{To:dd.MM}" + ".xlsx";
 
             FileInfo fileInfo = new FileInfo(path);
             ExcelPackage p = new ExcelPackage();

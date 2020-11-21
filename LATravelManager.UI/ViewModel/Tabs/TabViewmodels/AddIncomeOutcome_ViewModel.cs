@@ -391,7 +391,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         private bool CanSaveTransaction()
         {
-            if ((Transaction.ExpenseBaseCategory == ExpenseBaseCategories.GroupExpense || Transaction.IncomeBaseCategory == IncomeBaseCategories.OptionalActivities) && SelectedExcursion.Id == 0)
+            if ((Transaction.ExpenseBaseCategory == ExpenseBaseCategories.GroupExpense || Transaction.IncomeBaseCategory == IncomeBaseCategories.OptionalActivities) && SelectedExcursion != null && SelectedExcursion.Id == 0)
             {
                 return false;
             }

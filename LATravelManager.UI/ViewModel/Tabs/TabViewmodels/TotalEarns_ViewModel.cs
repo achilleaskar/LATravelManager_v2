@@ -372,6 +372,30 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         public MainViewModel MainViewModel { get; }
 
+
+
+
+        private decimal _Expenses;
+
+
+        public decimal Expenses
+        {
+            get
+            {
+                return _Expenses;
+            }
+
+            set
+            {
+                if (_Expenses == value)
+                {
+                    return;
+                }
+
+                _Expenses = value;
+                RaisePropertyChanged();
+            }
+        }
         public decimal Net
         {
             get
@@ -487,7 +511,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                     return;
                 }
 
-                _Total = decimal.Round(value,2);
+                _Total = decimal.Round(value, 2);
                 RaisePropertyChanged();
             }
         }
@@ -593,9 +617,11 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 UserIndexBookingFilter == 0 ? -1 : Users[UserIndexBookingFilter - 1].Id,
                 PartnerIndexBookingFilter == 0 ? -1 : Partners[PartnerIndexBookingFilter - 1].Id,
                 EnableFromFilter ? From : CompletedIncomeFilter ? DateTime.MinValue : DateTime.Today,
-                EnableToFilter ? To : DateTime.MaxValue)).Select(b => new BookingWrapper(b)).ToList();
+                EnableToFilter ? To : DateTime.MaxValue))
+                .Select(b => new BookingWrapper(b))
+                .ToList();
 
-            Total = Net = Commission = Customers = 0;
+            Total = Net = Commission = Expenses = Customers = 0;
             decimal net = 0;
             // decimal pel = 0, chara = 0, plat = 0;
 
@@ -646,13 +672,20 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 {
                     net += b.FullPrice;
                 }
+
+                foreach (var t in b.Transactions)
+                {
+                    Expenses += t.Amount;
+                }
             }
             Net = net;
+
             Commission = Total - Net;
             RaisePropertyChanged(nameof(Total));
             RaisePropertyChanged(nameof(Customers));
             RaisePropertyChanged(nameof(Net));
             RaisePropertyChanged(nameof(Commission));
+            RaisePropertyChanged(nameof(Expenses));
             Mouse.OverrideCursor = Cursors.Arrow;
 
         }

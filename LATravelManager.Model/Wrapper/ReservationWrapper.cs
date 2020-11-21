@@ -81,7 +81,18 @@ namespace LATravelManager.Model.Wrapper
         #endregion Fields
 
         #region Properties
+        public decimal Expenses => GetExpenses();
 
+        public bool Hide { get; set; }
+
+        private decimal GetExpenses()
+        {
+            if (Booking==null || Booking.Transactions==null)
+            {
+                return 0;
+            }
+            return Booking.Transactions.Sum(t => t.Amount);
+        }
         public ObservableCollection<Customer> AllCustomers => GetAllCustomers();
 
         public Booking Booking

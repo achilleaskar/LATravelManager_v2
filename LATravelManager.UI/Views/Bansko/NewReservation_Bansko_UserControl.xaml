@@ -6,13 +6,14 @@
              xmlns:helpers="clr-namespace:LATravelManager.UI.Helpers"
              xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:enum="clr-namespace:LATravelManager.Model;assembly=LATravelManager.Model"
              xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko"
              d:DataContext="{d:DesignInstance viewmodels:NewReservation_Bansko_ViewModel}"
              mc:Ignorable="d"
              KeyUp="UserControl_KeyUp"
              Background="White"
              d:DesignHeight="700"
-             d:DesignWidth="1200">
+             d:DesignWidth="1600">
     <UserControl.Resources>
         <converters:BoolToColorConverter x:Key="BrushColorConverter" />
         <converters:UserToVisibility x:Key="UserToVisibilityConverter" />
@@ -467,7 +468,7 @@
                                              Text="{Binding BookingWr.FIxedCommision,UpdateSourceTrigger=PropertyChanged}"
                                              Visibility="{Binding BookingWr.Partner.People}" />
                                 </StackPanel>
-                                <TextBlock Text="Νet τιμή:"
+                                <TextBlock Text="Net τιμή:"
                                            Grid.Row="2"
                                            HorizontalAlignment="Left" />
                                 <TextBlock Text="{Binding BookingWr.NetPrice,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
@@ -619,7 +620,7 @@
                         </StackPanel>
                         <StackPanel Grid.Row="2"
                                     VerticalAlignment="Bottom">
-                            <Label Content="Ξενοδόχείο:"
+                            <Label Content="Ξενοδοχείο:"
                                    Padding="0" />
                             <TextBlock Text="{Binding SelectedCustomer.HotelName }" />
                             <Label Content="Τύπος Δωματίου:"
@@ -642,6 +643,10 @@
                           HorizontalAlignment="Left"
                           VerticalAlignment="Top">
                     <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="7*"/>
+                            <ColumnDefinition Width="178*"/>
+                        </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -649,7 +654,7 @@
                         </Grid.RowDefinitions>
                         <GroupBox HorizontalAlignment="Left"
                                   VerticalAlignment="Top"
-                                  Header="Νέα Πληρωμή">
+                                  Header="Νέα Πληρωμή" Grid.ColumnSpan="2">
                             <StackPanel Orientation="Horizontal">
                                 <StackPanel Margin="5,5,5,0">
                                     <TextBlock Text="Ποσό:"
@@ -700,18 +705,18 @@
                             </StackPanel>
                         </GroupBox>
                         <StackPanel Grid.Row="1"
-                                    Orientation="Vertical">
+                                    Orientation="Vertical" Grid.ColumnSpan="2">
                             <TextBlock Text=" Ιστορικό Πληρωμών"
                                        HorizontalAlignment="Left" />
                             <ListView Name="payments"
                                       Focusable="False"
-                                      Height="142"
+                                      Height="164"
                                       SelectedItem="{Binding SelectedPayment}"
                                       Width="370"
                                       ItemsSource="{Binding BookingWr.Payments}">
                                 <ListView.Resources>
                                     <ContextMenu x:Key="ItemContextMenu">
-                                        <MenuItem Header="Διαγραφη"
+                                        <MenuItem Header="Διαγραφή"
                                                   Visibility="{Binding Converter={StaticResource UserToVisibilityConverter},ConverterParameter=1,  Mode=OneWay}"
                                                   Command="{Binding DataContext.DeletePaymentCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}"></MenuItem>
                                         <MenuItem Header="Εκτ. Απόδειξης"
@@ -746,93 +751,191 @@
                         </StackPanel>
                     </Grid>
                 </GroupBox>
-                <GroupBox Header="Εξτρά Υπηρεσίες"
+                <TabControl Margin="5 10 0 0"
                           HorizontalAlignment="Left"
                           VerticalAlignment="Top">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <StackPanel Orientation="Horizontal">
-                            <Label Content="Πελάτης:" />
-                            <Label Content="{Binding SelectedCustomer.FullName}" />
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal"
+                    <TabItem Header="Εξτρά Υπηρεσίες">
+
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Πελάτης:" />
+                                <Label Content="{Binding SelectedCustomer.FullName}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal"
                                     Grid.Row="1">
-                            <StackPanel Margin="5 0 5 5"
+                                <StackPanel Margin="5 0 5 5"
                                         Grid.Column="0"
                                         HorizontalAlignment="Stretch"
                                         Grid.ColumnSpan="2">
-                                <TextBlock Text="Περιγραφή:"
+                                    <TextBlock Text="Περιγραφή:"
                                            HorizontalAlignment="Left"
                                            VerticalAlignment="Center" />
-                                <TextBox Margin="0,0,5,5"
+                                    <TextBox Margin="0,0,5,5"
                                          HorizontalAlignment="Stretch"
                                          Grid.Column="1"
                                          Width="140"
                                          TextWrapping="Wrap"
                                          Height="45"
                                          Text="{Binding NewExtraService.Description}" />
-                            </StackPanel>
-                            <StackPanel  VerticalAlignment="Top">
-                                <TextBlock Text="Ποσό:"
+                                </StackPanel>
+                                <StackPanel  VerticalAlignment="Top">
+                                    <TextBlock Text="Ποσό:"
                                            HorizontalAlignment="Left"
                                            VerticalAlignment="Center" />
-                                <TextBox Grid.Row="0"
+                                    <TextBox Grid.Row="0"
                                          Margin="0 0 0 5"
                                          HorizontalAlignment="Center"
                                          Grid.Column="1"
                                          Text="{Binding NewExtraService.Amount,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                          Width="50" />
-                                <Button Content="Προσθήκη"
+                                    <Button Content="Προσθήκη"
                                         Command="{Binding AddExraServiceCommand}" />
+                                </StackPanel>
                             </StackPanel>
-                        </StackPanel>
-                        <StackPanel Grid.Row="2"
+                            <StackPanel Grid.Row="2"
                                     Orientation="Vertical">
-                            <ListView Name="extras"
+                                <ListView Name="extras"
                                       Focusable="False"
-                                      Height="142"
+                                      Height="146"
                                       SelectedItem="{Binding SelectedExtraService}"
                                       Width="270"
                                       ItemsSource="{Binding BookingWr.ExtraServices}">
-                                <ListView.Resources>
-                                    <ContextMenu x:Key="ItemContextMenub">
-                                        <MenuItem Header="Διαγραφη"
+                                    <ListView.Resources>
+                                        <ContextMenu x:Key="ItemContextMenub">
+                                            <MenuItem Header="Διαγραφή"
                                                   Visibility="{Binding Converter={StaticResource UserToVisibilityConverter},ConverterParameter=1,  Mode=OneWay}"
                                                   Command="{Binding DataContext.DeleteExtraServiceCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
-                                            <MenuItem.Icon>
-                                                <Image MaxHeight="20"
+                                                <MenuItem.Icon>
+                                                    <Image MaxHeight="20"
                                                        Stretch="Fill" />
-                                            </MenuItem.Icon>
-                                        </MenuItem>
-                                    </ContextMenu>
-                                </ListView.Resources>
-                                <ListView.ItemContainerStyle>
-                                    <Style TargetType="{x:Type ListViewItem}">
-                                        <Setter Property="ContextMenu"
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                        </ContextMenu>
+                                    </ListView.Resources>
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="{x:Type ListViewItem}">
+                                            <Setter Property="ContextMenu"
                                                 Value="{StaticResource ItemContextMenub}" />
-                                    </Style>
-                                </ListView.ItemContainerStyle>
-                                <ListView.View>
-                                    <GridView>
-                                        <GridViewColumn Header="Περιγραφή"
+                                        </Style>
+                                    </ListView.ItemContainerStyle>
+                                    <ListView.View>
+                                        <GridView>
+                                            <GridViewColumn Header="Περιγραφή"
                                                         Width="120"
                                                         DisplayMemberBinding="{Binding Description}" />
-                                        <GridViewColumn Header="Ποσό"
+                                            <GridViewColumn Header="Ποσό"
                                                         Width="40"
                                                         DisplayMemberBinding="{Binding Amount,Converter={StaticResource FtoSConverter}}" />
-                                        <GridViewColumn Header="Πελατης"
+                                            <GridViewColumn Header="Πελάτης"
                                                         Width="100"
                                                         DisplayMemberBinding="{Binding Customer}" />
-                                    </GridView>
-                                </ListView.View>
-                            </ListView>
-                        </StackPanel>
-                    </Grid>
-                </GroupBox>
+                                        </GridView>
+                                    </ListView.View>
+                                </ListView>
+                            </StackPanel>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Έξοδα">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Τύπος:" />
+                                <ComboBox Width="100" 
+                                          VerticalAlignment="Center" 
+                                          ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:GroupExpenseCategories}}}"
+                                         SelectedItem="{Binding NewTransaction.GroupExpenseCategory}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal"
+                                    Grid.Row="1">
+                                <StackPanel Margin="5 0 5 5"
+                                        Grid.Column="0"
+                                        HorizontalAlignment="Stretch"
+                                        Grid.ColumnSpan="2">
+                                    <TextBlock Text="Περιγραφή:"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Center" />
+                                    <TextBox Margin="0,0,5,5"
+                                         HorizontalAlignment="Stretch"
+                                         Grid.Column="1"
+                                         Width="140"
+                                         TextWrapping="Wrap"
+                                         Height="45"
+                                         Text="{Binding NewTransaction.Description,UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
+                                <StackPanel  VerticalAlignment="Top">
+                                    <TextBlock Text="Ποσό:"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Center" />
+                                    <TextBox Grid.Row="0"
+                                         Margin="0 0 0 5"
+                                         HorizontalAlignment="Center"
+                                         Grid.Column="1"
+                                         Text="{Binding NewTransaction.Amount,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged}"
+                                         Width="50" />
+                                    <Button Content="Προσθήκη"
+                                        Command="{Binding AddNewTransactionCommand}" />
+                                </StackPanel>
+                            </StackPanel>
+                            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Hidden"
+                                      Width="270"
+                                          
+                                          HorizontalScrollBarVisibility="Auto">
+                                <ListView Name="expenses"
+                                      Focusable="False"
+                                      Height="129"
+                                      SelectedItem="{Binding SelectedTransaction}"
+                                      ItemsSource="{Binding BookingWr.Transactions}">
+                                    <ListView.Resources>
+                                        <ContextMenu x:Key="ItemContextMenutrans">
+                                            <MenuItem Header="Διαγραφή"
+                                                  Visibility="{Binding Converter={StaticResource UserToVisibilityConverter},ConverterParameter=1,  Mode=OneWay}"
+                                                  Command="{Binding DataContext.DeleteTransactionCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
+                                                <MenuItem.Icon>
+                                                    <Image MaxHeight="20"
+                                                       Stretch="Fill" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                        </ContextMenu>
+                                    </ListView.Resources>
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="{x:Type ListViewItem}">
+                                            <Setter Property="ContextMenu"
+                                                Value="{StaticResource ItemContextMenutrans}" />
+                                        </Style>
+                                    </ListView.ItemContainerStyle>
+                                    <ListView.View>
+                                        <GridView>
+                                            <GridViewColumn Header="Ποσό"
+                                                        Width="40"
+                                                        DisplayMemberBinding="{Binding Amount,Converter={StaticResource FtoSConverter}}" />
+                                            <GridViewColumn Header="Τύπος"
+                                                        Width="60"
+                                                        DisplayMemberBinding="{Binding GroupExpenseDescription}" />
+                                            <GridViewColumn Header="Περιγραφή"
+                                                        Width="120"
+                                                        DisplayMemberBinding="{Binding Description}" />
+                                            <GridViewColumn Header="Χρήστης"
+                                                        Width="80"
+                                                        DisplayMemberBinding="{Binding User}" />
+                                            <GridViewColumn Header="Ημερομηνία"
+                                                        Width="95"
+                                                        DisplayMemberBinding="{Binding Date, StringFormat='{}{0:dd/MM/yy-HH:mm}'}" />
+                                        </GridView>
+                                    </ListView.View>
+                                </ListView>
+                            </ScrollViewer>
+                        </Grid>
+                    </TabItem>
+                </TabControl>
             </StackPanel>
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
@@ -872,7 +975,7 @@
                         </DataGrid.Resources>
                         <DataGrid.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="Διαγραφη"
+                                <MenuItem Header="Διαγραφή"
                                           Command="{Binding DeleteSelectedCustomersCommand}">
                                     <MenuItem.Icon>
                                         <Image MaxHeight="20"
@@ -996,9 +1099,9 @@
                                         <ComboBox SelectedIndex="{Binding CustomerHasBusIndex, UpdateSourceTrigger=PropertyChanged}"
                                                   Foreground="{Binding SelectedIndex, ConverterParameter=0, Converter={StaticResource SelectedIndexToForegroundConverter}, RelativeSource={RelativeSource Self}, UpdateSourceTrigger=PropertyChanged}">
                                             <ComboBoxItem Content="ΝΑΙ" />
-                                            <ComboBoxItem Content="ΜΟΝΟ ΠΗΓΑΙΝΕ" />
-                                            <ComboBoxItem Content="ΜΟΝΟ ΕΠΙΣΤΡΟΦΗ" />
-                                            <ComboBoxItem Content="ΟΧΙ" />
+                                            <ComboBoxItem Content="ΜΌΝΟ ΠΉΓΑΙΝΕ" />
+                                            <ComboBoxItem Content="ΜΌΝΟ ΕΠΙΣΤΡΟΦΉ" />
+                                            <ComboBoxItem Content="ΌΧΙ" />
                                         </ComboBox>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
@@ -1062,6 +1165,18 @@
                     <Button Content="Καθαρισμός"
                             Margin="5,5,5,0"
                             Command="{Binding ClearBookingCommand}" />
+                    <Button Margin="5,5,5,0"
+                            Command="{Binding SearchForCustomerCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock VerticalAlignment="center" Margin="0 0 5 0">
+                                Προσθήκη Πελ.
+                            </TextBlock>
+                            <iconPacks:PackIconFontAwesome
+                                Kind="SearchSolid"
+                                VerticalAlignment="Center"
+                                 />
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
             </Grid>
         </Grid>

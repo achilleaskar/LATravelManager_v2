@@ -80,6 +80,10 @@ namespace LATravelManager.Model.Wrapper
         {
             get { return GetValue<ObservableCollection<ChangeInBooking>>(); }
         }
+        public ObservableCollection<Transaction> Transactions
+        {
+            get { return GetValue<ObservableCollection<Transaction>>(); }
+        }
 
         public DateTime CheckIn
         {
@@ -276,6 +280,8 @@ namespace LATravelManager.Model.Wrapper
             get { return GetValue<ExcursionDate>(); }
             set
             {
+                if (value == null)
+                    return;
                 SetValue(value);
                 CheckIn = value.CheckIn;
                 CheckOut = value.CheckOut;
@@ -599,7 +605,7 @@ namespace LATravelManager.Model.Wrapper
             }
 
             foreach (var e in ExtraServices)
-                extra = e.Amount;
+                extra += e.Amount;
             Extras = extra;
 
             FullPrice = total + Extras;
@@ -715,11 +721,11 @@ namespace LATravelManager.Model.Wrapper
             }
             if (IsPartners && NetPrice <= 0)
             {
-                return "Δέν έχετε ορίσει ΝΕΤ τιμή!";
+                return "Δεν έχετε ορίσει ΝΕΤ τιμή!";
             }
             if (IsPartners && Partner == null)
             {
-                return "Δέν έχετε επιλέξει συνεργάτη";
+                return "Δεν έχετε επιλέξει συνεργάτη";
             }
             if (Excursion != null && Excursion.ExcursionType.Category == ExcursionTypeEnum.Group && Excursion.ExcursionDates == null)
             {

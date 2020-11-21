@@ -288,10 +288,11 @@
                                             BorderThickness="{TemplateBinding BorderThickness}"
                                             Background="{TemplateBinding Background}"
                                             Padding="{TemplateBinding Padding}"
-                                            SnapsToDevicePixels="true">
-                                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            SnapsToDevicePixels="true">                           
+                                        <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/> 
+                                        <!--<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                           SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />-->
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsSelected"
@@ -532,10 +533,11 @@
                                             Background="{TemplateBinding Background}"
                                             Padding="{TemplateBinding Padding}"
                                             SnapsToDevicePixels="true">
-                                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                        <!--<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                           SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-                                    </Border>
+                                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />-->
+                                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                        </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsSelected"
                                                  Value="True">

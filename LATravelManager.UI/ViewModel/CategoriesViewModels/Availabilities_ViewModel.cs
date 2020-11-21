@@ -311,7 +311,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
 
         public override string ToString()
         {
-            return $"{CheckIn.ToString("ddd dd/MM - ")}{CheckOut.ToString("ddd dd/MM")}({((CheckOut - CheckIn).TotalDays)} νύχτες)";
+            return $"{CheckIn:ddd dd/MM -} {CheckOut:ddd dd/MM}({((CheckOut - CheckIn).TotalDays)} νύχτες)";
         }
 
         #endregion Methods

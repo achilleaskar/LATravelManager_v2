@@ -61,6 +61,12 @@
     <Compile Include="BookingData\Personal_Booking.cs" />
     <Compile Include="BookingData\ReservationFullDto.cs" />
     <Compile Include="BookingData\ThirdParty_Booking.cs" />
+    <Compile Include="DTOS\BookingDTO.cs" />
+    <Compile Include="DTOS\CustomerDTO.cs" />
+    <Compile Include="DTOS\ExtraServiceDTO.cs" />
+    <Compile Include="DTOS\PaymentDTO.cs" />
+    <Compile Include="DTOS\ReservationDTO.cs" />
+    <Compile Include="DTOS\TransactionDTO.cs" />
     <Compile Include="Excursions\CustomerOptional.cs" />
     <Compile Include="Hotels\HotelOptions.cs" />
     <Compile Include="Hotels\PricingPeriod.cs" />
@@ -151,6 +157,9 @@
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator">
       <Version>2.0.5</Version>
+    </PackageReference>
+    <PackageReference Include="Enums.NET">
+      <Version>3.0.3</Version>
     </PackageReference>
     <PackageReference Include="EPPlus">
       <Version>4.5.3.3</Version>

@@ -1,11 +1,13 @@
-﻿using System;
-using System.Threading.Tasks;
-using LATravelManager.Model.BookingData;
+﻿using LATravelManager.Model.BookingData;
+using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Wrapper;
+using System;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Group
 {
@@ -89,7 +91,12 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Group
             {
                 Enabled = true;
                 SelectedExcursion = selectedExcursion;
-                InitializeBooking(await CreateNewBooking());
+                ObservableCollection<CustomerWrapper> oldCusts = null;
+                if (BookingWr != null && BookingWr.Id == 0)
+                {
+                    oldCusts = BookingWr.Customers;
+                }
+                InitializeBooking(await CreateNewBooking(), oldCusts);
 
                 await ResetAllRefreshableDataASync();
             }

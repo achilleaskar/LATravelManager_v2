@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using DocumentFormat.OpenXml;
+﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using LATravelManager.Model;
@@ -22,6 +12,16 @@ using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
 using DW = DocumentFormat.OpenXml.Drawing.Wordprocessing;
 using PIC = DocumentFormat.OpenXml.Drawing.Pictures;
 using TEST = DocumentFormat.OpenXml.Drawing;
@@ -90,6 +90,7 @@ namespace LATravelManager.UI.Helpers
         public bool Nonamemess { get; set; }
 
         public bool Tranmess { get; set; }
+        public bool OneDaymess { get; set; }
 
         #endregion Properties
 
@@ -508,15 +509,22 @@ namespace LATravelManager.UI.Helpers
                         MessageBox.Show("Error");
                         continue;
                     }
-                    else if (res.ReservationType == ReservationTypeEnum.Transfer && !Tranmess)
+                    else if (res.ReservationType == ReservationTypeEnum.Transfer)
                     {
-                        MessageBox.Show("Η κράτηση είναι TRANSFER");
-                        Tranmess = true;
+                        if (!Tranmess)
+                        {
+                            MessageBox.Show("Η κράτηση είναι TRANSFER");
+                            Tranmess = true;
+                        }
                         continue;
                     }
                     else if (res.ReservationType == ReservationTypeEnum.OneDay)
                     {
-                        MessageBox.Show("Η κράτηση είναι Μονοήμερη");
+                        if (!OneDaymess)
+                        {
+                            MessageBox.Show("Η κράτηση είναι Μονοήμερη");
+                            OneDaymess = true;
+                        }
                         continue;
                     }
 
@@ -1219,10 +1227,15 @@ namespace LATravelManager.UI.Helpers
                 //{
                 //    MessageBox.Show("Παρακαλώ τοποθετήστε τα OVER");
                 //}
-                else if (res.ReservationType == ReservationTypeEnum.Transfer && !Tranmess)
+                if (res.ReservationType == ReservationTypeEnum.Transfer && !Tranmess)
                 {
                     MessageBox.Show("Η κράτηση είναι TRANSFER");
                     Tranmess = true;
+                    return;
+                }
+                else if (res.ReservationType == ReservationTypeEnum.OneDay)
+                {
+                    MessageBox.Show("Η κράτηση είναι Μονοήμερη");
                     return;
                 }
             }
@@ -1342,6 +1355,8 @@ namespace LATravelManager.UI.Helpers
                     decimal remaining = selectedPayment.Booking != null ? new BookingWrapper(selectedPayment.Booking).Remaining : selectedPayment.Personal_Booking != null ? new Personal_BookingWrapper(selectedPayment.Personal_Booking).Remaining : new ThirdParty_Booking_Wrapper(selectedPayment.ThirdParty_Booking).Remaining;
                     decimal total = selectedPayment.Booking != null ? new BookingWrapper(selectedPayment.Booking).FullPrice : selectedPayment.Personal_Booking != null ? new Personal_BookingWrapper(selectedPayment.Personal_Booking).FullPrice : new ThirdParty_Booking_Wrapper(selectedPayment.ThirdParty_Booking).FullPrice;
                     string Description = selectedPayment.Booking != null ? new BookingWrapper(selectedPayment.Booking).GetPacketDescription() : selectedPayment.Personal_Booking != null ? new Personal_BookingWrapper(selectedPayment.Personal_Booking).GetPacketDescription() : new ThirdParty_Booking_Wrapper(selectedPayment.ThirdParty_Booking).GetPacketDescription();
+
+                    Description=Description.Replace("&", "&amp;");
 
                     Regex regexText = new Regex("regexcustomerid");
                     docText = regexText.Replace(docText, SelectedCustomer.Id.ToString());

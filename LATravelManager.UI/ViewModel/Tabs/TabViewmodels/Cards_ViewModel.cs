@@ -823,7 +823,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         private void CalculateAmounts()
         {
-            Total = RemainingA = Available = 0;
+            Total = RemainingA = Available = Commision = 0;
             foreach (ReservationWrapper res in ReservationsCollectionView)
             {
                 Total += res.FullPrice;

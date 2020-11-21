@@ -323,10 +323,11 @@
                     CornerRadius="2">
                 <StackPanel Orientation="Horizontal">
 
-                    <StackPanel Orientation="Vertical"
+                    <StackPanel Orientation="Vertical" 
+                                VerticalAlignment="Top"
                                 Margin="5">
                         <TextBlock Text="Ποσό:" />
-                        <TextBox Width="40"
+                        <TextBox Width="40" 
                                  Text="{Binding Transaction.Amount,Converter={StaticResource FloadToStringValueConverter},UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                     <StackPanel Orientation="Vertical"

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using EnumsNET;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Lists;
@@ -526,6 +527,8 @@ namespace LATravelManager.Model
             string names = Booking != null ? Booking.Names : PersonalBooking != null ? PersonalBooking.Names : ThirdPartyBooking != null ? ThirdPartyBooking.Names : "";
             return (names.IndexOfAny(new char[] { ',' }) >= 0 ? " των " : " του ") + names;
         }
+
+        public string GroupExpenseDescription => GroupExpenseCategory.AsString(EnumFormat.Description);
 
         private string GetDescription()
         {

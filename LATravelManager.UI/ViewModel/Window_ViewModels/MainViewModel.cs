@@ -125,7 +125,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
         public async Task LoadAsync()
         {
-            StartingRepository = new GenericRepository();
+            StartingRepository = new GenericRepository(mainViewModel: this);
             BasicDataManager = new BasicDataManager(StartingRepository);
 
             await BasicDataManager.LoadAsync();

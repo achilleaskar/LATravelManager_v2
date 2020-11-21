@@ -3,6 +3,7 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using GalaSoft.MvvmLight.CommandWpf;
 using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.LocalModels;
 using LATravelManager.Model.People;
@@ -13,10 +14,11 @@ using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.CategoriesViewModels;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
+using LATravelManager.UI.Views;
 using LATravelManager.UI.Views.Universal;
 using LATravelManager.UI.Wrapper;
 using Microsoft.Win32;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Logical;
+using NuGet;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -31,6 +33,15 @@ using System.Windows.Media;
 
 namespace LATravelManager.UI.ViewModel.BaseViewModels
 {
+    public class HotelWithRooms
+    {
+        #region Properties
+
+        public List<RoomWrapper> Rooms { get; set; }
+
+        #endregion Properties
+    }
+
     public abstract class NewReservationGroup_Base : MyViewModelBaseAsync
     {
         #region Fields
@@ -104,24 +115,80 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         #region Constructors
 
+
+        public RelayCommand ChangeBookingCommand { get; set; }
+
+
+        private ObservableCollection<Excursion> _GroupExcursions;
+
+
+        public ObservableCollection<Excursion> GroupExcursions
+        {
+            get
+            {
+                return _GroupExcursions;
+            }
+
+            set
+            {
+                if (_GroupExcursions == value)
+                {
+                    return;
+                }
+
+                _GroupExcursions = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private Excursion _SelectedExcursionToChange;
+
+        public Excursion SelectedExcursionToChange
+        {
+            get
+            {
+                return _SelectedExcursionToChange;
+            }
+
+            set
+            {
+                if (_SelectedExcursionToChange == value)
+                {
+                    return;
+                }
+
+                _SelectedExcursionToChange = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private RoomType _SelectedRoomTypeCount;
+        private Transaction _SelectedTransaction;
+
         public NewReservationGroup_Base(MainViewModel mainViewModel)
         {
             GenericRepository = mainViewModel.StartingRepository;
             BasicDataManager = mainViewModel.BasicDataManager;
             NewReservationHelper = new NewReservationHelper();
             RoomsManager = new RoomsManager();
+            NewTransaction = new Transaction();
 
             //Commands
             ShowFilteredRoomsCommand = new RelayCommand(async () => { await ShowFilteredRoomsAsync(); }, CanShowFilteredRooms);
             ClearBookingCommand = new RelayCommand(async () => { await ClearBooking(); });
             ReadNextLineCommand = new RelayCommand(ReadNextLine);
+
             AddCustomerCommand = new RelayCommand(AddRandomCustomer);
             AddFromFileCommand = new RelayCommand(AddFromFile);
 
             DeletePaymentCommand = new RelayCommand(DeletePayment, CanDeletePayment);
+            DeleteTransactionCommand = new RelayCommand(DeleteTransaction, CanDeleteTransaction);
+            AddNewTransactionCommand = new RelayCommand(AddNewTransaction, CanAddNewTransaction);
             PrintRecieptCommand = new RelayCommand(PrintReciept);
             DeleteExtraServiceCommand = new RelayCommand(DeleteExtraService, CanDeleteExtraservice);
             AddExraServiceCommand = new RelayCommand(AddExtraService, CanAddExtraservice);
+            ChangeBookingCommand = new RelayCommand(async () => { await TryChangeBooking(); });
+
 
             DeleteSelectedCustomersCommand = new RelayCommand(DeleteSelectedCustomers, CanDeleteCustomers);
 
@@ -135,6 +202,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             AddOneDayCommand = new RelayCommand(AddOneDay, CanAddOneDay);
 
             DoubleClickRoomTypeCommand = new RelayCommand(ExpandRooms, CanExpand);
+            SearchForCustomerCommand = new RelayCommand(SearchForCustomer);
 
             ManagePartnersCommand = new RelayCommand(ManagePartners);
 
@@ -153,12 +221,17 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         }
 
 
-
-
-
-        private RoomType _SelectedRoomTypeCount;
-
-
+        private async Task TryChangeBooking()
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+            if (SelectedExcursionToChange != null && BookingWr.Excursion != null && SelectedExcursionToChange.Id != BookingWr.Excursion.Id)
+            {
+                BookingWr.Excursion = await GenericRepository.GetFullExcursionByIdAsync(SelectedExcursionToChange.Id);
+                CheckOut(true);
+            }
+            SelectedExcursion = new ExcursionWrapper(SelectedExcursionToChange);
+            Mouse.OverrideCursor = Cursors.Arrow;
+        }
         public RoomType SelectedRoomTypeCount
         {
             get
@@ -177,9 +250,56 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 RaisePropertyChanged();
             }
         }
+
+        public Transaction SelectedTransaction
+        {
+            get
+            {
+                return _SelectedTransaction;
+            }
+
+            set
+            {
+                if (_SelectedTransaction == value)
+                {
+                    return;
+                }
+
+                _SelectedTransaction = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private void AddNewTransaction()
+        {
+            NewTransaction.User = GenericRepository.Context.Users.FirstOrDefault(u => u.Id == StaticResources.User.Id);
+            NewTransaction.Date = DateTime.Now;
+            NewTransaction.Excursion = BookingWr.Excursion != null ? BookingWr.Excursion : null;
+            NewTransaction.ExcursionExpenseCategory = ExcursionExpenseCategories.Booking;
+            NewTransaction.ExpenseBaseCategory = ExpenseBaseCategories.GroupExpense;
+            NewTransaction.TransactionType = TransactionType.Expense;
+            BookingWr.Transactions.Add(NewTransaction);
+            NewTransaction = new Transaction();
+        }
+
+        private bool CanAddNewTransaction()
+        {
+            return NewTransaction != null && NewTransaction.Amount > 0;
+        }
+
+        private bool CanDeleteTransaction()
+        {
+            return SelectedTransaction != null;
+        }
+
         private bool CanExpand()
         {
             return SelectedRoomTypeCount != null;
+        }
+
+        private void DeleteTransaction()
+        {
+            GenericRepository.Delete(SelectedTransaction);
         }
 
         private void ExpandRooms()
@@ -209,12 +329,15 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         #region Properties
 
+        private Transaction _NewTransaction;
+
         public RelayCommand AddCustomerCommand { get; set; }
-        public RelayCommand DoubleClickRoomTypeCommand { get; set; }
 
         public RelayCommand AddExraServiceCommand { get; set; }
 
         public RelayCommand AddFromFileCommand { get; set; }
+
+        public RelayCommand AddNewTransactionCommand { get; set; }
 
         public RelayCommand AddOneDayCommand { get; set; }
 
@@ -338,6 +461,17 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         public RelayCommand CheckOutCommand { get; set; }
 
         public RelayCommand ClearBookingCommand { get; set; }
+        public RelayCommand SearchForCustomerCommand { get; set; }
+
+        public void SearchForCustomer()
+        {
+            CustomerSearch_ViewModel vm = new CustomerSearch_ViewModel(GenericRepository, booking: BookingWr);
+            Window window = new CustomerSearchWindow
+            {
+                DataContext = vm
+            };
+            window.ShowDialog();
+        }
 
         public RelayCommand DeleteExtraServiceCommand { get; set; }
 
@@ -345,7 +479,11 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         public RelayCommand DeleteSelectedCustomersCommand { get; set; }
 
+        public RelayCommand DeleteTransactionCommand { get; set; }
+
         public DocumentsManagement DocumentsManagement { get; set; }
+
+        public RelayCommand DoubleClickRoomTypeCommand { get; set; }
 
         public ObservableCollection<Email> Emails
         {
@@ -539,6 +677,25 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         public NewReservationHelper NewReservationHelper { get; set; }
 
+        public Transaction NewTransaction
+        {
+            get
+            {
+                return _NewTransaction;
+            }
+
+            set
+            {
+                if (_NewTransaction == value)
+                {
+                    return;
+                }
+
+                _NewTransaction = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public int NoNames
         {
             get
@@ -714,6 +871,12 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
                 _SelectedExcursion = value;
                 RaisePropertyChanged();
+                if (BookingWr != null)
+                {
+                    RaisePropertyChanged(nameof(BookingWr));
+                    BookingWr.RaisePropertyChanged(nameof(BookingWr.IsGroup));
+                    BookingWr.RaisePropertyChanged(nameof(BookingWr.IsNotGroup));
+                }
             }
         }
 
@@ -933,7 +1096,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
             if (showMessage)
             {
-                MessengerInstance.Send(new ShowExceptionMessage_Message("Καπόιοι πελάτες δεν διαγράφηκαν επειδή συμμετέχουν σε κράτηση. Παλακαλώ κάντε τους CheckOut και δοκιμάστε ξανά!"));
+                MessengerInstance.Send(new ShowExceptionMessage_Message("Κάποιοι πελάτες δεν διαγράφηκαν επειδή συμμετέχουν σε κράτηση. Παρακαλώ κάντε τους CheckOut και δοκιμάστε ξανά!"));
             }
         }
 
@@ -1189,13 +1352,12 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             //return new Booking { Excursion = e, CheckIn = BookingWr != null ? BookingWr.CheckIn : new DateTime(2018, 12, 28), CheckOut = BookingWr != null ? BookingWr.CheckOut : new DateTime(2018, 12, 30), User = u};
         }
 
-        protected void InitializeBooking(Booking booking)
+        protected void InitializeBooking(Booking booking, ObservableCollection<CustomerWrapper> oldCusts = null)
         {
             BookingWr = new BookingWrapper(booking, true);
 
             BookingWr.PropertyChanged += (s, e) =>
             {
-                string x = e.PropertyName;
                 if (!HasChanges)
                 {
                     HasChanges = GenericRepository.HasChanges();
@@ -1205,6 +1367,29 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                     }
                 }
             };
+            BookingWr.Transactions.CollectionChanged += (s, e) =>
+             {
+                 if (!HasChanges)
+                 {
+                     HasChanges = GenericRepository.HasChanges();
+                     if (BookingWr.Id == 0)
+                     {
+                         HasChanges = true;
+                     }
+                 }
+             };
+            BookingWr.Payments.CollectionChanged += (s, e) =>
+            {
+                if (!HasChanges)
+                {
+                    HasChanges = GenericRepository.HasChanges();
+                    if (BookingWr.Id == 0)
+                    {
+                        HasChanges = true;
+                    }
+                }
+            };
+
             if (BookingWr.Id > 0)
             {
                 if (BookingWr.Customers.Count > 0)
@@ -1214,6 +1399,8 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
 
             Emails = (BookingWr.IsPartners && BookingWr.Partner != null && BookingWr.Partner.Emails != null && BookingWr.Partner.Emails.Any()) ? new ObservableCollection<Email>(BookingWr.Partner.Emails.Split(',').Select(e => new Email(e))) : new ObservableCollection<Email>();
+            if (oldCusts != null)
+                BookingWr.Customers.AddRange(oldCusts);
         }
 
         protected async Task ResetAllRefreshableDataASync(bool makeNew = false)
@@ -1247,6 +1434,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                     StaticResources.StartingPlaces = BasicDataManager.StartingPlaces;
                     Users = BasicDataManager.Users;
                     Partners = BasicDataManager.Partners;
+                    GroupExcursions = new ObservableCollection<Excursion>(BasicDataManager.GroupExcursions.Where(e => !e.Deactivated && e.ExcursionDates.Any(b => b.CheckOut > DateTime.Today)));
 
                     SelectedHotelIndex = hotelId > 0 ? Hotels.IndexOf(Hotels.Where(x => x.Id == hotelId).FirstOrDefault()) + 1 : 0;
                     SelectedRoomTypeIndex = roomTypeId > 0 ? RoomTypes.IndexOf(RoomTypes.Where(x => x.Id == roomTypeId).FirstOrDefault()) + 1 : 0;
@@ -1700,7 +1888,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             return AreContexesFree;
         }
 
-        private void CheckOut()
+        private void CheckOut(bool all = false)
         {
             try
             {
@@ -1708,13 +1896,14 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 foreach (Reservation r in BookingWr.ReservationsInBooking)
                 {
                     delete = true;
-                    foreach (var c in r.CustomersList)
-                    {
-                        if (!BookingWr.Customers.Where(c1 => c1.Id == c.Id).FirstOrDefault().IsSelected)
+                    if (all == false)
+                        foreach (var c in r.CustomersList)
                         {
-                            delete = false;
+                            if (!BookingWr.Customers.Where(c1 => c1.Id == c.Id).FirstOrDefault().IsSelected)
+                            {
+                                delete = false;
+                            }
                         }
-                    }
 
                     if (delete)
                     {
@@ -1728,7 +1917,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 List<Reservation> toRemove = new List<Reservation>();
                 foreach (CustomerWrapper c in BookingWr.Customers)
                 {
-                    if (c.IsSelected && c.Handled)
+                    if ((c.IsSelected && c.Handled) || all)
                     {
                         foreach (Reservation r in BookingWr.ReservationsInBooking)
                         {
@@ -1738,7 +1927,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                         c.RoomColor = new SolidColorBrush(System.Windows.Media.Colors.Green);
                         c.HotelName = "KENO";
                         c.RoomTypeName = "KENO";
-                        c.RoomNumber = "OXI";
+                        c.RoomNumber = "ΌΧΙ";
                         c.Reservation = null;
                     }
                 }
@@ -1758,13 +1947,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                         GenericRepository.Delete(r);
                     }
                 }
-
-                foreach (var r in BookingWr.ReservationsInBooking)
-                {
-                    if (r.Booking == null)
-                    {
-                    }
-                }
             }
             catch (Exception ex)
             {
@@ -1781,7 +1963,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             MessageBoxResult result = MessageBoxResult.Yes;
             if (HasChanges)
             {
-                result = MessageBox.Show("Υπάρχουν μη απόθηκευμένες αλλαγές, θέλετε σίγουρα να κλείσετε?", "Προσοχή", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                result = MessageBox.Show("Υπάρχουν μη αποθηκευμένες αλλαγές, θέλετε σίγουρα να κλείσετε?", "Προσοχή", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             }
             if (result == MessageBoxResult.Yes)
             {
@@ -2135,7 +2317,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 BookingWr = await NewReservationHelper.SaveAsync(GenericRepository, Payment, BookingWr);
                 FilteredRoomList.Clear();
                 Payment = new Payment();
-                BookedMessage = "H κράτηση απόθηκέυτηκε επιτυχώς";
+                BookedMessage = "H κράτηση αποθηκεύτηκε επιτυχώς";
                 HasChanges = false;
                 MessengerInstance.Send(new ReservationChanged_Message(BookingWr.Model));
             }
@@ -2354,7 +2536,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 }
                 if (BookingWr.NetPrice == 0 && customer.Price == 0)
                 {
-                    return "Δέν έχετε ορίσει τιμή";
+                    return "Δεν έχετε ορίσει τιμή";
                 }
             }
             return null;
@@ -2415,10 +2597,5 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         public RoomType RoomType { get; set; }
 
         #endregion Properties
-    }
-
-    public class HotelWithRooms
-    {
-        public List<RoomWrapper> Rooms { get; set; }
     }
 }
