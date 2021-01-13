@@ -1,11 +1,11 @@
-﻿using System;
+﻿using LATravelManager.Model.BookingData;
+using LATravelManager.Model.People;
+using LATravelManager.UI.Helpers;
+using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using LATravelManager.Model.BookingData;
-using LATravelManager.Model.People;
-using LATravelManager.UI.Helpers;
 
 namespace LATravelManager.Model.Wrapper
 {
@@ -237,6 +237,12 @@ namespace LATravelManager.Model.Wrapper
             set { SetValue(value); }
         }
 
+        public Partner BuyerPartner
+        {
+            get { return GetValue<Partner>(); }
+            set { SetValue(value); }
+        }
+
         public ObservableCollection<Payment> Payments
         {
             get { return GetValue<ObservableCollection<Payment>>(); }
@@ -246,12 +252,21 @@ namespace LATravelManager.Model.Wrapper
         {
             get { return GetValue<bool>(); }
             set { SetValue(value); }
-        } public bool VoucherSent
+        }
+
+        public bool IsPartners
         {
             get { return GetValue<bool>(); }
             set { SetValue(value); }
         }
-         public bool ProformaSent
+
+        public bool VoucherSent
+        {
+            get { return GetValue<bool>(); }
+            set { SetValue(value); }
+        }
+
+        public bool ProformaSent
         {
             get { return GetValue<bool>(); }
             set { SetValue(value); }
@@ -337,8 +352,6 @@ namespace LATravelManager.Model.Wrapper
             get { return GetValue<User>(); }
             set { SetValue(value); }
         }
-
-    
 
         #endregion Properties
 

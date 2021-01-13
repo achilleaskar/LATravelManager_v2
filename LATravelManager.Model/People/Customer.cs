@@ -1,13 +1,13 @@
-﻿using System;
+﻿using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Excursions;
+using LATravelManager.Model.Lists;
+using LATravelManager.Model.Services;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Windows.Media;
-using LATravelManager.Model.BookingData;
-using LATravelManager.Model.Excursions;
-using LATravelManager.Model.Lists;
-using LATravelManager.Model.Services;
 
 namespace LATravelManager.Model.People
 {
@@ -45,8 +45,6 @@ namespace LATravelManager.Model.People
 
         #endregion Fields
 
-
-
         private bool _Selected;
 
         [NotMapped]
@@ -68,7 +66,9 @@ namespace LATravelManager.Model.People
                 RaisePropertyChanged();
             }
         }
+
         #region Properties
+
         [NotMapped]
         public bool IsSelected
         {
@@ -88,6 +88,7 @@ namespace LATravelManager.Model.People
                 RaisePropertyChanged();
             }
         }
+
         [Range(0, 18)]
         public int Age { get; set; }
 
@@ -168,7 +169,7 @@ namespace LATravelManager.Model.People
 
         [Required(ErrorMessage = "Το όνομα είναι υποχρεωτικό")]
         [RegularExpression(@"^[a-z- A-Z]+$", ErrorMessage = "Παρακαλώ χρησιμοποιήστε μόνο λατινικούς χαρακτήρες")]
-        [StringLength(30, MinimumLength = 3, ErrorMessage = "Το Όνομα μπορεί να είναι από 3 έως 20 χαρακτήρες")]
+        [StringLength(30, MinimumLength = 3, ErrorMessage = "Το Όνομα μπορεί να είναι από 3 έως 30 χαρακτήρες")]
         public string Name { get; set; }
 
         public ObservableCollection<CustomerOptional> OptionalExcursions
@@ -342,7 +343,7 @@ namespace LATravelManager.Model.People
         }
 
         [StringLength(18, MinimumLength = 10, ErrorMessage = "Το τηλέφωνο πρέπει να είναι τουλάχιστον 10 χαρακτήρες")]
-        [Phone(ErrorMessage = "Το τηλέφωνο δν έχει τη σωστή μορφή")]
+        [Phone(ErrorMessage = "Το τηλέφωνο δ έχει τη σωστή μορφή")]
         public string Tel { get; set; }
 
         #endregion Properties

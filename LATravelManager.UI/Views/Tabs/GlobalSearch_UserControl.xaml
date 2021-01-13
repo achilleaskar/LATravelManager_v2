@@ -416,9 +416,12 @@
                         VerticalAlignment="Bottom"
                         Margin="5,0"
                         Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}"
-                        
-                        Click="Button_Click_2"
-                       />
+                        Click="Button_Click_2"/>
+                <Button Content="Dimos"
+                        VerticalAlignment="Bottom"
+                        Margin="5,0"
+                        Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}"
+                        Command="{Binding PrintDimosListsCommand}"/>
                 <Button Content="Sent Vchrs"
                         VerticalAlignment="Bottom"
                         Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"

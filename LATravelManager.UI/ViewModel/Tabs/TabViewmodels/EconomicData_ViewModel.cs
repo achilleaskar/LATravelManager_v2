@@ -445,6 +445,9 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
+        public decimal VIVA_ONL { get; private set; }
+        public decimal PAYPAL { get; private set; }
+
         #endregion Properties
 
         #region Methods
@@ -483,7 +486,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                     SearchBookingsHelper = new SearchBookingsHelper(Context);
                 DateTime dateLimit = SearchBookingsHelper.GetDateLimit(parameter);
                 UsersList.Clear();
-                Total = Cash = Peiraios = Ethniki = Eurobank = AlphaBank = VISA = 0;
+                Total = Cash = Peiraios = Ethniki = Eurobank = AlphaBank = VISA = PAYPAL = VIVA_ONL = 0;
 
                 List<Payment> list = (await Context.GetAllPaymentsFiltered(ExcursionIndexBookingFilter > 0 ? Excursions[ExcursionIndexBookingFilter - 1].Id : 0, UserIndexBookingFilter > 0 ? Users[UserIndexBookingFilter - 1].Id : 0, dateLimit, EnableDatesFilter, From, To)).ToList();
                 foreach (Payment payment in list)
@@ -514,6 +517,13 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
                         case 5:
                             VISA += payment.Amount;
+                            break;
+                        case 6:
+                            VIVA_ONL += payment.Amount;
+                            break;
+
+                        case 7:
+                            PAYPAL += payment.Amount;
                             break;
                     }
                     if (!UsersList.Any(u => u.User.Id == payment.User.Id))

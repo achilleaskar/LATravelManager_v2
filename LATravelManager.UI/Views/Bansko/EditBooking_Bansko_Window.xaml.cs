@@ -128,7 +128,7 @@ namespace LATravelManager.UI.Views.Bansko
         {
             if (DataContext is NewReservation_Bansko_ViewModel a && a.HasChanges)
             {
-                MessageBoxResult result = MessageBox.Show("Υπάρχουν μη απόθηκευμένες αλλαγές, θέλετε σίγουρα να κλείσετε?", "Προσοχή", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                MessageBoxResult result = MessageBox.Show("Υπάρχουν μη αποθηκευμένες αλλαγές, θέλετε σίγουρα να κλείσετε?", "Προσοχή", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if (result == MessageBoxResult.No)
                 {
                     e.Cancel = true;
@@ -138,7 +138,7 @@ namespace LATravelManager.UI.Views.Bansko
             }
             else if (DataContext is NewReservation_Group_ViewModel b && b.HasChanges)
             {
-                MessageBoxResult result = MessageBox.Show("Υπάρχουν μη απόθηκευμένες αλλαγές, θέλετε σίγουρα να κλείσετε?", "Προσοχή", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                MessageBoxResult result = MessageBox.Show("Υπάρχουν μη αποθηκευμένες αλλαγές, θέλετε σίγουρα να κλείσετε?", "Προσοχή", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if (result == MessageBoxResult.No)
                 {
                     e.Cancel = true;
@@ -146,6 +146,7 @@ namespace LATravelManager.UI.Views.Bansko
                 else
                     b.GenericRepository.RollBack();
             }
+            Helpers.StaticResources.Close(this);
         }
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)

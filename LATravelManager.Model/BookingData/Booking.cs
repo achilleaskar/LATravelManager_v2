@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using LATravelManager.Model.Excursions;
+using LATravelManager.Model.People;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
-using LATravelManager.Model.Excursions;
-using LATravelManager.Model.People;
 
 namespace LATravelManager.Model.BookingData
 {
@@ -26,11 +25,7 @@ namespace LATravelManager.Model.BookingData
 
         #endregion Constructors
 
-
-
-
         private ObservableCollection<Transaction> _Transactions;
-
 
         public ObservableCollection<Transaction> Transactions
         {
@@ -52,6 +47,7 @@ namespace LATravelManager.Model.BookingData
         }
 
         #region Properties
+
         public DisabledInfo DisabledInfo { get; set; }
         public PartnerInfo PartnerInfo { get; set; }
         // public int LeaderDriver => GetHigher(); ReservationsInBooking.OrderByDescending(r=> r.CustomersList.OrderByDescending(c=>c.LeaderDriver).First().LeaderDriver).Select;
@@ -106,6 +102,7 @@ namespace LATravelManager.Model.BookingData
         //}
         [MaxLength(300)]
         public string Comment { get; set; }
+
         public decimal Commision { get; set; }
         public string Dates => CheckIn.ToString("dd/MM") + "-" + CheckOut.ToString("dd/MM");
         public bool DifferentDates { get; set; }

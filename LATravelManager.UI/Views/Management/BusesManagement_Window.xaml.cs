@@ -1,5 +1,5 @@
-﻿using System.Windows;
-using LaTravelManager.ViewModel.Management;
+﻿using LATravelManager.UI.ViewModel.Management;
+using System.Windows;
 
 namespace LATravelManager.UI.Views.Management
 {
@@ -17,7 +17,7 @@ namespace LATravelManager.UI.Views.Management
         {
             if (DataContext is UsersManagement_viewModel u && u.BasicDataManager.Context.HasChanges())
             {
-                MessageBoxResult result = MessageBox.Show("Υπάρχουν μη απόθηκευμένες αλλαγές, θέλετε σίγουρα να κλείσετε?", "Προσοχή", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                MessageBoxResult result = MessageBox.Show("Υπάρχουν μη αποθηκευμένες αλλαγές, θέλετε σίγουρα να κλείσετε?", "Προσοχή", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if (result == MessageBoxResult.No)
                 {
                     e.Cancel = true;
@@ -25,6 +25,7 @@ namespace LATravelManager.UI.Views.Management
                 else
                     u.BasicDataManager.Context.RollBack();
             }
+            Helpers.StaticResources.Close(this);
         }
     }
 }

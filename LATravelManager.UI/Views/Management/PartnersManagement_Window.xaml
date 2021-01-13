@@ -8,6 +8,7 @@
         xmlns:helpers="clr-namespace:LATravelManager.UI.Helpers"
         mc:Ignorable="d"
         WindowStartupLocation="CenterOwner"
+        Loaded="Window_Loaded"
         Title="{Binding ControlName}"
         Closing="Window_Closing"
         Height="500"
@@ -35,6 +36,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Label Content="Όνομα:"
                        Grid.Row="0"
@@ -43,19 +45,37 @@
                          Margin="0,5,5,5"
                          Grid.Row="0"
                          Grid.Column="1" />
-                <Label Content="Τηλέφωνο:"
+                <Label Content="Επωνυμία:"
                        Grid.Row="1"
+                       Grid.Column="0" />
+                <ComboBox ItemsSource="{Binding Companies}"
+                          SelectedValue="{Binding SelectedEntity.Company, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
+                          Margin="0,5,5,5"
+                          Grid.Row="1"
+                          Grid.Column="1">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding CompanyName}"
+                                       TextTrimming="CharacterEllipsis"
+                                       MaxWidth="200"
+                                       ToolTip="{Binding CompanyName}">
+                            </TextBlock>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Label Content="Τηλέφωνο:"
+                       Grid.Row="2"
                        Grid.Column="0" />
                 <TextBox Text="{Binding SelectedEntity.Tel,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
                          Margin="0,5,5,5"
-                         Grid.Row="1"
+                         Grid.Row="2"
                          Grid.Column="1" />
                 <Label Content="Emails:"
-                       Grid.Row="2"
+                       Grid.Row="3"
                        Padding="5 0"
                        Grid.Column="0" />
                 <StackPanel Orientation="Horizontal"
-                            Grid.Row="3"
+                            Grid.Row="4"
                             Grid.ColumnSpan="2">
                     <TextBox Text="{Binding SelectedEntity.NewEmail,UpdateSourceTrigger=PropertyChanged}"
                              VerticalAlignment="Center"
@@ -71,7 +91,7 @@
                     </Button>
                 </StackPanel>
                 <DataGrid ItemsSource="{Binding SelectedEntity.EmailsList}"
-                          Grid.Row="4"
+                          Grid.Row="5"
                           AutoGenerateColumns="False"
                           Margin="5 0"
                           Grid.Column="0"
@@ -86,7 +106,7 @@
                     </DataGrid.Columns>
                 </DataGrid>
                 <StackPanel Orientation="Vertical"
-                            Grid.Row="5"
+                            Grid.Row="6"
                             Grid.ColumnSpan="2">
                     <Button Content="Προσθήκη"
                             Margin="5,5,5,0"
@@ -99,7 +119,7 @@
                             Command="{Binding ClearEntityCommand}" />
                 </StackPanel>
                 <TextBlock Text="{Binding ResultMessage}"
-                           Grid.Row="6"
+                           Grid.Row="7"
                            Grid.ColumnSpan="2"
                            TextWrapping="Wrap"
                            HorizontalAlignment="Left" />

@@ -1,4 +1,4 @@
-﻿namespace LATravelManager.UI.ViewModel
+﻿namespace LATravelManager.UI.ViewModel.BaseViewModels
 {
     public interface INavigationViewModel
     {

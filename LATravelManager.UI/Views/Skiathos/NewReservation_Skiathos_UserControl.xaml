@@ -686,6 +686,8 @@
                                         <ComboBoxItem>Eurobank</ComboBoxItem>
                                         <ComboBoxItem>Alpha Bank</ComboBoxItem>
                                         <ComboBoxItem>VISA</ComboBoxItem>
+                                        <ComboBoxItem>VIVA_ONL</ComboBoxItem>
+                                        <ComboBoxItem>PAYPAL</ComboBoxItem>
                                     </ComboBox>
                                 </StackPanel>
                                 <StackPanel Grid.Row="1"

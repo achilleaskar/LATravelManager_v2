@@ -472,7 +472,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
             MessageBoxResult result = MessageBoxResult.Yes;
             if (HasChanges)
             {
-                result = MessageBox.Show("Υπάρχουν μη απόθηκευμένες αλλαγές, θέλετε σίγουρα να κλείσετε?", "Προσοχή", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                result = MessageBox.Show("Υπάρχουν μη αποθηκευμένες αλλαγές, θέλετε σίγουρα να κλείσετε?", "Προσοχή", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             }
             if (result == MessageBoxResult.Yes)
             {

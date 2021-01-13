@@ -38,5 +38,10 @@ namespace LATravelManager.UI.Views
                 dt.AddCustomerToBooking(c);
             }
         }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Helpers.StaticResources.Close(this);
+        }
     }
 }

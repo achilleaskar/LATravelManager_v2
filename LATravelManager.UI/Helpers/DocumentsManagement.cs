@@ -7,6 +7,7 @@ using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Lists;
 using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
+using LATravelManager.Model.Services;
 using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
@@ -120,6 +121,105 @@ namespace LATravelManager.UI.Helpers
                 resultPath = folder + fileName + "(" + i + ")" + fileExtension;
             }
             return resultPath;
+        }
+
+        internal async Task PrintDimosList(List<Personal_BookingWrapper> AllBookings)
+        {
+            string wbPath = null;
+            string sampleFile = AppDomain.CurrentDomain.BaseDirectory + @"Sources\dimos.xlsx";
+            ExcelRange modelTable;
+            int lineNum = 0;
+            Thread.CurrentThread.CurrentCulture = culture;
+
+            int counter;
+            int customersCount;
+            using GenericRepository Context = new GenericRepository();
+            if (AllBookings.Count > 0)
+            {
+                AllBookings = AllBookings.OrderBy(o => o.Start).ToList();
+
+                FileInfo fileInfo = new FileInfo(sampleFile);
+                ExcelPackage p = new ExcelPackage(fileInfo);
+                ExcelWorksheet myWorksheet = p.Workbook.Worksheets[1];
+
+                counter = 0;
+                wbPath = GetPath("\\dimos", @"\\Λίστες");
+                customersCount = 0;
+                lineNum = 4;
+                int startLine = 0;
+
+                foreach (var booking in AllBookings)
+                {
+                    myWorksheet.Cells["A" + lineNum].Value = ++counter;
+                    myWorksheet.Cells["B" + lineNum + ":F" + lineNum].Merge = true;
+                    myWorksheet.Cells["B" + lineNum].Value = booking.GetPacketDescription();
+                    lineNum++;
+                    startLine = lineNum;
+                    foreach (var cust in booking.Customers)
+                    {
+                        myWorksheet.Cells["B" + lineNum].Value = cust.Surename;
+                        myWorksheet.Cells["C" + lineNum].Value = cust.Name;
+                        lineNum++;
+                    }
+                    myWorksheet.Cells["E" + startLine].Value = "Σύνολο";
+                    myWorksheet.Cells["F" + startLine].Value = booking.FullPrice;
+
+                    if (booking.Remaining > 1m)
+                    {
+                        myWorksheet.Cells["G" + startLine].Value = "Υπόλοιπο";
+                        myWorksheet.Cells["H" + startLine].Value = booking.Remaining;
+                    }
+
+                    foreach (var s in booking.Services)
+                    {
+                        myWorksheet.Cells["B" + lineNum].Value = s.Tittle ?? "";
+                        myWorksheet.Cells["C" + lineNum].Value = s.TimeGo.ToString("d");
+                        myWorksheet.Cells["D" + lineNum].Value = s.From ?? "";
+                        myWorksheet.Cells["E" + lineNum].Value = s.To ?? "";
+                        if (s is HotelService hs)
+                        {
+                            myWorksheet.Cells["D" + lineNum].Value = (hs.Hotel?.Name) ?? "";
+                            myWorksheet.Cells["E" + lineNum].Value = (hs.Hotel?.City?.Name) ?? "";
+                        }
+                        if (s is OptionalService os)
+                        {
+                            myWorksheet.Cells["D" + lineNum].Value = os.CompanyInfo ?? "";
+                        }
+                        lineNum++;
+                    }
+                    lineNum++;
+                }
+                //myWorksheet.Cells["D" + (lineNum - 1)].Style.Border.Bottom.Style = ExcelBorderStyle.Medium;
+                //myWorksheet.Cells["F" + (lineNum - 1)].Style.Border.Bottom.Style = ExcelBorderStyle.Medium;
+                //myWorksheet.Cells["A" + (lineNum - 1)].Style.Border.Bottom.Style = ExcelBorderStyle.Medium;
+                //if (reservation.Room.Id >= 0)
+                //{
+                //    PrintVoucher(reservation, out string dir);
+                //}
+                //lineNum--;
+                //modelTable = myWorksheet.Cells["C3:C" + (lineNum)];
+                //modelTable.Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                //modelTable.Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                //modelTable.Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                //modelTable.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+
+                //modelTable = myWorksheet.Cells["E4:E" + (lineNum)];
+                //modelTable.Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                //modelTable.Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                //modelTable.Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                //modelTable.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+
+                //modelTable = myWorksheet.Cells["G4:G" + (lineNum)];
+                //modelTable.Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                //modelTable.Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                //modelTable.Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                //modelTable.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+
+                fileInfo = new FileInfo(wbPath ?? throw new InvalidOperationException());
+                p.SaveAs(fileInfo);
+            }
+            else
+                MessageBox.Show("Μας δουλεύεις ρε μάν? ΑΦου δεν έχεις επιλέξει τίποτα", "Σφάλμα");
         }
 
         public static string GetPath(string fileName)
@@ -1356,7 +1456,7 @@ namespace LATravelManager.UI.Helpers
                     decimal total = selectedPayment.Booking != null ? new BookingWrapper(selectedPayment.Booking).FullPrice : selectedPayment.Personal_Booking != null ? new Personal_BookingWrapper(selectedPayment.Personal_Booking).FullPrice : new ThirdParty_Booking_Wrapper(selectedPayment.ThirdParty_Booking).FullPrice;
                     string Description = selectedPayment.Booking != null ? new BookingWrapper(selectedPayment.Booking).GetPacketDescription() : selectedPayment.Personal_Booking != null ? new Personal_BookingWrapper(selectedPayment.Personal_Booking).GetPacketDescription() : new ThirdParty_Booking_Wrapper(selectedPayment.ThirdParty_Booking).GetPacketDescription();
 
-                    Description=Description.Replace("&", "&amp;");
+                    Description = Description.Replace("&", "&amp;");
 
                     Regex regexText = new Regex("regexcustomerid");
                     docText = regexText.Replace(docText, SelectedCustomer.Id.ToString());

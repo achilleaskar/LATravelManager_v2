@@ -1,5 +1,4 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
-using LaTravelManager.BaseTypes;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.Locations;
@@ -14,7 +13,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LaTravelManager.ViewModel.Management
+namespace LATravelManager.UI.ViewModel.Management
 {
     public class ExcursionsManagement_ViewModel : AddEditBase<ExcursionWrapper, Excursion>
     {

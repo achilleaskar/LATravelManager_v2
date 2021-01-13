@@ -19,17 +19,27 @@ using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.ServiceViewModels;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
+using LATravelManager.UI.Views;
 
 namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 {
     public class NewReservation_Personal_ViewModel : MyViewModelBaseAsync
     {
         #region Constructors
-
+        private void OpenInvoicesWindow()
+        {
+            InvoicesManagement_ViewModel vm = new InvoicesManagement_ViewModel(BasicDataManager, personal: PersonalWr);
+            MessengerInstance.Send(new OpenChildWindowCommand(new InvoicesManagementWindow()));
+        }
         public RelayCommand ToggleDisabilityCommand { get; set; }
+        public RelayCommand OpenInvoicesWindowCommand { get; set; }
 
         public NewReservation_Personal_ViewModel(MainViewModel mainViewModel)
         {
+
+            OpenInvoicesWindowCommand = new RelayCommand(OpenInvoicesWindow);
+
+
             GenericRepository = mainViewModel.StartingRepository;
             BasicDataManager = mainViewModel.BasicDataManager;
             //Commands
@@ -67,9 +77,9 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             {
                 if (customer.IsSelected)
                 {
-                        toRemove.Add(customer);
-                        customer.BusGo = null;
-                        customer.BusReturn = null;
+                    toRemove.Add(customer);
+                    customer.BusGo = null;
+                    customer.BusReturn = null;
                 }
             }
             foreach (CustomerWrapper c in toRemove)
@@ -628,7 +638,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             {
                 return false;
             }
-            return AreBookingDataValid && ValidateServices() == null ;
+            return AreBookingDataValid && ValidateServices() == null;
         }
 
         private async Task ClearBooking()

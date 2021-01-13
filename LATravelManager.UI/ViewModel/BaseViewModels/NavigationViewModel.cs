@@ -10,7 +10,7 @@ using LATravelManager.UI.ViewModel.Tabs;
 using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 
-namespace LATravelManager.UI.ViewModel
+namespace LATravelManager.UI.ViewModel.BaseViewModels
 {
     public class NavigationViewModel : ViewModelBase, IViewModelAsync
     {

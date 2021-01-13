@@ -34,14 +34,16 @@ namespace LATravelManager.UI.Converters
             }
             if (value is int v)
             {
-                return v+ " €";
+                return v + " €";
             }
-            return "error"; 
+            return "error";
             //return decimalValue > 0 ? decimalValue.ToString() + " €" : "0 €";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (value == null)
+                return DependencyProperty.UnsetValue;
             string strValue = (value as string).Replace(".", "").Replace(',', '.').Replace("€", "").Replace(" ", "");
             if (!string.IsNullOrEmpty(strValue) && !strValue.EndsWith(".0") && strValue[strValue.Length - 1] != '.' && decimal.TryParse(strValue, NumberStyles.Any, new CultureInfo("en-US"), out var tmpdecimal))
             {

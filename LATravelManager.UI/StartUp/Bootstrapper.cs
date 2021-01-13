@@ -2,7 +2,7 @@
 using LATravelManager.DataAccess;
 using LATravelManager.UI.Data.Workers;
 using LATravelManager.UI.Repositories;
-using LATravelManager.UI.ViewModel;
+using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Views;
 

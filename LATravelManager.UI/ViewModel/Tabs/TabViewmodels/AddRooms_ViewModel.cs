@@ -1,4 +1,18 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight.CommandWpf;
+using LATravelManager.Model;
+using LATravelManager.Model.Hotels;
+using LATravelManager.Model.Locations;
+using LATravelManager.Model.People;
+using LATravelManager.Model.Plan;
+using LATravelManager.UI.Helpers;
+using LATravelManager.UI.Message;
+using LATravelManager.UI.Repositories;
+using LATravelManager.UI.ViewModel.BaseViewModels;
+using LATravelManager.UI.ViewModel.Management;
+using LATravelManager.UI.ViewModel.Window_ViewModels;
+using LATravelManager.UI.Views;
+using LATravelManager.UI.Wrapper;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -9,20 +23,6 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using GalaSoft.MvvmLight.CommandWpf;
-using LaTravelManager.ViewModel.Management;
-using LATravelManager.Model;
-using LATravelManager.Model.Hotels;
-using LATravelManager.Model.Locations;
-using LATravelManager.Model.People;
-using LATravelManager.Model.Plan;
-using LATravelManager.UI.Helpers;
-using LATravelManager.UI.Message;
-using LATravelManager.UI.Repositories;
-using LATravelManager.UI.ViewModel.BaseViewModels;
-using LATravelManager.UI.ViewModel.Window_ViewModels;
-using LATravelManager.UI.Views;
-using LATravelManager.UI.Wrapper;
 
 namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {

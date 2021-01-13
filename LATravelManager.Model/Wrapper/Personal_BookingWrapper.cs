@@ -1,14 +1,14 @@
-﻿using System;
+﻿using LATravelManager.Model.BookingData;
+using LATravelManager.Model.People;
+using LATravelManager.Model.Services;
+using LATravelManager.UI.Helpers;
+using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
-using LATravelManager.Model.BookingData;
-using LATravelManager.Model.People;
-using LATravelManager.Model.Services;
-using LATravelManager.UI.Helpers;
 
 namespace LATravelManager.Model.Wrapper
 {
@@ -236,6 +236,7 @@ namespace LATravelManager.Model.Wrapper
                 RaisePropertyChanged();
             }
         }
+
         public ObservableCollection<Payment> Payments
         {
             get { return GetValue<ObservableCollection<Payment>>(); }
@@ -260,7 +261,6 @@ namespace LATravelManager.Model.Wrapper
             get { return GetValue<bool>(); }
             set { SetValue(value); }
         }
-
 
         public decimal Recieved
         {
@@ -350,14 +350,26 @@ namespace LATravelManager.Model.Wrapper
             set { SetValue(value); }
         }
 
+        public DateTime Start => GetStart();
+
+        private DateTime GetStart()
+        {
+            if (Services == null || Services.Count == 0)
+            {
+                return CreatedDate;
+            }
+            else
+            {
+                return Services.OrderBy(s => s.TimeGo).First().TimeGo;
+            }
+        }
+
         #endregion Properties
 
         #region Methods
 
-
         public void CalculateRemainingAmount()
         {
-          
             if (Calculating)
             {
                 return;
@@ -380,8 +392,7 @@ namespace LATravelManager.Model.Wrapper
                 }
                 else
                 {
-
-                    ExtraProfit = Customers.Where(r=>r.Price>0).Sum(c => c.Price) - NetPrice - ServiceProfit;
+                    ExtraProfit = Customers.Where(r => r.Price > 0).Sum(c => c.Price) - NetPrice - ServiceProfit;
                 }
                 Calculating = false;
             }
@@ -682,8 +693,8 @@ namespace LATravelManager.Model.Wrapper
 
         private void EntityViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-                RaisePropertyChanged(nameof(Customers));
-            if (e.PropertyName == nameof(Service.NetPrice) || e.PropertyName == nameof(Service.Profit)|| e.PropertyName == nameof(Customer.Price))
+            RaisePropertyChanged(nameof(Customers));
+            if (e.PropertyName == nameof(Service.NetPrice) || e.PropertyName == nameof(Service.Profit) || e.PropertyName == nameof(Customer.Price))
             {
                 CalculateRemainingAmount();
             }

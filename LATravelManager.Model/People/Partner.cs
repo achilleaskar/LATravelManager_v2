@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using LATravelManager.Model.BookingData;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using LATravelManager.Model.BookingData;
 
 namespace LATravelManager.Model.People
 {
@@ -24,6 +24,9 @@ namespace LATravelManager.Model.People
         [StringLength(20)]
         [Phone]
         public string Tel { get; set; }
+
+        public Company CompanyInfo { get; set; }
+        public int? CompanyInfoId { get; set; }
 
         #endregion Properties
     }

@@ -350,6 +350,8 @@
                                             <ComboBoxItem>Eurobank</ComboBoxItem>
                                             <ComboBoxItem>Alpha Bank</ComboBoxItem>
                                             <ComboBoxItem>VISA</ComboBoxItem>
+                                            <ComboBoxItem>VIVA_ONL</ComboBoxItem>
+                                            <ComboBoxItem>PAYPAL</ComboBoxItem>
                                         </ComboBox>
                                     </StackPanel>
                                     <StackPanel Grid.Row="1"
@@ -718,6 +720,9 @@
                                 <Button Content="Αποθήκευση"
                                         Margin="0,5,5,0"
                                         Command="{Binding SaveCommand}" />
+                                <Button Content="Τιμολόγιο"
+                                        Margin="0,5,5,0"
+                                        Command="{Binding OpenInvoicesWindowCommand}" />
                                 <Button Content="Προσθήκη πελάτη"
                                         Margin="0,5,5,0"
                                         Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}"
@@ -726,7 +731,7 @@
                                         Margin="0,5,5,0"
                                         Command="{Binding ClearBookingCommand}"
                                         Click="Button_Click" />
-                                <Button Margin="5,5,5,0"
+                                <Button Margin="0,5,5,0"
                             Command="{Binding SearchForCustomerCommand}" >
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock VerticalAlignment="center" Margin="0 0 5 0">

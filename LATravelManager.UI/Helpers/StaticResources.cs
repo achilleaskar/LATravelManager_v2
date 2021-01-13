@@ -1,11 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
-using LATravelManager.Model.BookingData;
+﻿using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
 using LATravelManager.UI.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Windows;
 
 namespace LATravelManager.UI.Helpers
 {
@@ -21,6 +23,20 @@ namespace LATravelManager.UI.Helpers
         public static User User { get; set; }
 
         #endregion Properties
+
+        public static List<Window> Windows { get; set; } = new List<Window>();
+
+        public static void Close(Window window)
+        {
+            Windows.Remove(window);
+            if (HiddenWindows.Count == 0)
+                Application.Current.MainWindow.Visibility = Visibility.Visible;
+            else
+                HiddenWindows.Last().Show();
+        }
+
+        public static List<Window> HiddenWindows => Windows.Where(w => w.Visibility == Visibility.Hidden).ToList();
+        public static List<Window> VisibleWindows => Windows.Where(w => w.Visibility == Visibility.Visible).ToList();
 
         public static async void CalculateSum(GenericRepository genericRepository)
         {

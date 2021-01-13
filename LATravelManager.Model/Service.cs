@@ -27,6 +27,8 @@ namespace LATravelManager.Model.Services
 
         #endregion Fields
 
+        public bool Reciept { get; set; }
+
         private NotifStatus _NotifStatus;
 
         public NotifStatus NotifStatus

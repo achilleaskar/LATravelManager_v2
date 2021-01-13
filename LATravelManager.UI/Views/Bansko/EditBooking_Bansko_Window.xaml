@@ -4,17 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:helpers="clr-namespace:LATravelManager.UI.Helpers"
+        xmlns:enum="clr-namespace:LATravelManager.Model;assembly=LATravelManager.Model"
         xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-             xmlns:enum="clr-namespace:LATravelManager.Model;assembly=LATravelManager.Model"
         xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko"
         d:DataContext="{d:DesignInstance viewmodels:NewReservation_Bansko_ViewModel}"
         mc:Ignorable="d"
         Closing="Window_Closing"
         Background="White"
         WindowState="Maximized"
+        d:DesignHeight="1100"
         Height="700"
-        d:DesignHeight="900"
         d:DesignWidth="1400">
     <Window.Resources>
         <converters:UserToVisibility x:Key="UserToVisibilityConverter" />
@@ -615,6 +615,8 @@
                                             <ComboBoxItem>Eurobank</ComboBoxItem>
                                             <ComboBoxItem>Alpha Bank</ComboBoxItem>
                                             <ComboBoxItem>VISA</ComboBoxItem>
+                                            <ComboBoxItem>VIVA_ONL</ComboBoxItem>
+                                            <ComboBoxItem>PAYPAL</ComboBoxItem>
                                         </ComboBox>
                                     </StackPanel>
                                     <StackPanel Grid.Row="1"
@@ -715,8 +717,8 @@
                     </Grid>
                 </GroupBox>
                 <TabControl Margin="5 10 0 0"
-                          HorizontalAlignment="Left"
-                          VerticalAlignment="Top">
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top">
                     <TabItem Header="Εξτρά Υπηρεσίες">
 
                         <Grid>
@@ -730,52 +732,52 @@
                                 <Label Content="{Binding SelectedCustomer.FullName}" />
                             </StackPanel>
                             <StackPanel Orientation="Horizontal"
-                                    Grid.Row="1">
+                                        Grid.Row="1">
                                 <StackPanel Margin="5 0 5 5"
-                                        Grid.Column="0"
-                                        HorizontalAlignment="Stretch"
-                                        Grid.ColumnSpan="2">
+                                            Grid.Column="0"
+                                            HorizontalAlignment="Stretch"
+                                            Grid.ColumnSpan="2">
                                     <TextBlock Text="Περιγραφή:"
-                                           HorizontalAlignment="Left"
-                                           VerticalAlignment="Center" />
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center" />
                                     <TextBox Margin="0,0,5,5"
-                                         HorizontalAlignment="Stretch"
-                                         Grid.Column="1"
-                                         Width="140"
-                                         TextWrapping="Wrap"
-                                         Height="45"
-                                         Text="{Binding NewExtraService.Description}" />
+                                             HorizontalAlignment="Stretch"
+                                             Grid.Column="1"
+                                             Width="140"
+                                             TextWrapping="Wrap"
+                                             Height="45"
+                                             Text="{Binding NewExtraService.Description}" />
                                 </StackPanel>
                                 <StackPanel  VerticalAlignment="Top">
                                     <TextBlock Text="Ποσό:"
-                                           HorizontalAlignment="Left"
-                                           VerticalAlignment="Center" />
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center" />
                                     <TextBox Grid.Row="0"
-                                         Margin="0 0 0 5"
-                                         HorizontalAlignment="Center"
-                                         Grid.Column="1"
-                                         Text="{Binding NewExtraService.Amount,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                         Width="50" />
+                                             Margin="0 0 0 5"
+                                             HorizontalAlignment="Center"
+                                             Grid.Column="1"
+                                             Text="{Binding NewExtraService.Amount,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                             Width="50" />
                                     <Button Content="Προσθήκη"
-                                        Command="{Binding AddExraServiceCommand}" />
+                                            Command="{Binding AddExraServiceCommand}" />
                                 </StackPanel>
                             </StackPanel>
                             <StackPanel Grid.Row="2"
-                                    Orientation="Vertical">
+                                        Orientation="Vertical">
                                 <ListView Name="extras"
-                                      Focusable="False"
-                                      Height="135"
-                                      SelectedItem="{Binding SelectedExtraService}"
-                                      Width="270"
-                                      ItemsSource="{Binding BookingWr.ExtraServices}">
+                                          Focusable="False"
+                                          Height="135"
+                                          SelectedItem="{Binding SelectedExtraService}"
+                                          Width="270"
+                                          ItemsSource="{Binding BookingWr.ExtraServices}">
                                     <ListView.Resources>
                                         <ContextMenu x:Key="ItemContextMenub">
                                             <MenuItem Header="Διαγραφή"
-                                                  Visibility="{Binding Converter={StaticResource UserToVisibilityConverter},ConverterParameter=1,  Mode=OneWay}"
-                                                  Command="{Binding DataContext.DeleteExtraServiceCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
+                                                      Visibility="{Binding Converter={StaticResource UserToVisibilityConverter},ConverterParameter=1,  Mode=OneWay}"
+                                                      Command="{Binding DataContext.DeleteExtraServiceCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
                                                 <MenuItem.Icon>
                                                     <Image MaxHeight="20"
-                                                       Stretch="Fill" />
+                                                           Stretch="Fill" />
                                                 </MenuItem.Icon>
                                             </MenuItem>
                                         </ContextMenu>
@@ -783,20 +785,20 @@
                                     <ListView.ItemContainerStyle>
                                         <Style TargetType="{x:Type ListViewItem}">
                                             <Setter Property="ContextMenu"
-                                                Value="{StaticResource ItemContextMenub}" />
+                                                    Value="{StaticResource ItemContextMenub}" />
                                         </Style>
                                     </ListView.ItemContainerStyle>
                                     <ListView.View>
                                         <GridView>
                                             <GridViewColumn Header="Περιγραφή"
-                                                        Width="120"
-                                                        DisplayMemberBinding="{Binding Description}" />
+                                                            Width="120"
+                                                            DisplayMemberBinding="{Binding Description}" />
                                             <GridViewColumn Header="Ποσό"
-                                                        Width="40"
-                                                        DisplayMemberBinding="{Binding Amount,Converter={StaticResource FtoSConverter}}" />
+                                                            Width="40"
+                                                            DisplayMemberBinding="{Binding Amount,Converter={StaticResource FtoSConverter}}" />
                                             <GridViewColumn Header="Πελάτης"
-                                                        Width="100"
-                                                        DisplayMemberBinding="{Binding Customer}" />
+                                                            Width="100"
+                                                            DisplayMemberBinding="{Binding Customer}" />
                                         </GridView>
                                     </ListView.View>
                                 </ListView>
@@ -812,59 +814,59 @@
                             </Grid.RowDefinitions>
                             <StackPanel Orientation="Horizontal">
                                 <Label Content="Τύπος:" />
-                                <ComboBox Width="100" 
-                                          VerticalAlignment="Center" 
+                                <ComboBox Width="100"
+                                          VerticalAlignment="Center"
                                           ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:GroupExpenseCategories}}}"
-                                         SelectedItem="{Binding NewTransaction.GroupExpenseCategory}" />
+                                          SelectedItem="{Binding NewTransaction.GroupExpenseCategory}" />
                             </StackPanel>
                             <StackPanel Orientation="Horizontal"
-                                    Grid.Row="1">
+                                        Grid.Row="1">
                                 <StackPanel Margin="5 0 5 5"
-                                        Grid.Column="0"
-                                        HorizontalAlignment="Stretch"
-                                        Grid.ColumnSpan="2">
+                                            Grid.Column="0"
+                                            HorizontalAlignment="Stretch"
+                                            Grid.ColumnSpan="2">
                                     <TextBlock Text="Περιγραφή:"
-                                           HorizontalAlignment="Left"
-                                           VerticalAlignment="Center" />
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center" />
                                     <TextBox Margin="0,0,5,5"
-                                         HorizontalAlignment="Stretch"
-                                         Grid.Column="1"
-                                         Width="140"
-                                         TextWrapping="Wrap"
-                                         Height="45"
-                                         Text="{Binding NewTransaction.Description,UpdateSourceTrigger=PropertyChanged}" />
+                                             HorizontalAlignment="Stretch"
+                                             Grid.Column="1"
+                                             Width="140"
+                                             TextWrapping="Wrap"
+                                             Height="45"
+                                             Text="{Binding NewTransaction.Description,UpdateSourceTrigger=PropertyChanged}" />
                                 </StackPanel>
                                 <StackPanel  VerticalAlignment="Top">
                                     <TextBlock Text="Ποσό:"
-                                           HorizontalAlignment="Left"
-                                           VerticalAlignment="Center" />
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center" />
                                     <TextBox Grid.Row="0"
-                                         Margin="0 0 0 5"
-                                         HorizontalAlignment="Center"
-                                         Grid.Column="1"
-                                         Text="{Binding NewTransaction.Amount,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged}"
-                                         Width="50" />
+                                             Margin="0 0 0 5"
+                                             HorizontalAlignment="Center"
+                                             Grid.Column="1"
+                                             Text="{Binding NewTransaction.Amount,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged}"
+                                             Width="50" />
                                     <Button Content="Προσθήκη"
-                                        Command="{Binding AddNewTransactionCommand}" />
+                                            Command="{Binding AddNewTransactionCommand}" />
                                 </StackPanel>
                             </StackPanel>
-                            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Hidden"
-                                      Width="270"
-                                          
+                            <ScrollViewer Grid.Row="2"
+                                          VerticalScrollBarVisibility="Hidden"
+                                          Width="270"
                                           HorizontalScrollBarVisibility="Auto">
                                 <ListView Name="expenses"
-                                      Focusable="False"
-                                      Height="129"
-                                      SelectedItem="{Binding SelectedTransaction}"
-                                      ItemsSource="{Binding BookingWr.Transactions}">
+                                          Focusable="False"
+                                          Height="129"
+                                          SelectedItem="{Binding SelectedTransaction}"
+                                          ItemsSource="{Binding BookingWr.Transactions}">
                                     <ListView.Resources>
                                         <ContextMenu x:Key="ItemContextMenutrans">
                                             <MenuItem Header="Διαγραφή"
-                                                  Visibility="{Binding Converter={StaticResource UserToVisibilityConverter},ConverterParameter=1,  Mode=OneWay}"
-                                                  Command="{Binding DataContext.DeleteTransactionCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
+                                                      Visibility="{Binding Converter={StaticResource UserToVisibilityConverter},ConverterParameter=1,  Mode=OneWay}"
+                                                      Command="{Binding DataContext.DeleteTransactionCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
                                                 <MenuItem.Icon>
                                                     <Image MaxHeight="20"
-                                                       Stretch="Fill" />
+                                                           Stretch="Fill" />
                                                 </MenuItem.Icon>
                                             </MenuItem>
                                         </ContextMenu>
@@ -872,26 +874,26 @@
                                     <ListView.ItemContainerStyle>
                                         <Style TargetType="{x:Type ListViewItem}">
                                             <Setter Property="ContextMenu"
-                                                Value="{StaticResource ItemContextMenutrans}" />
+                                                    Value="{StaticResource ItemContextMenutrans}" />
                                         </Style>
                                     </ListView.ItemContainerStyle>
                                     <ListView.View>
                                         <GridView>
                                             <GridViewColumn Header="Ποσό"
-                                                        Width="40"
-                                                        DisplayMemberBinding="{Binding Amount,Converter={StaticResource FtoSConverter}}" />
+                                                            Width="40"
+                                                            DisplayMemberBinding="{Binding Amount,Converter={StaticResource FtoSConverter}}" />
                                             <GridViewColumn Header="Τύπος"
-                                                        Width="60"
-                                                        DisplayMemberBinding="{Binding GroupExpenseDescription}" />
+                                                            Width="60"
+                                                            DisplayMemberBinding="{Binding GroupExpenseDescription}" />
                                             <GridViewColumn Header="Περιγραφή"
-                                                        Width="120"
-                                                        DisplayMemberBinding="{Binding Description}" />
+                                                            Width="120"
+                                                            DisplayMemberBinding="{Binding Description}" />
                                             <GridViewColumn Header="Χρήστης"
-                                                        Width="80"
-                                                        DisplayMemberBinding="{Binding User}" />
+                                                            Width="80"
+                                                            DisplayMemberBinding="{Binding User}" />
                                             <GridViewColumn Header="Ημερομηνία"
-                                                        Width="95"
-                                                        DisplayMemberBinding="{Binding Date, StringFormat='{}{0:dd/MM/yy-HH:mm}'}" />
+                                                            Width="95"
+                                                            DisplayMemberBinding="{Binding Date, StringFormat='{}{0:dd/MM/yy-HH:mm}'}" />
                                         </GridView>
                                     </ListView.View>
                                 </ListView>
@@ -915,51 +917,51 @@
                         <StackPanel.Resources>
                             <Style TargetType="ComboBox">
                                 <Setter Property="MinWidth"
-                                            Value="50" />
+                                        Value="50" />
                                 <Setter Property="Width"
-                                            Value="110" />
+                                        Value="110" />
                                 <Setter Property="VerticalAlignment"
-                                            Value="Center" />
+                                        Value="Center" />
                             </Style>
                         </StackPanel.Resources>
                         <StackPanel>
                             <StackPanel Orientation="Horizontal">
                                 <StackPanel Orientation="Horizontal"
-                                                Visibility="{Binding BookingWr.IsNotGroup,Converter={StaticResource booleanToVisibilityConverter}}">
+                                            Visibility="{Binding BookingWr.IsNotGroup,Converter={StaticResource booleanToVisibilityConverter}}">
                                     <StackPanel>
                                         <Label Content="Check In:"
-                                                   Padding="0" />
+                                               Padding="0" />
                                         <DatePicker SelectedDate="{Binding BookingWr.CheckIn}"
-                                                        IsEnabled="{Binding CanEditDates}"
-                                                        Margin="0,0,5,0" />
+                                                    IsEnabled="{Binding CanEditDates}"
+                                                    Margin="0,0,5,0" />
                                     </StackPanel>
                                     <StackPanel>
                                         <Label Content="Check Out:"
-                                                   Padding="0" />
+                                               Padding="0" />
                                         <DatePicker SelectedDate="{Binding BookingWr.CheckOut}"
-                                                        IsEnabled="{Binding CanEditDates}" />
+                                                    IsEnabled="{Binding CanEditDates}" />
                                     </StackPanel>
                                 </StackPanel>
                                 <StackPanel Visibility="{Binding BookingWr.IsGroup,Converter={StaticResource booleanToVisibilityConverter}}">
                                     <Label Content="Ημερομηνίες:"
-                                               Padding="0" />
+                                           Padding="0" />
                                     <ComboBox ItemsSource="{Binding BookingWr.Excursion.ExcursionDates}"
-                                                  Width="130"
-                                                  VerticalAlignment="Center"
-                                                  SelectedItem="{Binding BookingWr.ExcursionDate}" />
+                                              Width="130"
+                                              VerticalAlignment="Center"
+                                              SelectedItem="{Binding BookingWr.ExcursionDate}" />
                                 </StackPanel>
                                 <StackPanel Margin="5,0,5,0">
                                     <Label Content="Ξενοδοχείο:"
-                                               Padding="0"
-                                               VerticalAlignment="Center" />
+                                           Padding="0"
+                                           VerticalAlignment="Center" />
                                     <ComboBox MinWidth="45"
-                                                  Width="90"
-                                                  x:Name="FilterSelectedHotelComboBox"
-                                                  SelectedIndex="{Binding SelectedHotelIndex}"
-                                                  VerticalAlignment="Center">
+                                              Width="90"
+                                              x:Name="FilterSelectedHotelComboBox"
+                                              SelectedIndex="{Binding SelectedHotelIndex}"
+                                              VerticalAlignment="Center">
                                         <ComboBox.Resources>
                                             <CollectionViewSource x:Key="HotelsList"
-                                                                      Source="{Binding Hotels}" />
+                                                                  Source="{Binding Hotels}" />
                                         </ComboBox.Resources>
                                         <ComboBox.ItemsSource>
                                             <CompositeCollection>
@@ -971,14 +973,14 @@
                                 </StackPanel>
                                 <StackPanel>
                                     <Label VerticalAlignment="Center"
-                                               Padding="0"
-                                               Content="Τύπος Δωματίου:" />
+                                           Padding="0"
+                                           Content="Τύπος Δωματίου:" />
                                     <ComboBox VerticalAlignment="Center"
-                                                  Width="90"
-                                                  SelectedIndex="{Binding SelectedRoomTypeIndex}">
+                                              Width="90"
+                                              SelectedIndex="{Binding SelectedRoomTypeIndex}">
                                         <ComboBox.Resources>
                                             <CollectionViewSource x:Key="RoomTypesList"
-                                                                      Source="{Binding RoomTypes}" />
+                                                                  Source="{Binding RoomTypes}" />
                                         </ComboBox.Resources>
                                         <ComboBox.ItemsSource>
                                             <CompositeCollection>
@@ -990,43 +992,43 @@
                                 </StackPanel>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal"
-                                            Margin="0,5"
-                                            HorizontalAlignment="Right">
+                                        Margin="0,5"
+                                        HorizontalAlignment="Right">
                                 <CheckBox Content="Όλοι"
-                                              IsChecked="{Binding All}"
-                                              VerticalAlignment="Center"
-                                              Margin="5" />
+                                          IsChecked="{Binding All}"
+                                          VerticalAlignment="Center"
+                                          Margin="5" />
                                 <Button Content="Προβολή"
-                                            IsDefault="True"
-                                            VerticalAlignment="Center"
-                                            Command="{Binding ShowFilteredRoomsCommand}"
-                                            Margin="5,0" />
+                                        IsDefault="True"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding ShowFilteredRoomsCommand}"
+                                        Margin="5,0" />
                                 <Button Content="Τοποθέτηση"
-                                            VerticalAlignment="Center"
-                                            Command="{Binding PutCustomersInRoomCommand}"
-                                            Margin="0,0,5,0" />
+                                        VerticalAlignment="Center"
+                                        Command="{Binding PutCustomersInRoomCommand}"
+                                        Margin="0,0,5,0" />
                                 <Button Content="Noname"
-                                            VerticalAlignment="Center"
-                                            Command="{Binding BookRoomNoNameCommand}"
-                                            Margin="0,0,5,0" />
+                                        VerticalAlignment="Center"
+                                        Command="{Binding BookRoomNoNameCommand}"
+                                        Margin="0,0,5,0" />
                                 <Button Content="OverBook"
-                                            VerticalAlignment="Center"
-                                            Command="{Binding OverBookHotelCommand}"
-                                            Margin="0,0,5,0"></Button>
+                                        VerticalAlignment="Center"
+                                        Command="{Binding OverBookHotelCommand}"
+                                        Margin="0,0,5,0"></Button>
                                 <Button Content="Transfer"
-                                            VerticalAlignment="Center"
-                                            Command="{Binding AddTransferCommand}"
-                                            Margin="0,0,5,0" />
+                                        VerticalAlignment="Center"
+                                        Command="{Binding AddTransferCommand}"
+                                        Margin="0,0,5,0" />
                                 <Button Content="1ήμερη"
-                                            VerticalAlignment="Center"
-                                            Command="{Binding AddOneDayCommand}"
-                                            Margin="0,0,5,0" />
+                                        VerticalAlignment="Center"
+                                        Command="{Binding AddOneDayCommand}"
+                                        Margin="0,0,5,0" />
                                 <Button Cursor="Hand"
-                                            Command="{Binding UpdateAllCommand}"
-                                            HorizontalAlignment="Left">
+                                        Command="{Binding UpdateAllCommand}"
+                                        HorizontalAlignment="Left">
                                     <iconPacks:PackIconFontAwesome Kind="SyncSolid"
-                                                                       VerticalAlignment="Center"
-                                                                       Margin="2" />
+                                                                   VerticalAlignment="Center"
+                                                                   Margin="2" />
                                 </Button>
                             </StackPanel>
                         </StackPanel>
@@ -1460,39 +1462,46 @@
                             <Button Content="Καθαρισμός"
                                     Margin="5,5,5,0"
                                     Command="{Binding ClearBookingCommand}" />
+                            <Button Content="Τιμολόγιο"
+                                    Margin="5,5,5,0"
+                                    Command="{Binding OpenInvoicesWindowCommand}" />
                             <Button Margin="5,5,5,0"
-                            Command="{Binding SearchForCustomerCommand}">
+                                    Command="{Binding SearchForCustomerCommand}">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock VerticalAlignment="center" Margin="0 0 5 0">
+                                    <TextBlock VerticalAlignment="center"
+                                               Margin="0 0 5 0">
                                 Προσθήκη Πελ.
                                     </TextBlock>
-                                    <iconPacks:PackIconFontAwesome
-                                Kind="SearchSolid"
-                                VerticalAlignment="Center"
-                                 />
+                                    <iconPacks:PackIconFontAwesome Kind="SearchSolid"
+                                                                   VerticalAlignment="Center" />
                                 </StackPanel>
                             </Button>
                             <StackPanel>
-                                <CheckBox Margin="5" Content="Μεταφορά" Name="ChangeCheckBox"/>
+                                <CheckBox Margin="5"
+                                          Content="Μεταφορά"
+                                          Name="ChangeCheckBox" />
                                 <StackPanel>
                                     <StackPanel.Style>
                                         <Style TargetType="{x:Type StackPanel}">
-                                            <Setter Property="Visibility" Value="Hidden"/>
+                                            <Setter Property="Visibility"
+                                                    Value="Hidden" />
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding ElementName=ChangeCheckBox, Path=IsChecked}" Value="True">
-                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                <DataTrigger Binding="{Binding ElementName=ChangeCheckBox, Path=IsChecked}"
+                                                             Value="True">
+                                                    <Setter Property="Visibility"
+                                                            Value="Visible" />
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
                                     </StackPanel.Style>
                                     <ComboBox VerticalAlignment="Center"
-                                      Width="200"
-                                      SelectedItem="{Binding SelectedExcursionToChange,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                                      ItemsSource="{Binding GroupExcursions}"
-                                      DisplayMemberPath="Name" />
+                                              Width="200"
+                                              SelectedItem="{Binding SelectedExcursionToChange,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                              ItemsSource="{Binding GroupExcursions}"
+                                              DisplayMemberPath="Name" />
                                     <Button Content="Αλλαγή"
-                                    Margin="5,5,5,0"
-                                    Command="{Binding ChangeBookingCommand}" />
+                                            Margin="5,5,5,0"
+                                            Command="{Binding ChangeBookingCommand}" />
                                 </StackPanel>
                             </StackPanel>
                             <TextBlock Text="{Binding ErrorsInCanAddReservationToRoom}"

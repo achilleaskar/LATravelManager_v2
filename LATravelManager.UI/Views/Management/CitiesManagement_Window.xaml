@@ -7,7 +7,7 @@
         FontSize="14"
         mc:Ignorable="d"
         WindowStartupLocation="CenterOwner"
-Closing="Window_Closing"
+        Closing="Window_Closing"
         Title="{Binding ControlName}"
         Height="500"
         Width="800">

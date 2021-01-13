@@ -1,14 +1,14 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Windows.Data;
-using GalaSoft.MvvmLight.CommandWpf;
-using LaTravelManager.ViewModel.Management;
+﻿using GalaSoft.MvvmLight.CommandWpf;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.Locations;
 using LATravelManager.Model.Services;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Personal;
+using LATravelManager.UI.ViewModel.Management;
 using LATravelManager.UI.Views;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows.Data;
 
 namespace LATravelManager.UI.ViewModel.ServiceViewModels
 {

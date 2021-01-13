@@ -1,18 +1,13 @@
-﻿using System.Windows.Controls;
-using LATravelManager.UI.Helpers;
+﻿using LATravelManager.UI.Helpers;
 using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
-using System.IO;
-using System;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Text;
-using System.Data;
-using iTextSharp.text;
-using iTextSharp.text.pdf;
-using iTextSharp.text.html.simpleparser;
 using OpenHtmlToPdf;
+using System;
+using System.Data;
 using System.Diagnostics;
+using System.IO;
+using System.Text;
+using System.Web.UI;
+using System.Windows.Controls;
 
 namespace LATravelManager.UI.Views.Tabs
 {
@@ -49,7 +44,6 @@ namespace LATravelManager.UI.Views.Tabs
             datagrid.Columns[15].Visibility = System.Windows.Visibility.Collapsed;
         }
 
-        [Obsolete]
         private void Button_Click_2(object sender, System.Windows.RoutedEventArgs e)
         {
             string companyName = "Nemboolisoft";
@@ -131,7 +125,6 @@ namespace LATravelManager.UI.Views.Tabs
                     Directory.CreateDirectory(outputpath + @"\test");
                     string path = GetPath("test1.pdf", outputpath + @"\test\");
                     File.WriteAllBytes(path, pdf);
-
 
                     Process.Start(path);
                 }

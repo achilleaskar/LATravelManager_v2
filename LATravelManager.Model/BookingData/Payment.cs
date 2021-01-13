@@ -485,6 +485,10 @@ namespace LATravelManager.Model.BookingData
 
                 case 5:
                     return "VISA";
+                case 6:
+                    return "VIVA_ONL";
+                case 7:
+                    return "PAYPAL";
             }
             return base.ToString();
         }

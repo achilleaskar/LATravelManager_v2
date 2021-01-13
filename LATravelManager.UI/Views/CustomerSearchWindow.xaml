@@ -9,6 +9,7 @@
         xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
         WindowStartupLocation="CenterScreen"
         Title="CustomerSearchWindow"
+        Closing="Window_Closing"
         Height="450" Width="1260">
     <Window.Resources>
         <converters:DateTimeToString x:Key="DateTimeToString" />

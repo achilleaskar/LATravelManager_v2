@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.People;
@@ -14,6 +11,9 @@ using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Views.Bansko;
 using LATravelManager.UI.Views.Personal;
 using LATravelManager.UI.Views.ThirdParty;
+using System;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace LATravelManager.UI.Helpers
 {
@@ -255,6 +255,8 @@ namespace LATravelManager.UI.Helpers
 
         public MainViewModel MainViewModel { get; }
         public EconomicData_ViewModel Parent { get; }
+        public decimal VIVA_ONL { get; private set; }
+        public decimal PAYPAL { get; private set; }
 
         #endregion Properties
 
@@ -290,6 +292,14 @@ namespace LATravelManager.UI.Helpers
 
                     case 5:
                         VISA += payment.Amount;
+                        break;
+
+                    case 6:
+                        VIVA_ONL += payment.Amount;
+                        break;
+
+                    case 7:
+                        PAYPAL += payment.Amount;
                         break;
                 }
             }

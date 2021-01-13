@@ -1,15 +1,14 @@
-﻿using System.Collections.ObjectModel;
-using System.Linq;
-using System.Security;
-using LaTravelManager.BaseTypes;
-using LATravelManager.Model.Locations;
+﻿using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Security;
 using LATravelManager.UI.ViewModel.BaseViewModels;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Security;
 
-namespace LaTravelManager.ViewModel.Management
+namespace LATravelManager.UI.ViewModel.Management
 {
     public class UsersManagement_viewModel : AddEditBase<UserWrapper, User>
     {

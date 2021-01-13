@@ -13,7 +13,7 @@
 using CommonServiceLocator;
 using GalaSoft.MvvmLight.Ioc;
 
-namespace LATravelManager.UI.ViewModel.BaseViewModels
+namespace LATravelManager.UI.ViewModel
 {
     /// <summary>
     /// This class contains static references to all the view models in the

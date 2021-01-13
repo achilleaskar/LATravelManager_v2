@@ -1,8 +1,6 @@
-﻿using AutoMapper;
-using LATravelManager.DataAccess;
+﻿using LATravelManager.DataAccess;
 using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
-using LATravelManager.Model.DTOS;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.Lists;
@@ -14,7 +12,6 @@ using LATravelManager.UI.Helpers;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Data.Entity.Core;
 using System.Data.Entity.Core.Objects;
@@ -85,8 +82,6 @@ namespace LATravelManager.UI.Repositories
             this.mainViewModel = mainViewModel;
         }
 
-
-
         #endregion Constructors
 
         #region Fields
@@ -97,6 +92,8 @@ namespace LATravelManager.UI.Repositories
 
         private volatile Task lastTask;
         private MainViewModel mainViewModel;
+
+        public BasicDataManager BasicDataManager => mainViewModel?.BasicDataManager;
 
         #endregion Fields
 
@@ -125,6 +122,11 @@ namespace LATravelManager.UI.Repositories
                 dbSet.Attach(entity);
             }
             dbSet.Remove(entity);
+        }
+
+        internal async Task GetAllDimosBookingInPeriod(DateTime from, DateTime to)
+        {
+            throw new NotImplementedException();
         }
 
         public void Dispose()
@@ -414,6 +416,12 @@ namespace LATravelManager.UI.Repositories
                 .ToListAsync);
         }
 
+        internal async Task<List<CompanyActivity>> GetAllACtivitiesAsync()
+        {
+            return await RunTask(Context.Activities
+               .ToListAsync);
+        }
+
         public async Task<IEnumerable<Reservation>> GetAllReservationsByCreationDate(DateTime afterThisDay, int excursionId, bool canceled = false)
         {
             var limit = DateTime.Today.AddDays(2);
@@ -437,7 +445,7 @@ namespace LATravelManager.UI.Repositories
         {
             return await RunTask(Context.Excursions.Where(e => e.Id == Id)
                 .Include(e => e.ExcursionDates)
-                .Include(e=>e.ExcursionType)
+                .Include(e => e.ExcursionType)
                 .FirstOrDefaultAsync);
         }
 
@@ -531,7 +539,6 @@ namespace LATravelManager.UI.Repositories
         {
             await RunTask(Context.Bookings.Where(b => b.Id == id)
                 .Include(f => f.Transactions).FirstOrDefaultAsync);
-
 
             return await RunTask(Context.Bookings.Where(b => b.Id == id)
             .Include(f => f.Partner)
@@ -955,6 +962,18 @@ namespace LATravelManager.UI.Repositories
             return x;
         }
 
+        internal async Task<List<Personal_Booking>> GetPersonalBookingByID(int id)
+        {
+            var x = await RunTask(Context.Personal_Bookings
+           .Where(c => c.Id == id)
+           .Include(f => f.Customers.Select(s => s.Services))
+           .Include(f => f.User)
+           .Include(f => f.Payments)
+           .Include(f => f.Partner)
+           .ToListAsync);
+            return x;
+        }
+
         internal async Task<List<Reservation>> GetAllRemainingReservationsFiltered(int excursionId, int userId, int category, int par = 0, DateTime checkin = new DateTime(), DateTime checkout = new DateTime())
         {
             DateTime limit = new DateTime(2019, 04, 01);
@@ -1066,7 +1085,6 @@ namespace LATravelManager.UI.Repositories
             //        bo.Excursion.ExcursionType = bo.ExcursionType;
             //        foreach (var item in bo.ReservationsInBooking)
             //        {
-
             //            if (item.HotelID != null && item.HotelID > 0)
             //            {
             //                item.Room = new Room { Hotel = mainViewModel.BasicDataManager.Hotels.FirstOrDefault(h => h.Id == item.HotelID) };
@@ -1460,7 +1478,7 @@ namespace LATravelManager.UI.Repositories
                                 else
                                     sb.Append($"Η κράτηση επανενεργοποιήθηκε, ");
                             break;
-                            
+
                         case nameof(Booking.ExcursionDate):
                             if (original is ExcursionDate ed)
                                 sb.Append($"Ημερομηνίες Εκδρομής από '{ed.Name}' σε '{b.ExcursionDate.Name}', ");
@@ -1707,6 +1725,7 @@ namespace LATravelManager.UI.Repositories
             return await RunTask(Context.Customers.Where(c => c.Tel.Contains(tel))
                 .ToListAsync);
         }
+
         internal async Task<List<Customer>> FindCustomerBySurename(string surename)
         {
             return await RunTask(Context.Customers.Where(c => c.Surename.Contains(surename))
@@ -1720,6 +1739,18 @@ namespace LATravelManager.UI.Repositories
                 .Include(c => c.Personal_Booking.Customers)
                 .Include(c => c.ThirdParty_Booking.Customers)
                 .FirstOrDefaultAsync);
+        }
+
+        internal async Task<List<Company>> GetAllCompaniesAsync(bool allProperties)
+        {
+            if (allProperties)
+            {
+                return await RunTask(Context.Companies
+                    .Include(c => c.Activity)
+                    .ToListAsync);
+            }
+            return (await RunTask(Context.Companies.Select(c => new { c.CompanyName, c.Id })
+                  .ToListAsync))?.Select(t => new Company { CompanyName = t.CompanyName, Id = t.Id }).ToList();
         }
 
         #endregion Methods

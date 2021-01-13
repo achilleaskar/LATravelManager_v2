@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using GalaSoft.MvvmLight.Command;
+﻿using GalaSoft.MvvmLight.Command;
 using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Excursions;
@@ -20,11 +12,43 @@ using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.Wrapper;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace LATravelManager.UI.Data.Workers
 {
     public class Lists : MyViewModelBaseAsync
     {
+        #region Fields
+
+        private ObservableCollection<Department> _Departments = new ObservableCollection<Department>();
+
+        private ObservableCollection<Booking> _FilteredBookings;
+
+        private ObservableCollection<Customer> _FilteredCustomers;
+
+        private ObservableCollection<Hotel> _Hotels = new ObservableCollection<Hotel>();
+
+        private ObservableCollection<Reservation> _RoomingList = new ObservableCollection<Reservation>();
+
+        private DateTime _RoomListCheckInFrom;
+
+        private DateTime _RoomListCheckInTo;
+
+        private bool _SecondDeparts = false;
+
+        private DateTime _SelectedDate;
+
+        private int _SelectedHotelIndex;
+
+        #endregion Fields
+
         #region Constructors
 
         public Lists(Excursion excursion, DateTime from, DateTime to)
@@ -45,23 +69,6 @@ namespace LATravelManager.UI.Data.Workers
         }
 
         #endregion Constructors
-
-        #region Fields
-
-        private ObservableCollection<Department> _Departments = new ObservableCollection<Department>();
-        private ObservableCollection<Booking> _FilteredBookings;
-        private ObservableCollection<Customer> _FilteredCustomers;
-        private ObservableCollection<Hotel> _Hotels = new ObservableCollection<Hotel>();
-        private ObservableCollection<Reservation> _RoomingList = new ObservableCollection<Reservation>();
-        private DateTime _RoomListCheckInFrom;
-        private DateTime _RoomListCheckInTo;
-        private bool _SecondDeparts = false;
-
-        private DateTime _SelectedDate;
-
-        private int _SelectedHotelIndex;
-
-        #endregion Fields
 
         #region Properties
 

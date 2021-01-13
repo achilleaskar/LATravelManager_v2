@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Linq;
+using System.Windows;
 using GalaSoft.MvvmLight.Messaging;
 using LATravelManager.UI.Message;
 
@@ -39,15 +40,47 @@ namespace LATravelManager.UI
                 });
             Messenger.Default.Register<OpenChildWindowCommand>(
                 this,
-                msg =>
+            //msg =>
+            //{
+            //    Window window = msg.Window;
+            //    if (msg.ViewModel != null)
+            //        window.DataContext = msg.ViewModel;
+            //    Application.Current.MainWindow.Visibility = Visibility.Hidden;
+            //    window.ShowDialog();
+            //    Application.Current.MainWindow.Visibility = Visibility.Visible;
+            //});
+
+
+            msg =>
+            {
+                Window window = msg.Window;
+                Helpers.StaticResources.Windows.Add(msg.Window);
+                if (msg.ViewModel != null)
+                    window.DataContext = msg.ViewModel;
+                if (Helpers.StaticResources.VisibleWindows.Count == 0)
                 {
-                    Window window = msg.Window;
-                    if (msg.ViewModel != null)
-                        window.DataContext = msg.ViewModel;
                     Application.Current.MainWindow.Visibility = Visibility.Hidden;
-                    window.ShowDialog();
-                    Application.Current.MainWindow.Visibility = Visibility.Visible;
-                });
+                }
+                else
+                {
+                    Helpers.StaticResources.VisibleWindows.Last().Hide();
+                }
+                window.Show();
+                //Helpers.StaticResources.Windows.Remove(msg.Window);
+                //if (Helpers.StaticResources.HiddenWindows.Count == 0)
+                //{
+                //    Application.Current.MainWindow.Visibility = Visibility.Visible;
+                //}
+                //else
+                //{
+                //    Helpers.StaticResources.HiddenWindows.Last().Show();
+                //}
+                //window.ShowDialog();
+                //Application.Current.MainWindow.Visibility = Visibility.Visible;
+            });
+
+
+
         }
 
         #endregion Methods

@@ -224,6 +224,62 @@
     <Compile Include="Migrations\202006021033156_pricing.designer.cs">
       <DependentUpon>202006021033156_pricing.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202012121808546_CompanyInfo.cs" />
+    <Compile Include="Migrations\202012121808546_CompanyInfo.designer.cs">
+      <DependentUpon>202012121808546_CompanyInfo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202012130040155_creationDate.cs" />
+    <Compile Include="Migrations\202012130040155_creationDate.designer.cs">
+      <DependentUpon>202012130040155_creationDate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202012141742361_invoiceTypes.cs" />
+    <Compile Include="Migrations\202012141742361_invoiceTypes.designer.cs">
+      <DependentUpon>202012141742361_invoiceTypes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202012151205581_unknown.cs" />
+    <Compile Include="Migrations\202012151205581_unknown.designer.cs">
+      <DependentUpon>202012151205581_unknown.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202101031742165_third_Party.cs" />
+    <Compile Include="Migrations\202101031742165_third_Party.designer.cs">
+      <DependentUpon>202101031742165_third_Party.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202101031959449_mystery.cs" />
+    <Compile Include="Migrations\202101031959449_mystery.designer.cs">
+      <DependentUpon>202101031959449_mystery.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202101071742248_deleteInvoices.cs" />
+    <Compile Include="Migrations\202101071742248_deleteInvoices.designer.cs">
+      <DependentUpon>202101071742248_deleteInvoices.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202101081137442_RecieptSeries.cs" />
+    <Compile Include="Migrations\202101081137442_RecieptSeries.designer.cs">
+      <DependentUpon>202101081137442_RecieptSeries.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202101081144009_RecieptLetter.cs" />
+    <Compile Include="Migrations\202101081144009_RecieptLetter.designer.cs">
+      <DependentUpon>202101081144009_RecieptLetter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202101081149364_RecieptFix.cs" />
+    <Compile Include="Migrations\202101081149364_RecieptFix.designer.cs">
+      <DependentUpon>202101081149364_RecieptFix.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202101081915100_RowVersion.cs" />
+    <Compile Include="Migrations\202101081915100_RowVersion.designer.cs">
+      <DependentUpon>202101081915100_RowVersion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202101101542392_unknown1.cs" />
+    <Compile Include="Migrations\202101101542392_unknown1.designer.cs">
+      <DependentUpon>202101101542392_unknown1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202101101906279_requiredRecieptStuff.cs" />
+    <Compile Include="Migrations\202101101906279_requiredRecieptStuff.designer.cs">
+      <DependentUpon>202101101906279_requiredRecieptStuff.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202101101936055_requiredRecieptSeriesStuff.cs" />
+    <Compile Include="Migrations\202101101936055_requiredRecieptSeriesStuff.designer.cs">
+      <DependentUpon>202101101936055_requiredRecieptSeriesStuff.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\ContextConfiguration.cs" />
     <Compile Include="MainDataBase.cs" />
     <Compile Include="Migrations\Configuration.cs" />
@@ -370,6 +426,48 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202006021033156_pricing.resx">
       <DependentUpon>202006021033156_pricing.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012121808546_CompanyInfo.resx">
+      <DependentUpon>202012121808546_CompanyInfo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012130040155_creationDate.resx">
+      <DependentUpon>202012130040155_creationDate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012141742361_invoiceTypes.resx">
+      <DependentUpon>202012141742361_invoiceTypes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012151205581_unknown.resx">
+      <DependentUpon>202012151205581_unknown.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202101031742165_third_Party.resx">
+      <DependentUpon>202101031742165_third_Party.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202101031959449_mystery.resx">
+      <DependentUpon>202101031959449_mystery.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202101071742248_deleteInvoices.resx">
+      <DependentUpon>202101071742248_deleteInvoices.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202101081137442_RecieptSeries.resx">
+      <DependentUpon>202101081137442_RecieptSeries.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202101081144009_RecieptLetter.resx">
+      <DependentUpon>202101081144009_RecieptLetter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202101081149364_RecieptFix.resx">
+      <DependentUpon>202101081149364_RecieptFix.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202101081915100_RowVersion.resx">
+      <DependentUpon>202101081915100_RowVersion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202101101542392_unknown1.resx">
+      <DependentUpon>202101101542392_unknown1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202101101906279_requiredRecieptStuff.resx">
+      <DependentUpon>202101101906279_requiredRecieptStuff.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202101101936055_requiredRecieptSeriesStuff.resx">
+      <DependentUpon>202101101936055_requiredRecieptSeriesStuff.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

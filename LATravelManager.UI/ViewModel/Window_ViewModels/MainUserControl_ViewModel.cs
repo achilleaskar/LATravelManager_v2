@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Data;
-using System.Windows.Input;
+﻿using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
 using GalaSoft.MvvmLight.CommandWpf;
-using LaTravelManager.ViewModel.Management;
 using LATravelManager.Model;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Hotels;
+using LATravelManager.Model.Locations;
 using LATravelManager.Model.Notifications;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Services;
@@ -30,7 +23,19 @@ using LATravelManager.UI.Views.Bansko;
 using LATravelManager.UI.Views.Management;
 using LATravelManager.UI.Views.Personal;
 using LATravelManager.UI.Views.ThirdParty;
+using Microsoft.Win32;
 using Notifications.Wpf;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Data;
+using System.Windows.Input;
 
 namespace LATravelManager.UI.ViewModel.Window_ViewModels
 {
@@ -40,9 +45,10 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
         public MainUserControl_ViewModel(MainViewModel mainViewModel)
         {
-            LogOutCommand = new RelayCommand(async () => { await TryLogOut(); });
+            LogOutCommand = new RelayCommand(async () => await TryLogOut());
 
             OpenHotelEditCommand = new RelayCommand(OpenHotelsWindow, CanEditWindows);
+            InsertPartnersFromExcelCommand = new RelayCommand(async () => await InsertPartnerDataFromExcel());
             OpenCitiesEditCommand = new RelayCommand(OpenCitiesWindow, CanEditWindows);
             OpenCountriesEditCommand = new RelayCommand(OpenCountriesWindow, CanEditWindows);
             OpenExcursionsEditCommand = new RelayCommand(OpenExcursionsWindow, CanEditWindows);
@@ -51,6 +57,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             OpenLeadersEditCommand = new RelayCommand(OpenLeadersWindow, CanEditWindows);
             OpenVehiclesEditCommand = new RelayCommand(OpenVehiclesWindow, CanEditWindows);
             OpenOptionalsEditCommand = new RelayCommand(OpenOpionalsWindow, CanEditWindows);
+            OpenTaxDataEditCommand = new RelayCommand(async () => await OpenTaxDataEditWindow(), CanEditWindows);
 
             ToggleTestModeCommand = new RelayCommand(async () => await ToggleTestMode());
 
@@ -67,11 +74,20 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             MainViewModel = mainViewModel;
             var x = GetaAllNotifications().ConfigureAwait(false);
 
-            TestmodeMessage = Properties.Settings.Default.isTest ? "Εναλαγή σε κανονικό" : "Εναλαγή σε test";
+            TestmodeMessage = Properties.Settings.Default.isTest ? "Εναλλαγή σε κανονικό" : "Εναλλαγή σε test";
 
             // MessengerInstance.Register<ChangeChildViewModelMessage>(this, async vm => { await SelectedExcursionType.SetProperChildViewModel(vm.ViewModelindex); });
 
             //  MessengerInstance.Register<ExcursionCategoryChangedMessage>(this, async index => { await SetProperViewModel(); });
+        }
+
+        private async Task OpenTaxDataEditWindow()
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+            var vm = new TaxDataManagement_ViewModel(MainViewModel.BasicDataManager);
+            await vm.LoadAsync();
+            Mouse.OverrideCursor = Cursors.Arrow;
+            MessengerInstance.Send(new OpenChildWindowCommand(new TaxData_Management_Window { DataContext = vm }));
         }
 
         private bool CanSetOk()
@@ -82,9 +98,8 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
         private async Task ToggleTestMode()
         {
             await MainViewModel.BasicDataManager.ToggleTestMode(Properties.Settings.Default.isTest);
-            TestmodeMessage = Properties.Settings.Default.isTest ? "Εναλαγή σε κανονικό" : "Εναλαγή σε test";
+            TestmodeMessage = Properties.Settings.Default.isTest ? "Εναλλαγή σε κανονικό" : "Εναλλαγή σε test";
             Properties.Settings.Default.Save();
-
         }
 
         private Notification _SelectedNot;
@@ -278,7 +293,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
         public RelayCommand LogOutCommand { get; set; }
         public RelayCommand ToggleTestModeCommand { get; set; }
-
+        public RelayCommand OpenTaxDataEditCommand { get; set; }
 
         private string _TestmodeMessage;
 
@@ -374,6 +389,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
         public RelayCommand OpenOptionalsEditCommand { get; }
 
         public RelayCommand OpenHotelEditCommand { get; }
+        public RelayCommand InsertPartnersFromExcelCommand { get; }
         public RelayCommand NotIsOkCommand { get; }
 
         public RelayCommand OpenLeadersEditCommand { get; }
@@ -547,6 +563,295 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             MessengerInstance.Send(new OpenChildWindowCommand(new HotelsManagement_Window { DataContext = vm }));
         }
 
+        public async Task InsertPartnerDataFromExcel()
+        {
+            var cities = MainViewModel.BasicDataManager.Cities;
+            var countries = MainViewModel.BasicDataManager.Countries;
+            var activities = await MainViewModel.BasicDataManager.Context.GetAllACtivitiesAsync();
+            OpenFileDialog dlg = new OpenFileDialog
+            {
+                //FileName = "Document", // Default file name
+                //DefaultExt = ".pdf", // Default file extension
+                Filter = "Excel Files (*.xlsx*)|*.xlsx*" // Filter files by extension
+            };
+            // Show open file dialog box
+            bool? result = dlg.ShowDialog();
+
+            // Process open file dialog box results
+            if (result == true)
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                Dictionary<string, string> pointers = new Dictionary<string, string>();
+                string fileName = dlg.FileName;
+                FileInfo file = new FileInfo(fileName);
+                if (file.Exists)
+                {
+                    using FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                    using SpreadsheetDocument doc = SpreadsheetDocument.Open(fs, false);
+                    WorkbookPart workbookPart = doc.WorkbookPart;
+                    SharedStringTablePart sstpart = workbookPart.GetPartsOfType<SharedStringTablePart>().First();
+                    SharedStringTable sst = sstpart.SharedStringTable;
+
+                    WorksheetPart worksheetPart = workbookPart.WorksheetParts.First();
+                    Worksheet sheet = worksheetPart.Worksheet;
+
+                    IEnumerable<Row> rows = sheet.Descendants<Row>();
+                    int i = 0;
+                    CustomerWrapper tmpCustomerWr = new CustomerWrapper();
+                    Company comp;
+                    List<Company> companies = new List<Company>();
+                    if (rows.Any())
+                    {
+                        //// for (int l = char.ToUpper('A', CultureInfo.CurrentCulture); l <= char.ToUpper('Z', CultureInfo.CurrentCulture); l++)
+                        // {
+                        // }
+                        int ssid = 0;
+                        string content;
+                        string pointer;
+                        int parsedint;
+                        foreach (var row in rows)
+                        {
+                            comp = new Company();
+                            if (row.RowIndex == 1)
+                            {
+                                foreach (Cell c in row.Elements<Cell>())
+                                {
+                                    if ((c.DataType != null) && (c.DataType == CellValues.SharedString))
+                                    {
+                                        ssid = int.Parse(c.CellValue.Text);
+                                        content = sst.ChildElements[ssid].InnerText;
+                                        pointers.Add(c.CellReference.ToString().Trim('1'), content);
+                                    }
+                                }
+                                continue;
+                            }
+                            foreach (Cell c in row.Elements<Cell>())
+                            {
+                                if (c.CellValue == null)
+                                    continue;
+                                if (!int.TryParse(c.CellValue.Text, out ssid))
+                                    ssid = -1;
+                                if (!((c.DataType != null) && (c.DataType == CellValues.SharedString)))
+                                    content = c.CellValue.Text;
+                                else
+                                {
+                                    if (ssid < 0)
+                                        continue;
+                                    else
+                                        content = sst.ChildElements[ssid].InnerText;
+                                }
+                                content = content.Trim();
+                                if (content.ToUpperInvariant() == "NULL")
+                                {
+                                    continue;
+                                }
+                                pointer = Regex.Replace(c.CellReference.ToString(), @"\d", "");
+                                if (pointers.TryGetValue(pointer, out string val))
+                                {
+                                    switch (val)
+                                    {
+                                        case "Code":
+                                            comp.Code = int.TryParse(content, out parsedint) ? parsedint : 0;
+                                            break;
+
+                                        case "Name":
+                                            comp.Name = content;
+                                            break;
+
+                                        case "LastName":
+                                            comp.LastName = content;
+                                            break;
+                                        //case "NameInLatin":
+                                        //    comp.name = content;
+                                        //    break;
+                                        case "CompanyName":
+                                            comp.CompanyName = content;
+                                            break;
+
+                                        case "Address":
+                                            comp.AddressRoad = content;
+                                            break;
+
+                                        case "AddressNumber":
+                                            comp.AddressNumber = int.TryParse(content, out parsedint) ? parsedint : 0;
+                                            break;
+
+                                        case "ZipCode":
+                                            comp.AddressZipCode = content;
+                                            break;
+
+                                        case "City":
+                                            var ct = cities.FirstOrDefault(c => c.Name.ToUpperInvariant() == content.ToUpperInvariant());
+                                            if (ct != null)
+                                            {
+                                                comp.AddressCity = ct;
+                                            }
+                                            else
+                                            {
+                                                comp.AddressCity = new City { Name = content, Country = countries.FirstOrDefault(r => r.Id == 6) };
+                                                MainViewModel.BasicDataManager.Cities.Add(comp.AddressCity);
+                                            }
+                                            break;
+
+                                        case "Country":
+                                            var ctry = countries.FirstOrDefault(c => c.Name.ToUpperInvariant() == content.ToUpperInvariant());
+                                            if (ctry != null)
+                                            {
+                                                comp.Country = ctry;
+                                            }
+                                            else
+                                            {
+                                                comp.Country = new Country { Name = content };
+                                                MainViewModel.BasicDataManager.Countries.Add(comp.Country);
+                                            }
+                                            break;
+
+                                        case "Activity":
+                                            var act = activities.FirstOrDefault(c => c.Name.ToUpperInvariant() == content.ToUpperInvariant());
+                                            if (act != null)
+                                            {
+                                                comp.Activity = act;
+                                            }
+                                            else
+                                            {
+                                                comp.Activity = new CompanyActivity { Name = content };
+                                                activities.Add(comp.Activity);
+                                            }
+                                            break;
+
+                                        case "TaxationNo":
+                                            comp.TaxationNumber = content;
+                                            break;
+
+                                        case "TaxOffice":
+                                            comp.TaxOffice = content;
+                                            break;
+
+                                        case "BillAddress":
+                                            comp.BillRoad = content;
+                                            break;
+
+                                        case "BillZipCode":
+                                            comp.BillZipCode = content;
+                                            break;
+
+                                        case "BillCity":
+                                            var bct = cities.FirstOrDefault(c => c.Name.ToUpperInvariant() == content.ToUpperInvariant());
+                                            if (bct != null)
+                                            {
+                                                comp.BillCity = bct;
+                                            }
+                                            else
+                                            {
+                                                comp.BillCity = new City { Name = content, Country = countries.FirstOrDefault(r => r.Id == 6) };
+                                                MainViewModel.BasicDataManager.Cities.Add(comp.BillCity);
+                                            }
+                                            break;
+
+                                        case "Phone":
+                                            comp.Phone1 = content;
+                                            break;
+
+                                        case "SecondPhone":
+                                            comp.Phone2 = content;
+                                            break;
+
+                                        case "MobilePhone":
+                                            comp.MobilePhone = content;
+                                            break;
+
+                                        case "EMail":
+                                            comp.Email = content;
+                                            break;
+
+                                        case "Details":
+                                            comp.Comment = content;
+                                            break;
+
+                                        case "CreationDate":
+                                            comp.CreationDate = DateTime.TryParse(content, out DateTime date) ? date : new DateTime();
+                                            break;
+
+                                        case "IsAgent":
+                                            comp.IsAgent = content == "1";
+                                            break;
+
+                                        default:
+                                            break;
+                                    }
+                                }
+                            }
+                            if (!string.IsNullOrEmpty(comp.Name) && !string.IsNullOrEmpty(comp.LastName) && comp.Name == comp.LastName)
+                            {
+                                comp.LastName = "";
+                            }
+                            if (comp.AddressNumber > 0 && !string.IsNullOrEmpty(comp.AddressRoad) && comp.AddressRoad.EndsWith(comp.AddressNumber.ToString()))
+                            {
+                                comp.AddressRoad = comp.AddressRoad.Substring(0, comp.AddressRoad.LastIndexOf(comp.AddressNumber.ToString())).Trim();
+                            }
+                            if (comp.Code > 0)
+                            {
+                                comp.Id = comp.Code;
+                            }
+                            companies.Add(comp);
+                            //if (!string.IsNullOrEmpty(comp.BillAddressNumber.ToString()) && comp.BillRoad.EndsWith(comp.BillAddressNumber.ToString()))
+                            //{
+                            //    comp.BillRoad = comp.BillRoad.Substring(0, comp.BillRoad.LastIndexOf(comp.BillAddressNumber.ToString()));
+                            //}
+                        }
+
+                        int ctr = 0;
+                        foreach (var act in activities.Where(c => c.Id == 0))
+                        {
+                            MainViewModel.BasicDataManager.Context.Add(act);
+                            ctr++;
+                            if (ctr % 10 == 9)
+                            {
+                                await MainViewModel.BasicDataManager.Context.SaveAsync();
+                            }
+                        }
+
+                        foreach (var cte in cities.Where(c => c.Id == 0))
+                        {
+                            MainViewModel.BasicDataManager.Context.Add(cte);
+                            ctr++;
+                            if (ctr % 10 == 9)
+                            {
+                                await MainViewModel.BasicDataManager.Context.SaveAsync();
+                            }
+                        }
+
+                        foreach (var cte in countries.Where(c => c.Id == 0))
+                        {
+                            MainViewModel.BasicDataManager.Context.Add(cte);
+                            ctr++;
+                            if (ctr % 10 == 9)
+                            {
+                                await MainViewModel.BasicDataManager.Context.SaveAsync();
+                            }
+                        }
+
+                        foreach (var com in companies)
+                        {
+                            MainViewModel.BasicDataManager.Context.Add(com);
+                            ctr++;
+                            if (ctr % 10 == 9)
+                            {
+                                await MainViewModel.BasicDataManager.Context.SaveAsync();
+                            }
+                        }
+                        await MainViewModel.BasicDataManager.Context.SaveAsync();
+                    }
+                    else
+                    {
+                    }
+                    // BookingWr.CalculateRemainingAmount();
+                }
+            }
+            Mouse.OverrideCursor = Cursors.Arrow;
+        }
+
         public override async Task ReloadAsync()
         {
             await Task.Delay(0);
@@ -604,7 +909,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                         reply.Add(new Notification
                         {
                             Details = $"Η κράτηση για { booking.Excursion.Destinations[0]}  " +
-                            $"στο όνομα { booking.ReservationsInBooking[0].CustomersList[0] } δέν έχει δώσει προκαταβολή",
+                            $"στο όνομα { booking.ReservationsInBooking[0].CustomersList[0] } δεν έχει δώσει προκαταβολή",
                             ReservationWrapper = new ReservationWrapper { BookingWrapper = booking },
                             NotificaationType = NotificaationType.NoPay
                         });
@@ -614,7 +919,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                         reply.Add(new Notification
                         {
                             Details = $"Η κράτηση για { booking.Excursion.Destinations[0]}  " +
-                            $"στο όνομα { booking.ReservationsInBooking[0].CustomersList[0] } δέν έχει κάνει εξόφληση",
+                            $"στο όνομα { booking.ReservationsInBooking[0].CustomersList[0] } δεν έχει κάνει εξόφληση",
                             ReservationWrapper = new ReservationWrapper { BookingWrapper = booking },
                             NotificaationType = NotificaationType.NoPay
                         });
@@ -638,7 +943,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                     {
                         reply.Add(new Notification
                         {
-                            Details = $"Το ατομικό πακέτο στο όνομα { booking.Customers[0] } δέν έχει δώσει προκαταβολή",
+                            Details = $"Το ατομικό πακέτο στο όνομα { booking.Customers[0] } δεν έχει δώσει προκαταβολή",
                             ReservationWrapper = new ReservationWrapper { PersonalModel = booking },
                             NotificaationType = NotificaationType.NoPay
                         });
@@ -647,7 +952,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                     {
                         reply.Add(new Notification
                         {
-                            Details = $"Το ατομικό πακέτο στο όνομα { booking.Customers[0] } δέν έχει δώσει προκαταβολή",
+                            Details = $"Το ατομικό πακέτο στο όνομα { booking.Customers[0] } δεν έχει δώσει προκαταβολή",
                             ReservationWrapper = new ReservationWrapper { PersonalModel = booking },
                             NotificaationType = NotificaationType.NoPay
                         });
@@ -672,7 +977,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                         reply.Add(new Notification
                         {
                             Details = $"Το πακέτο συνεργάτη για { booking.City} " +
-                            $"στο όνομα { booking.Customers[0]} δέν έχει δώσει προκαταβολή",
+                            $"στο όνομα { booking.Customers[0]} δεν έχει δώσει προκαταβολή",
                             ReservationWrapper = new ReservationWrapper { ThirdPartyModel = booking },
                             NotificaationType = NotificaationType.NoPay
                         });
@@ -682,7 +987,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                         reply.Add(new Notification
                         {
                             Details = $"Το πακέτο συνεργάτη για { booking.City} " +
-                            $"στο όνομα { booking.Customers[0]} δέν έχει κάνει εξόφληση",
+                            $"στο όνομα { booking.Customers[0]} δεν έχει κάνει εξόφληση",
                             ReservationWrapper = new ReservationWrapper { ThirdPartyModel = booking },
                             NotificaationType = NotificaationType.NoPay
                         });
@@ -710,12 +1015,12 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                         if (option.Airline.Checkin != 0 && option.TimeGo > DateTime.Now &&
                             (option.TimeGo - DateTime.Now).TotalHours <= option.Airline.Checkin)
                         {
-                            reply.Add(new Notification { Details = $"Ανοιξε το CheckIn {option.From}-{option.To} του {(option.Personal_Booking.Customers.Count > 0 ? option.Personal_Booking.Customers.ToList()[0].ToString() : option.Id.ToString())}", NotificaationType = NotificaationType.CheckIn, ReservationWrapper = new ReservationWrapper { PersonalModel = new Personal_BookingWrapper(option.Personal_Booking) }, Service = option });
+                            reply.Add(new Notification { Details = $"Άνοιξε το CheckIn {option.From}-{option.To} του {(option.Personal_Booking.Customers.Count > 0 ? option.Personal_Booking.Customers.ToList()[0].ToString() : option.Id.ToString())}", NotificaationType = NotificaationType.CheckIn, ReservationWrapper = new ReservationWrapper { PersonalModel = new Personal_BookingWrapper(option.Personal_Booking) }, Service = option });
                         }
                         if (option.Airline.Checkin != 0 && option.TimeReturn > DateTime.Now && option.Allerretour &&
                             (option.TimeReturn - DateTime.Now).TotalHours <= option.Airline.Checkin)
                         {
-                            reply.Add(new Notification { Details = $"Ανοιξε το το CheckIn Επιστροφής {option.To}-{option.From} του {(option.Personal_Booking.Customers.Count > 0 ? option.Personal_Booking.Customers.ToList()[0].ToString() : option.Id.ToString())}", NotificaationType = NotificaationType.CheckIn, ReservationWrapper = new ReservationWrapper { PersonalModel = new Personal_BookingWrapper(option.Personal_Booking) }, Service = option });
+                            reply.Add(new Notification { Details = $"Άνοιξε το CheckIn Επιστροφής {option.To}-{option.From} του {(option.Personal_Booking.Customers.Count > 0 ? option.Personal_Booking.Customers.ToList()[0].ToString() : option.Id.ToString())}", NotificaationType = NotificaationType.CheckIn, ReservationWrapper = new ReservationWrapper { PersonalModel = new Personal_BookingWrapper(option.Personal_Booking) }, Service = option });
                         }
                     }
                     else
@@ -728,7 +1033,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                         if (option.TimeReturn > DateTime.Now && option.Allerretour &&
                             (option.TimeReturn - DateTime.Now).TotalHours <= 48)
                         {
-                            reply.Add(new Notification { Details = $"Ίσως άνοιξε το το CheckIn Επιστροφής {option.To}-{option.From} του {(option.Personal_Booking.Customers.Count > 0 ? option.Personal_Booking.Customers.ToList()[0].ToString() : option.Id.ToString())}", NotificaationType = NotificaationType.CheckIn, ReservationWrapper = new ReservationWrapper { PersonalModel = new Personal_BookingWrapper(option.Personal_Booking) }, Service = option });
+                            reply.Add(new Notification { Details = $"Ίσως άνοιξε το CheckIn Επιστροφής {option.To}-{option.From} του {(option.Personal_Booking.Customers.Count > 0 ? option.Personal_Booking.Customers.ToList()[0].ToString() : option.Id.ToString())}", NotificaationType = NotificaationType.CheckIn, ReservationWrapper = new ReservationWrapper { PersonalModel = new Personal_BookingWrapper(option.Personal_Booking) }, Service = option });
                         }
                     }
                 }

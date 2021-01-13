@@ -32,6 +32,10 @@ namespace LATravelManager.Model.BookingData
 
         public string Comment { get; set; }
 
+        public bool IsPartners { get; set; }
+
+        public Partner BuyerPartner { get; set; }
+
         public decimal Commision { get; set; }
 
         public ICollection<Customer> Customers { get; }
@@ -56,7 +60,7 @@ namespace LATravelManager.Model.BookingData
         public User User { get; set; }
 
         #endregion Properties
-         public DisabledInfo DisabledInfo { get; set; }
+        public DisabledInfo DisabledInfo { get; set; }
         public PartnerInfo PartnerInfo { get; set; }
         public bool VoucherSent { get; set; }
         public bool ProformaSent { get; set; }

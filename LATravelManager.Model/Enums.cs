@@ -21,6 +21,23 @@ namespace LATravelManager.Model
     };
 
     [TypeConverter(typeof(EnumDescriptionTypeConverter))]
+    public enum RecieptTypeEnum
+    {
+        [Description("ΑΠΥ - Απόδειξη Πώλησης Υπηρεσιών")]
+        ServiceReciept = 0,
+        [Description("ΤΠΥ - Τιμολόγιο Πώλησης Υπηρεσιών")]
+        ServiceInvoice = 1,
+        [Description("ΑΠΕ - Απόδειξη Πώλησης Εισιτηρίων")]
+        AirTicketsReciept = 2,
+        [Description("ΑΠΑ - Απόδειξη Πώλησης Ακτοπλοϊκών εισιτηρίων")]
+        FerryTicketsReciept = 3,
+        [Description("Ακυρωτικό Τιμολόγιο")]
+        CancelationInvoice = 4,
+        [Description("Πιστωτικό Τιμολόγιο")]
+        CreditInvoice = 5
+    };
+
+    [TypeConverter(typeof(EnumDescriptionTypeConverter))]
     public enum ExcursionExpenseCategories //100
     {
         [Description("Σύνολο Εκδρομής")]

@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using LaTravelManager.BaseTypes;
-using LATravelManager.Model.Excursions;
+﻿using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.ViewModel.BaseViewModels;
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace LATravelManager.UI.ViewModel.Management
 {

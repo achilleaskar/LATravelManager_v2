@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using GalaSoft.MvvmLight.CommandWpf;
-using LaTravelManager.BaseTypes;
+﻿using GalaSoft.MvvmLight.CommandWpf;
 using LATravelManager.Model.LocalModels;
 using LATravelManager.Model.People;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.Wrapper;
+using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace LATravelManager.UI.ViewModel.Management
 {
@@ -21,13 +21,41 @@ namespace LATravelManager.UI.ViewModel.Management
             AddEmailCommand = new RelayCommand(AddEmail, CanAddEmail);
         }
 
+        public async Task GetAllCompaniesAsync(bool allProperties = false)
+        {
+            MessengerInstance.Send(new IsBusyChangedMessage(true));
+            Companies = new ObservableCollection<Company>(await BasicDataManager.Context.GetAllCompaniesAsync(allProperties));
+            MessengerInstance.Send(new IsBusyChangedMessage(false));
+        }
+
+        private ObservableCollection<Company> _Companies;
+
+        public ObservableCollection<Company> Companies
+        {
+            get
+            {
+                return _Companies;
+            }
+
+            set
+            {
+                if (_Companies == value)
+                {
+                    return;
+                }
+
+                _Companies = value;
+                RaisePropertyChanged();
+            }
+        }
+
         private bool CanAddEmail()
         {
             try
             {
                 if (SelectedEntity == null || string.IsNullOrEmpty(SelectedEntity.NewEmail))
                     return false;
-              
+
                 return new EmailAddressAttribute().IsValid(SelectedEntity.NewEmail);
             }
             catch
@@ -58,6 +86,7 @@ namespace LATravelManager.UI.ViewModel.Management
                 MessengerInstance.Send(new IsBusyChangedMessage(false));
             }
         }
+
         public RelayCommand AddEmailCommand { get; set; }
     }
 }

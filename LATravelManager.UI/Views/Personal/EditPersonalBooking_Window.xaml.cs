@@ -17,7 +17,7 @@ namespace LATravelManager.UI.Views.Personal
         {
             if (DataContext is NewReservation_Personal_ViewModel a && a.HasChanges)
             {
-                MessageBoxResult result = MessageBox.Show("Υπάρχουν μη απόθηκευμένες αλλαγές, θέλετε σίγουρα να κλείσετε?", "Προσοχή", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                MessageBoxResult result = MessageBox.Show("Υπάρχουν μη αποθηκευμένες αλλαγές, θέλετε σίγουρα να κλείσετε?", "Προσοχή", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if (result == MessageBoxResult.No)
                 {
                     e.Cancel = true;
@@ -25,6 +25,7 @@ namespace LATravelManager.UI.Views.Personal
                 else
                     a.GenericRepository.RollBack();
             }
+            Helpers.StaticResources.Close(this);
         }
     }
 }

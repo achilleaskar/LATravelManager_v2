@@ -10,6 +10,7 @@
         d:DataContext="{d:DesignInstance viewmodels:Availabilities_ViewModel}"
         mc:Ignorable="d"
         SizeToContent="Width"
+        Closing="Window_Closing"
         Height="600"
         Background="White"
         d:DesignHeight="700"

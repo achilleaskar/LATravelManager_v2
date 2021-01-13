@@ -4,6 +4,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using LATravelManager.UI.Helpers;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Views;
 
@@ -63,6 +64,7 @@ namespace LATravelManager.UI
             // Bootstrapper bootstrapper = new Bootstrapper();
             // IContainer container = bootstrapper.Bootstrap();
             MainWindow mainWindow = new MainWindow();
+            StaticResources.Windows.Add(mainWindow);
             _viewModel = new MainViewModel();
             mainWindow.DataContext = _viewModel;
             await _viewModel.LoadAsync();
