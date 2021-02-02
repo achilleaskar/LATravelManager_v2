@@ -280,6 +280,14 @@
     <Compile Include="Migrations\202101101936055_requiredRecieptSeriesStuff.designer.cs">
       <DependentUpon>202101101936055_requiredRecieptSeriesStuff.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202101171054487_disableCompanies.cs" />
+    <Compile Include="Migrations\202101171054487_disableCompanies.designer.cs">
+      <DependentUpon>202101171054487_disableCompanies.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202101190918144_uniqueKey.cs" />
+    <Compile Include="Migrations\202101190918144_uniqueKey.designer.cs">
+      <DependentUpon>202101190918144_uniqueKey.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\ContextConfiguration.cs" />
     <Compile Include="MainDataBase.cs" />
     <Compile Include="Migrations\Configuration.cs" />
@@ -468,6 +476,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202101101936055_requiredRecieptSeriesStuff.resx">
       <DependentUpon>202101101936055_requiredRecieptSeriesStuff.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202101171054487_disableCompanies.resx">
+      <DependentUpon>202101171054487_disableCompanies.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202101190918144_uniqueKey.resx">
+      <DependentUpon>202101190918144_uniqueKey.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

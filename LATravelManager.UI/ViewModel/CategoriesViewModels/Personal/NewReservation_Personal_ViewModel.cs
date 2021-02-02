@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-using GalaSoft.MvvmLight.CommandWpf;
+﻿using GalaSoft.MvvmLight.CommandWpf;
 using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Hotels;
@@ -20,25 +14,31 @@ using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.ServiceViewModels;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Views;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
 
 namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 {
     public class NewReservation_Personal_ViewModel : MyViewModelBaseAsync
     {
         #region Constructors
+
         private void OpenInvoicesWindow()
         {
             InvoicesManagement_ViewModel vm = new InvoicesManagement_ViewModel(BasicDataManager, personal: PersonalWr);
             MessengerInstance.Send(new OpenChildWindowCommand(new InvoicesManagementWindow()));
         }
+
         public RelayCommand ToggleDisabilityCommand { get; set; }
         public RelayCommand OpenInvoicesWindowCommand { get; set; }
 
         public NewReservation_Personal_ViewModel(MainViewModel mainViewModel)
         {
-
             OpenInvoicesWindowCommand = new RelayCommand(OpenInvoicesWindow);
-
 
             GenericRepository = mainViewModel.StartingRepository;
             BasicDataManager = mainViewModel.BasicDataManager;
@@ -65,11 +65,11 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 
         public RelayCommand DeleteSelectedCustomersCommand { get; set; }
 
-
         private bool CanDeleteCustomers()
         {
             return PersonalWr.CustomerWrappers.Any(c => c.IsSelected);
         }
+
         public void DeleteSelectedCustomers()
         {
             List<CustomerWrapper> toRemove = new List<CustomerWrapper>();
@@ -113,8 +113,15 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
         {
             if (SelectedCustomer == null)
             {
-                MessageBox.Show("Παρακαλώ επιλέξτε πελάτη");
-                return;
+                if (PersonalWr.CustomerWrappers.Count == 1)
+                {
+                    SelectedCustomer = PersonalWr.CustomerWrappers.First();
+                }
+                else
+                {
+                    MessageBox.Show("Παρακαλώ επιλέξτε πελάτη");
+                    return;
+                }
             }
             if (DocumentsManagement == null)
             {

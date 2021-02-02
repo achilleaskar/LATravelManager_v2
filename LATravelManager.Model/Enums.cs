@@ -23,9 +23,9 @@ namespace LATravelManager.Model
     [TypeConverter(typeof(EnumDescriptionTypeConverter))]
     public enum RecieptTypeEnum
     {
-        [Description("ΑΠΥ - Απόδειξη Πώλησης Υπηρεσιών")]
+        [Description("ΑΠΥ - Απόδειξη Παροχής Υπηρεσιών")]
         ServiceReciept = 0,
-        [Description("ΤΠΥ - Τιμολόγιο Πώλησης Υπηρεσιών")]
+        [Description("ΤΠΥ - Τιμολόγιο Παροχής Υπηρεσιών")]
         ServiceInvoice = 1,
         [Description("ΑΠΕ - Απόδειξη Πώλησης Εισιτηρίων")]
         AirTicketsReciept = 2,

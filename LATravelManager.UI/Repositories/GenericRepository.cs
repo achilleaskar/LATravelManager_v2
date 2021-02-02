@@ -611,6 +611,7 @@ namespace LATravelManager.UI.Repositories
 
         public async Task SaveAsync()
         {
+#if DEBUG
             if (!Context.ChangeTracker.HasChanges())
             {
                 return;
@@ -636,39 +637,42 @@ namespace LATravelManager.UI.Repositories
                 }
             });
 
-            //IEnumerable<DbEntityEntry> changes = from e in Context.ChangeTracker.Entries()
-            //                                     where e.State != EntityState.Unchanged
-            //                                     select e;
+            IEnumerable<DbEntityEntry> changes = from e in Context.ChangeTracker.Entries()
+                                                 where e.State != EntityState.Unchanged
+                                                 select e;
 
-            //foreach (DbEntityEntry change in changes)
-            //{
-            //    if (change.State == EntityState.Added)
-            //    {
-            //        // Log Added
-            //    }
-            //    else if (change.State == EntityState.Modified)
-            //    {
-            //        // Log Modified
-            //        object item = change.Entity;
-            //        DbPropertyValues originalValues = Context.Entry(item).OriginalValues;
-            //        DbPropertyValues currentValues = Context.Entry(item).CurrentValues;
+            foreach (DbEntityEntry change in changes)
+            {
+                if (change.State == EntityState.Added)
+                {
+                    // Log Added
+                }
+                else if (change.State == EntityState.Modified)
+                {
+                    // Log Modified
+                    object item = change.Entity;
+                    DbPropertyValues originalValues = Context.Entry(item).OriginalValues;
+                    DbPropertyValues currentValues = Context.Entry(item).CurrentValues;
 
-            //        foreach (string propertyName in originalValues.PropertyNames)
-            //        {
-            //            object original = originalValues[propertyName];
-            //            object current = currentValues[propertyName];
-
-            //            Console.WriteLine("Property {0} changed from {1} to {2}",
-            //         propertyName,
-            //         originalValues[propertyName],
-            //         currentValues[propertyName]);
-            //        }
-            //    }
-            //    else if (change.State == EntityState.Deleted)
-            //    {
-            //        // log deleted
-            //    }
-            //}
+                    foreach (string propertyName in originalValues.PropertyNames)
+                    {
+                        object original = originalValues[propertyName];
+                        object current = currentValues[propertyName];
+                        if ((original != null && current != null && original.ToString() != current.ToString()) || (original == null && current != null) || (current == null && original != null))
+                        {
+                            Console.WriteLine("Property {0} changed from {1} to {2}",
+                                propertyName,
+                                originalValues[propertyName],
+                                currentValues[propertyName]);
+                        }
+                    }
+                }
+                else if (change.State == EntityState.Deleted)
+                {
+                    // log deleted
+                }
+            }
+#endif
             await RunTask(Context.SaveChangesAsync);
             Mouse.OverrideCursor = Cursors.Arrow;
         }

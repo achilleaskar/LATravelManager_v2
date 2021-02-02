@@ -1,5 +1,5 @@
-﻿using GalaSoft.MvvmLight.CommandWpf;
-using LATravelManager.Model.Extensions;
+﻿using EnumsNET;
+using GalaSoft.MvvmLight.CommandWpf;
 using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Pricing.Invoices;
@@ -7,19 +7,19 @@ using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace LATravelManager.UI.ViewModel.Management
 {
     public class TaxDataManagement_ViewModel : MyViewModelBaseAsync
     {
-
         #region Constructors
 
         public TaxDataManagement_ViewModel(BasicDataManager basicDataManager)
@@ -27,11 +27,9 @@ namespace LATravelManager.UI.ViewModel.Management
             this.BasicDataManager = basicDataManager;
             DeleteSelectedCompanyCommand = new RelayCommand(async () => await DeleteSelectedCompany(), SelectedCompany != null && SelectedCompany.Id > 0);
             SaveChangesCommand = new RelayCommand(async () => await SaveCompanyChangesAsync(), CanSaveCompanyChanges);
-            
-            
+
             SaveRecieptSeriesChangesCommand = new RelayCommand(async () => await SaveRecieptSeriesChangesAsync(), CanSaveRecieptSeriesChanges);
-            
-            
+
             CreateNewCompanyCommand = new RelayCommand(CreateNewCompany);
             CreateNewRecieptSerieCommand = new RelayCommand(CreateNewRecieptSerie);
         }
@@ -40,10 +38,14 @@ namespace LATravelManager.UI.ViewModel.Management
 
         #region Fields
 
-        private ObservableCollection<City> _Cities;
+        private ObservableCollection<City> _AddressCities;
+        private CollectionView _AddressCitiesCV;
+        private ObservableCollection<City> _BillCities;
+        private CollectionView _BillCitiesCV;
         private ObservableCollection<Company> _Companies;
+        private CollectionView _CompaniesCV;
         private ObservableCollection<CompanyActivity> _CompanyActivities;
-        private string _CompanyError;
+        private string _CompanyFilterText;
         private ObservableCollection<Country> _Countries;
         private Company _SelectedCompany;
         private RecieptSeries _SelectedSerie;
@@ -51,34 +53,87 @@ namespace LATravelManager.UI.ViewModel.Management
 
         private ObservableCollection<RecieptSeries> _Series;
 
-        private Dictionary<string, string> Companyerrors;
-
         #endregion Fields
 
         #region Properties
 
-        public BasicDataManager BasicDataManager { get; set; }
-
-        public ObservableCollection<City> Cities
+        public ObservableCollection<City> AddressCities
         {
             get
             {
-                return _Cities;
+                return _AddressCities;
             }
 
             set
             {
-                if (_Cities == value)
+                if (_AddressCities == value)
                 {
                     return;
                 }
 
-                _Cities = value;
+                _AddressCities = value;
                 RaisePropertyChanged();
             }
         }
 
-        public CollectionView CitiesCV { get; set; }
+        public CollectionView AddressCitiesCV
+        {
+            get
+            {
+                return _AddressCitiesCV;
+            }
+
+            set
+            {
+                if (_AddressCitiesCV == value)
+                {
+                    return;
+                }
+
+                _AddressCitiesCV = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public BasicDataManager BasicDataManager { get; set; }
+
+        public ObservableCollection<City> BillCities
+        {
+            get
+            {
+                return _BillCities;
+            }
+
+            set
+            {
+                if (_BillCities == value)
+                {
+                    return;
+                }
+
+                _BillCities = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public CollectionView BillCitiesCV
+        {
+            get
+            {
+                return _BillCitiesCV;
+            }
+
+            set
+            {
+                if (_BillCitiesCV == value)
+                {
+                    return;
+                }
+
+                _BillCitiesCV = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public ObservableCollection<Company> Companies
         {
@@ -95,6 +150,27 @@ namespace LATravelManager.UI.ViewModel.Management
                 }
 
                 _Companies = value;
+                CompaniesCV = (CollectionView)CollectionViewSource.GetDefaultView(Companies);
+                CompaniesCV.Filter = CompaniesFilter;
+                RaisePropertyChanged();
+            }
+        }
+
+        public CollectionView CompaniesCV
+        {
+            get
+            {
+                return _CompaniesCV;
+            }
+
+            set
+            {
+                if (_CompaniesCV == value)
+                {
+                    return;
+                }
+
+                _CompaniesCV = value;
                 RaisePropertyChanged();
             }
         }
@@ -118,21 +194,23 @@ namespace LATravelManager.UI.ViewModel.Management
             }
         }
 
-        public string CompanyError
+        public string CompanyFilterText
         {
             get
             {
-                return _CompanyError;
+                return _CompanyFilterText;
             }
 
             set
             {
-                if (_CompanyError == value)
+                if (_CompanyFilterText == value)
                 {
                     return;
                 }
 
-                _CompanyError = value;
+                _CompanyFilterText = value.ToUpper();
+                if (Companies != null && CompaniesCV != null)
+                    CompaniesCV.Refresh();
                 RaisePropertyChanged();
             }
         }
@@ -162,8 +240,6 @@ namespace LATravelManager.UI.ViewModel.Management
 
         public RelayCommand DeleteSelectedCompanyCommand { get; set; }
 
-        public bool NewSerie => SelectedSerie != null && SelectedSerie.Id == 0;
-
         public RelayCommand SaveChangesCommand { get; set; }
 
         public RelayCommand SaveRecieptSeriesChangesCommand { get; set; }
@@ -184,7 +260,7 @@ namespace LATravelManager.UI.ViewModel.Management
                 }
                 _SelectedCompany = value;
 
-                if (BasicDataManager.HasChanges() || SelectedCompany?.Id == 0)
+                if (BasicDataManager.HasChanges())
                 {
                     MessageBoxResult result = MessageBox.Show("Υπάρχουν μη αποθηκευμένες αλλαγές. Εάν συνεχίσετε θα απορριφθούν. Συνέχεια?", "Προσοχή", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
                     if (result == MessageBoxResult.OK)
@@ -215,6 +291,7 @@ namespace LATravelManager.UI.ViewModel.Management
 
         public RecieptSeries SelectedSerie
         {
+
             get
             {
                 return _SelectedSerie;
@@ -229,6 +306,7 @@ namespace LATravelManager.UI.ViewModel.Management
 
                 _SelectedSerie = value;
                 RaisePropertyChanged();
+                RaisePropertyChanged(nameof(IsSerieNew));
             }
         }
 
@@ -269,6 +347,7 @@ namespace LATravelManager.UI.ViewModel.Management
                 RaisePropertyChanged();
             }
         }
+
         public ObservableCollection<RecieptSeries> Series
         {
             get
@@ -288,6 +367,27 @@ namespace LATravelManager.UI.ViewModel.Management
             }
         }
 
+        private void CheckValues()
+        {
+            foreach (var prop in typeof(Company).GetProperties())
+            {
+                if (prop.PropertyType != typeof(string) || !prop.CanWrite)
+                {
+                    continue;
+                }
+
+                var val = prop.GetValue(SelectedCompany, null);
+                if (prop.Name == nameof(SelectedCompany.Phone1) || prop.Name == nameof(SelectedCompany.Phone2) || prop.Name == nameof(SelectedCompany.MobilePhone))
+                {
+                    prop.SetValue(SelectedCompany, val?.ToString().Replace(" ", ""));
+                }
+                else
+                {
+                    prop.SetValue(SelectedCompany, val?.ToString().Trim());
+                }
+            }
+        }
+
         #endregion Properties
 
         #region Methods
@@ -301,13 +401,19 @@ namespace LATravelManager.UI.ViewModel.Management
 
         public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
-            Companies = new ObservableCollection<Company>((await BasicDataManager.Context.GetAllAsync<Company>()).OrderBy(c => c.CompanyName));
+            Companies = new ObservableCollection<Company>((await BasicDataManager.Context.GetAllAsync<Company>(c => !c.Disabled)).OrderBy(c => c.CompanyName));
             CompanyActivities = new ObservableCollection<CompanyActivity>((await BasicDataManager.Context.GetAllAsync<CompanyActivity>()).OrderBy(a => a.Name));
-            Cities = new ObservableCollection<City>(BasicDataManager.Cities);
-            CitiesCV = (CollectionView)CollectionViewSource.GetDefaultView(Cities);
-            CitiesCV.Filter = CitiesFilter;
-            Countries = BasicDataManager.Countries;
             Series = new ObservableCollection<RecieptSeries>((await BasicDataManager.Context.GetAllAsync<RecieptSeries>()).OrderBy(a => a.DateStarted));
+
+            Countries = BasicDataManager.Countries;
+
+            AddressCities = new ObservableCollection<City>(BasicDataManager.Cities);
+            AddressCitiesCV = (CollectionView)CollectionViewSource.GetDefaultView(AddressCities);
+            AddressCitiesCV.Filter = CitiesFilter;
+
+            BillCities = new ObservableCollection<City>(BasicDataManager.Cities);
+            BillCitiesCV = (CollectionView)CollectionViewSource.GetDefaultView(BillCities);
+            BillCitiesCV.Filter = CitiesFilter;
         }
 
         public override Task ReloadAsync()
@@ -317,30 +423,28 @@ namespace LATravelManager.UI.ViewModel.Management
 
         internal void UpdateCities()
         {
-            CitiesCV.Refresh();
+            BillCitiesCV.Refresh();
+            AddressCitiesCV.Refresh();
         }
 
         private bool CanSaveCompanyChanges()
         {
-            if (SelectedCompany != null && SelectedCompany.Id == 0)
-            {
-                SelectedCompany.IsValid(ref Companyerrors);
-                if (CompanyError.Length > 0)
-                {
-                    CompanyError = Companyerrors.First().Value;
-                }
-            }
-            return BasicDataManager.HasChanges();
+            return SelectedCompany != null && SelectedCompany.IsValidToPrint() && (BasicDataManager.HasChanges() || SelectedCompany.Id == 0);
         }
 
         private bool CanSaveRecieptSeriesChanges()
         {
-            return true;
+            return SelectedSerie != null && SerieDataAreValid() && (SelectedSerie.Id == 0 || BasicDataManager.HasChanges());
         }
 
         private bool CitiesFilter(object obj)
         {
-            return obj is City c && SelectedCompany != null && c.Country.Id == SelectedCompany.Country.Id;
+            return SelectedCompany == null || (obj is City c && SelectedCompany != null && SelectedCompany.Country != null && c.Country.Id == SelectedCompany.Country.Id);
+        }
+
+        private bool CompaniesFilter(object obj)
+        {
+            return obj is Company c && !c.Disabled && (string.IsNullOrEmpty(CompanyFilterText) || c.CompanyName?.Contains(CompanyFilterText) == true || c.Name?.Contains(CompanyFilterText)==true || c.LastName?.Contains(CompanyFilterText) == true);
         }
 
         private void CreateNewCompany()
@@ -354,20 +458,47 @@ namespace LATravelManager.UI.ViewModel.Management
                     SelectedCompany = new Company();
                 }
             }
+            else
+                SelectedCompany = new Company();
         }
 
         private void CreateNewRecieptSerie()
         {
-            throw new NotImplementedException();
+            if (BasicDataManager.Context.HasChanges())
+            {
+                MessageBoxResult result = MessageBox.Show("Υπάρχουν μη αποθηκευμένες αλλαγές. Εάν συνεχίσετε θα απορριφθούν. Συνέχεια?", "Προσοχή", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
+                if (result == MessageBoxResult.OK)
+                {
+                    BasicDataManager.Context.RollBack();
+                    SelectedSerie = new RecieptSeries { DateStarted = DateTime.Today };
+                }
+            }
+            else
+                SelectedSerie = new RecieptSeries { DateStarted = DateTime.Today };
         }
-        private Task DeleteSelectedCompany()
+
+        private async Task DeleteSelectedCompany()
         {
-            throw new NotImplementedException();
+            SelectedCompany.Disabled = true;
+            await BasicDataManager.Context.SaveAsync();
+
+            if (SelectedCompany != null)
+                BasicDataManager.Context.Context.Entry(SelectedCompany).State = EntityState.Detached;
+            //SelectedCompany = Companies[0];
+            Companies.Remove(SelectedCompany);
         }
+
+        public bool IsCompanyNew => SelectedCompany != null && SelectedCompany.Id == 0;
+        public bool IsSerieNew => SelectedSerie != null && SelectedSerie.Id == 0;
 
         private async Task SaveCompanyChangesAsync()
         {
-            if (SelectedCompany.Id == 0)
+            if (SelectedCompany != null)
+            {
+                CheckValues();
+            }
+
+            if (SelectedCompany != null && SelectedCompany.Id == 0)
             {
                 BasicDataManager.Add(SelectedCompany);
                 await BasicDataManager.SaveAsync();
@@ -378,9 +509,69 @@ namespace LATravelManager.UI.ViewModel.Management
             }
         }
 
-        private Task SaveRecieptSeriesChangesAsync()
+        private async Task SaveRecieptSeriesChangesAsync()
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (SelectedSerie != null && SelectedSerie.Id == 0)
+                {
+                    MessageBoxResult result = MessageBox.Show($"Είσαστε σίγουρος ότι θέλετε να προσθέσετε νέα σειρά {SelectedSerie.RecieptType.AsString(EnumFormat.Description)} με συμβολισμό {SelectedSerie.Letter ?? " 'χωρίς σύμβολο'"}?", "Προσοχή", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                    if (result == MessageBoxResult.No)
+                    {
+                        return;
+                    }
+
+                    switch (SelectedSerie.RecieptType)
+                    {
+                        case Model.RecieptTypeEnum.ServiceReciept:
+                            SelectedSerie.SerieCode = "ΑΠΥ";
+                            break;
+
+                        case Model.RecieptTypeEnum.ServiceInvoice:
+                            SelectedSerie.SerieCode = "ΤΠΥ";
+                            break;
+
+                        case Model.RecieptTypeEnum.AirTicketsReciept:
+                            SelectedSerie.SerieCode = "ΑΠΕ";
+                            break;
+
+                        case Model.RecieptTypeEnum.FerryTicketsReciept:
+                            SelectedSerie.SerieCode = "ΑΠΑ";
+                            break;
+
+                        case Model.RecieptTypeEnum.CancelationInvoice:
+                            SelectedSerie.SerieCode = "ΑΤ";
+                            break;
+
+                        case Model.RecieptTypeEnum.CreditInvoice:
+                            SelectedSerie.SerieCode = "ΠΤ";
+                            break;
+
+                        default:
+                            break;
+                    }
+                    SelectedSerie.SerieCode += ("-" + SelectedSerie.Letter ?? "").TrimEnd('-');
+                    SelectedSerie.DateStarted = DateTime.Today;
+                    BasicDataManager.Add(SelectedSerie);
+                    await BasicDataManager.SaveAsync();
+                }
+                else
+                {
+                    await BasicDataManager.SaveAsync();
+                }
+                RaisePropertyChanged(nameof(IsSerieNew));
+
+            }
+            catch (Exception)
+            {
+                Mouse.OverrideCursor = Cursors.Arrow;
+                MessengerInstance.Send(new ShowExceptionMessage_Message("Η προσθήκη σειράς απέτυχε"));
+            }
+        }
+
+        private bool SerieDataAreValid()
+        {
+            return SelectedSerie.Name != null && SelectedSerie.Name.Length > 3;
         }
 
         #endregion Methods

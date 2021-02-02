@@ -1,16 +1,19 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using LATravelManager.Model;
+using LATravelManager.Model.DTOS;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.Lists;
 using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
 using LATravelManager.UI.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data.Entity;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace LATravelManager.UI.Helpers
 {
@@ -80,7 +83,7 @@ namespace LATravelManager.UI.Helpers
 
         internal async Task GetAllPrices()
         {
-           await  Context.UpdatePrices();
+            await Context.UpdatePrices();
         }
 
         public ObservableCollection<Bus> Buses
@@ -401,7 +404,11 @@ namespace LATravelManager.UI.Helpers
             Vehicles = new ObservableCollection<Vehicle>(await Context.GetAllAsync<Vehicle>());
             Leaders = new ObservableCollection<Leader>(await Context.GetAllAsync<Leader>());
             OptionalExcursions = new ObservableCollection<OptionalExcursion>(await Context.GetAllAsync<OptionalExcursion>(o => o.Date >= DateTime.Today));
+            //List<CompanyDto> t = await Context.Context.Companies.Where(c => !c.Disabled).Select(c => new CompanyDto { CompanyName = c.CompanyName, Id = c.Id }).ToListAsync();
 
+            await Context.SaveAsync();
+
+            Mouse.OverrideCursor = Cursors.Arrow;
             //DateTime from = new DateTime(2019, 12, 18);
             //DateTime to = new DateTime(2020, 01, 1);
 
@@ -468,10 +475,6 @@ namespace LATravelManager.UI.Helpers
             //        }
             //    }
             //}
-
-            await Context.SaveAsync();
-
-            Mouse.OverrideCursor = Cursors.Arrow;
         }
 
         //private async Task DoTempStuff()

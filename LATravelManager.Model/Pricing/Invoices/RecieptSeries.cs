@@ -22,8 +22,15 @@ namespace LATravelManager.Model.Pricing.Invoices
         [MaxLength(20)]
         public string Letter { get; set; }
 
+        [Index(IsUnique = true)]
         [MaxLength(40)]
-        public string Name { get; set; }
+        public string SerieCode { get; set; }
+
+        [MaxLength(40)]
+        public string Name
+        { 
+            get; 
+            set; }
 
         public HashSet<Reciept> Reciepts { get; set; }
 
@@ -35,7 +42,7 @@ namespace LATravelManager.Model.Pricing.Invoices
 
         public override string ToString()
         {
-            return Name + $" ({ DateStarted.ToString("dd/MM/yy")}-{(DateEnded.HasValue?DateEnded.Value.ToString("dd/MM/yy"):"...")})";
+            return Name + $" ({ DateStarted.ToString("dd/MM/yy")}-{(DateEnded.HasValue ? DateEnded.Value.ToString("dd/MM/yy") : "σήμερα")})" + (Disabled ? "Ολοκληρωμένη" : "");
         }
 
         #endregion Methods

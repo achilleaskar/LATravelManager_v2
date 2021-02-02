@@ -343,7 +343,7 @@ namespace LATravelManager.Model.People
         }
 
         [StringLength(18, MinimumLength = 10, ErrorMessage = "Το τηλέφωνο πρέπει να είναι τουλάχιστον 10 χαρακτήρες")]
-        [Phone(ErrorMessage = "Το τηλέφωνο δ έχει τη σωστή μορφή")]
+        [Phone(ErrorMessage = "Το τηλέφωνο δεν έχει τη σωστή μορφή")]
         public string Tel { get; set; }
 
         #endregion Properties

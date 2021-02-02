@@ -1,12 +1,29 @@
-﻿using LATravelManager.Model.Locations;
+﻿using LATravelManager.Model.Extensions;
+using LATravelManager.Model.Locations;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace LATravelManager.Model.People
 {
-    public class Company : BaseModel, INamed
+    public class Company : BaseModel, INamed, IDataErrorInfo
     {
+        #region Constructors
+
+        public Company()
+        {
+            //this.PropertyChanged += Company_PropertyChanged;
+        }
+
+        #endregion Constructors
+
+        //private void Company_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        //{
+
+        //}
 
         #region Fields
 
@@ -49,6 +66,11 @@ namespace LATravelManager.Model.People
 
         #region Properties
 
+        private bool _Disabled;
+
+        [NotMapped]
+        private List<string> Companyerrors;
+
         public CompanyActivity Activity
         {
             get
@@ -69,6 +91,7 @@ namespace LATravelManager.Model.People
         }
 
         public int? ActivityId { get; set; }
+
         public City AddressCity
         {
             get
@@ -78,7 +101,7 @@ namespace LATravelManager.Model.People
 
             set
             {
-                if (_AddressCity == value)
+                if (_AddressCity == value || value == null)
                 {
                     return;
                 }
@@ -149,7 +172,7 @@ namespace LATravelManager.Model.People
 
         public string BillAddressFull => GetBillingAddress();
 
-        [Required]
+        [Required(ErrorMessage = "Η οδός και ο αριθμός τιμολόγησης απαιτούνται")]
         public int BillAddressNumber
         {
             get
@@ -169,7 +192,7 @@ namespace LATravelManager.Model.People
             }
         }
 
-        [Required]
+        [Required(ErrorMessage = "Η πόλη, η οδός και ο αριθμός τιμολόγησης απαιτούνται")]
         public City BillCity
         {
             get
@@ -179,7 +202,7 @@ namespace LATravelManager.Model.People
 
             set
             {
-                if (_BillCity == value)
+                if (_BillCity == value || value == null)
                 {
                     return;
                 }
@@ -191,7 +214,7 @@ namespace LATravelManager.Model.People
 
         public int? BillCityId { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Η οδός και ο αριθμός τιμολόγησης απαιτούνται")]
         [StringLength(100)]
         public string BillRoad
         {
@@ -212,7 +235,7 @@ namespace LATravelManager.Model.People
             }
         }
 
-        [Required]
+        [Required(ErrorMessage = "Η οδός, ο αριθμός και ο ΤΚ τιμολόγησης απαιτούνται")]
         [MaxLength(10)]
         public string BillZipCode
         {
@@ -232,7 +255,6 @@ namespace LATravelManager.Model.People
                 RaisePropertyChanged();
             }
         }
-
         public int? CityId { get; set; }
 
         public int Code
@@ -273,8 +295,8 @@ namespace LATravelManager.Model.People
             }
         }
 
-        [Required]
-        [StringLength(120,MinimumLength =3)]
+        [Required(ErrorMessage = "Η επωνυμία απαιτείται")]
+        [StringLength(120, MinimumLength = 3)]
         public string CompanyName
         {
             get
@@ -294,7 +316,7 @@ namespace LATravelManager.Model.People
             }
         }
 
-        [Required]
+        [Required(ErrorMessage = "Η χώρα απαιτείται")]
         public Country Country
         {
             get
@@ -335,6 +357,24 @@ namespace LATravelManager.Model.People
             }
         }
 
+        public bool Disabled
+        {
+            get
+            {
+                return _Disabled;
+            }
+
+            set
+            {
+                if (_Disabled == value)
+                {
+                    return;
+                }
+
+                _Disabled = value;
+                RaisePropertyChanged();
+            }
+        }
         [StringLength(50, MinimumLength = 0)]
         [DataType(DataType.EmailAddress, ErrorMessage = "Το Email δεν έχει τη σωστή μορφή")]
         [EmailAddress(ErrorMessage = "Το Email δεν έχει τη σωστή μορφή")]
@@ -352,7 +392,7 @@ namespace LATravelManager.Model.People
                     return;
                 }
 
-                _Email = value;
+                _Email = string.IsNullOrEmpty(value) ? null : value;
                 RaisePropertyChanged();
             }
         }
@@ -376,7 +416,7 @@ namespace LATravelManager.Model.People
             }
         }
 
-        [StringLength(40, MinimumLength = 3, ErrorMessage = "Το Όνομα μπορεί να είναι από 3 έως 30 χαρακτήρες")]
+        [StringLength(40, ErrorMessage = "Το Επίθετο μπορεί να είναι από 3 έως 30 χαρακτήρες")]
         public string LastName
         {
             get
@@ -391,7 +431,7 @@ namespace LATravelManager.Model.People
                     return;
                 }
 
-                _LastName = value;
+                _LastName = string.IsNullOrEmpty(value) ? null : value;
                 RaisePropertyChanged();
             }
         }
@@ -410,12 +450,12 @@ namespace LATravelManager.Model.People
                 {
                     return;
                 }
-                _MobilePhone = value;
+                _MobilePhone = string.IsNullOrEmpty(value) ? null : value;
                 RaisePropertyChanged();
             }
         }
 
-        [StringLength(120, MinimumLength = 3, ErrorMessage = "Το Όνομα μπορεί να είναι από 3 έως 120 χαρακτήρες")]
+        [StringLength(120, ErrorMessage = "Το Όνομα μπορεί να είναι από 3 έως 120 χαρακτήρες")]
         public string Name
         {
             get
@@ -430,7 +470,7 @@ namespace LATravelManager.Model.People
                     return;
                 }
 
-                _Name = value;
+                _Name = string.IsNullOrEmpty(value) ? null : value;
                 RaisePropertyChanged();
             }
         }
@@ -451,7 +491,7 @@ namespace LATravelManager.Model.People
                     return;
                 }
 
-                _Phone1 = value;
+                _Phone1 = string.IsNullOrEmpty(value) ? null : value;
                 RaisePropertyChanged();
             }
         }
@@ -472,12 +512,12 @@ namespace LATravelManager.Model.People
                     return;
                 }
 
-                _Phone2 = value;
+                _Phone2 = string.IsNullOrEmpty(value) ? null : value;
                 RaisePropertyChanged();
             }
         }
 
-        [Required]
+        [Required(ErrorMessage = "Το ΑΦΜ απαιτείται")]
         [StringLength(20)]
         public string TaxationNumber
         {
@@ -498,7 +538,7 @@ namespace LATravelManager.Model.People
             }
         }
 
-        [Required]
+        [Required(ErrorMessage = "Η ΔΟΥ απαιτείται")]
         [StringLength(40)]
         public string TaxOffice
         {
@@ -518,15 +558,78 @@ namespace LATravelManager.Model.People
                 RaisePropertyChanged();
             }
         }
-
         #endregion Properties
 
         #region Methods
 
+        private string _CompanyError;
+
+        [NotMapped]
+        public string CompanyError
+        {
+            get
+            {
+                return _CompanyError;
+            }
+
+            set
+            {
+                if (_CompanyError == value)
+                {
+                    return;
+                }
+
+                _CompanyError = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
+
+
+        public string Error { get; }
+
+        public virtual string this[string columnName]
+        {
+            get
+            {
+                var validationResults = new List<ValidationResult>();
+
+                var property = GetType().GetProperty(columnName);
+
+                var validationContext = new ValidationContext(this)
+                {
+                    MemberName = columnName
+                };
+
+                var isValid = Validator.TryValidateProperty(property.GetValue(this), validationContext, validationResults);
+                if (isValid)
+                {
+                    return null;
+                }
+
+                return validationResults.First().ErrorMessage;
+            }
+        }
+
         public bool IsValidToPrint()
         {
-            //id 6 is Greece
-            return Country.Id != 6 || TaxationNumberIsValid();
+            if (Country != null && Country.Id == 6 && !TaxationNumberIsValid())
+            {
+                Companyerrors = new List<string> { "Λάθος ΑΦΜ" };
+                CompanyError = Companyerrors.First();
+
+            }
+            else if (!this.IsValid(ref Companyerrors))
+            {
+                CompanyError = Companyerrors.First();
+            }
+            else
+            {
+                CompanyError = string.Empty;
+                return true;
+            }
+            return false;
         }
 
         public override string ToString()
@@ -545,10 +648,11 @@ namespace LATravelManager.Model.People
                 return BillRoad + " " + BillAddressNumber;
             }
         }
+
         private bool TaxationNumberIsValid()
         {
             bool result = false;
-            if (TaxationNumber.Length != 9)
+            if (string.IsNullOrEmpty(TaxationNumber) || TaxationNumber.Length != 9)
             {
                 return result;
             }

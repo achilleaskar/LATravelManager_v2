@@ -144,6 +144,7 @@
     <Compile Include="Helpers\Actor.cs" />
     <Compile Include="Helpers\BasicDataManager.cs" />
     <Compile Include="Helpers\BookingsPerDay.cs" />
+    <Compile Include="Helpers\CustomPhoneValidation.cs" />
     <Compile Include="Helpers\DailyDepartureInfo.cs" />
     <Compile Include="Helpers\EmailsManager.cs" />
     <Compile Include="Helpers\EnumBindingSourceExtension.cs" />

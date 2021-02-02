@@ -62,6 +62,7 @@
     <Compile Include="BookingData\ReservationFullDto.cs" />
     <Compile Include="BookingData\ThirdParty_Booking.cs" />
     <Compile Include="DTOS\BookingDTO.cs" />
+    <Compile Include="DTOS\CompanyDto.cs" />
     <Compile Include="DTOS\CustomerDTO.cs" />
     <Compile Include="DTOS\ExtraServiceDTO.cs" />
     <Compile Include="DTOS\PaymentDTO.cs" />
@@ -162,6 +163,9 @@
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator">
       <Version>2.0.5</Version>
+    </PackageReference>
+    <PackageReference Include="EntityFramework">
+      <Version>6.4.4</Version>
     </PackageReference>
     <PackageReference Include="Enums.NET">
       <Version>3.0.3</Version>

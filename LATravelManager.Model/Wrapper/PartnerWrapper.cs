@@ -37,6 +37,12 @@ namespace LATravelManager.UI.Wrapper
             set { SetValue(value); }
         }
 
+        public Company CompanyInfo
+        {
+            get { return GetValue<Company>(); }
+            set { SetValue(value); }
+        }
+
 
 
 
@@ -87,6 +93,12 @@ namespace LATravelManager.UI.Wrapper
         {
             get { return GetValue<string>(); }
             set { SetValue(value.ToUpper()); }
+        }
+
+        public int? CompanyInfoId
+        {
+            get { return GetValue<int?>(); }
+            set { SetValue(value); }
         }
 
         public string Note

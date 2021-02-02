@@ -49,9 +49,10 @@
                        Grid.Row="1"
                        Grid.Column="0" />
                 <ComboBox ItemsSource="{Binding Companies}"
-                          SelectedValue="{Binding SelectedEntity.Company, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
                           Margin="0,5,5,5"
                           Grid.Row="1"
+                          SelectedValuePath="Id"
+                          SelectedValue="{Binding SelectedEntity.CompanyInfoId}"
                           Grid.Column="1">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>

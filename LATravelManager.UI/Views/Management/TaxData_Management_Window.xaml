@@ -3,8 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:LATravelManager.UI.Views.Management"
-        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:helpers="clr-namespace:LATravelManager.UI.Helpers"
         xmlns:enum="clr-namespace:LATravelManager.Model;assembly=LATravelManager.Model"
         xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
@@ -14,44 +12,43 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterOwner"
         Closing="Window_Closing"
-        Title="{Binding ControlName}"
-        Height="700"
-        Width="800">
+        Title="Διαχείριση φορολογικών στοιχείων"
+        Height="600"
+        Width="950">
     <Window.Resources>
         <converters:DateTimeToString x:Key="DateTimeToString" />
+        <Style TargetType="TextBox"
+               BasedOn="{StaticResource {x:Type TextBox}}">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError"
+                         Value="True">
+                    <Setter Property="ToolTip"
+                            Value="{Binding RelativeSource={RelativeSource Self},Path=(Validation.Errors)[0].ErrorContent}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
     <Grid>
         <TabControl SelectedIndex="{Binding SelectedTabIndex}">
             <TabItem Header="Στοιχεία τιμολόγησης">
                 <StackPanel Orientation="Vertical"
                             Margin="20 10 30 10">
-                    <StackPanel Orientation="Horizontal">
+                    <!--<StackPanel Orientation="Horizontal">
                         <Label Content="Επιλογή Συνεργάτη:"
                                VerticalAlignment="Center"
                                Grid.ColumnSpan="2" />
-                        <helpers:FilterableComboBox Grid.Column="2"
-                                                    IsEditable="True"
-                                                    IsTextSearchEnabled="true"
-                                                    StaysOpenOnEdit="True"
-                                                    Width="250"
-                                                    VerticalAlignment="Center"
-                                                    SelectionChanged="FilterableComboBox_SelectionChanged"
-                                                    Margin="5"
-                                                    Grid.ColumnSpan="2"
-                                                    SelectedItem="{Binding SelectedCompany}"
-                                                    ItemsSource="{Binding Companies}" />
-                        <Button Cursor="Hand"
-                                Content="Διαγραφή"
-                                Command="{Binding DeleteSelectedCompanyCommand}"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Left" />
-                        <Button Cursor="Hand"
-                                Content="Νέος Συνεργάτης"
-                                Margin="5 0"
-                                Command="{Binding CreateNewCompanyCommand}"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Left" />
-                    </StackPanel>
+                        <ComboBox Grid.Column="2"
+                                  IsEditable="True"
+                                  IsTextSearchEnabled="true"
+                                  StaysOpenOnEdit="True"
+                                  Width="250"
+                                  VerticalAlignment="Center"
+                                  SelectionChanged="FilterableComboBox_SelectionChanged"
+                                  Margin="5"
+                                  Grid.ColumnSpan="2"
+                                  SelectedItem="{Binding SelectedCompany}"
+                                  ItemsSource="{Binding Companies}" />
+                    </StackPanel>-->
                     <Grid DataContext="{Binding SelectedCompany}"
                           Margin="5">
                         <Grid.ColumnDefinitions>
@@ -59,6 +56,7 @@
                             <ColumnDefinition Width="200" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="200" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -80,36 +78,37 @@
                         <Label Content="Επωνυμία:"
                                Grid.Row="0"
                                Grid.Column="0" />
-                        <TextBox Text="{Binding CompanyName, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding CompanyName, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="0"
                                  Grid.ColumnSpan="3"
+                                 Width="465"
                                  VerticalAlignment="Center"
                                  Grid.Column="1" />
                         <Label Content="Όνομα:"
                                Grid.Row="1"
                                Grid.Column="0" />
-                        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="1"
                                  VerticalAlignment="Center"
                                  Grid.Column="1" />
                         <Label Content="Επίθετο:"
                                Grid.Row="1"
                                Grid.Column="2" />
-                        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding LastName, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="1"
                                  VerticalAlignment="Center"
                                  Grid.Column="3" />
                         <Label Content="ΑΦΜ:"
                                Grid.Row="2"
                                Grid.Column="0" />
-                        <TextBox Text="{Binding TaxationNumber, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding TaxationNumber, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="2"
                                  VerticalAlignment="Center"
                                  Grid.Column="1" />
                         <Label Content="ΔΟΥ:"
                                Grid.Row="2"
                                Grid.Column="2" />
-                        <TextBox Text="{Binding TaxOffice, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding TaxOffice, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="2"
                                  VerticalAlignment="Center"
                                  Grid.Column="3" />
@@ -119,7 +118,7 @@
                         <ComboBox Grid.Row="3"
                                   ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.CompanyActivities}"
                                   VerticalAlignment="Center"
-                                  SelectedItem="{Binding Activity}"
+                                  SelectedItem="{Binding Activity,ValidatesOnDataErrors=True}"
                                   DisplayMemberPath="Name"
                                   Grid.Column="1" />
                         <Label Content="Χώρα"
@@ -129,7 +128,7 @@
                                   ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.Countries}"
                                   VerticalAlignment="Center"
                                   SelectionChanged="ComboBox_SelectionChanged"
-                                  SelectedItem="{Binding Country}"
+                                  SelectedItem="{Binding Country,ValidatesOnDataErrors=True}"
                                   DisplayMemberPath="Name"
                                   Grid.Column="3" />
                         <TextBlock Grid.Row="4"
@@ -140,14 +139,14 @@
                         <Label Content="Οδός:"
                                Grid.Row="5"
                                Grid.Column="0" />
-                        <TextBox Text="{Binding AddressRoad, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding AddressRoad, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="5"
                                  VerticalAlignment="Center"
                                  Grid.Column="1" />
                         <Label Content="Αριθμός:"
                                Grid.Row="5"
                                Grid.Column="2" />
-                        <TextBox Text="{Binding AddressNumber, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding AddressNumber, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="5"
                                  VerticalAlignment="Center"
                                  Grid.Column="3" />
@@ -155,15 +154,15 @@
                                Grid.Row="6"
                                Grid.Column="0" />
                         <ComboBox Grid.Row="6"
-                                  ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.Cities}"
+                                  ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.AddressCities}"
                                   VerticalAlignment="Center"
-                                  SelectedItem="{Binding AddressCity}"
+                                  SelectedItem="{Binding AddressCity,ValidatesOnDataErrors=True}"
                                   DisplayMemberPath="Name"
                                   Grid.Column="1" />
                         <Label Content="Τ.Κ."
                                Grid.Row="6"
                                Grid.Column="2" />
-                        <TextBox Text="{Binding AddressZipCode, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding AddressZipCode, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="6"
                                  VerticalAlignment="Center"
                                  Grid.Column="3" />
@@ -175,14 +174,14 @@
                         <Label Content="Οδός:"
                                Grid.Row="8"
                                Grid.Column="0" />
-                        <TextBox Text="{Binding BillRoad, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding BillRoad, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="8"
                                  VerticalAlignment="Center"
                                  Grid.Column="1" />
                         <Label Content="Αριθμός:"
                                Grid.Row="8"
                                Grid.Column="2" />
-                        <TextBox Text="{Binding BillAddressNumber, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding BillAddressNumber, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="8"
                                  VerticalAlignment="Center"
                                  Grid.Column="3" />
@@ -190,7 +189,7 @@
                                Grid.Row="9"
                                Grid.Column="0" />
                         <ComboBox Grid.Row="9"
-                                  ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.Cities}"
+                                  ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.BillCities}"
                                   VerticalAlignment="Center"
                                   SelectedItem="{Binding BillCity}"
                                   DisplayMemberPath="Name"
@@ -198,7 +197,7 @@
                         <Label Content="Τ.Κ."
                                Grid.Row="9"
                                Grid.Column="2" />
-                        <TextBox Text="{Binding BillZipCode, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding BillZipCode, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="9"
                                  VerticalAlignment="Center"
                                  Grid.Column="3" />
@@ -210,28 +209,28 @@
                         <Label Content="Τηλ:"
                                Grid.Row="11"
                                Grid.Column="0" />
-                        <TextBox Text="{Binding Phone1, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding Phone1, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="11"
                                  VerticalAlignment="Center"
                                  Grid.Column="1" />
                         <Label Content="Τηλ 2:"
                                Grid.Row="11"
                                Grid.Column="2" />
-                        <TextBox Text="{Binding Phone2, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding Phone2, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="11"
                                  VerticalAlignment="Center"
                                  Grid.Column="3" />
                         <Label Content="Κινητό:"
                                Grid.Row="12"
                                Grid.Column="0" />
-                        <TextBox Text="{Binding MobilePhone, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding MobilePhone, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="12"
                                  VerticalAlignment="Center"
                                  Grid.Column="1" />
                         <Label Content="Email:"
                                Grid.Row="12"
                                Grid.Column="2" />
-                        <TextBox Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding Email, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="12"
                                  VerticalAlignment="Center"
                                  Grid.Column="3" />
@@ -239,7 +238,7 @@
                                Grid.Row="13"
                                VerticalAlignment="Top"
                                Grid.Column="0" />
-                        <CheckBox IsChecked="{Binding IsAgent, UpdateSourceTrigger=PropertyChanged}"
+                        <CheckBox IsChecked="{Binding IsAgent, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                   Grid.Row="13"
                                   Height="18"
                                   VerticalAlignment="Center"
@@ -248,7 +247,7 @@
                                Grid.Row="13"
                                VerticalAlignment="Top"
                                Grid.Column="2" />
-                        <TextBox Text="{Binding Comment, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding Comment, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="13"
                                  VerticalAlignment="Stretch"
                                  TextWrapping="Wrap"
@@ -256,17 +255,72 @@
                                  VerticalScrollBarVisibility="Auto"
                                  AcceptsReturn="True"
                                  Grid.Column="3" />
-                        <Label Content=""
-                               Grid.Row="14"
-                               VerticalAlignment="Top"
-                               Grid.Column="0" />
+                        <GroupBox Header="Συνεργάτης"
+                                  Margin="25 0 25 0"
+                                  Grid.Column="4"
+                                  Grid.RowSpan="14">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <StackPanel Orientation="Horizontal"
+                                            HorizontalAlignment="Stretch">
+                                    <Label Content="Φίλτρο:" />
+                                    <TextBox Width="150"
+                                             VerticalAlignment="Center"
+                                             Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.CompanyFilterText,UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
+                                <DataGrid ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.Companies}"
+                                          Grid.Row="1"
+                                          Height="345"
+                                          Margin="5 0"
+                                          VerticalAlignment="Stretch"
+                                          AutoGenerateColumns="False"
+                                          SelectionMode="Single"
+                                          CanUserAddRows="False"
+                                          CanUserDeleteRows="False"
+                                          SelectedItem="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.SelectedCompany}">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Όνομα"
+                                                            Width="220"
+                                                            IsReadOnly="True"
+                                                            Binding="{Binding CompanyName}" />
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </Grid>
+                        </GroupBox>
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="15"
+                                    Grid.Column="4"
+                                    HorizontalAlignment="Center"
+                                    Margin="5">
+                            <Button Cursor="Hand"
+                                    Content="Διαγραφή"
+                                    Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.DeleteSelectedCompanyCommand}"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Left" />
+                            <Button Cursor="Hand"
+                                    Content="Νέος Συνεργάτης"
+                                    Margin="5 0"
+                                    Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.CreateNewCompanyCommand}"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Left" />
+                        </StackPanel>
+                        <Button Content="Αποθήκευση"
+                                Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.SaveChangesCommand}"
+                                Grid.Row="14"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Left"
+                                Margin="5" />
                     </Grid>
-                    <Button Content="Αποθήκευση"
-                            Command="{Binding SaveChangesCommand}"
-                            Grid.Row="20"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Left"
-                            Margin="5" />
+                    <TextBlock Grid.Row="15"
+                               Margin="5 0"
+                               Width="576" HorizontalAlignment="Left"
+                               TextWrapping="Wrap"
+                               Text="{Binding SelectedCompany.CompanyError}"
+                               Foreground="Red" />
                 </StackPanel>
             </TabItem>
             <TabItem Header="Σειρές">
@@ -305,6 +359,7 @@
                                Grid.Column="0" />
                         <ComboBox Grid.Column="1"
                                   Grid.Row="2"
+                                  IsEnabled="{Binding IsSerieNew}"
                                   VerticalAlignment="Center"
                                   ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:RecieptTypeEnum}}}"
                                   SelectedItem="{Binding SelectedSerie.RecieptType}" />
@@ -313,7 +368,7 @@
                                Grid.Column="0" />
                         <TextBox Text="{Binding SelectedSerie.Letter}"
                                  VerticalAlignment="Center"
-                                 IsEnabled="{Binding NewSerie}"
+                                 IsEnabled="{Binding IsSerieNew}"
                                  Grid.Row="3"
                                  Grid.Column="1" />
                         <Label Content="Έναρξη:"

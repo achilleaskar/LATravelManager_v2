@@ -34,41 +34,71 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Label Content="Τύπος:" />
             <ComboBox Grid.Column="1"
                       VerticalAlignment="Center"
                       ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:RecieptTypeEnum}}}"
                       SelectedItem="{Binding RecieptType}" />
-            <Label Grid.Row="1"
+            <Label Content="Σειρά:"
+                   Grid.Row="1" />
+            <ComboBox Grid.Column="1"
+                      Grid.Row="1"
+                      VerticalAlignment="Center"
+                      DisplayMemberPath="Name"
+                      ItemsSource="{Binding Series}"
+                      SelectedItem="{Binding SelectedSerie}" />
+            <Label Content="Τρόπος:"
+                   Grid.Row="2" />
+            <ComboBox Grid.Column="1"
+                      Grid.Row="2"
+                      VerticalAlignment="Center"
+                      SelectedValuePath="Content"
+                      SelectedValue="{Binding PaymentType}">
+                <ComboBoxItem Content="Μετρητά / Cash"  />
+                <ComboBoxItem Content="Τραπεζικά / Bank" />
+                <ComboBoxItem Content="Visa" />
+                <ComboBoxItem Content="Με Πίστωση / On Credit" />
+            </ComboBox>
+            <Label Grid.Row="3"
                    Content="Συνεργάτης:" />
-            <TextBlock Grid.Row="1"
+            <TextBlock Grid.Row="3"
                        VerticalAlignment="Center"
                        Grid.Column="1"
                        Text="{Binding Partner.Name}"
                        HorizontalAlignment="Left"
                        TextTrimming="CharacterEllipsis" />
-            <Label Grid.Row="2"
+            <Label Grid.Row="4"
                    Content="Επωνυμία:" />
-            <TextBlock Grid.Row="2"
+            <TextBlock Grid.Row="4"
                        VerticalAlignment="Center"
                        Grid.Column="1"
                        Text="{Binding Partner.CompanyInfo.CompanyName}"
                        HorizontalAlignment="Left"
                        TextTrimming="CharacterEllipsis" />
             <Button Content="Προεπισκόπηση"
-                    Grid.Row="9"
+                    Grid.Row="5"
                     Command="{Binding CreateRecieptPreviewCommand}"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Margin="5" />
             <Button Content="Εκτύπωση"
-                    Grid.Row="9"
+                    Grid.Row="5"
                     Click="Button_Click"
                     IsEnabled="{Binding PrintEnabled}"
                     Grid.Column="1"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center" />
+            <TextBlock Grid.Row="6"
+                       Grid.ColumnSpan="2"
+                       TextWrapping="Wrap"
+                       Width="270"
+                       Margin="5 0"
+                       Text="{Binding SelectedCompany.CompanyError}"
+                       Foreground="Red" />
         </Grid>
         <TabControl>
             <TabItem Header="Προεπισκόπηση">
@@ -224,13 +254,16 @@
                                                       Grid.Column="1">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="2*" />
+                                                        <ColumnDefinition Width="Auto" />
                                                         <ColumnDefinition Width="*" />
                                                     </Grid.ColumnDefinitions>
                                                     <TextBlock Text="{Binding Reciept.Company.BillCity.Name}"
                                                                Grid.Column="0" />
+                                                    <TextBlock Text="T.K.:"
+                                                               Grid.Column="1" />
                                                     <TextBlock Text="{Binding Reciept.Company.BillZipCode}"
                                                                HorizontalAlignment="Center"
-                                                               Grid.Column="1" />
+                                                               Grid.Column="2" />
                                                 </Grid>
                                                 <TextBlock Text="ΤΗΛΕΦΩΝΟ / PHONE:"
                                                            Grid.Column="0"
@@ -294,7 +327,7 @@
                                                 BorderThickness="0 0 1 1"
                                                 Grid.Row="1"
                                                 Grid.Column="1">
-                                            <TextBlock Text="A"
+                                            <TextBlock Text="{Binding Reciept.Series.Letter}"
                                                        HorizontalAlignment="Center"
                                                        VerticalAlignment="Center" />
                                         </Border>
@@ -304,7 +337,7 @@
                                                 BorderThickness="0 0 1 1"
                                                 Grid.Row="1"
                                                 Grid.Column="2">
-                                            <TextBlock Text="715"
+                                            <TextBlock Text="{Binding Reciept.RecieptNumber}"
                                                        HorizontalAlignment="Center"
                                                        VerticalAlignment="Center" />
                                         </Border>
@@ -338,7 +371,7 @@
                                                 BorderBrush="Black"
                                                 BorderThickness="1 0 1 1"
                                                 Grid.Row="1">
-                                            <TextBlock Text="Με πίστωση / On Credit"
+                                            <TextBlock Text="{Binding PaymentType}"
                                                        HorizontalAlignment="Center"
                                                        VerticalAlignment="Center" />
                                         </Border>
@@ -619,6 +652,7 @@
                             <ColumnDefinition Width="200" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="200" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -640,36 +674,37 @@
                         <Label Content="Επωνυμία:"
                                Grid.Row="0"
                                Grid.Column="0" />
-                        <TextBox Text="{Binding CompanyName, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding CompanyName, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="0"
                                  Grid.ColumnSpan="3"
+                                 Width="465"
                                  VerticalAlignment="Center"
                                  Grid.Column="1" />
                         <Label Content="Όνομα:"
                                Grid.Row="1"
                                Grid.Column="0" />
-                        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="1"
                                  VerticalAlignment="Center"
                                  Grid.Column="1" />
                         <Label Content="Επίθετο:"
                                Grid.Row="1"
                                Grid.Column="2" />
-                        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding LastName, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="1"
                                  VerticalAlignment="Center"
                                  Grid.Column="3" />
                         <Label Content="ΑΦΜ:"
                                Grid.Row="2"
                                Grid.Column="0" />
-                        <TextBox Text="{Binding TaxationNumber, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding TaxationNumber, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="2"
                                  VerticalAlignment="Center"
                                  Grid.Column="1" />
                         <Label Content="ΔΟΥ:"
                                Grid.Row="2"
                                Grid.Column="2" />
-                        <TextBox Text="{Binding TaxOffice, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding TaxOffice, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="2"
                                  VerticalAlignment="Center"
                                  Grid.Column="3" />
@@ -679,7 +714,7 @@
                         <ComboBox Grid.Row="3"
                                   ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.CompanyActivities}"
                                   VerticalAlignment="Center"
-                                  SelectedItem="{Binding Activity}"
+                                  SelectedItem="{Binding Activity,ValidatesOnDataErrors=True}"
                                   DisplayMemberPath="Name"
                                   Grid.Column="1" />
                         <Label Content="Χώρα"
@@ -689,7 +724,7 @@
                                   ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.Countries}"
                                   VerticalAlignment="Center"
                                   SelectionChanged="ComboBox_SelectionChanged"
-                                  SelectedItem="{Binding Country}"
+                                  SelectedItem="{Binding Country,ValidatesOnDataErrors=True}"
                                   DisplayMemberPath="Name"
                                   Grid.Column="3" />
                         <TextBlock Grid.Row="4"
@@ -700,14 +735,14 @@
                         <Label Content="Οδός:"
                                Grid.Row="5"
                                Grid.Column="0" />
-                        <TextBox Text="{Binding AddressRoad, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding AddressRoad, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="5"
                                  VerticalAlignment="Center"
                                  Grid.Column="1" />
                         <Label Content="Αριθμός:"
                                Grid.Row="5"
                                Grid.Column="2" />
-                        <TextBox Text="{Binding AddressNumber, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding AddressNumber, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="5"
                                  VerticalAlignment="Center"
                                  Grid.Column="3" />
@@ -717,13 +752,13 @@
                         <ComboBox Grid.Row="6"
                                   ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.Cities}"
                                   VerticalAlignment="Center"
-                                  SelectedItem="{Binding AddressCity}"
+                                  SelectedItem="{Binding AddressCity,ValidatesOnDataErrors=True}"
                                   DisplayMemberPath="Name"
                                   Grid.Column="1" />
                         <Label Content="Τ.Κ."
                                Grid.Row="6"
                                Grid.Column="2" />
-                        <TextBox Text="{Binding AddressZipCode, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding AddressZipCode, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="6"
                                  VerticalAlignment="Center"
                                  Grid.Column="3" />
@@ -735,14 +770,14 @@
                         <Label Content="Οδός:"
                                Grid.Row="8"
                                Grid.Column="0" />
-                        <TextBox Text="{Binding BillRoad, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding BillRoad, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="8"
                                  VerticalAlignment="Center"
                                  Grid.Column="1" />
                         <Label Content="Αριθμός:"
                                Grid.Row="8"
                                Grid.Column="2" />
-                        <TextBox Text="{Binding BillAddressNumber, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding BillAddressNumber, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="8"
                                  VerticalAlignment="Center"
                                  Grid.Column="3" />
@@ -758,7 +793,7 @@
                         <Label Content="Τ.Κ."
                                Grid.Row="9"
                                Grid.Column="2" />
-                        <TextBox Text="{Binding BillZipCode, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding BillZipCode, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="9"
                                  VerticalAlignment="Center"
                                  Grid.Column="3" />
@@ -770,28 +805,28 @@
                         <Label Content="Τηλ:"
                                Grid.Row="11"
                                Grid.Column="0" />
-                        <TextBox Text="{Binding Phone1, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding Phone1, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="11"
                                  VerticalAlignment="Center"
                                  Grid.Column="1" />
                         <Label Content="Τηλ 2:"
                                Grid.Row="11"
                                Grid.Column="2" />
-                        <TextBox Text="{Binding Phone2, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding Phone2, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="11"
                                  VerticalAlignment="Center"
                                  Grid.Column="3" />
                         <Label Content="Κινητό:"
                                Grid.Row="12"
                                Grid.Column="0" />
-                        <TextBox Text="{Binding MobilePhone, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding MobilePhone, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="12"
                                  VerticalAlignment="Center"
                                  Grid.Column="1" />
                         <Label Content="Email:"
                                Grid.Row="12"
                                Grid.Column="2" />
-                        <TextBox Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding Email, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="12"
                                  VerticalAlignment="Center"
                                  Grid.Column="3" />
@@ -799,7 +834,7 @@
                                Grid.Row="13"
                                VerticalAlignment="Top"
                                Grid.Column="0" />
-                        <CheckBox IsChecked="{Binding IsAgent, UpdateSourceTrigger=PropertyChanged}"
+                        <CheckBox IsChecked="{Binding IsAgent, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                   Grid.Row="13"
                                   Height="18"
                                   VerticalAlignment="Center"
@@ -808,7 +843,7 @@
                                Grid.Row="13"
                                VerticalAlignment="Top"
                                Grid.Column="2" />
-                        <TextBox Text="{Binding Comment, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding Comment, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                                  Grid.Row="13"
                                  VerticalAlignment="Stretch"
                                  TextWrapping="Wrap"
@@ -816,10 +851,6 @@
                                  VerticalScrollBarVisibility="Auto"
                                  AcceptsReturn="True"
                                  Grid.Column="3" />
-                        <Label Content=""
-                               Grid.Row="14"
-                               VerticalAlignment="Top"
-                               Grid.Column="0" />
                     </Grid>
                     <Button Content="Αποθήκευση"
                             Command="{Binding SaveChangesCommand}"

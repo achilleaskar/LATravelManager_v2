@@ -81,7 +81,7 @@
                                         Padding="5,2" />
                                 <Border BorderBrush="Gray"
                                         BorderThickness="1,0,0,0" />
-                                <Button Content="Νεο!!"
+                                <Button Content="Νέο!!"
                                         Click="Button_Click_1"
                                         Margin="5"
                                         CommandParameter="40"
@@ -163,7 +163,7 @@
                                 <ComboBoxItem Content="Όλα" />
                                 <ComboBoxItem Content="Θεσσαλονίκης" />
                                 <ComboBoxItem Content="Λάρισας" />
-                                <ComboBoxItem Content="Συνεργάτών" />
+                                <ComboBoxItem Content="Συνεργατών" />
                             </ComboBox>
                         </StackPanel>
                     </StackPanel>
@@ -209,7 +209,7 @@
                             </ComboBox>
                         </StackPanel>
                         <StackPanel Margin="5 0 0 0">
-                            <Label Content="Γκρούπ:"
+                            <Label Content="Γκρουπ:"
                                    VerticalAlignment="Center" />
                             <ComboBox  Width="85"
                                        VerticalAlignment="Center"
@@ -217,7 +217,7 @@
                                 <ComboBox.ItemsSource>
                                     <CompositeCollection>
                                         <ComboBoxItem Content="Όλα" />
-                                        <ComboBoxItem Content="Ναί" />
+                                        <ComboBoxItem Content="Ναι" />
                                         <ComboBoxItem Content="Όχι" />
                                     </CompositeCollection>
                                 </ComboBox.ItemsSource>
@@ -364,7 +364,7 @@
                     <CheckBox Content="Τράπεζα"
                               Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
                               IsChecked="{Binding Bank}" />
-                    <CheckBox Content="Όλοκληρωμένες"
+                    <CheckBox Content="Ολοκληρωμένες"
                               IsChecked="{Binding Completed}" />
                     <CheckBox Content="Υπόλοιπο"
                               Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
@@ -543,7 +543,7 @@
                                     Width="80"
                                     CanUserResize="True"
                                     Binding="{Binding Locations}" />
-                <DataGridTextColumn Header="Eδωσε"
+                <DataGridTextColumn Header="Έδωσε"
                                     Width="45"
                                     Binding="{Binding Recieved,Converter={StaticResource FtoSConverter } }" />
                 <DataGridTextColumn Header="Υπόλοιπο"

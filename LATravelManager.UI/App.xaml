@@ -40,19 +40,6 @@
             </Style>-->
             <Style TargetType="TextBox"
                    BasedOn="{StaticResource {x:Type TextBox}}">
-                <!--<Setter Property="Validation.ErrorTemplate">
-                    <Setter.Value>
-                        <ControlTemplate>
-                            <StackPanel>
-                                <AdornedElementPlaceholder x:Name="placeholder" />
-                                <TextBlock FontSize="12"
-                                           Foreground="Yellow"
-                                           Text="{Binding ElementName=placeholder,
-                Path=AdornedElement.(Validation.Errors)[0].ErrorContent}" />
-                            </StackPanel>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>-->
                 <Style.Triggers>
                     <Trigger Property="Validation.HasError"
                              Value="True">

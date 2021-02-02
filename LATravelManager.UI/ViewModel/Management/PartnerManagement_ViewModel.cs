@@ -24,7 +24,7 @@ namespace LATravelManager.UI.ViewModel.Management
         public async Task GetAllCompaniesAsync(bool allProperties = false)
         {
             MessengerInstance.Send(new IsBusyChangedMessage(true));
-            Companies = new ObservableCollection<Company>(await BasicDataManager.Context.GetAllCompaniesAsync(allProperties));
+            Companies = new ObservableCollection<Company>((await BasicDataManager.Context.GetAllCompaniesAsync(false)).OrderBy(r => r.CompanyName));
             MessengerInstance.Send(new IsBusyChangedMessage(false));
         }
 
@@ -76,6 +76,7 @@ namespace LATravelManager.UI.ViewModel.Management
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
 
                 MainCollection = new ObservableCollection<PartnerWrapper>((BasicDataManager.Partners).Select(p => new PartnerWrapper(p)));
+
             }
             catch (Exception ex)
             {
