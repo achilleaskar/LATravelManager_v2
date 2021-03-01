@@ -1,4 +1,5 @@
 ﻿using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Pricing.Invoices;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
@@ -64,7 +65,8 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Group
                     Booking booking = id > 0
                          ? await GenericRepository.GetFullBookingByIdAsync(id)
                          : await CreateNewBooking();
-
+                    if (id > 0)
+                        await GenericRepository.GetAllAsync<Reciept>(r => r.BookingId == id);
                     InitializeBooking(booking);
 
                     await ResetAllRefreshableDataASync();

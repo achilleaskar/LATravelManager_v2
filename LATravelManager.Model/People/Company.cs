@@ -668,7 +668,7 @@ namespace LATravelManager.Model.People
                 currentDigit = TaxationNumber[i - 1] - '0';
                 total += currentDigit * (int)Math.Pow(2, 9 - i);
             }
-            return (total % 11) % 10 == (int)TaxationNumber[8] - '0';
+            return (total % 11) % 10 == TaxationNumber[8] - '0';
         }
 
         #endregion Methods

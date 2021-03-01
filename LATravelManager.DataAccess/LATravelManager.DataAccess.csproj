@@ -288,6 +288,58 @@
     <Compile Include="Migrations\202101190918144_uniqueKey.designer.cs">
       <DependentUpon>202101190918144_uniqueKey.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202102041935196_RecieptFile.cs" />
+    <Compile Include="Migrations\202102041935196_RecieptFile.designer.cs">
+      <DependentUpon>202102041935196_RecieptFile.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102041954161_RecieptDate.cs" />
+    <Compile Include="Migrations\202102041954161_RecieptDate.designer.cs">
+      <DependentUpon>202102041954161_RecieptDate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102050945424_amounts.cs" />
+    <Compile Include="Migrations\202102050945424_amounts.designer.cs">
+      <DependentUpon>202102050945424_amounts.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102051114290_LastPrintTime.cs" />
+    <Compile Include="Migrations\202102051114290_LastPrintTime.designer.cs">
+      <DependentUpon>202102051114290_LastPrintTime.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102051334268_Reciepts.cs" />
+    <Compile Include="Migrations\202102051334268_Reciepts.designer.cs">
+      <DependentUpon>202102051334268_Reciepts.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102061845135_agencyId.cs" />
+    <Compile Include="Migrations\202102061845135_agencyId.designer.cs">
+      <DependentUpon>202102061845135_agencyId.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102071826561_RecieptUser.cs" />
+    <Compile Include="Migrations\202102071826561_RecieptUser.designer.cs">
+      <DependentUpon>202102071826561_RecieptUser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102071849521_removedRecieptFileId.cs" />
+    <Compile Include="Migrations\202102071849521_removedRecieptFileId.designer.cs">
+      <DependentUpon>202102071849521_removedRecieptFileId.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102081338508_mysterious.cs" />
+    <Compile Include="Migrations\202102081338508_mysterious.designer.cs">
+      <DependentUpon>202102081338508_mysterious.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102251710522_BulkPayments.cs" />
+    <Compile Include="Migrations\202102251710522_BulkPayments.designer.cs">
+      <DependentUpon>202102251710522_BulkPayments.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102271138430_LoginData.cs" />
+    <Compile Include="Migrations\202102271138430_LoginData.designer.cs">
+      <DependentUpon>202102271138430_LoginData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102271215441_LoginData_fixes.cs" />
+    <Compile Include="Migrations\202102271215441_LoginData_fixes.designer.cs">
+      <DependentUpon>202102271215441_LoginData_fixes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102281435512_removeChanges.cs" />
+    <Compile Include="Migrations\202102281435512_removeChanges.designer.cs">
+      <DependentUpon>202102281435512_removeChanges.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\ContextConfiguration.cs" />
     <Compile Include="MainDataBase.cs" />
     <Compile Include="Migrations\Configuration.cs" />
@@ -483,19 +535,58 @@
     <EmbeddedResource Include="Migrations\202101190918144_uniqueKey.resx">
       <DependentUpon>202101190918144_uniqueKey.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102041935196_RecieptFile.resx">
+      <DependentUpon>202102041935196_RecieptFile.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102041954161_RecieptDate.resx">
+      <DependentUpon>202102041954161_RecieptDate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102050945424_amounts.resx">
+      <DependentUpon>202102050945424_amounts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102051114290_LastPrintTime.resx">
+      <DependentUpon>202102051114290_LastPrintTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102051334268_Reciepts.resx">
+      <DependentUpon>202102051334268_Reciepts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102061845135_agencyId.resx">
+      <DependentUpon>202102061845135_agencyId.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102071826561_RecieptUser.resx">
+      <DependentUpon>202102071826561_RecieptUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102071849521_removedRecieptFileId.resx">
+      <DependentUpon>202102071849521_removedRecieptFileId.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102081338508_mysterious.resx">
+      <DependentUpon>202102081338508_mysterious.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102251710522_BulkPayments.resx">
+      <DependentUpon>202102251710522_BulkPayments.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102271138430_LoginData.resx">
+      <DependentUpon>202102271138430_LoginData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102271215441_LoginData_fixes.resx">
+      <DependentUpon>202102271215441_LoginData_fixes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102281435512_removeChanges.resx">
+      <DependentUpon>202102281435512_removeChanges.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BouncyCastle">
-      <Version>1.8.5</Version>
+      <Version>1.8.9</Version>
     </PackageReference>
     <PackageReference Include="EFInteractiveViews">
       <Version>1.1.0</Version>
     </PackageReference>
     <PackageReference Include="Google.Protobuf">
-      <Version>3.11.4</Version>
+      <Version>3.15.3</Version>
     </PackageReference>
     <PackageReference Include="MySql.Data.EntityFramework">
-      <Version>8.0.19</Version>
+      <Version>8.0.23</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

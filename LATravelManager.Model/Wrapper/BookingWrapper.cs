@@ -10,6 +10,7 @@ using System.Windows.Media;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.People;
+using LATravelManager.Model.Pricing.Invoices;
 using LATravelManager.UI.Helpers;
 
 namespace LATravelManager.Model.Wrapper
@@ -37,6 +38,16 @@ namespace LATravelManager.Model.Wrapper
         #endregion Constructors
 
         #region Fields
+
+        public string Dates => CheckIn.ToString("dd/MM") + (CheckIn.Date != CheckOut.Date ? ("-" + CheckOut.ToString("dd/MM")) : "");
+
+
+        public ObservableCollection<Reciept> Reciepts
+        {
+            get { return GetValue<ObservableCollection<Reciept>>(); }
+            set { SetValue(value); }
+        }
+
 
         public bool PhoneMissing;
 

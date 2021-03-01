@@ -172,7 +172,7 @@ namespace LATravelManager.UI.Helpers
 
                     foreach (var s in booking.Services)
                     {
-                        myWorksheet.Cells["B" + lineNum].Value = s.Tittle ?? "";
+                        myWorksheet.Cells["B" + lineNum].Value = s.Title ?? "";
                         myWorksheet.Cells["C" + lineNum].Value = s.TimeGo.ToString("d");
                         myWorksheet.Cells["D" + lineNum].Value = s.From ?? "";
                         myWorksheet.Cells["E" + lineNum].Value = s.To ?? "";

@@ -24,6 +24,8 @@ namespace LATravelManager.UI.Helpers
 
         #endregion Properties
 
+        public static string LoginDataEncryptionKey { get; } = "b14ca58latravel3bbce2ea2315a1916";
+
         public static List<Window> Windows { get; set; } = new List<Window>();
 
         public static void Close(Window window)

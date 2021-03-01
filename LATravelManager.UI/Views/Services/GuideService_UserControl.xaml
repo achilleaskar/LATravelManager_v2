@@ -1,13 +1,12 @@
 ﻿<UserControl x:Class="LATravelManager.UI.Views.Services.GuideService_UserControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:helpers="clr-namespace:LATravelManager.UI.Helpers"
+             xmlns:toolkit="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
              xmlns:services="clr-namespace:LATravelManager.UI.ViewModel.ServiceViewModels"
              mc:Ignorable="d"
-             xmlns:toolkit="http://schemas.xceed.com/wpf/xaml/toolkit"
              d:DataContext="{d:DesignInstance services:GuideViewModel}"
              Background="White"
              VerticalAlignment="Top"
@@ -57,7 +56,8 @@
                Grid.Column="0" />
         <TextBox Grid.Row="0"
                  Width="300"
-                 Grid.ColumnSpan="3" HorizontalAlignment="Left"
+                 Grid.ColumnSpan="3"
+                 HorizontalAlignment="Left"
                  Text="{Binding Service.From,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                  Grid.Column="1" />
         <Label Content="Στοιχεία Ξεναγού:"
@@ -75,14 +75,14 @@
                                 Grid.Column="1"
                                 FormatString="dd/MM/yy HH:mm"
                                 Kind="Local"
-
                                 HorizontalAlignment="Left"
                                 ShowButtonSpinner="False"
                                 VerticalAlignment="Center"
                                 Value="{Binding Service.TimeGo,UpdateSourceTrigger=PropertyChanged}"
                                 Format="Custom" />
         <Label Content="Ημέρες Ξενάγησης:"
-               Grid.Row="2" Margin="8 0"
+               Grid.Row="2"
+               Margin="8 0"
                Grid.Column="2" />
         <TextBox Grid.Row="2"
                  Text="{Binding Service.Duration,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
@@ -101,7 +101,9 @@
                Grid.Row="3"
                Grid.Column="2" />
         <TextBox Text="{Binding Service.NetPrice,Converter={StaticResource floatToStringConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-                 Grid.Row="3" Width="50" HorizontalAlignment="Left"
+                 Grid.Row="3"
+                 Width="50"
+                 HorizontalAlignment="Left"
                  Grid.Column="3" />
     </Grid>
 </UserControl>

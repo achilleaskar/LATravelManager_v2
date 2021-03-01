@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:LATravelManager.UI.Views.ThirdParty"
              xmlns:helpers="clr-namespace:LATravelManager.UI.Helpers"
+             xmlns:enum="clr-namespace:LATravelManager.Model;assembly=LATravelManager.Model"
              xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty"
@@ -317,16 +318,10 @@
                                                   Margin="0,5"
                                                   VerticalAlignment="Center"
                                                   HorizontalAlignment="Center"
-                                                  SelectedIndex="{Binding Payment.PaymentMethod,NotifyOnValidationError=True}"
+                                                  ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:PaymentMethod}}}"
+                                                  SelectedItem="{Binding Payment.PaymentMethod,NotifyOnValidationError=True}"
                                                   Grid.Column="1"
-                                                  Width="80">
-                                            <ComboBoxItem>Μετρητά</ComboBoxItem>
-                                            <ComboBoxItem>Πειραιώς</ComboBoxItem>
-                                            <ComboBoxItem>Εθνική</ComboBoxItem>
-                                            <ComboBoxItem>Eurobank</ComboBoxItem>
-                                            <ComboBoxItem>Alpha Bank</ComboBoxItem>
-                                            <ComboBoxItem>VISA</ComboBoxItem>
-                                        </ComboBox>
+                                                  Width="90" />
                                     </StackPanel>
                                     <StackPanel Grid.Row="1"
                                                 Margin="5,5,0,0"

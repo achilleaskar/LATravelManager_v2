@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
+using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.People;
 using LATravelManager.UI.Message;
@@ -270,35 +271,35 @@ namespace LATravelManager.UI.Helpers
 
                 switch (payment.PaymentMethod)
                 {
-                    case 0:
+                    case PaymentMethod.Cash:
                         Cash += payment.Amount;
                         break;
 
-                    case 1:
+                    case PaymentMethod.Peiraeus:
                         Peiraios += payment.Amount;
                         break;
 
-                    case 2:
+                    case PaymentMethod.NBG:
                         Ethniki += payment.Amount;
                         break;
 
-                    case 3:
+                    case PaymentMethod.Eurobank:
                         Eurobank += payment.Amount;
                         break;
 
-                    case 4:
+                    case PaymentMethod.AlphaBank:
                         AlphaBank += payment.Amount;
                         break;
 
-                    case 5:
+                    case PaymentMethod.Visa:
                         VISA += payment.Amount;
                         break;
 
-                    case 6:
+                    case PaymentMethod.Viva_ONL:
                         VIVA_ONL += payment.Amount;
                         break;
 
-                    case 7:
+                    case PaymentMethod.PAYPAL:
                         PAYPAL += payment.Amount;
                         break;
                 }
@@ -349,7 +350,7 @@ namespace LATravelManager.UI.Helpers
                 if (SelectedPayment.Checked != true)
                     SelectedPayment.Checked = true;
                 else
-                    if (SelectedPayment.PaymentMethod != 0 && SelectedPayment.PaymentMethod != 5)
+                    if (SelectedPayment.PaymentMethod != PaymentMethod.Cash && SelectedPayment.PaymentMethod != PaymentMethod.Visa)
                     SelectedPayment.Checked = null;
                 else
                     SelectedPayment.Checked = false;

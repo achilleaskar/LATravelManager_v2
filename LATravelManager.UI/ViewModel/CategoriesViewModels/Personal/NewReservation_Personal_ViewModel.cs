@@ -5,6 +5,7 @@ using LATravelManager.Model.Hotels;
 using LATravelManager.Model.LocalModels;
 using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
+using LATravelManager.Model.Pricing.Invoices;
 using LATravelManager.Model.Services;
 using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Helpers;
@@ -14,31 +15,36 @@ using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.ServiceViewModels;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Views;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 
 namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 {
     public class NewReservation_Personal_ViewModel : MyViewModelBaseAsync
     {
         #region Constructors
-
-        private void OpenInvoicesWindow()
+        public RelayCommand SearchForCustomerCommand { get; set; }
+        private async Task OpenInvoicesWindow(object obj)
         {
-            InvoicesManagement_ViewModel vm = new InvoicesManagement_ViewModel(BasicDataManager, personal: PersonalWr);
-            MessengerInstance.Send(new OpenChildWindowCommand(new InvoicesManagementWindow()));
+            InvoicesManagement_ViewModel vm = new InvoicesManagement_ViewModel(BasicDataManager, personal: PersonalWr, parameter: obj);
+            await vm.LoadAsync();
+            MessengerInstance.Send(new OpenChildWindowCommand(new InvoicesManagementWindow(), vm));
         }
 
         public RelayCommand ToggleDisabilityCommand { get; set; }
-        public RelayCommand OpenInvoicesWindowCommand { get; set; }
+        public RelayCommand<object> OpenInvoicesWindowCommand { get; set; }
 
         public NewReservation_Personal_ViewModel(MainViewModel mainViewModel)
         {
-            OpenInvoicesWindowCommand = new RelayCommand(OpenInvoicesWindow);
+            OpenInvoicesWindowCommand = new RelayCommand<object>(async (obj) => await OpenInvoicesWindow(obj));
 
             GenericRepository = mainViewModel.StartingRepository;
             BasicDataManager = mainViewModel.BasicDataManager;
@@ -50,8 +56,10 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             ClearServiceCommand = new RelayCommand(ClearService, CanClearService);
             AddServiceCommand = new RelayCommand(AddService, CanAddService);
             ToggleDisabilityCommand = new RelayCommand(ToggleDisability, CanToggleDisability);
-
+            OpenFileCommand = new RelayCommand<Reciept>(async (obj) => await OpenRecieptFile(obj));
+            ReplaceFileCommand = new RelayCommand(ReplaceFile);
             DeleteSelectedCustomersCommand = new RelayCommand(DeleteSelectedCustomers, CanDeleteCustomers);
+            SearchForCustomerCommand = new RelayCommand(SearchForCustomer);
 
             SaveCommand = new RelayCommand(async () => { await SaveAsync(); }, CanSave);
             Payment = new Payment();
@@ -63,6 +71,104 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             Emails = new ObservableCollection<Email>();
         }
 
+        public void SearchForCustomer()
+        {
+            CustomerSearch_ViewModel vm = new CustomerSearch_ViewModel(GenericRepository, personal: PersonalWr);
+            Window window = new CustomerSearchWindow
+            {
+                DataContext = vm
+            };
+            window.ShowDialog();
+        }
+
+        private void ReplaceFile()
+        {
+            if (SelectedReciept == null)
+            {
+                return;
+            }
+            OpenFileDialog dlg = new OpenFileDialog
+            {
+                //FileName = "Document", // Default file name
+                //DefaultExt = ".pdf", // Default file extension
+                Filter = "All files (*.*)|*.*" // Filter files by extension
+            };
+            // Show open file dialog box
+            bool? result = dlg.ShowDialog();
+
+            // Process open file dialog box results
+            if (result == true)
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                // Open document
+                string fileName = dlg.FileName;
+                using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    FileInfo file = new FileInfo(fileName);
+                    if (file.Exists)
+                    {
+                        SelectedReciept.Content = File.ReadAllBytes(fileName);
+                        SelectedReciept.FileName = file.Name;
+                    }
+                }
+                Mouse.OverrideCursor = Cursors.Arrow;
+            }
+        }
+
+        private Reciept _SelectedReciept;
+
+
+        public Reciept SelectedReciept
+        {
+            get
+            {
+                return _SelectedReciept;
+            }
+
+            set
+            {
+                if (_SelectedReciept == value)
+                {
+                    return;
+                }
+
+                _SelectedReciept = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public static string GetPath(string fileName, string folderpath)
+        {
+            int i = 1;
+            string resultPath;
+            string filenm = fileName.Substring(0, fileName.LastIndexOf('.'));
+            string fileExtension = fileName.Substring(fileName.LastIndexOf('.'));
+            resultPath = folderpath + filenm + fileExtension;
+            while (File.Exists(resultPath))
+            {
+                i++;
+                resultPath = folderpath + filenm + "(" + i + ")" + fileExtension;
+            }
+            return resultPath;
+        }
+
+        private async Task OpenRecieptFile(Reciept Reciept)
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            string outputpath = Path.GetTempPath();
+
+            Directory.CreateDirectory(outputpath + @"\Παραστατικά");
+            string path = GetPath(Reciept.FileName, outputpath + @"\Παραστατικά\");
+            File.WriteAllBytes(path, Reciept.Content);
+
+            Mouse.OverrideCursor = Cursors.Arrow;
+
+            Process.Start(path);
+        }
+
+        public RelayCommand<Reciept> OpenFileCommand { get; set; }
+        public RelayCommand ReplaceFileCommand { get; set; }
         public RelayCommand DeleteSelectedCustomersCommand { get; set; }
 
         private bool CanDeleteCustomers()
@@ -562,6 +668,9 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
                       ? await GenericRepository.GetFullPersonalBookingByIdAsync(id)
                       : await CreateNewBooking();
 
+                if (id > 0)
+                    await GenericRepository.GetAllAsync<Reciept>(r => r.Personal_BookingId == id);
+
                 InitializeBooking(booking);
 
                 Services = new ObservableCollection<Service>();
@@ -673,7 +782,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 
         private void EditService()
         {
-            SelectedServiceViewModel = Templates.Where(t => t.Service.Tittle == SelectedService.Tittle).FirstOrDefault();
+            SelectedServiceViewModel = Templates.Where(t => t.Service.Title == SelectedService.Title).FirstOrDefault();
             SelectedServiceViewModel.Service = SelectedService;
         }
 
@@ -817,7 +926,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 
                 if (Payment.Amount > 0)
                 {
-                    PersonalWr.Payments.Add(new Payment { Amount = Payment.Amount, Comment = Payment.Comment, Date = DateTime.Now, PaymentMethod = Payment.PaymentMethod, User = await GenericRepository.GetByIdAsync<User>(StaticResources.User.Id), Checked = (Payment.PaymentMethod == 0 || Payment.PaymentMethod == 5) ? (bool?)false : null });
+                    PersonalWr.Payments.Add(new Payment { Amount = Payment.Amount, Comment = Payment.Comment, Date = DateTime.Now, PaymentMethod = Payment.PaymentMethod, User = await GenericRepository.GetByIdAsync<User>(StaticResources.User.Id), Checked = (Payment.PaymentMethod == PaymentMethod.Cash || Payment.PaymentMethod == PaymentMethod.Visa) ? (bool?)false : null });
                 }
 
                 if (PersonalWr.Id == 0)

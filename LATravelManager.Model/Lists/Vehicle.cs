@@ -24,7 +24,7 @@ namespace LATravelManager.Model.Lists
         #region Properties
 
         [Required]
-        [Range(10, 100, ErrorMessage = "Επιλέξτε την θέση πίσω απο την πόρτα")]
+        [Range(10, 100, ErrorMessage = "Επιλέξτε την θέση πίσω από την πόρτα")]
         public int DoorSeat
         {
             get

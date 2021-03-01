@@ -398,7 +398,7 @@
                                       CanUserDeleteRows="False"
                                       SelectedItem="{Binding SelectedPeriod}">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Απο"
+                                    <DataGridTextColumn Header="από"
                                                         Binding="{Binding From,StringFormat='{}{0:dd/MM/yyyy}'}"
                                                         IsReadOnly="True"
                                                         Width="85" />
@@ -409,7 +409,7 @@
                                     <DataGridCheckBoxColumn Header="Διπλό"
                                                             IsReadOnly="True"
                                                             Binding="{Binding Parted,UpdateSourceTrigger=PropertyChanged}" />
-                                    <DataGridTextColumn Header="ΑποB:"
+                                    <DataGridTextColumn Header="απόB:"
                                                         Binding="{Binding FromB,StringFormat='{}{0:dd/MM/yyyy}'}"
                                                         IsReadOnly="True"
                                                         Width="85" />

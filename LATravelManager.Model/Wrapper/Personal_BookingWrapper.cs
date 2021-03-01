@@ -1,5 +1,6 @@
 ﻿using LATravelManager.Model.BookingData;
 using LATravelManager.Model.People;
+using LATravelManager.Model.Pricing.Invoices;
 using LATravelManager.Model.Services;
 using LATravelManager.UI.Helpers;
 using System;
@@ -57,6 +58,13 @@ namespace LATravelManager.Model.Wrapper
         #endregion Fields
 
         #region Properties
+
+        public ObservableCollection<Reciept> Reciepts
+        {
+            get { return GetValue<ObservableCollection<Reciept>>(); }
+            set { SetValue(value); }
+        }
+
 
         public bool Calculating { get; private set; }
 
@@ -418,7 +426,7 @@ namespace LATravelManager.Model.Wrapper
             hotels = hotels.TrimEnd('-');
             if (!string.IsNullOrEmpty(hotels))
             {
-                sb.Append("Ατομικο πακετο για ");
+                sb.Append("Ατομικό πακέτο για ");
                 sb.Append(hotels);
                 sb.Append(".");
                 return sb.ToString().ToUpper();
@@ -435,7 +443,7 @@ namespace LATravelManager.Model.Wrapper
             planes = planes.TrimEnd('-');
             if (!string.IsNullOrEmpty(planes))
             {
-                sb.Append("Αεροπορικο για ");
+                sb.Append("Αεροπορικό για ");
                 sb.Append(planes);
             }
 
@@ -452,9 +460,9 @@ namespace LATravelManager.Model.Wrapper
             if (!string.IsNullOrEmpty(ferrys))
             {
                 if (sb.Length > 1)
-                    sb.Append(" & ακτοπλοικα για ");
+                    sb.Append(" & ακτοπλοϊκά για ");
                 else
-                    sb.Append("Aκτοπλοικά για ");
+                    sb.Append("Ακτοπλοϊκά για ");
                 sb.Append(ferrys);
             }
             foreach (var s in Services)
@@ -470,9 +478,9 @@ namespace LATravelManager.Model.Wrapper
             if (!string.IsNullOrEmpty(guides))
             {
                 if (sb.Length > 1)
-                    sb.Append(" & ξεναγηση για ");
+                    sb.Append(" & ξενάγηση για ");
                 else
-                    sb.Append("Ξεναγηση για ");
+                    sb.Append("Ξενάγηση για ");
                 sb.Append(guides);
             }
             foreach (var s in Services)
@@ -488,9 +496,9 @@ namespace LATravelManager.Model.Wrapper
             if (!string.IsNullOrEmpty(transfers))
             {
                 if (sb.Length > 1)
-                    sb.Append(" & transfer απο ");
+                    sb.Append(" & transfer από ");
                 else
-                    sb.Append("Transfer απο ");
+                    sb.Append("Transfer από ");
                 sb.Append(transfers);
             }
             foreach (var s in Services)
@@ -547,11 +555,11 @@ namespace LATravelManager.Model.Wrapper
             }
             if (IsPartners && NetPrice <= 0)
             {
-                return "Δέν έχετε ορίσει ΝΕΤ τιμή!";
+                return "Δεν έχετε ορίσει ΝΕΤ τιμή!";
             }
             if (IsPartners && Partner == null)
             {
-                return "Δέν έχετε επιλέξει συνεργάτη";
+                return "Δεν έχετε επιλέξει συνεργάτη";
             }
 
             return null;

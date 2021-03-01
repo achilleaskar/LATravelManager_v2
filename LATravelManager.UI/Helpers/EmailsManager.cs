@@ -110,7 +110,7 @@ namespace LATravelManager.UI.Helpers
                     ContentId = "gobansko",
                     ContentType = new ContentType(MediaTypeNames.Image.Jpeg)
                 };
-                AlternateView htmlView = AlternateView.CreateAlternateViewFromString("<br/> Το παρόν email έχει σταλεί αυτόματα απο την κεντρική εφαρμογή διαχείρισης κρατήσεων του LA Travel.<br/>" +
+                AlternateView htmlView = AlternateView.CreateAlternateViewFromString("<br/> Το παρόν email έχει σταλεί αυτόματα από την κεντρική εφαρμογή διαχείρισης κρατήσεων του LA Travel.<br/>" +
                             "Για οποιαδήποτε διευκρίνιση μπορείτε να επικοινωνήσετε μαζί μας στα τηλέφωνα:<br/>" +
                             "Thessaloniki: 2310260986 <br/>Larisa: 2410555689<br/> Athens: 2102841001 <br/>  <a href=\"https://www.latravel.gr/ \">  <img src=cid:latravel ></a><br/><a  href=\"https://www.gotoskiathos.com/ \"> <img src=cid:gotoskiathos ></a><a href=\"http://www.gobansko.com/ \"> <img src=cid:gobansko ></a>", null, "text/html");
                 htmlView.LinkedResources.Add(LinkedImage);
@@ -188,7 +188,7 @@ namespace LATravelManager.UI.Helpers
                     //Added the patch for Thunderbird as suggested by Jorge
                     ContentType = new ContentType(MediaTypeNames.Image.Jpeg)
                 };
-                AlternateView htmlView = AlternateView.CreateAlternateViewFromString(" Το παρόν email έχει σταλεί αυτόματα απο την κεντρική εφαρμογή διαχείρισης κρατήσεων του LA Travel.<br/>" +
+                AlternateView htmlView = AlternateView.CreateAlternateViewFromString(" Το παρόν email έχει σταλεί αυτόματα από την κεντρική εφαρμογή διαχείρισης κρατήσεων του LA Travel.<br/>" +
                             "Για οποιαδήποτε διευκρίνιση μπορείτε να επικοινωνήσετε μαζί μας στα τηλέφωνα:<br/>" +
                             "Thessaloniki: 2310260986 <br/>Larisa: 2410555689<br/> Athens: 2102841001 <br/>  <a href=\"https://www.latravel.gr/ \">  <img src=cid:latravel ></a><br/><a  href=\"https://www.gotoskiathos.com/ \"> <img src=cid:gotoskiathos ></a><a href=\"http://www.gobansko.com/ \"> <img src=cid:gobansko ></a>", null, "text/html");
                 htmlView.LinkedResources.Add(LinkedImage);

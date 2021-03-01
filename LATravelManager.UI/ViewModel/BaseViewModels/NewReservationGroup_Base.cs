@@ -7,6 +7,7 @@ using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.LocalModels;
 using LATravelManager.Model.People;
+using LATravelManager.Model.Pricing.Invoices;
 using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Data.Workers;
 using LATravelManager.UI.Helpers;
@@ -23,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -154,8 +156,8 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             ShowAltairnativesCommand = new RelayCommand(ShowAlernatives, CanShowAltairnatives);
 
             BookRoomNoNameCommand = new RelayCommand<RoomType>(async (obj) => { await MakeNonameReservation(obj); }, CanMakeNoNameReservation);
-            OverBookHotelCommand = new RelayCommand(async () =>  await OverBookHotelAsync(), CanOverBookHotel);
-            PutCustomersInRoomCommand = new RelayCommand(async () =>  await PutCustomersInRoomAsync(), CanPutCustomersInRoom);
+            OverBookHotelCommand = new RelayCommand(async () => await OverBookHotelAsync(), CanOverBookHotel);
+            PutCustomersInRoomCommand = new RelayCommand(async () => await PutCustomersInRoomAsync(), CanPutCustomersInRoom);
             AddTransferCommand = new RelayCommand(AddTransfer, CanAddTransfer);
             AddOneDayCommand = new RelayCommand(AddOneDay, CanAddOneDay);
 
@@ -169,6 +171,8 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             CheckOutCommand = new RelayCommand(() => { CheckOut(); }, CanCheckOut);
             PrintVoucherCommand = new RelayCommand(async () => await PrintVoucher(), CanPrintDoc);
             PrintContractCommand = new RelayCommand(PrintContract, CanPrintDoc);
+            OpenFileCommand = new RelayCommand<Reciept>(async (obj) => await OpenRecieptFile(obj));
+            ReplaceFileCommand = new RelayCommand( ReplaceFile);
             Payment = new Payment();
 
             ToggleDisabilityCommand = new RelayCommand(ToggleDisability, CanToggleDisability);
@@ -177,6 +181,95 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             SelectedUserIndex = -1;
             Emails = new ObservableCollection<Email>();
             NewExtraService = new ExtraService();
+        }
+
+
+
+
+        private Reciept _SelectedReciept;
+
+
+        public Reciept SelectedReciept
+        {
+            get
+            {
+                return _SelectedReciept;
+            }
+
+            set
+            {
+                if (_SelectedReciept == value)
+                {
+                    return;
+                }
+
+                _SelectedReciept = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private void ReplaceFile()
+        {
+            if (SelectedReciept==null)
+            {
+                return;
+            }
+            OpenFileDialog dlg = new OpenFileDialog
+            {
+                //FileName = "Document", // Default file name
+                //DefaultExt = ".pdf", // Default file extension
+                Filter = "All files (*.*)|*.*" // Filter files by extension
+            };
+            // Show open file dialog box
+            bool? result = dlg.ShowDialog();
+
+            // Process open file dialog box results
+            if (result == true)
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                // Open document
+                string fileName = dlg.FileName;
+                using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    FileInfo file = new FileInfo(fileName);
+                    if (file.Exists)
+                    {
+                        SelectedReciept.Content = File.ReadAllBytes(fileName);
+                        SelectedReciept.FileName = file.Name;
+                    }
+                }
+                Mouse.OverrideCursor = Cursors.Arrow;
+            }
+        }
+
+        public static string GetPath(string fileName, string folderpath)
+        {
+            int i = 1;
+            string resultPath;
+            string filenm = fileName.Substring(0, fileName.LastIndexOf('.'));
+            string fileExtension = fileName.Substring(fileName.LastIndexOf('.'));
+            resultPath = folderpath + filenm + fileExtension;
+            while (File.Exists(resultPath))
+            {
+                i++;
+                resultPath = folderpath + filenm + "(" + i + ")" + fileExtension;
+            }
+            return resultPath;
+        }
+
+        private async Task OpenRecieptFile(Reciept Reciept)
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            string outputpath = Path.GetTempPath();
+
+            Directory.CreateDirectory(outputpath + @"\Παραστατικά");
+            string path = GetPath(Reciept.FileName, outputpath + @"\Παραστατικά\");
+            File.WriteAllBytes(path, Reciept.Content);
+
+            Mouse.OverrideCursor = Cursors.Arrow;
+
+            Process.Start(path);
         }
 
         #endregion Constructors
@@ -288,6 +381,9 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 RaisePropertyChanged();
             }
         }
+
+        public RelayCommand<Reciept> OpenFileCommand { get; set; }
+        public RelayCommand ReplaceFileCommand { get; set; }
 
         public BookingWrapper BookingWr
         {

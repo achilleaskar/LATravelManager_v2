@@ -612,6 +612,28 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
+        private ObservableCollection<BulkPayment> _BulkPayments;
+
+
+        public ObservableCollection<BulkPayment> BulkPayments
+        {
+            get
+            {
+                return _BulkPayments;
+            }
+
+            set
+            {
+                if (_BulkPayments == value)
+                {
+                    return;
+                }
+
+                _BulkPayments = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public ObservableCollection<Payment> Payments
         {
             get
@@ -854,7 +876,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         private bool CustomerFilter(object item)
         {
             ReservationWrapper reservation = item as ReservationWrapper;
-            var x = reservation.Contains(FilterString, false) &&
+            var x = reservation.Contains(FilterString, false,true) &&
                 (!Remaining || reservation.Remaining > 3) &&
                 (!NoProforma || !reservation.ProformaSent) &&
                 (!NoVoucher || !reservation.VoucherSent) &&
@@ -961,10 +983,10 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                     await Context.GetAllHotelsAsync<Hotel>();
                     listr.AddRange((await Context.GetAllPersonalBookingsFiltered(0, true, new DateTime(), remainingPar: 1, checkin: From, checkout: To, partnerId: PartnerIndex >= 0 ? Partners[PartnerIndex].Id : 0, onlyPartners: true)).Select(r => new ReservationWrapper { Id = r.Id, PersonalModel = new Personal_BookingWrapper(r), CreatedDate = r.CreatedDate, CustomersList = r.Customers.ToList() }).ToList());
                 }
-                //if (ExcursionIndexBookingFilter == 0 && (ExcursionCategoryIndexBookingFilter == 5 || ExcursionCategoryIndexBookingFilter == 0))
-                //{
-                //    listr.AddRange((await Context.GetAllThirdPartyBookingsFiltered(0, Completed, new DateTime(), checkin: From, checkout: To, byCheckIn: ByCheckIn)).Select(r => new ReservationWrapper { Id = r.Id, ThirdPartyModel = new ThirdParty_Booking_Wrapper(r), CreatedDate = r.CreatedDate, CustomersList = r.Customers.ToList() }).ToList());
-                //}
+                if (ExcursionIndexBookingFilter == 0 && (ExcursionCategoryIndexBookingFilter == 5 || ExcursionCategoryIndexBookingFilter == 0))
+                {
+                    listr.AddRange((await Context.GetAllThirdPartyBookingsFiltered(0, Completed, new DateTime(), checkin: From, checkout: To, byCheckIn: ByCheckIn)).Select(r => new ReservationWrapper { Id = r.Id, ThirdPartyModel = new ThirdParty_Booking_Wrapper(r), CreatedDate = r.CreatedDate, CustomersList = r.Customers.ToList() }).ToList());
+                }
 
                 FilteredReservations = new ObservableCollection<ReservationWrapper>(listr);
                 Parallel.ForEach(FilteredReservations, wr => { wr.CalculateAmounts(); _ = wr.Partner; });

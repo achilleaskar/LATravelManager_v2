@@ -77,13 +77,13 @@ namespace LATravelManager.UI.Views
             Helpers.StaticResources.Close(this);
         }
 
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (DataContext is InvoicesManagement_ViewModel u)
-            {
-                u.UpdateCities();
-            }
-        }
+        //private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        //{
+        //    if (DataContext is InvoicesManagement_ViewModel u)
+        //    {
+        //        u.UpdateCities();
+        //    }
+        //}
 
        
 
@@ -92,6 +92,7 @@ namespace LATravelManager.UI.Views
             if (DataContext is InvoicesManagement_ViewModel u)
             {
                 await u.PrintInvoice(printArea);
+                
             }
 
             //    MemoryStream lMemoryStream = new MemoryStream();

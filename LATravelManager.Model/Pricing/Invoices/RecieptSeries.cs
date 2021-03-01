@@ -13,6 +13,31 @@ namespace LATravelManager.Model.Pricing.Invoices
         [ConcurrencyCheck]
         public int CurrentNumber { get; set; }
 
+
+
+
+        private DateTime _LastPrint;
+
+
+        public DateTime LastPrint
+        {
+            get
+            {
+                return _LastPrint;
+            }
+
+            set
+            {
+                if (_LastPrint == value)
+                {
+                    return;
+                }
+
+                _LastPrint = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public DateTime? DateEnded { get; set; }
 
         public DateTime DateStarted { get; set; }
@@ -25,6 +50,8 @@ namespace LATravelManager.Model.Pricing.Invoices
         [Index(IsUnique = true)]
         [MaxLength(40)]
         public string SerieCode { get; set; }
+
+        public int AgencyId { get; set; }
 
         [MaxLength(40)]
         public string Name

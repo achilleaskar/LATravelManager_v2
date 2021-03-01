@@ -1,6 +1,6 @@
-﻿using System;
-using LATravelManager.Model.Hotels;
+﻿using LATravelManager.Model.Hotels;
 using LATravelManager.Model.Locations;
+using System;
 
 namespace LATravelManager.Model.Services
 {
@@ -10,7 +10,7 @@ namespace LATravelManager.Model.Services
 
         public HotelService()
         {
-            Tittle = "Διαμονή";
+            Title = "Διαμονή";
             Option = DateTime.Today.AddMinutes(6);
             //PropertyChanged += HotelService_PropertyChanged;
         }
@@ -113,8 +113,14 @@ namespace LATravelManager.Model.Services
 
         #region Methods
 
-        private void HotelService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        public override string GetDescription()
         {
+            return $"{Title} σε{(Hotel != null ? " " + Hotel.Name : "") + (City != null && Hotel != null ? "," : "") + (City != null ? " " + City.Name : "")}";
+        }
+
+        public override string GetDates()
+        {
+            return TimeGo.ToString("dd/MM") + (TimeGo != TimeReturn && TimeReturn.Year > 2000 ? ("-" + TimeReturn.ToString("dd/MM/yy")) : TimeGo.ToString("/yy"));
         }
 
         #endregion Methods

@@ -13,7 +13,7 @@
     <UserControl.Resources>
         <converters:DateTimeToString x:Key="dateTimeToString" />
     </UserControl.Resources>
-    <GroupBox Header="{Binding Tittle}">
+    <GroupBox Header="{Binding Title}">
         <Grid>
             <Grid.Resources>
                 <converters:FloadToStringValueConverter x:Key="floatToStringConverter" />
@@ -49,14 +49,14 @@
                    Width="Auto"
                    Margin="5"
                    HorizontalAlignment="Stretch"
-                   Content="{Binding CompanyInfo,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                   Content="{Binding From,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                    Grid.Column="1"
                    Grid.ColumnSpan="3" />
             <Label Content="Ημερομηνία:"
                    Grid.Row="1" />
             <Label Grid.Row="1"
                    Grid.Column="1"
-                   Width="100"
+                   Width="115"
                    Content="{Binding TimeGo ,ConverterParameter='dd/MM/yyyy-HH:mm', Converter={StaticResource dateTimeToString}}" />
             <Label Content="Κέρδος:"
                    Grid.Row="2"

@@ -1,11 +1,12 @@
-﻿using System;
+﻿using LATravelManager.Model.People;
+using LATravelManager.Model.Pricing.Invoices;
+using LATravelManager.Model.Services;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
-using LATravelManager.Model.People;
-using LATravelManager.Model.Services;
 
 namespace LATravelManager.Model.BookingData
 {
@@ -13,13 +14,35 @@ namespace LATravelManager.Model.BookingData
     {
         #region Constructors
 
+        private ObservableCollection<Reciept> _Reciepts;
+
+        public ObservableCollection<Reciept> Reciepts
+        {
+            get
+            {
+                return _Reciepts;
+            }
+
+            set
+            {
+                if (_Reciepts == value)
+                {
+                    return;
+                }
+
+                _Reciepts = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public Personal_Booking()
         {
             Payments = new ObservableCollection<Payment>();
             Customers = new ObservableCollection<Customer>();
             Services = new ObservableCollection<Service>();
         }
-         public DisabledInfo DisabledInfo { get; set; }
+
+        public DisabledInfo DisabledInfo { get; set; }
         public PartnerInfo PartnerInfo { get; set; }
 
         public bool Disabled { get; set; }
@@ -32,9 +55,6 @@ namespace LATravelManager.Model.BookingData
         public User DisabledBy { get; set; }
 
         #endregion Constructors
-
-
-
 
         private bool _Group;
 
@@ -56,6 +76,7 @@ namespace LATravelManager.Model.BookingData
                 RaisePropertyChanged();
             }
         }
+
         public bool VoucherSent { get; set; }
         public bool ProformaSent { get; set; }
 

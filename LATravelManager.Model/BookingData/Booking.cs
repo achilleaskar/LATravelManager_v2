@@ -1,5 +1,6 @@
 ﻿using LATravelManager.Model.Excursions;
 using LATravelManager.Model.People;
+using LATravelManager.Model.Pricing.Invoices;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
@@ -11,7 +12,26 @@ namespace LATravelManager.Model.BookingData
     public class Booking : EditTracker
     {
         #region Constructors
+        private ObservableCollection<Reciept> _Reciepts;
 
+        public ObservableCollection<Reciept> Reciepts
+        {
+            get
+            {
+                return _Reciepts;
+            }
+
+            set
+            {
+                if (_Reciepts == value)
+                {
+                    return;
+                }
+
+                _Reciepts = value;
+                RaisePropertyChanged();
+            }
+        }
         public Booking()
         {
             Payments = new ObservableCollection<Payment>();

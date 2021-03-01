@@ -4,7 +4,7 @@
     {
         public GuideService()
         {
-            Tittle = "Ξενάγηση";
+            Title = "Ξενάγηση";
         }
 
         private int _Duration;
@@ -26,6 +26,11 @@
                 _Duration = value;
                 RaisePropertyChanged();
             }
+        }
+
+        public override string GetDescription()
+        {
+            return Title+" σε "+ From ?? "";
         }
     }
 }

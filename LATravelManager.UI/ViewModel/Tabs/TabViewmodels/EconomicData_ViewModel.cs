@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using GalaSoft.MvvmLight.CommandWpf;
+using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.People;
@@ -495,34 +496,35 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
                     switch (payment.PaymentMethod)
                     {
-                        case 0:
+                        case PaymentMethod.Cash:
                             Cash += payment.Amount;
                             break;
 
-                        case 1:
+                        case PaymentMethod.Peiraeus:
                             Peiraios += payment.Amount;
                             break;
 
-                        case 2:
+                        case PaymentMethod.NBG:
                             Ethniki += payment.Amount;
                             break;
 
-                        case 3:
+                        case PaymentMethod.Eurobank:
                             Eurobank += payment.Amount;
                             break;
 
-                        case 4:
+                        case PaymentMethod.AlphaBank:
                             AlphaBank += payment.Amount;
                             break;
 
-                        case 5:
+                        case PaymentMethod.Visa:
                             VISA += payment.Amount;
                             break;
-                        case 6:
+
+                        case PaymentMethod.Viva_ONL:
                             VIVA_ONL += payment.Amount;
                             break;
 
-                        case 7:
+                        case PaymentMethod.PAYPAL:
                             PAYPAL += payment.Amount;
                             break;
                     }

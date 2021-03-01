@@ -6,12 +6,14 @@ using LATravelManager.Model.Hotels;
 using LATravelManager.Model.Lists;
 using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
+using LATravelManager.Model.Security;
 using LATravelManager.Model.Services;
 using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Data.Entity.Core;
 using System.Data.Entity.Core.Objects;
@@ -611,7 +613,7 @@ namespace LATravelManager.UI.Repositories
 
         public async Task SaveAsync()
         {
-#if DEBUG
+
             if (!Context.ChangeTracker.HasChanges())
             {
                 return;
@@ -633,10 +635,11 @@ namespace LATravelManager.UI.Repositories
             {
                 if (E.OriginalValues.PropertyNames.Contains("ModifiedDate"))
                 {
-                    //   E.Property("ModifiedDate").CurrentValue = DateTime.Now;
+                    E.Property("ModifiedDate").CurrentValue = DateTime.Now;
                 }
             });
 
+#if DEBUG
             IEnumerable<DbEntityEntry> changes = from e in Context.ChangeTracker.Entries()
                                                  where e.State != EntityState.Unchanged
                                                  select e;
@@ -734,7 +737,7 @@ namespace LATravelManager.UI.Repositories
                     var exc = relatioships.Where(r => r.Item1 is Booking && r.Item2 is Excursion).ToList();
                     if (exc.Count == 2)
                     {
-                        sb.Append($"Η κράτηση μεταφέρθηκε απο '{(exc[1].Item2 as Excursion).Name}' σε '{(exc[0].Item2 as Excursion).Name}', ");
+                        sb.Append($"Η κράτηση μεταφέρθηκε από '{(exc[1].Item2 as Excursion).Name}' σε '{(exc[0].Item2 as Excursion).Name}', ");
                     }
 
                     var cust = relatioships.Where(r => r.Item2 is Customer && r.Item1 is Reservation).ToList();
@@ -952,7 +955,8 @@ namespace LATravelManager.UI.Repositories
            .Where(c =>
            c.CreatedDate >= dateLimit &&
            c.Disabled == canceled &&
-            (!onlyPartners || c.IsPartners) &&
+           c.User.BaseLocation == StaticResources.User.BaseLocation &&
+           (!onlyPartners || c.IsPartners) &&
            (userId == 0 || c.User.Id == userId) &&
            (partnerId == 0 || c.Partner.Id == partnerId) &&
            (remainingPar == 0 || (byCheckIn && c.Services.Any(s => s.TimeGo >= checkin) && c.Services.Any(s => s.TimeGo <= checkout) || (!byCheckIn && c.CreatedDate >= checkin && c.CreatedDate <= checkout))) &&
@@ -982,7 +986,7 @@ namespace LATravelManager.UI.Repositories
         {
             DateTime limit = new DateTime(2019, 04, 01);
             return await RunTask(Context.Reservations.Where(
-                c => (category >= 0 ? (int)c.Booking.Excursion.ExcursionType.Category == category : true) &&
+                c => (category < 0 || (int)c.Booking.Excursion.ExcursionType.Category == category) &&
                   (excursionId == 0 || c.Booking.Excursion.Id == excursionId) &&
                   (userId == 0 || c.Booking.User.Id == userId) &&
                   (par == 0 || c.Booking.CheckIn >= checkin && c.Booking.CheckIn <= checkout) &&
@@ -1127,7 +1131,7 @@ namespace LATravelManager.UI.Repositories
             await RunTask(Context.Reservations
                 .Where(c =>
                 c.Booking.ReservationsInBooking.Any(r => r.CreatedDate >= dateLimit) &&
-                (category >= 0 ? (int)c.Booking.Excursion.ExcursionType.Category == category : true) &&
+                (category < 0 || (int)c.Booking.Excursion.ExcursionType.Category == category) &&
                 (excursionId == 0 || c.Booking.Excursion.Id == excursionId) &&
                 (userId == 0 || c.Booking.User.Id == userId) &&
                 (!checkinout || ((!checkInb || c.Booking.CheckIn == checkin) && (!checkoutb || c.Booking.CheckOut == checkout))) &&
@@ -1141,7 +1145,7 @@ namespace LATravelManager.UI.Repositories
             return await RunTask(Context.Reservations
             .Where(c =>
             c.Booking.ReservationsInBooking.Any(r => r.CreatedDate >= dateLimit) &&
-            (category >= 0 ? (int)c.Booking.Excursion.ExcursionType.Category == category : true) &&
+            (category < 0 || (int)c.Booking.Excursion.ExcursionType.Category == category) &&
             (excursionId == 0 || c.Booking.Excursion.Id == excursionId) &&
             (userId == 0 || c.Booking.User.Id == userId) &&
             (!checkinout || ((!checkInb || c.Booking.CheckIn == checkin) && (!checkoutb || c.Booking.CheckOut == checkout))) &&
@@ -1215,7 +1219,7 @@ namespace LATravelManager.UI.Repositories
             return await RunTask(Context.Reservations
                   .Where(c =>
                   c.Booking.ReservationsInBooking.Any(r => r.CreatedDate >= dateLimit) &&
-                  (category >= 0 ? (int)c.Booking.Excursion.ExcursionType.Category == category : true) &&
+                  (category < 0 || (int)c.Booking.Excursion.ExcursionType.Category == category) &&
                   (excursionId == 0 || c.Booking.Excursion.Id == excursionId) &&
                   (userId == 0 || c.Booking.User.Id == userId) &&
                   (!checkinout || ((!checkInb || c.Booking.CheckIn == checkin) && (!checkoutb || c.Booking.CheckOut == checkout))) &&
@@ -1371,6 +1375,7 @@ namespace LATravelManager.UI.Repositories
                .Include(f => f.Customers)
                .Include(f => f.Partner)
                .Include(f => f.File)
+               .Include(f => f.Reciepts)
                .FirstOrDefaultAsync);
         }
 
@@ -1753,10 +1758,27 @@ namespace LATravelManager.UI.Repositories
                     .Include(c => c.Activity)
                     .ToListAsync);
             }
-            return (await RunTask(Context.Companies.Select(c => new { c.CompanyName, c.Id })
-                  .ToListAsync))?.Select(t => new Company { CompanyName = t.CompanyName, Id = t.Id }).ToList();
+            return (await RunTask(Context.Companies
+                .Select(c => new { c.CompanyName, c.Id })
+                .ToListAsync))?.Select(t => new Company { CompanyName = t.CompanyName, Id = t.Id }).ToList();
         }
 
+        internal async Task LoadAllLoginsAsync()
+        {
+            await Context.LoginData
+                .Where(l => l.LastEditedBy.BaseLocation == StaticResources.User.BaseLocation)
+                .Include(l => l.LastEditedBy)
+                .LoadAsync();
+        }
+
+        internal async Task LoadAllLoginDataChangesAsync()
+        {
+            await Context.ChangesInBooking
+                .Where(l => l.ChangeType == ChangeType.LoginData && 
+                l.User.BaseLocation == StaticResources.User.BaseLocation)
+                .Include(l => l.User).OrderByDescending(t => t.Id)
+                .LoadAsync();
+        }
         #endregion Methods
     }
 }

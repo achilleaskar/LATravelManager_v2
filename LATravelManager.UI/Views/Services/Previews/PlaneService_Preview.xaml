@@ -13,7 +13,7 @@
     <UserControl.Resources>
         <converters:DateTimeToString x:Key="dateTimeToString" />
     </UserControl.Resources>
-    <GroupBox Header="{Binding Tittle}">
+    <GroupBox Header="{Binding Title}">
         <Grid HorizontalAlignment="Stretch">
             <Grid.Resources>
                 <converters:FloadToStringValueConverter x:Key="floatToStringConverter" />
@@ -112,10 +112,12 @@
                 <StackPanel Orientation="Horizontal"
                             Visibility="{Binding Stop,  Converter={StaticResource booleanToVisibilityConverter}}">
                     <Label Content="Πόλη:"
+                           VerticalAlignment="Center"
                            Grid.Row="4"
                            Grid.Column="2" />
-                    <TextBox Text="{Binding Service.StopPlace}"
-                             Grid.Row="4" VerticalAlignment="Center"
+                    <TextBlock Text="{Binding StopPlace}"
+                             Grid.Row="4" 
+                               VerticalAlignment="Bottom"
                              Width="120"
                              Grid.Column="3" />
                 </StackPanel>

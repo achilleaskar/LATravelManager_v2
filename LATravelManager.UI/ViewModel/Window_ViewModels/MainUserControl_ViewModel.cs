@@ -58,6 +58,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             OpenVehiclesEditCommand = new RelayCommand(OpenVehiclesWindow, CanEditWindows);
             OpenOptionalsEditCommand = new RelayCommand(OpenOpionalsWindow, CanEditWindows);
             OpenTaxDataEditCommand = new RelayCommand(async () => await OpenTaxDataEditWindow(), CanEditWindows);
+            OpenLoginDataManagementCommand = new RelayCommand(async () => await OpenLoginDataManagementWindow(), CanEditWindows);
 
             ToggleTestModeCommand = new RelayCommand(async () => await ToggleTestMode());
 
@@ -88,6 +89,15 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             await vm.LoadAsync();
             Mouse.OverrideCursor = Cursors.Arrow;
             MessengerInstance.Send(new OpenChildWindowCommand(new TaxData_Management_Window { DataContext = vm }));
+        }
+
+        private async Task OpenLoginDataManagementWindow()
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+            var vm = new LoginDataManagement_ViewModel();
+            await vm.LoadAsync();
+            Mouse.OverrideCursor = Cursors.Arrow;
+            MessengerInstance.Send(new OpenChildWindowCommand(new LoginDataManagement_Window { DataContext = vm }));
         }
 
         private bool CanSetOk()
@@ -293,6 +303,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
         public RelayCommand LogOutCommand { get; set; }
         public RelayCommand ToggleTestModeCommand { get; set; }
+        public RelayCommand OpenLoginDataManagementCommand { get; set; }
         public RelayCommand OpenTaxDataEditCommand { get; set; }
 
         private string _TestmodeMessage;

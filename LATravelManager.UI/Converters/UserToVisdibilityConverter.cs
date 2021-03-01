@@ -11,9 +11,9 @@ namespace LATravelManager.UI.Converters
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (parameter == null && value is int)
+            if (parameter == null && value is int level)
             {
-                if (Helpers.StaticResources.User.Level <= (int)value)
+                if (Helpers.StaticResources.User.Level <= level)
                     return Visibility.Visible;
                 else
                     return Visibility.Collapsed;

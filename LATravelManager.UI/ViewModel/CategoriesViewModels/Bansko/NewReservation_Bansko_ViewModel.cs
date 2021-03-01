@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using LATravelManager.Model.Excursions;
+using LATravelManager.Model.Pricing.Invoices;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
@@ -27,6 +28,8 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
                     ? await GenericRepository.GetFullBookingByIdAsync(id)
                     : await CreateNewBooking();
 
+                if (id > 0)
+                    await GenericRepository.GetAllAsync<Reciept>(r => r.BookingId == id);
                 //Id = id;
 
                 InitializeBooking(booking);

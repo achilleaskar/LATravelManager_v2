@@ -4,7 +4,13 @@
     {
         public TransferService()
         {
-            Tittle = "Transfer";
+            Title = "Transfer";
+        }
+
+        public override string GetDescription()
+        {
+            return $"Transfer{(!string.IsNullOrWhiteSpace(From) ? " από " + From : "")+" " + (!string.IsNullOrWhiteSpace(To) ? " για " + To : "")}";
+
         }
     }
 }

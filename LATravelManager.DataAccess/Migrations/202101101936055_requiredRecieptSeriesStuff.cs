@@ -7,7 +7,7 @@
     {
         public override void Up()
         {
-            AlterColumn("dbo.RecieptSeries", "Letter", c => c.String(maxLength: 20, unicode: false));
+           // AlterColumn("dbo.RecieptSerie", "Letter", c => c.String(maxLength: 20, unicode: false));
         }
         
         public override void Down()

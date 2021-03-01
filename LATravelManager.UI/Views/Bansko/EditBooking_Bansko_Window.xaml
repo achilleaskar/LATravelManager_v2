@@ -1,12 +1,12 @@
 ﻿<Window x:Class="LATravelManager.UI.Views.Bansko.EditBooking_Bansko_Window"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:helpers="clr-namespace:LATravelManager.UI.Helpers"
         xmlns:enum="clr-namespace:LATravelManager.Model;assembly=LATravelManager.Model"
         xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
-        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:helpers="clr-namespace:LATravelManager.UI.Helpers"
         xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko"
         d:DataContext="{d:DesignInstance viewmodels:NewReservation_Bansko_ViewModel}"
         mc:Ignorable="d"
@@ -19,6 +19,7 @@
     <Window.Resources>
         <converters:UserToVisibility x:Key="UserToVisibilityConverter" />
         <converters:BoolToColorConverter x:Key="BrushColorConverter" />
+        <converters:EnumConverter x:Key="EnumConverter" />
         <converters:FloadToStringValueConverter x:Key="FtoSConverter" />
         <converters:IsGroupConverter x:Key="isGroupConverter" />
         <converters:RoomsLeftToVisibilityConverter x:Key="RoomsLeftToVisibilityConverter" />
@@ -606,18 +607,10 @@
                                                   Margin="0,5"
                                                   VerticalAlignment="Center"
                                                   HorizontalAlignment="Center"
-                                                  SelectedIndex="{Binding Payment.PaymentMethod,NotifyOnValidationError=True}"
+                                                  ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:PaymentMethod}}}"
+                                                  SelectedItem="{Binding Payment.PaymentMethod,NotifyOnValidationError=True}"
                                                   Grid.Column="1"
-                                                  Width="80">
-                                            <ComboBoxItem>Μετρητά</ComboBoxItem>
-                                            <ComboBoxItem>Πειραιώς</ComboBoxItem>
-                                            <ComboBoxItem>Εθνική</ComboBoxItem>
-                                            <ComboBoxItem>Eurobank</ComboBoxItem>
-                                            <ComboBoxItem>Alpha Bank</ComboBoxItem>
-                                            <ComboBoxItem>VISA</ComboBoxItem>
-                                            <ComboBoxItem>VIVA_ONL</ComboBoxItem>
-                                            <ComboBoxItem>PAYPAL</ComboBoxItem>
-                                        </ComboBox>
+                                                  Width="90" />
                                     </StackPanel>
                                     <StackPanel Grid.Row="1"
                                                 Margin="0,5,0,0"
@@ -720,7 +713,6 @@
                             HorizontalAlignment="Left"
                             VerticalAlignment="Top">
                     <TabItem Header="Εξτρά Υπηρεσίες">
-
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -912,7 +904,6 @@
                           Grid.Row="0"
                           Grid.Column="0"
                           VerticalAlignment="Top">
-
                     <StackPanel>
                         <StackPanel.Resources>
                             <Style TargetType="ComboBox">
@@ -1217,8 +1208,6 @@
                             </DataGrid>
                         </StackPanel>
                     </StackPanel>
-
-
                 </GroupBox>
                 <Grid HorizontalAlignment="Left"
                       VerticalAlignment="Top"
@@ -1470,8 +1459,7 @@
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock VerticalAlignment="center"
                                                Margin="0 0 5 0">
-                                Προσθήκη Πελ.
-                                    </TextBlock>
+                                Προσθήκη Πελ.</TextBlock>
                                     <iconPacks:PackIconFontAwesome Kind="SearchSolid"
                                                                    VerticalAlignment="Center" />
                                 </StackPanel>
@@ -1514,63 +1502,131 @@
                         </StackPanel>
                     </GroupBox>
                 </Grid>
-                <GroupBox Grid.Column="2"
-                          Grid.ColumnSpan="2"
-                          VerticalAlignment="Top"
-                          HorizontalAlignment="Left"
-                          Header="Ιστορικό Επεξεργασίας"
-                          Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}">
-                    <ListView Name="edits"
-                              Focusable="False"
-                              Height="252"
-                              Margin="5,5,5,0"
-                              Width="635"
-                              ItemsSource="{Binding BookingWr.ChangesInBooking}">
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="{x:Type ListViewItem}">
-                                <Setter Property="BorderBrush"
-                                        Value="Gray" />
-                                <Setter Property="BorderThickness"
-                                        Value="0,0,0,1" />
-                            </Style>
-                        </ListView.ItemContainerStyle>
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn Header="Ημερομηνία">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yy-HH:mm}'}"
-                                                       VerticalAlignment="Top"
-                                                       Width="85" />
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
-                                <GridViewColumn Header="Χρήστης">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding User.UserName}"
-                                                       VerticalAlignment="Top"
-                                                       Width="55" />
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
-                                <GridViewColumn Header="Σημείωση">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Description}"
-                                                       TextWrapping="Wrap"
-                                                       Background="LightGoldenrodYellow"
-                                                       Margin="0,0,0,3"
-                                                       VerticalAlignment="Top"
-                                                       MaxHeight="150"
-                                                       Width="425" />
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
-                            </GridView>
-                        </ListView.View>
-                    </ListView>
-                </GroupBox>
+                <TabControl Grid.Column="2"
+                            Grid.ColumnSpan="2"
+                            VerticalAlignment="Top"
+                            HorizontalAlignment="Left">
+                    <!--Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}">-->
+                    <TabItem Header="Ιστορικό Επεξεργασίας">
+                        <ListView Name="edits"
+                                  Focusable="False"
+                                  Height="252"
+                                  Margin="5,5,5,0"
+                                  Width="635"
+                                  ItemsSource="{Binding BookingWr.ChangesInBooking}">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="{x:Type ListViewItem}">
+                                    <Setter Property="BorderBrush"
+                                            Value="Gray" />
+                                    <Setter Property="BorderThickness"
+                                            Value="0,0,0,1" />
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Ημερομηνία">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yy-HH:mm}'}"
+                                                           VerticalAlignment="Top"
+                                                           Width="85" />
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="Χρήστης">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding User.UserName}"
+                                                           VerticalAlignment="Top"
+                                                           Width="55" />
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="Σημείωση">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Description}"
+                                                           TextWrapping="Wrap"
+                                                           Background="LightGoldenrodYellow"
+                                                           Margin="0,0,0,3"
+                                                           VerticalAlignment="Top"
+                                                           MaxHeight="150"
+                                                           Width="425" />
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </TabItem>
+                    <TabItem Header="Παραστατικά">
+                        <ListView Focusable="False"
+                                  Height="142"
+                                  SelectedItem="{Binding SelectedReciept}"
+                                  Width="398"
+                                  SelectionMode="Single"
+                                  ItemsSource="{Binding BookingWr.Reciepts}">
+                            <ListView.Resources>
+                                <ContextMenu x:Key="ItemContextMenu">
+                                    <MenuItem Header="Διαγραφη"
+                                              IsEnabled="False"
+                                              Command="{Binding DataContext.DeletePaymentCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
+                                        <MenuItem.Icon>
+                                            <Image MaxHeight="20"
+                                                   Stretch="Fill" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="Αντικατάσταση Αρχείου"
+                                              Command="{Binding DataContext.ReplaceFileCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TabControl}}">
+                                        <MenuItem.Icon>
+                                            <Image MaxHeight="20"
+                                                   Stretch="Fill" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </ContextMenu>
+                            </ListView.Resources>
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="{x:Type ListViewItem}">
+                                    <Setter Property="ContextMenu"
+                                            Value="{StaticResource ItemContextMenu}" />
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Ημερομηνία"
+                                                    Width="95"
+                                                    DisplayMemberBinding="{Binding Date, StringFormat='{}{0:dd/MM/yy-HH:mm}'}" />
+                                    <GridViewColumn Header="Ποσό"
+                                                    Width="40"
+                                                    DisplayMemberBinding="{Binding Total,Converter={StaticResource FtoSConverter}}" />
+                                    <GridViewColumn Header="Τύπος"
+                                                    Width="70"
+                                                    DisplayMemberBinding="{Binding RecieptType,Converter={StaticResource EnumConverter}}" />
+                                    <!--DisplayMemberBinding="{Binding Method, Converter={StaticResource IntToPaymentMethod}}" />-->
+                                    <GridViewColumn Header="Χρήστης"
+                                                    Width="70"
+                                                    DisplayMemberBinding="{Binding User.UserName}" />
+                                    <GridViewColumn Header="Αρχείο">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock HorizontalAlignment="Stretch"
+                                                           Margin="5 0" Cursor="Hand"
+                                                           VerticalAlignment="Bottom">
+                                                    <Hyperlink Command="{Binding DataContext.OpenFileCommand,RelativeSource={RelativeSource AncestorType=TabControl}}"
+                                                               CommandParameter="{Binding}"
+                                                               Cursor="Hand">
+                                                        <TextBlock Text="{Binding FileName}"
+                                                                   Cursor="Hand" />
+                                                    </Hyperlink>
+                                                </TextBlock>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </TabItem>
+                </TabControl>
             </Grid>
         </Grid>
     </ScrollViewer>

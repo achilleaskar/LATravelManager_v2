@@ -11,6 +11,7 @@ using GalaSoft.MvvmLight.CommandWpf;
 using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.People;
+using LATravelManager.Model.Pricing.Invoices;
 using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
@@ -406,6 +407,9 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
                       ? await GenericRepository.GetFullThirdPartyBookingByIdAsync(id)
                       : await CreateNewBooking();
 
+                if (id > 0)
+                    await GenericRepository.GetAllAsync<Reciept>(r => r.ThirdParty_BookingId == id);
+
                 InitializeBooking(booking);
 
                 await ResetAllRefreshableDataASync();
@@ -610,7 +614,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
 
                 if (Payment.Amount > 0)
                 {
-                    ThirdPartyWr.Payments.Add(new Payment { Amount = Payment.Amount, Outgoing = Payment.Outgoing, Comment = Payment.Comment, Date = DateTime.Now, PaymentMethod = Payment.PaymentMethod, User = await GenericRepository.GetByIdAsync<User>(StaticResources.User.Id), Checked = (Payment.PaymentMethod == 0 || Payment.PaymentMethod == 5) ? (bool?)false : null });
+                    ThirdPartyWr.Payments.Add(new Payment { Amount = Payment.Amount, Outgoing = Payment.Outgoing, Comment = Payment.Comment, Date = DateTime.Now, PaymentMethod = Payment.PaymentMethod, User = await GenericRepository.GetByIdAsync<User>(StaticResources.User.Id), Checked = (Payment.PaymentMethod == PaymentMethod.Cash || Payment.PaymentMethod == PaymentMethod.Visa) ? (bool?)false : null });
                 }
 
                 if (ThirdPartyWr.Id == 0)

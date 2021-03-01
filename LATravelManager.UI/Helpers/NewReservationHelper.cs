@@ -270,11 +270,11 @@ public class NewReservationHelper : ViewModelBase
     {
         if (Payment != null && BookingWr != null && Payment.Amount > 0)
         {
-            BookingWr.Payments.Add(new Payment { Amount = Payment.Amount, Comment = Payment.Comment, Date = DateTime.Now, PaymentMethod = Payment.PaymentMethod, User = await context.GetByIdAsync<User>(StaticResources.User.Id), Checked = (Payment.PaymentMethod == 0 || Payment.PaymentMethod == 5) ? (bool?)false : null });
+            BookingWr.Payments.Add(new Payment { Amount = Payment.Amount, Comment = Payment.Comment, Date = DateTime.Now, PaymentMethod = Payment.PaymentMethod, User = await context.GetByIdAsync<User>(StaticResources.User.Id), Checked = (Payment.PaymentMethod == PaymentMethod.Cash || Payment.PaymentMethod == PaymentMethod.Visa) ? (bool?)false : null });
         }
         if (BookingWr != null && BookingWr.IsPartners && BookingWr.Partner != null && !string.IsNullOrEmpty(BookingWr.PartnerEmail))
         {
-            if (string.IsNullOrEmpty(BookingWr.Partner.Emails) )
+            if (string.IsNullOrEmpty(BookingWr.Partner.Emails))
             {
                 BookingWr.Partner.Emails += BookingWr.PartnerEmail;
             }

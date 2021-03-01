@@ -677,18 +677,10 @@
                                               Margin="0,5"
                                               VerticalAlignment="Center"
                                               HorizontalAlignment="Center"
-                                              SelectedIndex="{Binding Payment.PaymentMethod,NotifyOnValidationError=True}"
+                                              ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:PaymentMethod}}}"
+                                              SelectedItem="{Binding Payment.PaymentMethod,NotifyOnValidationError=True}"
                                               Grid.Column="1"
-                                              Width="80">
-                                        <ComboBoxItem>Μετρητά</ComboBoxItem>
-                                        <ComboBoxItem>Πειραιώς</ComboBoxItem>
-                                        <ComboBoxItem>Εθνική</ComboBoxItem>
-                                        <ComboBoxItem>Eurobank</ComboBoxItem>
-                                        <ComboBoxItem>Alpha Bank</ComboBoxItem>
-                                        <ComboBoxItem>VISA</ComboBoxItem>
-                                        <ComboBoxItem>VIVA_ONL</ComboBoxItem>
-                                        <ComboBoxItem>PAYPAL</ComboBoxItem>
-                                    </ComboBox>
+                                              Width="90" />
                                 </StackPanel>
                                 <StackPanel Grid.Row="1"
                                             Margin="5,5,0,0"

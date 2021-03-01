@@ -13,7 +13,7 @@ namespace LATravelManager.UI.Converters
         {
             if (value is HotelCategoryEnum e)
             {
-                return HotelCategoryDictionary[e] as string;
+                return HotelCategoryDictionary[e];
             }
             return null;
         }

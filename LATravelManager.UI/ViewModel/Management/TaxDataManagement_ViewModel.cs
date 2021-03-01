@@ -403,7 +403,7 @@ namespace LATravelManager.UI.ViewModel.Management
         {
             Companies = new ObservableCollection<Company>((await BasicDataManager.Context.GetAllAsync<Company>(c => !c.Disabled)).OrderBy(c => c.CompanyName));
             CompanyActivities = new ObservableCollection<CompanyActivity>((await BasicDataManager.Context.GetAllAsync<CompanyActivity>()).OrderBy(a => a.Name));
-            Series = new ObservableCollection<RecieptSeries>((await BasicDataManager.Context.GetAllAsync<RecieptSeries>()).OrderBy(a => a.DateStarted));
+            Series = new ObservableCollection<RecieptSeries>((await BasicDataManager.Context.GetAllAsync<RecieptSeries>(s=>s.AgencyId==StaticResources.User.BaseLocation)).OrderBy(a => a.DateStarted));
 
             Countries = BasicDataManager.Countries;
 
@@ -552,6 +552,7 @@ namespace LATravelManager.UI.ViewModel.Management
                     }
                     SelectedSerie.SerieCode += ("-" + SelectedSerie.Letter ?? "").TrimEnd('-');
                     SelectedSerie.DateStarted = DateTime.Today;
+                    SelectedSerie.AgencyId = StaticResources.User.BaseLocation;
                     BasicDataManager.Add(SelectedSerie);
                     await BasicDataManager.SaveAsync();
                 }

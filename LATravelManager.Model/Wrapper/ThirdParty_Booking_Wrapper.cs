@@ -1,5 +1,6 @@
 ﻿using LATravelManager.Model.BookingData;
 using LATravelManager.Model.People;
+using LATravelManager.Model.Pricing.Invoices;
 using LATravelManager.UI.Helpers;
 using System;
 using System.Collections.ObjectModel;
@@ -13,6 +14,8 @@ namespace LATravelManager.Model.Wrapper
     {
         #region Constructors
 
+
+       
         public ThirdParty_Booking_Wrapper() : this(new ThirdParty_Booking())
         {
         }
@@ -114,6 +117,12 @@ namespace LATravelManager.Model.Wrapper
         public CustomFile File
         {
             get { return GetValue<CustomFile>(); }
+            set { SetValue(value); }
+        }
+
+         public ObservableCollection<Reciept> Reciepts
+        {
+            get { return GetValue<ObservableCollection<Reciept>>(); }
             set { SetValue(value); }
         }
 

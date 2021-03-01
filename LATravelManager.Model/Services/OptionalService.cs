@@ -4,7 +4,12 @@
     {
         public OptionalService()
         {
-            Tittle = "Προαιρετική";
+            Title = "Προαιρετική";
+        }
+
+        public override string GetDescription()
+        {
+            return CompanyInfo;
         }
     }
 }

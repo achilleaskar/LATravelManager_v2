@@ -15,7 +15,7 @@
     <UserControl.Resources>
         <converters:DateTimeToString x:Key="dateTimeToString" />
     </UserControl.Resources>
-    <GroupBox Header="{Binding Tittle}">
+    <GroupBox Header="{Binding Title}">
         <Grid>
             <Grid.Resources>
                 <converters:FloadToStringValueConverter x:Key="floatToStringConverter" />

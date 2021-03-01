@@ -9,7 +9,7 @@ namespace LATravelManager.Model.Services
         public PlaneService()
         {
             TimeGo = DateTime.Now.AddDays(7);
-            Tittle = "Αεροπορικό";
+            Title = "Αεροπορικό";
             Allerretour = true;
             To = From = "";
             StopArrive = new TimeSpan(0);
@@ -148,6 +148,11 @@ namespace LATravelManager.Model.Services
                 _StopPlace = value.ToUpper();
                 RaisePropertyChanged();
             }
+        }
+
+        public override string GetDescription()
+        {
+            return $"Αεροπορικό εισιτήριο{(!string.IsNullOrWhiteSpace(From) ? " από " + From : "") +" "+ (!string.IsNullOrWhiteSpace(To) ? " για " + To : "")}";
         }
 
         #endregion Properties

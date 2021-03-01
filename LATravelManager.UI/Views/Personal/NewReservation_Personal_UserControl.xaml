@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:helpers="clr-namespace:LATravelManager.UI.Helpers"
              xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
+             xmlns:enum="clr-namespace:LATravelManager.Model;assembly=LATravelManager.Model"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:serviceViews="clr-namespace:LATravelManager.UI.Views.Services"
              xmlns:services="clr-namespace:LATravelManager.Model.Services;assembly=LATravelManager.Model"
@@ -21,6 +22,7 @@
         <converters:BoolToColorConverter x:Key="BrushColorConverter" />
         <converters:FloadToStringValueConverter x:Key="FtoSConverter" />
         <converters:UserToVisibility x:Key="UserToVisibilityConverter" />
+        <converters:EnumConverter x:Key="EnumConverter" />
         <converters:FloadToStringValueConverter x:Key="floatToStringConverter" />
         <converters:SelectedIndexToForegroundConverter x:Key="SelectedIndexToForegroundConverter" />
         <DataTemplate x:Key="EnabledTemplate"
@@ -208,7 +210,6 @@
                                                 MinWidth="80"
                                                 MaxWidth="200"
                                                 Binding="{Binding Tel, UpdateSourceTrigger=PropertyChanged}" />
-                            
                             <DataGridTemplateColumn Header="Αναχώρηση"
                                                     Width="100"
                                                     CellStyle="{StaticResource DataGridCellStyle}">
@@ -341,18 +342,10 @@
                                                   Margin="0,5"
                                                   VerticalAlignment="Center"
                                                   HorizontalAlignment="Center"
-                                                  SelectedIndex="{Binding Payment.PaymentMethod,NotifyOnValidationError=True}"
+                                                  ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:PaymentMethod}}}"
+                                                  SelectedItem="{Binding Payment.PaymentMethod,NotifyOnValidationError=True}"
                                                   Grid.Column="1"
-                                                  Width="80">
-                                            <ComboBoxItem>Μετρητά</ComboBoxItem>
-                                            <ComboBoxItem>Πειραιώς</ComboBoxItem>
-                                            <ComboBoxItem>Εθνική</ComboBoxItem>
-                                            <ComboBoxItem>Eurobank</ComboBoxItem>
-                                            <ComboBoxItem>Alpha Bank</ComboBoxItem>
-                                            <ComboBoxItem>VISA</ComboBoxItem>
-                                            <ComboBoxItem>VIVA_ONL</ComboBoxItem>
-                                            <ComboBoxItem>PAYPAL</ComboBoxItem>
-                                        </ComboBox>
+                                                  Width="90" />
                                     </StackPanel>
                                     <StackPanel Grid.Row="1"
                                                 Margin="0,5,0,0"
@@ -395,59 +388,135 @@
                                 </ContentControl>
                             </Border>
                         </StackPanel>
-                        <StackPanel Grid.Row="1"
-                                    Orientation="Vertical">
-                            <TextBlock Text=" Ιστορικό Πληρωμών"
-                                       HorizontalAlignment="Left" />
-                            <ListView Name="payments"
-                                      Focusable="False"
-                                      Height="142"
-                                      SelectedItem="{Binding SelectedPayment}"
-                                      Width="425"
-                                      ItemsSource="{Binding PersonalWr.Payments}">
-                                <ListView.Resources>
-                                    <ContextMenu x:Key="ItemContextMenu">
-                                        <MenuItem Header="Διαγραφη"
-                                                  Command="{Binding DataContext.DeletePaymentCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
-                                            <MenuItem.Icon>
-                                                <Image MaxHeight="20"
-                                                       Stretch="Fill" />
-                                            </MenuItem.Icon>
-                                        </MenuItem>
-                                        <MenuItem Header="Εκτ. Απόδειξης"
-                                                  Command="{Binding DataContext.PrintRecieptCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
-                                            <MenuItem.Icon>
-                                                <Image MaxHeight="20"
-                                                       Stretch="Fill" />
-                                            </MenuItem.Icon>
-                                        </MenuItem>
-                                    </ContextMenu>
-                                </ListView.Resources>
-                                <ListView.ItemContainerStyle>
-                                    <Style TargetType="{x:Type ListViewItem}">
-                                        <Setter Property="ContextMenu"
-                                                Value="{StaticResource ItemContextMenu}" />
-                                    </Style>
-                                </ListView.ItemContainerStyle>
-                                <ListView.View>
-                                    <GridView>
-                                        <GridViewColumn Header="Ημερομηνία"
-                                                        Width="115"
-                                                        DisplayMemberBinding="{Binding Date, StringFormat='{}{0:dd/MM/yyyy-HH:mm}'}" />
-                                        <GridViewColumn Header="Ποσό"
-                                                        Width="40"
-                                                        DisplayMemberBinding="{Binding Amount,Converter={StaticResource floatToStringConverter}}" />
-                                        <GridViewColumn Header="Μέθοδος"
-                                                        Width="70" />
-                                        <GridViewColumn Header="Χρήστης"
-                                                        Width="80"
-                                                        DisplayMemberBinding="{Binding User.UserName}" />
-                                        <GridViewColumn Header="Σημείωση"
-                                                        DisplayMemberBinding="{Binding Comment}" />
-                                    </GridView>
-                                </ListView.View>
-                            </ListView>
-                        </StackPanel>
+                        <TabControl Grid.Row="1">
+                            <TabItem Header="Ιστορικό Πληρωμών">
+                                <ListView Name="payments"
+                                          Focusable="False"
+                                          Height="120"
+                                          SelectedItem="{Binding SelectedPayment}"
+                                          Width="425"
+                                          ItemsSource="{Binding PersonalWr.Payments}">
+                                    <ListView.Resources>
+                                        <ContextMenu x:Key="ItemContextMenu">
+                                            <MenuItem Header="Διαγραφη"
+                                                      Command="{Binding DataContext.DeletePaymentCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
+                                                <MenuItem.Icon>
+                                                    <Image MaxHeight="20"
+                                                           Stretch="Fill" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="Εκτ. Απόδειξης"
+                                                      Command="{Binding DataContext.PrintRecieptCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
+                                                <MenuItem.Icon>
+                                                    <Image MaxHeight="20"
+                                                           Stretch="Fill" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="Εκτ. Τιμολογίου"
+                                                      Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
+                                                      CommandParameter="{Binding}"
+                                                      Command="{Binding DataContext.OpenInvoicesWindowCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
+                                                <MenuItem.Icon>
+                                                    <Image MaxHeight="20"
+                                                           Stretch="Fill" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                        </ContextMenu>
+                                    </ListView.Resources>
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="{x:Type ListViewItem}">
+                                            <Setter Property="ContextMenu"
+                                                    Value="{StaticResource ItemContextMenu}" />
+                                        </Style>
+                                    </ListView.ItemContainerStyle>
+                                    <ListView.View>
+                                        <GridView>
+                                            <GridViewColumn Header="Ημερομηνία"
+                                                            Width="115"
+                                                            DisplayMemberBinding="{Binding Date, StringFormat='{}{0:dd/MM/yyyy-HH:mm}'}" />
+                                            <GridViewColumn Header="Ποσό"
+                                                            Width="40"
+                                                            DisplayMemberBinding="{Binding Amount,Converter={StaticResource floatToStringConverter}}" />
+                                            <GridViewColumn Header="Μέθοδος"
+                                                            Width="70" />
+                                            <GridViewColumn Header="Χρήστης"
+                                                            Width="80"
+                                                            DisplayMemberBinding="{Binding User.UserName}" />
+                                            <GridViewColumn Header="Σημείωση"
+                                                            DisplayMemberBinding="{Binding Comment}" />
+                                        </GridView>
+                                    </ListView.View>
+                                </ListView>
+                            </TabItem>
+                            <TabItem Header="Παραστατικά">
+                                <ListView Focusable="False"
+                                          Height="142"
+                                          SelectedItem="{Binding SelectedReciept}"
+                                          Width="398"
+                                          SelectionMode="Single"
+                                          ItemsSource="{Binding PersonalWr.Reciepts}">
+                                    <ListView.Resources>
+                                        <ContextMenu x:Key="ItemContextMenu">
+                                            <MenuItem Header="Διαγραφη"
+                                                      IsEnabled="False"
+                                                      Command="{Binding DataContext.DeletePaymentCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
+                                                <MenuItem.Icon>
+                                                    <Image MaxHeight="20"
+                                                           Stretch="Fill" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="Αντικατάσταση Αρχείου"
+                                                      Command="{Binding DataContext.ReplaceFileCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TabControl}}">
+                                                <MenuItem.Icon>
+                                                    <Image MaxHeight="20"
+                                                           Stretch="Fill" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                        </ContextMenu>
+                                    </ListView.Resources>
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="{x:Type ListViewItem}">
+                                            <Setter Property="ContextMenu"
+                                                    Value="{StaticResource ItemContextMenu}" />
+                                        </Style>
+                                    </ListView.ItemContainerStyle>
+                                    <ListView.View>
+                                        <GridView>
+                                            <GridViewColumn Header="Ημερομηνία"
+                                                            Width="95"
+                                                            DisplayMemberBinding="{Binding Date, StringFormat='{}{0:dd/MM/yy-HH:mm}'}" />
+                                            <GridViewColumn Header="Ποσό"
+                                                            Width="40"
+                                                            DisplayMemberBinding="{Binding Total,Converter={StaticResource FtoSConverter}}" />
+                                            <GridViewColumn Header="Τύπος"
+                                                            Width="70"
+                                                            DisplayMemberBinding="{Binding RecieptType,Converter={StaticResource EnumConverter}}" />
+                                            <!--DisplayMemberBinding="{Binding Method, Converter={StaticResource IntToPaymentMethod}}" />-->
+                                            <GridViewColumn Header="Χρήστης"
+                                                            Width="70"
+                                                            DisplayMemberBinding="{Binding User.UserName}" />
+                                            <GridViewColumn Header="Αρχείο">
+                                                <GridViewColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock HorizontalAlignment="Stretch"
+                                                                   Margin="5 0"
+                                                                   Cursor="Hand"
+                                                                   VerticalAlignment="Bottom">
+                                                    <Hyperlink Command="{Binding DataContext.OpenFileCommand,RelativeSource={RelativeSource AncestorType=TabControl}}"
+                                                               CommandParameter="{Binding}"
+                                                               Cursor="Hand">
+                                                        <TextBlock Text="{Binding FileName}"
+                                                                   Cursor="Hand" />
+                                                    </Hyperlink>
+                                                </TextBlock>
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                            </GridViewColumn>
+                                        </GridView>
+                                    </ListView.View>
+                                </ListView>
+                            </TabItem>
+                        </TabControl>
                     </Grid>
                 </GroupBox>
             </StackPanel>
@@ -466,6 +535,7 @@
                                     <ComboBox SelectedItem="{Binding SelectedServiceViewModel}"
                                               Width="95"
                                               ItemsSource="{Binding Templates}"
+                                              VerticalAlignment="Center"
                                               DisplayMemberPath="Service"
                                               HorizontalAlignment="Left"
                                               Margin="5 0" />
@@ -576,9 +646,9 @@
                                                Text="Group" />
                                     <CheckBox IsChecked="{Binding PersonalWr.Group,UpdateSourceTrigger=PropertyChanged}"
                                               VerticalAlignment="Center"
-                                              HorizontalAlignment="Center" 
+                                              HorizontalAlignment="Center"
                                               Checked="CheckBox_Checked"
-                                              Unchecked="CheckBox_Checked"/>
+                                              Unchecked="CheckBox_Checked" />
                                 </StackPanel>
                                 <Separator />
                                 <StackPanel Orientation="Horizontal"
@@ -732,15 +802,12 @@
                                         Command="{Binding ClearBookingCommand}"
                                         Click="Button_Click" />
                                 <Button Margin="0,5,5,0"
-                            Command="{Binding SearchForCustomerCommand}" >
+                                        Command="{Binding SearchForCustomerCommand}">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock VerticalAlignment="center" Margin="0 0 5 0">
-                                Προσθήκη Πελ.
-                                        </TextBlock>
-                                        <iconPacks:PackIconFontAwesome
-                                Kind="SearchSolid"
-                                VerticalAlignment="Center"
-                                 />
+                                        <TextBlock VerticalAlignment="center"
+                                                   Margin="0 0 5 0">Προσθήκη Πελ.</TextBlock>
+                                        <iconPacks:PackIconFontAwesome Kind="SearchSolid"
+                                                                       VerticalAlignment="Center" />
                                     </StackPanel>
                                 </Button>
                                 <TextBlock Text="{Binding PersonalWr.ErrorsInCanSaveBooking}"
@@ -767,12 +834,11 @@
                             <ListView.Resources>
                                 <ContextMenu x:Key="ItemContextMenu">
                                     <MenuItem Header="Επεξεργασία"
-                                              Command="{Binding DataContext.EditServiceCommand,ConverterParameter=Binding,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}">
-                                        <MenuItem.Icon>
-                                            <Image MaxHeight="20"
-                                                   Stretch="Fill" />
-                                        </MenuItem.Icon>
-                                    </MenuItem>
+                                              Command="{Binding DataContext.EditServiceCommand,ConverterParameter=Binding,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" />
+                                    <MenuItem Header="Τιμολόγιο"
+                                              CommandParameter="{Binding}"
+                                              Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
+                                              Command="{Binding DataContext.OpenInvoicesWindowCommand,ConverterParameter=Binding,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" />
                                 </ContextMenu>
                                 <DataTemplate DataType="{x:Type services:PlaneService}">
                                     <ServicePreviews:PlaneService_Preview />

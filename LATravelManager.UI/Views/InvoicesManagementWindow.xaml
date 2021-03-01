@@ -1,23 +1,25 @@
 ﻿<Window x:Class="LATravelManager.UI.Views.InvoicesManagementWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:LATravelManager.UI.Views"
-        mc:Ignorable="d"
-        xmlns:helpers="clr-namespace:LATravelManager.UI.Helpers"
         xmlns:enum="clr-namespace:LATravelManager.Model;assembly=LATravelManager.Model"
         xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
-        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:helpers="clr-namespace:LATravelManager.UI.Helpers"
         xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel"
+        mc:Ignorable="d"
         d:DataContext="{d:DesignInstance viewmodels:InvoicesManagement_ViewModel}"
         WindowStartupLocation="CenterScreen"
         Title="Δημιουργία Παραστατικού"
         Height="950"
+        Language="el-GR"
         Closing="Window_Closing"
         SizeToContent="Width">
+    <!--950-->
     <Window.Resources>
         <converters:EnumConverter x:Key="EnumConverter" />
+        <converters:DateTimeToString x:Key="DateTimeToString" />
+        <converters:FloadToStringValueConverter x:Key="FloadToStringValueConverter" />
     </Window.Resources>
     <StackPanel Orientation="Horizontal">
         <Grid   Grid.Row="0"
@@ -37,6 +39,8 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Label Content="Τύπος:" />
             <ComboBox Grid.Column="1"
@@ -49,6 +53,8 @@
                       Grid.Row="1"
                       VerticalAlignment="Center"
                       DisplayMemberPath="Name"
+                      IsSynchronizedWithCurrentItem="True"
+                      IsEnabled="{Binding CanChangeSerie}"
                       ItemsSource="{Binding Series}"
                       SelectedItem="{Binding SelectedSerie}" />
             <Label Content="Τρόπος:"
@@ -58,41 +64,68 @@
                       VerticalAlignment="Center"
                       SelectedValuePath="Content"
                       SelectedValue="{Binding PaymentType}">
-                <ComboBoxItem Content="Μετρητά / Cash"  />
+                <ComboBoxItem Content="Μετρητά / Cash" />
                 <ComboBoxItem Content="Τραπεζικά / Bank" />
                 <ComboBoxItem Content="Visa" />
                 <ComboBoxItem Content="Με Πίστωση / On Credit" />
             </ComboBox>
             <Label Grid.Row="3"
+                   Visibility="{Binding ShowPartner, Converter={StaticResource booleanToVisibilityConverter}}"
                    Content="Συνεργάτης:" />
             <TextBlock Grid.Row="3"
+                       Visibility="{Binding ShowPartner, Converter={StaticResource booleanToVisibilityConverter}}"
                        VerticalAlignment="Center"
                        Grid.Column="1"
                        Text="{Binding Partner.Name}"
                        HorizontalAlignment="Left"
                        TextTrimming="CharacterEllipsis" />
+            <Label Grid.Row="3"
+                   Visibility="{Binding ShowCustomers, Converter={StaticResource booleanToVisibilityConverter}}"
+                   Content="Πελάτης:" />
+            <ComboBox Grid.Row="3"
+                      Grid.Column="1"
+                      Visibility="{Binding ShowCustomers, Converter={StaticResource booleanToVisibilityConverter}}"
+                      VerticalAlignment="Center"
+                      DisplayMemberPath="FullName"
+                      IsSynchronizedWithCurrentItem="True"
+                      ItemsSource="{Binding Customers}"
+                      SelectedItem="{Binding SelectedCustomer}" />
             <Label Grid.Row="4"
                    Content="Επωνυμία:" />
             <TextBlock Grid.Row="4"
-                       VerticalAlignment="Center"
                        Grid.Column="1"
+                       VerticalAlignment="Center"
                        Text="{Binding Partner.CompanyInfo.CompanyName}"
                        HorizontalAlignment="Left"
                        TextTrimming="CharacterEllipsis" />
+            <Label Grid.Row="5"
+                   Content="Ημερομηνία" />
+            <DatePicker Grid.Row="5"
+                        SelectedDate="{Binding RecieptDate}"
+                        DisplayDateEnd="{Binding MaxDate}"
+                        DisplayDateStart="{Binding SelectedSerie.LastPrint}"
+                        Grid.Column="1" />
+            <Label Content="Ποσό:"
+                   Grid.Row="6"
+                   Visibility="{Binding ServiceAmmountVisible, Converter={StaticResource booleanToVisibilityConverter}}" />
+            <TextBox Grid.Row="6"
+                     Grid.Column="1" VerticalAlignment="Center"
+                     Text="{Binding ServiceAmmount, Converter={StaticResource FloadToStringValueConverter},UpdateSourceTrigger=PropertyChanged}"
+                     Visibility="{Binding ServiceAmmountVisible, Converter={StaticResource booleanToVisibilityConverter}}" />
             <Button Content="Προεπισκόπηση"
-                    Grid.Row="5"
+                    Grid.Row="7"
                     Command="{Binding CreateRecieptPreviewCommand}"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Margin="5" />
             <Button Content="Εκτύπωση"
-                    Grid.Row="5"
+                    Grid.Row="7"
                     Click="Button_Click"
                     IsEnabled="{Binding PrintEnabled}"
                     Grid.Column="1"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center" />
-            <TextBlock Grid.Row="6"
+            <TextBlock Grid.Row="8"
                        Grid.ColumnSpan="2"
                        TextWrapping="Wrap"
                        Width="270"
@@ -339,6 +372,7 @@
                                                 Grid.Column="2">
                                             <TextBlock Text="{Binding Reciept.RecieptNumber}"
                                                        HorizontalAlignment="Center"
+                                                       Name="RecieptNumber"
                                                        VerticalAlignment="Center" />
                                         </Border>
                                     </Grid>
@@ -381,7 +415,7 @@
                                                 BorderThickness="0 0 1 1"
                                                 Grid.Row="1"
                                                 Grid.Column="1">
-                                            <TextBlock Text="22/9/2020"
+                                            <TextBlock Text="{Binding Reciept.Date,Converter={StaticResource DateTimeToString}, ConverterParameter='dd/MM/yy'}"
                                                        HorizontalAlignment="Center"
                                                        VerticalAlignment="Center" />
                                         </Border>
@@ -442,88 +476,101 @@
                                         </VisualBrush>
                                     </Border.BorderBrush>
                                     <StackPanel Height="575">
-                                        <Grid Margin="-1 0 0 0">
-                                            <Grid.Resources>
-                                                <Style TargetType="TextBlock">
-                                                    <Setter Property="Height"
-                                                            Value="15" />
-                                                    <Setter Property="Margin"
-                                                            Value="0 1" />
-                                                    <Setter Property="VerticalAlignment"
-                                                            Value="Top" />
-                                                </Style>
-                                            </Grid.Resources>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="14*" />
-                                                <ColumnDefinition Width="3*" />
-                                                <ColumnDefinition Width="3*" />
-                                                <ColumnDefinition Width="3*" />
-                                            </Grid.ColumnDefinitions>
-                                            <Border BorderBrush="Gray"
-                                                    BorderThickness="0 0 2 2"
-                                                    Grid.ColumnSpan="4"
-                                                    Margin="2 2 -2 -2"
-                                                    VerticalAlignment="Stretch"
-                                                    HorizontalAlignment="Stretch" />
-                                            <Border BorderBrush="Gray"
-                                                    BorderThickness="1"
-                                                    Background="White"
-                                                    Padding="5 0 0 0"
-                                                    Grid.Column="0">
-                                                <Grid>
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition Height="Auto" />
-                                                        <RowDefinition Height="Auto" />
-                                                        <RowDefinition Height="Auto" />
-                                                        <RowDefinition Height="Auto" />
-                                                    </Grid.RowDefinitions>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="10*" />
-                                                        <ColumnDefinition Width="11*" />
-                                                        <ColumnDefinition Width="10*" />
-                                                    </Grid.ColumnDefinitions>
-                                                    <TextBox Text="Αεροπορικό k διαμονή στο CITY HOTEL"
-                                                             Grid.ColumnSpan="3"
-                                                             Grid.Column="0" />
-                                                    <TextBlock  Text="24/09/2020 - 26/9/2020 "
-                                                                Grid.Row="1" />
-                                                    <TextBlock Text="Κράτηση / Reservation: 5384"
-                                                               Grid.Row="1"
-                                                               Grid.Column="1"
-                                                               HorizontalAlignment="Center" />
-                                                    <TextBlock Text="Άτομα / Pax: 1"
-                                                               Grid.Row="1"
-                                                               Grid.Column="2"
-                                                               HorizontalAlignment="Center" />
-                                                    <TextBlock Text="OBI ATHENS"
-                                                               Grid.Row="2" />
-                                                    <TextBox Text="CHRONIS DIMITRIOS"
-                                                             Grid.ColumnSpan="3"
-                                                             Grid.Row="3" />
-                                                </Grid>
-                                            </Border>
-                                            <Border BorderBrush="Gray"
-                                                    Background="White"
-                                                    BorderThickness="0 1"
-                                                    Grid.Column="1">
-                                                <TextBlock Text="160,00"
-                                                           HorizontalAlignment="Center" />
-                                            </Border>
-                                            <Border BorderBrush="Gray"
-                                                    Background="White"
-                                                    BorderThickness="1"
-                                                    Grid.Column="2">
-                                                <TextBlock Text="0,00"
-                                                           HorizontalAlignment="Center" />
-                                            </Border>
-                                            <Border BorderBrush="Gray"
-                                                    Background="White"
-                                                    BorderThickness="0 1 1 1"
-                                                    Grid.Column="3">
-                                                <TextBlock Text="160,00"
-                                                           HorizontalAlignment="Center" />
-                                            </Border>
-                                        </Grid>
+                                        <ItemsControl ItemsSource="{Binding Reciept.RecieptItems}"
+                                                      Margin="5">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel Orientation="Vertical" />
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid Margin="-1 0 0 5">
+                                                        <Grid.Resources>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Height"
+                                                                        Value="15" />
+                                                                <Setter Property="Margin"
+                                                                        Value="0 1" />
+                                                                <Setter Property="VerticalAlignment"
+                                                                        Value="Top" />
+                                                            </Style>
+                                                        </Grid.Resources>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="14*" />
+                                                            <ColumnDefinition Width="3*" />
+                                                            <ColumnDefinition Width="3*" />
+                                                            <ColumnDefinition Width="3*" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <Border BorderBrush="Gray"
+                                                                BorderThickness="0 0 2 2"
+                                                                Grid.ColumnSpan="4"
+                                                                Margin="2 2 -2 -2"
+                                                                VerticalAlignment="Stretch"
+                                                                HorizontalAlignment="Stretch" />
+                                                        <Border BorderBrush="Gray"
+                                                                BorderThickness="1"
+                                                                Background="White"
+                                                                Padding="5 0 0 0"
+                                                                Grid.Column="0">
+                                                            <Grid>
+                                                                <Grid.RowDefinitions>
+                                                                    <RowDefinition Height="Auto" />
+                                                                    <RowDefinition Height="Auto" />
+                                                                    <RowDefinition Height="Auto" />
+                                                                    <RowDefinition Height="Auto" />
+                                                                </Grid.RowDefinitions>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="10*" />
+                                                                    <ColumnDefinition Width="11*" />
+                                                                    <ColumnDefinition Width="10*" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <TextBox Text="{Binding Description}"
+                                                                         Grid.ColumnSpan="3"
+                                                                         Grid.Column="0" />
+                                                                <TextBox  Text="{Binding Dates}"
+                                                                          Grid.Row="1" />
+                                                                <TextBlock Text="{Binding ReservationId,StringFormat= Κράτηση / Reservation: {0}}"
+                                                                           Grid.Row="1"
+                                                                           Grid.Column="1"
+                                                                           HorizontalAlignment="Center" />
+                                                                <TextBox Text="{Binding Pax,StringFormat= Άτομα / Pax: {0}}"
+                                                                         Grid.Row="1"
+                                                                         Grid.Column="2"
+                                                                         HorizontalAlignment="Center" />
+                                                                <TextBox Text="{Binding Extra}"
+                                                                         Grid.ColumnSpan="3"
+                                                                         Grid.Row="2" />
+                                                                <TextBox Text="{Binding Names}"
+                                                                         Grid.ColumnSpan="3"
+                                                                         Grid.Row="3" />
+                                                            </Grid>
+                                                        </Border>
+                                                        <Border BorderBrush="Gray"
+                                                                Background="White"
+                                                                BorderThickness="0 1"
+                                                                Grid.Column="1">
+                                                            <TextBlock Text="{Binding Amount,StringFormat=N2}"
+                                                                       HorizontalAlignment="Center" />
+                                                        </Border>
+                                                        <Border BorderBrush="Gray"
+                                                                Background="White"
+                                                                BorderThickness="1"
+                                                                Grid.Column="2">
+                                                            <TextBlock Text="0,00"
+                                                                       HorizontalAlignment="Center" />
+                                                        </Border>
+                                                        <Border BorderBrush="Gray"
+                                                                Background="White"
+                                                                BorderThickness="0 1 1 1"
+                                                                Grid.Column="3">
+                                                            <TextBlock Text="{Binding Amount,StringFormat=N2}"
+                                                                       HorizontalAlignment="Center" />
+                                                        </Border>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
                                     </StackPanel>
                                 </Border>
                                 <Grid Margin="5 0">
@@ -585,11 +632,11 @@
                                             VerticalAlignment="Stretch">
                                         <StackPanel HorizontalAlignment="Right"
                                                     Margin="0 0 5 0">
-                                            <TextBlock Text="160,00"
+                                            <TextBlock Text="{Binding Reciept.Total,StringFormat=C2}"
                                                        HorizontalAlignment="Right" />
-                                            <TextBlock Text="0,00"
+                                            <TextBlock Text="0,00 €"
                                                        HorizontalAlignment="Right" />
-                                            <TextBlock Text="0,00"
+                                            <TextBlock Text="0,00 €"
                                                        HorizontalAlignment="Right" />
                                         </StackPanel>
                                     </Border>
@@ -601,7 +648,8 @@
                                     <Label Grid.Row="2"
                                            Grid.Column="3"
                                            BorderThickness="0 1 1 0"
-                                           Content="160,00"
+                                           Content="{Binding Reciept.Total}"
+                                           ContentStringFormat="C2"
                                            HorizontalContentAlignment="Right" />
                                     <Border Grid.ColumnSpan="4"
                                             BorderBrush="Black"
@@ -619,7 +667,7 @@
                     </ScrollViewer>
                 </Border>
             </TabItem>
-            <TabItem Header="Στοιχεία"
+            <!--<TabItem Header="Στοιχεία"
                      Visibility="{Binding TaxDetailsVisibility}">
                 <StackPanel Orientation="Vertical"
                             Margin="20 10 30 10">
@@ -859,7 +907,7 @@
                             HorizontalAlignment="Left"
                             Margin="5" />
                 </StackPanel>
-            </TabItem>
+            </TabItem>-->
         </TabControl>
         <!--<ScrollViewer>
             <WebBrowser Name="wbSample"

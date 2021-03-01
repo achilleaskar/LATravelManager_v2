@@ -400,7 +400,7 @@ namespace LATravelManager.UI.Helpers
             Partners = new ObservableCollection<Partner>(await Context.GetAllAsyncSortedByName<Partner>());
             HotelCategories = new ObservableCollection<HotelCategory>(await Context.GetAllAsync<HotelCategory>());
             GroupExcursions = new ObservableCollection<Excursion>(Excursions.Where(e => e.ExcursionType.Category == ExcursionTypeEnum.Group));
-            Airlines = new ObservableCollection<Airline>(await Context.GetAllAsync<Airline>());
+            Airlines = new ObservableCollection<Airline>(await Context.GetAllAsyncSortedByName<Airline>());
             Vehicles = new ObservableCollection<Vehicle>(await Context.GetAllAsync<Vehicle>());
             Leaders = new ObservableCollection<Leader>(await Context.GetAllAsync<Leader>());
             OptionalExcursions = new ObservableCollection<OptionalExcursion>(await Context.GetAllAsync<OptionalExcursion>(o => o.Date >= DateTime.Today));
@@ -508,7 +508,7 @@ namespace LATravelManager.UI.Helpers
             Users = new ObservableCollection<User>(await Context.GetAllUsersAsyncSortedByUserName());
             Partners = new ObservableCollection<Partner>(await Context.GetAllAsyncSortedByName<Partner>());
             HotelCategories = new ObservableCollection<HotelCategory>(await Context.GetAllAsync<HotelCategory>());
-            Airlines = new ObservableCollection<Airline>(await Context.GetAllAsync<Airline>());
+            Airlines = new ObservableCollection<Airline>(await Context.GetAllAsyncSortedByName<Airline>());
         }
 
         public async Task Refresh()

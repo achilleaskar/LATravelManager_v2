@@ -31,7 +31,7 @@ namespace LATravelManager.UI.Views
         {
             try
             {
-                using (UpdateManager updateManager = await UpdateManager.GitHubUpdateManager("https://github.com/achilleaskar/LATravelManager_v2"))
+                using (UpdateManager updateManager = new UpdateManager("http://demo.gotoskiathos.com/latravel/"))
                 {
                     ReleaseEntry releaseEntry = await updateManager.UpdateApp();
                     if (releaseEntry?.Version.ToString() != null)

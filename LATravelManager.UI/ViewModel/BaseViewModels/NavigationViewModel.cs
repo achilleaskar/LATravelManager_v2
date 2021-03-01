@@ -211,7 +211,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             if (parent is ExcursionCategory_ViewModelBase)
             {
                 Tabs.Clear();
-                tabs = (parent as ExcursionCategory_ViewModelBase).Tabs ?? new List<TabsBaseViewModel>();
+                tabs = parent.Tabs ?? new List<TabsBaseViewModel>();
                 foreach (TabsBaseViewModel tab in tabs)
                 {
                     Tabs.Add(tab);

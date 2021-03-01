@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using AutoUpdaterDotNET;
 using System.Windows.Input;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
@@ -72,6 +73,7 @@ namespace LATravelManager.UI
             // mainWindow.Visibility = Visibility.Hidden;
             mainWindow.Show();
             mainWindow.WindowState = WindowState.Maximized;
+           // AutoUpdater.Start("http://demo.gotoskiathos.com/AutoUpdaterManager.xml");
         }
 
         // private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -79,7 +81,7 @@ namespace LATravelManager.UI
         private void Application_DispatcherUnhandledException(object sender,
           System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            MessageBox.Show("Unexpected error occured. Please inform the admin."
+            MessageBox.Show("Unexpected error occurred. Please inform the admin."
               + Environment.NewLine + e.Exception.Message, "Unexpected error");
             // log.Error("error", e.Exception);
             e.Handled = true;

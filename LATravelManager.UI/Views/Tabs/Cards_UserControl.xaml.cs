@@ -35,5 +35,10 @@ namespace LATravelManager.UI.Views.Tabs
                 // reservations.ScrollIntoView(reservations.SelectedItem);
             }
         }
+
+        private void BulkPayments_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }

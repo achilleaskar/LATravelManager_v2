@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using LATravelManager.Model.People;
+using LATravelManager.Model.Pricing.Invoices;
 
 namespace LATravelManager.Model.BookingData
 {
@@ -21,6 +22,26 @@ namespace LATravelManager.Model.BookingData
 
         #region Properties
 
+        private ObservableCollection<Reciept> _Reciepts;
+
+        public ObservableCollection<Reciept> Reciepts
+        {
+            get
+            {
+                return _Reciepts;
+            }
+
+            set
+            {
+                if (_Reciepts == value)
+                {
+                    return;
+                }
+
+                _Reciepts = value;
+                RaisePropertyChanged();
+            }
+        }
         public CustomFile File { get; set; }
         public string CancelReason { get; set; }
 

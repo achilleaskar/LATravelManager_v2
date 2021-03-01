@@ -13,6 +13,33 @@ namespace LATravelManager.Model
         Antarctica
     }
 
+    public enum ChangeType
+    {
+        Booking,
+        LoginData
+    }
+
+    [TypeConverter(typeof(EnumDescriptionTypeConverter))]
+    public enum PaymentMethod
+    {
+        [Description("Μετρητά")]
+        Cash,
+        [Description("Πειραιώς")]
+        Peiraeus,
+        [Description("Εθνική")]
+        NBG,
+        [Description("Eurobank")]
+        Eurobank,
+        [Description("Alpha Bank")]
+        AlphaBank,
+        [Description("VISA")]
+        Visa,
+        [Description("VIVA_ONL")]
+        Viva_ONL,
+        [Description("PAYPAL")]
+        PAYPAL
+    };
+
     public enum DayStateEnum
     {
         Empty,

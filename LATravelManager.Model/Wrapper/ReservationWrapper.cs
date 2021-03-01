@@ -87,7 +87,7 @@ namespace LATravelManager.Model.Wrapper
 
         private decimal GetExpenses()
         {
-            if (Booking==null || Booking.Transactions==null)
+            if (Booking == null || Booking.Transactions == null)
             {
                 return 0;
             }
@@ -752,7 +752,7 @@ namespace LATravelManager.Model.Wrapper
             //}
         }
 
-        public bool Contains(string key, bool full = true)
+        public bool Contains(string key, bool full = true, bool semi = false)
         {
             if (string.IsNullOrEmpty(key))
             {
@@ -761,8 +761,8 @@ namespace LATravelManager.Model.Wrapper
             key = key.ToUpper();
             if (ApiData != null)
             {
-               
-                 if ((!string.IsNullOrEmpty(Comment) && Comment.ToUpper().Contains(key)) || (!string.IsNullOrEmpty(HotelName) && HotelName.ToUpper().Contains(key)) || (full&&!string.IsNullOrEmpty(Partner) && Partner.ToUpper().Contains(key)))
+
+                if ((!string.IsNullOrEmpty(Comment) && Comment.ToUpper().Contains(key)) || (!string.IsNullOrEmpty(HotelName) && HotelName.ToUpper().Contains(key)) || (full && !string.IsNullOrEmpty(Partner) && Partner.ToUpper().Contains(key)))
                 {
                     return true;
                 }
@@ -803,7 +803,7 @@ namespace LATravelManager.Model.Wrapper
             }
             foreach (Customer c in CustomersList)
             {
-                if (c.Name.ToUpper().StartsWith(key) || c.Surename.ToUpper().StartsWith(key) || (full && c.Tel != null && c.Tel.StartsWith(key)) || (full && c.Email != null && c.Email.ToUpper().StartsWith(key))
+                if (c.Name.ToUpper().StartsWith(key) || c.Surename.ToUpper().StartsWith(key) || ((full || semi) && c.Tel != null && c.Tel.StartsWith(key)) || (full && c.Email != null && c.Email.ToUpper().StartsWith(key))
                     || (full && !string.IsNullOrEmpty(c.PassportNum) && c.PassportNum.ToUpper().StartsWith(key)) || (full && c.StartingPlace.ToUpper().Contains(key)))
                 {
                     return true;

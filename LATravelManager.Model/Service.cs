@@ -199,7 +199,7 @@ namespace LATravelManager.Model.Services
         }
 
         [NotMapped]
-        public string Tittle { get; set; }
+        public string Title { get; set; }
         [MaxLength(50)]
         public string To
         {
@@ -226,9 +226,18 @@ namespace LATravelManager.Model.Services
 
         public override string ToString()
         {
-            return Tittle;
+            return Title;
         }
 
+
+        public abstract string GetDescription();
+       
+        
+        
+        public virtual string GetDates()
+        {
+            return TimeGo.ToString("dd/MM") + (Allerretour ? ("-" + TimeReturn.ToString("dd/MM/yy")) : TimeGo.ToString("/yy"));
+        }
         #endregion Methods
     }
 }

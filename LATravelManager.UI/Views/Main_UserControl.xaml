@@ -98,9 +98,12 @@
                     <MenuItem Command="{Binding OpenTaxDataEditCommand}"
                               Header="Φορολογικά στοιχεία"
                               Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}" />
+                    <MenuItem Command="{Binding OpenLoginDataManagementCommand}"
+                              Header="Στοιχεία σύνδεσης"
+                              Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}" />
                     <MenuItem Command="{Binding ToggleTestModeCommand}"
                               Header="{Binding TestmodeMessage}"
-                              Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}" />
+                              Visibility="{Binding ConverterParameter=3, Converter={StaticResource UserToVisibilityConverter}}" />
                     <MenuItem Command="{Binding InsertPartnersFromExcelCommand}"
                               Header="Εισαγωγή συνεργατών"
                               Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}" />

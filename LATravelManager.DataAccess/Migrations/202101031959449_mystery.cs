@@ -7,8 +7,8 @@
     {
         public override void Up()
         {
-            RenameColumn(table: "dbo.Partners", name: "CompanyInfo_Id", newName: "CompanyInfoId");
-            RenameIndex(table: "dbo.Partners", name: "IX_CompanyInfo_Id", newName: "IX_CompanyInfoId");
+            //RenameColumn(table: "dbo.Partners", name: "CompanyInfo_Id", newName: "CompanyInfoId");
+            //RenameIndex(table: "dbo.Partners", name: "IX_CompanyInfo_Id", newName: "IX_CompanyInfoId");
         }
         
         public override void Down()

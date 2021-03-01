@@ -11,17 +11,17 @@
             //DropForeignKey("dbo.Companies", "CountryId", "dbo.Countries");
             //DropIndex("dbo.Companies", new[] { "BillCityId" });
             //DropIndex("dbo.Companies", new[] { "CountryId" });
-            AlterColumn("dbo.Companies", "BillCityId", c => c.Int(nullable: false));
+            //AlterColumn("dbo.Companies", "BillCityId", c => c.Int(nullable: false));
             AlterColumn("dbo.Companies", "BillRoad", c => c.String(nullable: false, maxLength: 100, unicode: false));
             AlterColumn("dbo.Companies", "BillZipCode", c => c.String(nullable: false, maxLength: 10, unicode: false));
             AlterColumn("dbo.Companies", "CompanyName", c => c.String(nullable: false, maxLength: 120, unicode: false));
-            AlterColumn("dbo.Companies", "CountryId", c => c.Int(nullable: false));
+           // AlterColumn("dbo.Companies", "CountryId", c => c.Int(nullable: false));
             AlterColumn("dbo.Companies", "TaxationNumber", c => c.String(nullable: false, maxLength: 20, unicode: false));
             AlterColumn("dbo.Companies", "TaxOffice", c => c.String(nullable: false, maxLength: 40, unicode: false));
             //CreateIndex("dbo.Companies", "BillCityId");
             //CreateIndex("dbo.Companies", "CountryId");
-            AddForeignKey("dbo.Companies", "BillCityId", "dbo.Cities", "Id", cascadeDelete: true);
-            AddForeignKey("dbo.Companies", "CountryId", "dbo.Countries", "Id", cascadeDelete: true);
+           // AddForeignKey("dbo.Companies", "BillCityId", "dbo.Cities", "Id", cascadeDelete: true);
+           // AddForeignKey("dbo.Companies", "CountryId", "dbo.Countries", "Id", cascadeDelete: true);
         }
         
         public override void Down()

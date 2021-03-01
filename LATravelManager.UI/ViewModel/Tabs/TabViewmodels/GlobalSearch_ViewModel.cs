@@ -82,7 +82,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 {
                     if (r.ExcursionType == ExcursionTypeEnum.Personal && !bookings.Contains(r.PersonalModel))
                     {
-                        bookings.Add((r as ReservationWrapper).PersonalModel);
+                        bookings.Add(r.PersonalModel);
                     }
                 }
 
@@ -1458,7 +1458,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 {
                     if (r.ExcursionType != ExcursionTypeEnum.Personal && r.ReservationType != ReservationTypeEnum.OneDay && !bookings.Contains(r.Booking))
                     {
-                        bookings.Add((r as ReservationWrapper).Booking);
+                        bookings.Add(r.Booking);
                     }
                 }
                 int coutner = 0;
@@ -1517,7 +1517,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 {
                     if (!bookings.Contains(r.Booking) && (!send || (r.Booking.IsPartners && r.Booking.Partner != null)))
                     {
-                        bookings.Add((r as ReservationWrapper).Booking);
+                        bookings.Add(r.Booking);
                     }
                 }
 
@@ -1584,7 +1584,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 {
                     if (r.ExcursionType != ExcursionTypeEnum.Personal && !bookings.Contains(r.Booking))
                     {
-                        bookings.Add((r as ReservationWrapper).Booking);
+                        bookings.Add(r.Booking);
                     }
                 }
 

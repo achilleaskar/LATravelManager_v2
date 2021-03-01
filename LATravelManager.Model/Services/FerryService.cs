@@ -4,7 +4,14 @@
     {
         public FerryService()
         {
-            Tittle = "Ακτοπλοικό";
+            Title = "Ακτοπλοϊκό";
+        }
+
+       
+
+        public override string GetDescription()
+        {
+            return $"{Title} από {From ?? ""} για {To ?? ""}";
         }
     }
 }

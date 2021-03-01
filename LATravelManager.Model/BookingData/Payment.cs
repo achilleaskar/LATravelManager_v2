@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Windows.Media;
+using EnumsNET;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Wrapper;
 
@@ -13,6 +14,31 @@ namespace LATravelManager.Model.BookingData
 
         public Payment()
         {
+        }
+
+
+
+
+        private BulkPayment _BulkPayment;
+
+
+        public BulkPayment BulkPayment
+        {
+            get
+            {
+                return _BulkPayment;
+            }
+
+            set
+            {
+                if (_BulkPayment == value)
+                {
+                    return;
+                }
+
+                _BulkPayment = value;
+                RaisePropertyChanged();
+            }
         }
 
         public Payment(Payment p)
@@ -37,7 +63,7 @@ namespace LATravelManager.Model.BookingData
         private DateTime _Date;
 
         private bool _Outgoing;
-        private int _PaymentMethod;
+        private PaymentMethod _PaymentMethod;
         private SolidColorBrush _PColor;
 
         private User _User;
@@ -276,7 +302,7 @@ namespace LATravelManager.Model.BookingData
         /// PropertyChanged event.
         /// </summary>
         [Required]
-        public int PaymentMethod
+        public PaymentMethod PaymentMethod
         {
             get
             {
@@ -402,29 +428,7 @@ namespace LATravelManager.Model.BookingData
         //        _AmountString = value;
         public string GetPaymentMethod()
         {
-            switch (PaymentMethod)
-            {
-                case 0:
-                    return "ΜΕΤΡΗΤΑ";
-
-                case 1:
-                    return "ΤΡ. ΚΑΤΑΘΕΣΗ (ΠΕΙΡΑΩΣ)";
-
-                case 2:
-                    return "ΤΡ. ΚΑΤΑΘΕΣΗ (ΕΘΝΙΚΗ)";
-
-                case 3:
-                    return "ΤΡ. ΚΑΤΑΘΕΣΗ (EUROBANK)";
-
-                case 4:
-                    return "ΤΡ. ΚΑΤΑΘΕΣΗ (ALPHABANK)";
-
-                case 5:
-                    return "ΠΙΣΤΩΤΙΚΗ ΚΑΡΤΑ (POS)";
-
-                default:
-                    return "ERROR";
-            }
+            return PaymentMethod.AsString(EnumFormat.Description);
         }
 
         public void SetPColor()
@@ -466,31 +470,7 @@ namespace LATravelManager.Model.BookingData
         //        }
         public override string ToString()
         {
-            switch (PaymentMethod)
-            {
-                case 0:
-                    return "Μετρητά";
-
-                case 1:
-                    return "Πειραώς";
-
-                case 2:
-                    return "Εθνική";
-
-                case 3:
-                    return "Eurobank";
-
-                case 4:
-                    return "Alpha Bank";
-
-                case 5:
-                    return "VISA";
-                case 6:
-                    return "VIVA_ONL";
-                case 7:
-                    return "PAYPAL";
-            }
-            return base.ToString();
+           return PaymentMethod.AsString(EnumFormat.Description);
         }
 
 

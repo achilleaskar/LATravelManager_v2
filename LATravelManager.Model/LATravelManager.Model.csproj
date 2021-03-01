@@ -57,6 +57,7 @@
     <Compile Include="BaseModel.cs" />
     <Compile Include="BookingData\Booking.cs" />
     <Compile Include="BookingData\BookingForSearchDto.cs" />
+    <Compile Include="BookingData\BulkPayment.cs" />
     <Compile Include="BookingData\ExtraService.cs" />
     <Compile Include="BookingData\Personal_Booking.cs" />
     <Compile Include="BookingData\ReservationFullDto.cs" />
@@ -82,8 +83,10 @@
     <Compile Include="People\CustomerNeededValues.cs" />
     <Compile Include="Pricing\ChildEtcPrices.cs" />
     <Compile Include="Pricing\HotelPricing.cs" />
+    <Compile Include="Pricing\Invoices\RecieptItem.cs" />
     <Compile Include="Pricing\Invoices\RecieptSeries.cs" />
     <Compile Include="Pricing\Invoices\Reciept.cs" />
+    <Compile Include="Security\LoginData.cs" />
     <Compile Include="Thesi.cs" />
     <Compile Include="CustomFile.cs" />
     <Compile Include="EnumDescriptionTypeConverter.cs" />
@@ -162,13 +165,13 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator">
-      <Version>2.0.5</Version>
+      <Version>2.0.6</Version>
     </PackageReference>
     <PackageReference Include="EntityFramework">
       <Version>6.4.4</Version>
     </PackageReference>
     <PackageReference Include="Enums.NET">
-      <Version>3.0.3</Version>
+      <Version>4.0.0</Version>
     </PackageReference>
     <PackageReference Include="EPPlus">
       <Version>4.5.3.3</Version>

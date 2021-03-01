@@ -1,5 +1,4 @@
-﻿using LATravelManager.DataAccess.Migrations;
-using LATravelManager.Model;
+﻿using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Hotels;
@@ -8,6 +7,7 @@ using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Plan;
 using LATravelManager.Model.Pricing.Invoices;
+using LATravelManager.Model.Security;
 using LATravelManager.Model.Services;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
@@ -21,13 +21,13 @@ namespace LATravelManager.DataAccess
     {
         #region Constructors
 
-        public MainDatabase() : base(test)
+        public MainDatabase() : base(normal)
         //public MainDatabase() : base(Properties.Settings.Default.IsTest ? test : normal)
         //public MainDatabase() : base("Server=localhost;Database=readmore_achill2;pooling=true;Uid=root;Pwd=Tr6981001676;Convert Zero Datetime=True;  default command timeout=3600;SslMode=none;TreatTinyAsBoolean=true;")
         {
             Configuration.ValidateOnSaveEnabled = false;
 
-            DbConfiguration.SetConfiguration(new ContextConfiguration());
+            DbConfiguration.SetConfiguration(new Migrations.ContextConfiguration());
         }
 
         #endregion Constructors
@@ -42,6 +42,7 @@ namespace LATravelManager.DataAccess
         #region Properties
 
         public DbSet<Company> Companies { get; set; }
+        public DbSet<LoginData> LoginData { get; set; }
         public DbSet<Airline> Airlines { get; set; }
         public DbSet<CompanyActivity> Activities { get; set; }
         public DbSet<Reciept> Reciepts { get; set; }
@@ -49,6 +50,7 @@ namespace LATravelManager.DataAccess
         public DbSet<PricingPeriod> PricingPeriods { get; set; }
         public DbSet<BookingInfoPerDay> BookingInfosPerDay { get; set; }
         public DbSet<Booking> Bookings { get; set; }
+        public DbSet<ChangeInBooking> ChangesInBooking { get; set; }
         public DbSet<Bus> Buses { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<Country> Countries { get; set; }

@@ -69,7 +69,7 @@ namespace LATravelManager.Model
         //    }
         ////}
         //[NotMapped]
-        //public string Tittle { get; set; } = string.Empty;
+        //public string Title { get; set; } = string.Empty;
 
         //public string[] ValidationProperties { get; set; }
 
