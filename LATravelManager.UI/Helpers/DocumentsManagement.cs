@@ -1716,11 +1716,10 @@ namespace LATravelManager.UI.Helpers
                     regexText = new Regex("zplace");
                     docText = regexText.Replace(docText, customerStartingPlace.Id == 14 && booking.Excursion.Destinations[0].Id == 5 ? "Εθνική Τράπεζα" : customerStartingPlace.Details);
                     regexText = new Regex("zsynodos");
-                    docText = regexText.Replace(docText, booking.Excursion.Id == 29 ? "Αθανασία 6981189869" :
-                        bus.Id > 0 && bus.Leader != null ? bus?.Leader.ToString() :
-                         //booking.Excursion.Destinations[0].Id == 2 ? ((new List<int>() { 2, 14, 17, 28 }).Any(t => t == customerStartingPlace.Id) ? "Υπεύθυνος Αναχώρησης:" + Environment.NewLine + "Σωτήρης:6946681572" :
-                         //"ΣΤΡΑΤΟΣ:6988558275") : "");
-                         "");
+                    docText = regexText.Replace(docText, bus.Id > 0 && bus.Leader != null ? bus?.Leader.ToString() : booking.Excursion.Id == 29 ? "Αθανασία 6981189869" :
+                        //booking.Excursion.Destinations[0].Id == 2 ? ((new List<int>() { 2, 14, 17, 28 }).Any(t => t == customerStartingPlace.Id) ? "Υπεύθυνος Αναχώρησης:" + Environment.NewLine + "Σωτήρης:6946681572" :
+                        //"ΣΤΡΑΤΟΣ:6988558275") : "");
+                        "");
                     regexText = new Regex("zcity");
                     docText = regexText.Replace(docText, booking.Excursion.Destinations[0].Name);
                     regexText = new Regex("zgostart");
