@@ -340,6 +340,26 @@
     <Compile Include="Migrations\202102281435512_removeChanges.designer.cs">
       <DependentUpon>202102281435512_removeChanges.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202103211845219_no.cs" />
+    <Compile Include="Migrations\202103211845219_no.designer.cs">
+      <DependentUpon>202103211845219_no.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202103221108493_no1.cs" />
+    <Compile Include="Migrations\202103221108493_no1.designer.cs">
+      <DependentUpon>202103221108493_no1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202103221150172_no2.cs" />
+    <Compile Include="Migrations\202103221150172_no2.designer.cs">
+      <DependentUpon>202103221150172_no2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202104041734586_userid.cs" />
+    <Compile Include="Migrations\202104041734586_userid.designer.cs">
+      <DependentUpon>202104041734586_userid.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202104041749312_userid1.cs" />
+    <Compile Include="Migrations\202104041749312_userid1.designer.cs">
+      <DependentUpon>202104041749312_userid1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\ContextConfiguration.cs" />
     <Compile Include="MainDataBase.cs" />
     <Compile Include="Migrations\Configuration.cs" />
@@ -360,6 +380,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201910201407025_10201.resx">
       <DependentUpon>201910201407025_10201.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201910201503343_10202.resx">
       <DependentUpon>201910201503343_10202.cs</DependentUpon>
@@ -447,6 +468,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202002071552059_721.resx">
       <DependentUpon>202002071552059_721.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202002081247266_82.resx">
       <DependentUpon>202002081247266_82.cs</DependentUpon>
@@ -573,6 +595,21 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202102281435512_removeChanges.resx">
       <DependentUpon>202102281435512_removeChanges.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202103211845219_no.resx">
+      <DependentUpon>202103211845219_no.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202103221108493_no1.resx">
+      <DependentUpon>202103221108493_no1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202103221150172_no2.resx">
+      <DependentUpon>202103221150172_no2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202104041734586_userid.resx">
+      <DependentUpon>202104041734586_userid.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202104041749312_userid1.resx">
+      <DependentUpon>202104041749312_userid1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

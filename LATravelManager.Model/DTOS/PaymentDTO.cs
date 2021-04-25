@@ -15,7 +15,7 @@ namespace LATravelManager.Model.DTOS
 
         public bool Outgoing { get; set; }
 
-        public int PaymentMethod { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
 
         public User User { get; set; }
     }

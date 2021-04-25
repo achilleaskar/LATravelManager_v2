@@ -343,7 +343,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         #region Methods
 
-        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
+        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null, MyViewModelBase parent = null)
         {
             Optionals = new ObservableCollection<OptionalExcursion>((await Context.GetAllOptionalExcursionsAsync(CheckIn)).Where(e => e.Date == CheckIn));
             Leaders = new ObservableCollection<Leader>((await Context.GetAllAsync<Leader>()).OrderBy(l => l.Name));

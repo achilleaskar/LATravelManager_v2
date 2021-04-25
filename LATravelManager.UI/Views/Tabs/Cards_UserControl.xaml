@@ -3,13 +3,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:enum="clr-namespace:LATravelManager.Model;assembly=LATravelManager.Model"
              xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
+             xmlns:helpers="clr-namespace:LATravelManager.UI.Helpers"
              xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.Tabs.TabViewmodels"
              d:DataContext="{d:DesignInstance viewmodels:Cards_ViewModel}"
              mc:Ignorable="d"
              Background="White"
              d:DesignHeight="900"
-             d:DesignWidth="800">
+             d:DesignWidth="1200">
     <UserControl.Resources>
         <converters:UserToVisibility x:Key="UserToVisibilityConverter" />
         <converters:FloadToStringValueConverter x:Key="FtoSConverter" />
@@ -17,147 +19,154 @@
         <converters:DateTimeToString x:Key="DateTimeToString" />
         <converters:BoolToRedGreenConverter x:Key="BoolToRedGreenConverter" />
         <converters:BoolToYesNoConverter x:Key="BoolToYesNoConverter" />
+        <helpers:EnumBindingSource x:Key="EnumBindingSource" />
+        <converters:EnumConverter x:Key="EnumConverter" />
     </UserControl.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <StackPanel Grid.Row="0"
-                    Orientation="Horizontal">
-            <Border BorderBrush="Gray"
-                    Padding="0,3"
-                    Background="LightYellow"
-                    CornerRadius="3"
-                    BorderThickness="1"
-                    VerticalAlignment="Top"
-                    Margin="0,2,0,3">
-                <StackPanel VerticalAlignment="Stretch"
-                            Orientation="Vertical">
-                    <StackPanel Orientation="Horizontal"
-                                HorizontalAlignment="Left">
-                        <TextBlock Text="Ημερομηνία:"
-                                   Margin="3 0 3 3"
-                                   VerticalAlignment="Top" />
-                        <RadioButton Content="CheckIn"
-                                     IsChecked="{Binding ByCheckIn}"
-                                     GroupName="by"
-                                     VerticalAlignment="Center"
-                                     Margin="5 0" />
-                        <RadioButton Content="Κράτησης"
-                                     IsChecked="{Binding ByCreated}"
-                                     GroupName="by"
-                                     VerticalAlignment="Center"
-                                     Margin="5 0" />
-                    </StackPanel>
+    <TabControl>
+        <TabItem Header="Κινήσεις">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border BorderBrush="Gray"
+                        BorderThickness="0 1 0 0"
+                        VerticalAlignment="Bottom" />
+                <StackPanel Grid.Row="0"
+                            Orientation="Horizontal">
                     <Border BorderBrush="Gray"
-                            Margin="0 2"
-                            BorderThickness="0 1 0 0" />
-                    <StackPanel Orientation="Horizontal"
-                                Margin="0 0 0 5"
-                                HorizontalAlignment="Left">
-                        <StackPanel Margin=" 3 0 0 0">
-                            <TextBlock Text="Από:" />
-                            <DatePicker SelectedDate="{Binding CheckIn}"
-                                        Width="92"
-                                        Margin="0 0 5 0" />
-                        </StackPanel>
-                        <StackPanel>
-                            <TextBlock Text="Έως:" />
-                            <DatePicker SelectedDate="{Binding CheckOut}"
-                                        Width="92" />
-                        </StackPanel>
-                        <Button Content="Ημ/νίες"
-                                IsDefault="True"
-                                Margin="5 0"
-                                VerticalAlignment="Bottom"
-                                Command="{Binding ShowReservationsCommand}"
-                                Padding="2" />
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <Border BorderBrush="Gray"
-                                CornerRadius="0,0,3,3"
-                                Background="LightGreen"
-                                Margin="0,0,0,-4"
-                                BorderThickness="0,1,0,1">
-                            <StackPanel Orientation="Horizontal">
-                                <Button Content="Μήνα"
-                                        Margin="5"
-                                        Command="{Binding ShowReservationsCommand}"
-                                        CommandParameter="1"
-                                        Padding="5,2" />
-                                <Button Content="Τριμήνου"
-                                        Margin="5"
-                                        CommandParameter="3"
-                                        Command="{Binding ShowReservationsCommand}"
-                                        Padding="5,2" />
-                                <Button Content="Εξαμήνου"
-                                        Margin="5"
-                                        CommandParameter="6"
-                                        Command="{Binding ShowReservationsCommand}"
-                                        Padding="5,2" />
-                                <Button Content="Όλες"
-                                        Margin="5"
-                                        CommandParameter="10"
-                                        Command="{Binding ShowReservationsCommand}"
-                                        Padding="5,2" />
+                            Padding="0,3"
+                            Background="LightYellow"
+                            CornerRadius="3"
+                            BorderThickness="1"
+                            VerticalAlignment="Top"
+                            Margin="0,2,0,3">
+                        <StackPanel VerticalAlignment="Stretch"
+                                    Orientation="Vertical">
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Left">
+                                <TextBlock Text="Ημερομηνία:"
+                                           Margin="3 0 3 3"
+                                           VerticalAlignment="Top" />
+                                <RadioButton Content="CheckIn"
+                                             IsChecked="{Binding ByCheckIn}"
+                                             GroupName="by"
+                                             VerticalAlignment="Center"
+                                             Margin="5 0" />
+                                <RadioButton Content="Κράτησης"
+                                             IsChecked="{Binding ByCreated}"
+                                             GroupName="by"
+                                             VerticalAlignment="Center"
+                                             Margin="5 0" />
                             </StackPanel>
-                        </Border>
-                    </StackPanel>
-                </StackPanel>
-            </Border>
-            <StackPanel Orientation="Horizontal"
-                        VerticalAlignment="Top"
-                        Margin="5 5 0 5">
-                <StackPanel.Resources>
-                    <Style TargetType="Label">
-                        <Setter Property="Padding"
-                                Value="0" />
-                    </Style>
-                    <Style TargetType="Button">
-                        <Setter Property="VerticalAlignment"
-                                Value="Bottom" />
-                    </Style>
-                    <Style TargetType="ComboBox">
-                        <Style.Triggers>
-                            <Trigger Property="SelectedIndex"
-                                     Value="0">
+                            <Border BorderBrush="Gray"
+                                    Margin="0 2"
+                                    BorderThickness="0 1 0 0" />
+                            <StackPanel Orientation="Horizontal"
+                                        Margin="0 0 0 5"
+                                        HorizontalAlignment="Left">
+                                <StackPanel Margin=" 3 0 0 0">
+                                    <TextBlock Text="Από:" />
+                                    <DatePicker SelectedDate="{Binding CheckIn}"
+                                                Width="92"
+                                                Margin="0 0 5 0" />
+                                </StackPanel>
+                                <StackPanel>
+                                    <TextBlock Text="Έως:" />
+                                    <DatePicker SelectedDate="{Binding CheckOut}"
+                                                Width="92" />
+                                </StackPanel>
+                                <Button Content="Ημ/νίες"
+                                        IsDefault="True"
+                                        Margin="5 0"
+                                        VerticalAlignment="Bottom"
+                                        Command="{Binding ShowReservationsCommand}"
+                                        Padding="2" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Border BorderBrush="Gray"
+                                        CornerRadius="0,0,3,3"
+                                        Background="LightGreen"
+                                        Margin="0,0,0,-4"
+                                        BorderThickness="0,1,0,1">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Content="Μήνα"
+                                                Margin="5"
+                                                Command="{Binding ShowReservationsCommand}"
+                                                CommandParameter="1"
+                                                Padding="5,2" />
+                                        <Button Content="Τριμήνου"
+                                                Margin="5"
+                                                CommandParameter="3"
+                                                Command="{Binding ShowReservationsCommand}"
+                                                Padding="5,2" />
+                                        <Button Content="Εξαμήνου"
+                                                Margin="5"
+                                                CommandParameter="6"
+                                                Command="{Binding ShowReservationsCommand}"
+                                                Padding="5,2" />
+                                        <Button Content="Όλες"
+                                                Margin="5"
+                                                CommandParameter="10"
+                                                Command="{Binding ShowReservationsCommand}"
+                                                Padding="5,2" />
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                    <StackPanel Orientation="Horizontal"
+                                VerticalAlignment="Top"
+                                Margin="5 5 0 5">
+                        <StackPanel.Resources>
+                            <Style TargetType="Label">
+                                <Setter Property="Padding"
+                                        Value="0" />
+                            </Style>
+                            <Style TargetType="Button">
+                                <Setter Property="VerticalAlignment"
+                                        Value="Bottom" />
+                            </Style>
+                            <Style TargetType="ComboBox">
+                                <Style.Triggers>
+                                    <Trigger Property="SelectedIndex"
+                                             Value="0">
+                                        <Setter Property="Foreground"
+                                                Value="Black" />
+                                    </Trigger>
+                                </Style.Triggers>
+                                <Setter Property="Foreground"
+                                        Value="Blue" />
+                            </Style>
+                            <Style TargetType="ComboBoxItem">
                                 <Setter Property="Foreground"
                                         Value="Black" />
-                            </Trigger>
-                        </Style.Triggers>
-                        <Setter Property="Foreground"
-                                Value="Blue" />
-                    </Style>
-                    <Style TargetType="ComboBoxItem">
-                        <Setter Property="Foreground"
-                                Value="Black" />
-                    </Style>
-                </StackPanel.Resources>
-                <StackPanel Orientation="Vertical">
-                    <StackPanel Orientation="Horizontal"
-                                VerticalAlignment="Bottom"
-                                Margin="5 0 0 5">
-                        <StackPanel Margin="0 0 5 0">
-                            <Label Content="Κατηγορία:"
-                                   VerticalAlignment="Bottom" />
-                            <ComboBox  Width="105"
-                                       VerticalAlignment="Center"
-                                       SelectedIndex="{Binding ExcursionCategoryIndexBookingFilter}">
-                                <ComboBoxItem Content="Όλες" />
-                                <ComboBoxItem Content="Μπάνσκο" />
-                                <ComboBoxItem Content="Σκιάθος" />
-                                <ComboBoxItem Content="Ατομικά" />
-                                <ComboBoxItem Content="Οργανωμένες" />
-                                <ComboBoxItem Content="Εκδρομές Τρίτων" />
-                            </ComboBox>
-                        </StackPanel>
-                        <StackPanel>
+                            </Style>
+                        </StackPanel.Resources>
+                        <StackPanel Orientation="Vertical">
+                            <StackPanel Orientation="Horizontal"
+                                        VerticalAlignment="Bottom"
+                                        Margin="5 0 0 5">
+                                <StackPanel Margin="0 0 5 0">
+                                    <Label Content="Κατηγορία:"
+                                           VerticalAlignment="Bottom" />
+                                    <ComboBox  Width="105"
+                                               VerticalAlignment="Center"
+                                               SelectedIndex="{Binding ExcursionCategoryIndexBookingFilter}">
+                                        <ComboBoxItem Content="Όλες" />
+                                        <ComboBoxItem Content="Μπάνσκο" />
+                                        <ComboBoxItem Content="Σκιάθος" />
+                                        <ComboBoxItem Content="Ατομικά" />
+                                        <ComboBoxItem Content="Οργανωμένες" />
+                                        <ComboBoxItem Content="Εκδρομές Τρίτων" />
+                                    </ComboBox>
+                                </StackPanel>
+                                <!--<StackPanel>
                             <Label Content="Πόλη:"
                                    VerticalAlignment="Center" />
                             <ComboBox  Width="105"
@@ -166,149 +175,236 @@
                                        VerticalAlignment="Center"
                                        ItemsSource="{Binding Cities}"
                                        SelectedItem="{Binding SelectedCity}" />
+                        </StackPanel>-->
+                                <StackPanel>
+                                    <Label Content="Εκδρομή:"
+                                           VerticalAlignment="Center" />
+                                    <ComboBox  Width="105"
+                                               Margin="0 0 5 0"
+                                               IsSynchronizedWithCurrentItem="True"
+                                               VerticalAlignment="Center"
+                                               ItemsSource="{Binding ExcursionsCollectionView}"
+                                               SelectedIndex="{Binding ExcursionIndexBookingFilter}" />
+                                    <CheckBox Content="Όλοκληρωμένες"
+                                              Margin="0 5 0 0"
+                                              IsChecked="{Binding Completed}" />
+                                </StackPanel>
+                            </StackPanel>
+                            <Border BorderBrush="Gray"
+                                    BorderThickness="0 0 0 1"
+                                    Margin="-5 0 5 0" />
+                            <StackPanel Orientation="Horizontal"
+                                        VerticalAlignment="Bottom"
+                                        Margin="5 0 0 0">
+                                <StackPanel>
+                                    <Label Content="Συνεργάτης:"
+                                           VerticalAlignment="Center" />
+                                    <ComboBox  Width="105"
+                                               VerticalAlignment="Center"
+                                               ItemsSource="{Binding Partners}"
+                                               DisplayMemberPath="Name"
+                                               IsEditable="True"
+                                               SelectedIndex="{Binding PartnerIndex,UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
+                                <StackPanel Margin="5 0">
+                                    <Label Content="Λέξη Κλειδί:"
+                                           VerticalAlignment="Center" />
+                                    <TextBox Text="{Binding FilterString, Delay=100,UpdateSourceTrigger=PropertyChanged}"
+                                             Width="105"
+                                             Height="22"
+                                             VerticalContentAlignment="Bottom"
+                                             VerticalAlignment="Center"
+                                             Margin="0,0,5,0" />
+                                </StackPanel>
+                            </StackPanel>
                         </StackPanel>
+                        <Border BorderBrush="Gray"
+                                BorderThickness="0 0 1 0"
+                                Margin="-5 0 5 0" />
+                    </StackPanel>
+                    <StackPanel VerticalAlignment="Top"
+                                Grid.Column="1">
                         <StackPanel>
-                            <Label Content="Εκδρομή:"
-                                   VerticalAlignment="Center" />
+                            <TextBlock Text="Γραφείο:"
+                                       Margin="0 5 0 0"
+                                       VerticalAlignment="Center" />
                             <ComboBox  Width="105"
-                                       Margin="0 0 5 0"
-                                       IsSynchronizedWithCurrentItem="True"
                                        VerticalAlignment="Center"
-                                       ItemsSource="{Binding ExcursionsCollectionView}"
-                                       SelectedIndex="{Binding ExcursionIndexBookingFilter}" />
-                            <CheckBox Content="Όλοκληρωμένες"
-                                      Margin="0 5 0 0"
-                                      IsChecked="{Binding Completed}" />
+                                       HorizontalAlignment="Left"
+                                       SelectedIndex="{Binding DepartmentIndexBookingFilter}">
+                                <ComboBoxItem Content="Όλα" />
+                                <ComboBoxItem Content="Θεσσαλονίκης" />
+                                <ComboBoxItem Content="Λάρισας" />
+                                <ComboBoxItem Content="Συνεργάτών" />
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel VerticalAlignment="Top"
+                                    Margin="0 5">
+                            <CheckBox Content="Υπόλοιπο"
+                                      IsChecked="{Binding Remaining}" />
+                            <CheckBox Content="OXI Voucher"
+                                      IsChecked="{Binding NoVoucher}" />
+                            <CheckBox Content="OXI Proforma"
+                                      IsChecked="{Binding NoProforma}" />
+                            <CheckBox Content="OXI Τιμολόγιο"
+                                      IsChecked="{Binding NoReciept}" />
                         </StackPanel>
                     </StackPanel>
                     <Border BorderBrush="Gray"
-                            BorderThickness="0 0 0 1"
-                            Margin="-5 0 5 0" />
-                    <StackPanel Orientation="Horizontal"
-                                VerticalAlignment="Bottom"
-                                Margin="5 0 0 0">
-                        <StackPanel>
-                            <Label Content="Συνεργάτης:"
-                                   VerticalAlignment="Center" />
-                            <ComboBox  Width="105"
-                                       VerticalAlignment="Center"
-                                       ItemsSource="{Binding Partners}"
-                                       DisplayMemberPath="Name"
-                                       IsEditable="True"
-                                       SelectedIndex="{Binding PartnerIndex,UpdateSourceTrigger=PropertyChanged}" />
-                            <!--<Button Command="{Binding SetNonPartnerCommand}" Margin=" 0 3"
-                                    Content="Όλοι" />-->
-                        </StackPanel>
-                        <StackPanel Margin="5 0">
-                            <Label Content="Λέξη Κλειδί:"
-                                   VerticalAlignment="Center" />
-                            <TextBox Text="{Binding FilterString, Delay=100,UpdateSourceTrigger=PropertyChanged}"
-                                     Width="105"
-                                     Height="22"
-                                     VerticalContentAlignment="Bottom"
-                                     VerticalAlignment="Center"
-                                     Margin="0,0,5,0" />
+                            BorderThickness="0 0 1 0"
+                            Margin="5 0" />
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="Νέα Κατάθεση" />
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Ποσό:"
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center" />
+                                    <TextBox Margin="5 3 5 2"
+                                             HorizontalAlignment="Left"
+                                             VerticalAlignment="Center"
+                                             Text="{Binding NewPayment.Amount,Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                             Width="50" />
+                                </StackPanel>
+                                <TextBlock Text="Μέθοδος:"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Center" />
+                                <ComboBox Margin="0 5 5 0"
+                                          VerticalAlignment="Center"
+                                          HorizontalAlignment="Center"
+                                          ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type enum:PaymentMethod}}}"
+                                          SelectedItem="{Binding NewPayment.PaymentMethod,NotifyOnValidationError=True}"
+                                          Width="90" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="0"
+                                        HorizontalAlignment="Stretch">
+                                <TextBlock Text="Σημείωση:"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Center" />
+                                <TextBox VerticalContentAlignment="Top"
+                                         HorizontalAlignment="Stretch"
+                                         Width="100"
+                                         TextWrapping="Wrap"
+                                         Height="50"
+                                         Text="{Binding NewPayment.Comment}" />
+                                <Button Content="Προσθήκη"
+                                        Margin="0 5"
+                                        Command="{Binding AddBulkPayment_Command}"
+                                        VerticalAlignment="Center" />
+                            </StackPanel>
                         </StackPanel>
                     </StackPanel>
+                    <Border BorderBrush="Gray"
+                            BorderThickness="0 0 1 0"
+                            Margin="5 0 0 0" />
                 </StackPanel>
-                <Border BorderBrush="Gray"
-                        BorderThickness="0 0 1 0"
-                        Margin="-5 0 5 0" />
-            </StackPanel>
-            <StackPanel VerticalAlignment="Top"
-                        Grid.Column="1">
-                <StackPanel>
-                    <TextBlock Text="Γραφείο:"
-                               Margin="0 5 0 0"
-                               VerticalAlignment="Center" />
-                    <ComboBox  Width="105"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Left"
-                               SelectedIndex="{Binding DepartmentIndexBookingFilter}">
-                        <ComboBoxItem Content="Όλα" />
-                        <ComboBoxItem Content="Θεσσαλονίκης" />
-                        <ComboBoxItem Content="Λάρισας" />
-                        <ComboBoxItem Content="Συνεργάτών" />
-                    </ComboBox>
-                </StackPanel>
-                <StackPanel VerticalAlignment="Top"
-                            Margin="0 5">
-                    <CheckBox Content="Υπόλοιπο"
-                              IsChecked="{Binding Remaining}" />
-                    <CheckBox Content="OXI Voucher"
-                              IsChecked="{Binding NoVoucher}" />
-                    <CheckBox Content="OXI Proforma"
-                              IsChecked="{Binding NoProforma}" />
-                    <CheckBox Content="OXI Τιμολόγιο"
-                              IsChecked="{Binding NoReciept}" />
-                </StackPanel>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal"
-                        Visibility="Collapsed"
-                        Grid.Row="1"
-                        VerticalAlignment="Bottom">
-                <Button Content="Letters"
-                        VerticalAlignment="Bottom" />
-                <Button Content="List"
-                        VerticalAlignment="Bottom"
-                        Margin="5,0" />
-                <Button Content="Sent Vchrs"
-                        VerticalAlignment="Bottom"
-                        Margin="5,0" />
-            </StackPanel>
-        </StackPanel>
-        <Grid Grid.Row="1"
-              Grid.ColumnSpan="2  ">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <GroupBox Header="Πακέτα"
-                      VerticalAlignment="Top">
-                <GroupBox.Style>
-                    <Style TargetType="GroupBox">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding ReservationsCollectionView.Count}"
-                                         Value="0">
-                                <Setter Property="Visibility"
-                                        Value="Collapsed" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </GroupBox.Style>
-                <ListView ItemsSource="{Binding ReservationsCollectionView}"
-                          x:Name="reservations"
-                          SelectedItem="{Binding SelectedReservation}">
-                    <!--<ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel />
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>-->
-                    <ListView.Resources>
-                        <Style TargetType="{x:Type ListViewItem}">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type ListViewItem}">
-                                        <Border x:Name="Bd"
-                                                BorderBrush="{TemplateBinding BorderBrush}"
-                                                BorderThickness="{TemplateBinding BorderThickness}"
-                                                Background="{TemplateBinding Background}"
-                                                Padding="{TemplateBinding Padding}"
-                                                SnapsToDevicePixels="true">
-                                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                            <!--<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                <Grid Grid.Row="1"
+                      Grid.ColumnSpan="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Popup IsOpen="{Binding IsPaymentPopupOpen}"
+                           Placement="Center"
+                           MaxWidth="250"
+                           MaxHeight="200"
+                           Margin="0,0,0,0">
+                        <Border Background="White"
+                                BorderThickness="1"
+                                Padding="10"
+                                BorderBrush="Silver">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Label Content="Απόθεμα Συνεργάτη:" />
+                                <Label Content="{Binding Available, StringFormat=C2}"
+                                       Grid.Column="1"
+                                       Foreground="Green" />
+                                <Label Content="Υπόλοιπο Κράτησης:"
+                                       Grid.Row="1" />
+                                <Label Content="{Binding SelectedReservation.Remaining, StringFormat=C2}"
+                                       Foreground="Red"
+                                       Grid.Column="1"
+                                       Grid.Row="1" />
+                                <Label Content="Ποσό πληρωμής:"
+                                       Grid.Row="2" />
+                                <TextBox Text="{Binding PaymentAmmount, Converter={StaticResource FtoSConverter},UpdateSourceTrigger=PropertyChanged}"
+                                         Grid.Column="1"
+                                         Grid.Row="2"
+                                         VerticalAlignment="Center"
+                                         Width="40" />
+                                <StackPanel Grid.Row="3"
+                                            Orientation="Horizontal"
+                                            HorizontalAlignment="Center"
+                                            Grid.ColumnSpan="2">
+                                    <Button Content="Ακύρωση"
+                                            Padding="5 0 5 1"
+                                            VerticalAlignment="Center"
+                                            HorizontalAlignment="Left"
+                                            Command="{Binding ClosePopup_Command}" />
+                                    <Button Content="Πληρωμή"
+                                            Padding="5 0 5 1"
+                                            VerticalAlignment="Center"
+                                            Margin="5 5 0 5"
+                                            HorizontalAlignment="Left"
+                                            Command="{Binding CommitPayment_Command}" />
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </Popup>
+                    <GroupBox Header="Πακέτα"
+                              Width="674"
+                              MinHeight="200"
+                              VerticalAlignment="Top">
+                        <ListView ItemsSource="{Binding ReservationsCollectionView}"
+                                  x:Name="reservations"
+                                  SelectedItem="{Binding SelectedReservation}">
+                            <ListView.Resources>
+                                <ContextMenu x:Key="ItemContextMenu">
+                                    <MenuItem Header="Πληρωμή απο απόθεμα"
+                                              Command="{Binding DataContext.PayFromBulkCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}"
+                                              CommandParameter="{Binding}">
+                                        <MenuItem.Icon>
+                                            <Image MaxHeight="20"
+                                                   Stretch="Fill" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </ContextMenu>
+                                <Style TargetType="{x:Type ListViewItem}">
+                                    <Setter Property="ContextMenu"
+                                            Value="{StaticResource ItemContextMenu}" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                                <Border x:Name="Bd"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        Background="{TemplateBinding Background}"
+                                                        Padding="{TemplateBinding Padding}"
+                                                        SnapsToDevicePixels="true">
+                                                    <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                                    <!--<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                           SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />-->
-                                        </Border>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsSelected"
-                                                     Value="True">
-                                                <Setter Property="Background"
-                                                        TargetName="Bd"
-                                                        Value="{x:Static SystemColors.HighlightBrush}" />
-                                            </Trigger>
-                                            <!--<MultiTrigger>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsSelected"
+                                                             Value="True">
+                                                        <Setter Property="Background"
+                                                                TargetName="Bd"
+                                                                Value="{x:Static SystemColors.HighlightBrush}" />
+                                                    </Trigger>
+                                                    <!--<MultiTrigger>
                                             <MultiTrigger.Conditions>
                                                 <Condition Property="Selector.IsSelectionActive"
                                                            Value="True" />
@@ -319,254 +415,260 @@
                                                     TargetName="Bd"
                                                     Value="{x:Static SystemColors.HighlightBrush}" />
                                         </MultiTrigger>-->
-                                            <MultiDataTrigger>
-                                                <MultiDataTrigger.Conditions>
-                                                    <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsMouseOver}"
-                                                               Value="True" />
-                                                    <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsSelected}"
-                                                               Value="False" />
-                                                </MultiDataTrigger.Conditions>
-                                                <Setter Property="Background"
-                                                        TargetName="Bd"
-                                                        Value="LightBlue" />
-                                            </MultiDataTrigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                            <EventSetter Event="MouseDoubleClick"
-                                         Handler="ListView_MouseDoubleClick" />
-                            <Setter Property="IsSelected"
-                                    Value="{Binding Selected}" />
-                        </Style>
-                    </ListView.Resources>
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Border BorderBrush="Gray"
-                                    Margin="10 2 5 2"
-                                    BorderThickness="1">
-                                <Grid Background="White">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="150" />
-                                        <ColumnDefinition Width="80" />
-                                        <ColumnDefinition Width="150" />
-                                        <ColumnDefinition Width="72" />
-                                        <ColumnDefinition Width="65" />
-                                        <ColumnDefinition Width="72" />
-                                        <ColumnDefinition Width="35" />
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                    </Grid.RowDefinitions>
-                                    <Rectangle Fill="LightGreen"
-                                               Grid.Column="1"
-                                               Grid.ColumnSpan="2"
-                                               Grid.RowSpan="5" />
-                                    <Rectangle Fill="AliceBlue"
-                                               Grid.Column="3"
-                                               Grid.ColumnSpan="2"
-                                               Grid.RowSpan="5" />
-                                    <Rectangle Fill="LightYellow"
-                                               Grid.Column="5"
-                                               Grid.ColumnSpan="2"
-                                               Grid.RowSpan="5" />
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsMouseOver}"
+                                                                       Value="True" />
+                                                            <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsSelected}"
+                                                                       Value="False" />
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Background"
+                                                                TargetName="Bd"
+                                                                Value="LightBlue" />
+                                                    </MultiDataTrigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <EventSetter Event="MouseDoubleClick"
+                                                 Handler="ListView_MouseDoubleClick" />
+                                    <Setter Property="IsSelected"
+                                            Value="{Binding Selected}" />
+                                </Style>
+                            </ListView.Resources>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
                                     <Border BorderBrush="Gray"
-                                            BorderThickness="2 0 0 0"
-                                            HorizontalAlignment="Right"
-                                            Grid.Column="0"
-                                            Grid.RowSpan="5" />
-                                    <Border BorderBrush="Gray"
-                                            BorderThickness="1 0 0 0"
-                                            HorizontalAlignment="Right"
-                                            Grid.Column="1"
-                                            Grid.RowSpan="5" />
-                                    <Border BorderBrush="Gray"
-                                            BorderThickness="2 0 0 0"
-                                            HorizontalAlignment="Right"
-                                            Grid.Column="2"
-                                            Grid.RowSpan="5" />
-                                    <Border BorderBrush="Gray"
-                                            BorderThickness="1 0 0 0"
-                                            HorizontalAlignment="Right"
-                                            Grid.Column="3"
-                                            Grid.RowSpan="5" />
-                                    <Border BorderBrush="Gray"
-                                            BorderThickness="2 0 0 0"
-                                            HorizontalAlignment="Right"
-                                            Grid.Column="4"
-                                            Grid.RowSpan="5" />
-                                    <Border BorderBrush="Gray"
-                                            BorderThickness="1 0 0 0"
-                                            HorizontalAlignment="Right"
-                                            Grid.Column="5"
-                                            Grid.RowSpan="5" />
-                                    <Border BorderBrush="Gray"
-                                            BorderThickness="0 1 0 0"
-                                            VerticalAlignment="Bottom"
-                                            Grid.ColumnSpan="7" />
-                                    <Border BorderBrush="Gray"
-                                            Grid.Row="1"
-                                            BorderThickness="0 1 0 0"
-                                            VerticalAlignment="Bottom"
-                                            Grid.ColumnSpan="7" />
-                                    <Border BorderBrush="Gray"
-                                            Grid.Row="2"
-                                            BorderThickness="0 1 0 0"
-                                            VerticalAlignment="Bottom"
-                                            Grid.ColumnSpan="7" />
-                                    <Label Content="{Binding Partner}"
-                                           Grid.Row="0"
-                                           Padding="2 5 5 5" />
-                                    <Label Content="{Binding CustNum}"
-                                           Grid.Row="1"
-                                           Padding="2 5 5 5" />
-                                    <ListView ItemsSource="{Binding AllCustomers}"
-                                              FontSize="12"
-                                              Height="52"
-                                              Grid.Row="2"
-                                              Padding="-3 0 0 0"
-                                              BorderThickness="0 0  2 0"
-                                              BorderBrush="Gray"
-                                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                              Grid.RowSpan="5" />
-                                    <Label Content="Κατηγορία:"
-                                           Grid.Row="0"
-                                           Grid.Column="1" />
-                                    <Label Content="{Binding Category}"
-                                           Grid.Row="0"
-                                           HorizontalAlignment="Left"
-                                           Grid.Column="2" />
-                                    <Label Content="Προορισμος:"
-                                           Grid.Column="1"
-                                           Grid.Row="1" />
-                                    <Label Content="{Binding To}"
-                                           Grid.Row="1"
-                                           HorizontalAlignment="Left"
-                                           Grid.Column="2" />
-                                    <Label Content="Ημ/νίες:"
-                                           Grid.Column="1"
-                                           Grid.Row="2" />
-                                    <Label Content="{Binding DatesWithYear}"
-                                           Grid.Row="2"
-                                           HorizontalAlignment="Left"
-                                           Grid.Column="2" />
-                                    <Label Content="Ημ Κράτ:"
-                                           Grid.Column="1"
-                                           Grid.Row="3" />
-                                    <Label Content="{Binding Createddate,Converter={StaticResource DateTimeToString},ConverterParameter='dd/MM/yy hh:mm'}"
-                                           Grid.Row="3"
-                                           HorizontalAlignment="Left"
-                                           Grid.Column="2" />
-                                    <!--Econ-->
-                                    <Label Content="Σύνολο:"
-                                           Grid.Row="0"
-                                           Grid.Column="3" />
-                                    <Label Content="{Binding FullPrice,Converter={StaticResource FtoSConverter}}"
-                                           Grid.Row="0"
-                                           HorizontalAlignment="Right"
-                                           Grid.Column="4" />
-                                    <Label Content="Προκατ.:"
-                                           Grid.Column="3"
-                                           Grid.Row="1" />
-                                    <Label Content="{Binding Recieved,Converter={StaticResource FtoSConverter}}"
-                                           Grid.Row="1"
-                                           HorizontalAlignment="Right"
-                                           Grid.Column="4" />
-                                    <Label Content="Υπόλοιπο:"
-                                           Grid.Column="3"
-                                           Grid.Row="2" />
-                                    <Label Content="{Binding Remaining,Converter={StaticResource FtoSConverter}}"
-                                           Grid.Row="2"
-                                           Foreground="{Binding Remaining, Converter={StaticResource BoolToRedGreenConverter}}"
-                                           HorizontalAlignment="Right"
-                                           Grid.Column="4" />
-                                    <!--Papers-->
-                                    <Label Content="Προφόρμα:"
-                                           Grid.Row="0"
-                                           Grid.Column="5" />
-                                    <Label Content="OXI"
-                                           Grid.Row="0"
-                                           HorizontalAlignment="Left"
-                                           Grid.Column="6" />
-                                    <Label Content="Τιμολόγιο:"
-                                           Grid.Column="5"
-                                           Grid.Row="1" />
-                                    <Label Content="{Binding Reciept,Converter={StaticResource BoolToYesNoConverter}}"
-                                           Grid.Row="1"
-                                           FontWeight="Bold"
-                                           Foreground="{Binding Reciept,Converter={StaticResource BoolToRedGreenConverter}}"
-                                           HorizontalAlignment="Left"
-                                           Grid.Column="6" />
-                                    <Label Content="Voucher:"
-                                           Grid.Column="5"
-                                           Grid.Row="2" />
-                                    <Label Content="OXI"
-                                           Grid.Row="2"
-                                           HorizontalAlignment="Left"
-                                           Grid.Column="6" />
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </GroupBox>
-            <Grid Grid.Column="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="3*" />
-                </Grid.RowDefinitions>
-                <GroupBox Header="Καταθέσεις"
-                          VerticalAlignment="Top">
-                    <GroupBox.Style>
-                        <Style TargetType="GroupBox">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding BulkPayments.Count}"
-                                             Value="0">
-                                    <Setter Property="Visibility"
-                                            Value="Collapsed" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </GroupBox.Style>
-                    <ListView ItemsSource="{Binding BulkPayments}"
-                              Background="LightGreen"
-                              Margin="0 0 0 5"
-                              SelectionChanged="BulkPayments_SelectionChanged"
-                              SelectedItem="{Binding SelectedBulkPayment}">
-                        <!--<ListView.ItemContainerStyle>
+                                            Margin="0 2 5 2"
+                                            BorderThickness="1">
+                                        <Grid Background="White">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="150" />
+                                                <ColumnDefinition Width="80" />
+                                                <ColumnDefinition Width="150" />
+                                                <ColumnDefinition Width="72" />
+                                                <ColumnDefinition Width="65" />
+                                                <ColumnDefinition Width="72" />
+                                                <ColumnDefinition Width="35" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Rectangle Fill="LightGreen"
+                                                       Grid.Column="1"
+                                                       Grid.ColumnSpan="2"
+                                                       Grid.RowSpan="5" />
+                                            <Rectangle Fill="AliceBlue"
+                                                       Grid.Column="3"
+                                                       Grid.ColumnSpan="2"
+                                                       Grid.RowSpan="5" />
+                                            <Rectangle Fill="LightYellow"
+                                                       Grid.Column="5"
+                                                       Grid.ColumnSpan="2"
+                                                       Grid.RowSpan="5" />
+                                            <Border BorderBrush="Gray"
+                                                    BorderThickness="2 0 0 0"
+                                                    HorizontalAlignment="Right"
+                                                    Grid.Column="0"
+                                                    Grid.RowSpan="5" />
+                                            <Border BorderBrush="Gray"
+                                                    BorderThickness="1 0 0 0"
+                                                    HorizontalAlignment="Right"
+                                                    Grid.Column="1"
+                                                    Grid.RowSpan="5" />
+                                            <Border BorderBrush="Gray"
+                                                    BorderThickness="2 0 0 0"
+                                                    HorizontalAlignment="Right"
+                                                    Grid.Column="2"
+                                                    Grid.RowSpan="5" />
+                                            <Border BorderBrush="Gray"
+                                                    BorderThickness="1 0 0 0"
+                                                    HorizontalAlignment="Right"
+                                                    Grid.Column="3"
+                                                    Grid.RowSpan="5" />
+                                            <Border BorderBrush="Gray"
+                                                    BorderThickness="2 0 0 0"
+                                                    HorizontalAlignment="Right"
+                                                    Grid.Column="4"
+                                                    Grid.RowSpan="5" />
+                                            <Border BorderBrush="Gray"
+                                                    BorderThickness="1 0 0 0"
+                                                    HorizontalAlignment="Right"
+                                                    Grid.Column="5"
+                                                    Grid.RowSpan="5" />
+                                            <Border BorderBrush="Gray"
+                                                    BorderThickness="0 1 0 0"
+                                                    VerticalAlignment="Bottom"
+                                                    Grid.ColumnSpan="7" />
+                                            <Border BorderBrush="Gray"
+                                                    Grid.Row="1"
+                                                    BorderThickness="0 1 0 0"
+                                                    VerticalAlignment="Bottom"
+                                                    Grid.ColumnSpan="7" />
+                                            <Border BorderBrush="Gray"
+                                                    Grid.Row="2"
+                                                    BorderThickness="0 1 0 0"
+                                                    VerticalAlignment="Bottom"
+                                                    Grid.ColumnSpan="7" />
+                                            <Label Content="{Binding Partner}"
+                                                   Grid.Row="0"
+                                                   Padding="2 5 5 5" />
+                                            <Label Content="{Binding CustNum}"
+                                                   Grid.Row="1"
+                                                   Padding="2 5 5 5" />
+                                            <ListView ItemsSource="{Binding AllCustomers}"
+                                                      FontSize="12"
+                                                      Height="52"
+                                                      Grid.Row="2"
+                                                      Padding="-3 0 0 0"
+                                                      BorderThickness="0 0  2 0"
+                                                      BorderBrush="Gray"
+                                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                      Grid.RowSpan="5" />
+                                            <Label Content="Κατηγορία:"
+                                                   Grid.Row="0"
+                                                   Grid.Column="1" />
+                                            <Label Content="{Binding Category}"
+                                                   Grid.Row="0"
+                                                   HorizontalAlignment="Left"
+                                                   Grid.Column="2" />
+                                            <Label Content="Προορισμος:"
+                                                   Grid.Column="1"
+                                                   Grid.Row="1" />
+                                            <Label Content="{Binding To}"
+                                                   Grid.Row="1"
+                                                   HorizontalAlignment="Left"
+                                                   Grid.Column="2" />
+                                            <Label Content="Ημ/νίες:"
+                                                   Grid.Column="1"
+                                                   Grid.Row="2" />
+                                            <Label Content="{Binding DatesWithYear}"
+                                                   Grid.Row="2"
+                                                   HorizontalAlignment="Left"
+                                                   Grid.Column="2" />
+                                            <Label Content="Ημ Κράτ:"
+                                                   Grid.Column="1"
+                                                   Grid.Row="3" />
+                                            <Label Content="{Binding Createddate,Converter={StaticResource DateTimeToString},ConverterParameter='dd/MM/yy hh:mm'}"
+                                                   Grid.Row="3"
+                                                   HorizontalAlignment="Left"
+                                                   Grid.Column="2" />
+                                            <!--Econ-->
+                                            <Label Content="Σύνολο:"
+                                                   Grid.Row="0"
+                                                   Grid.Column="3" />
+                                            <Label Content="{Binding FullPrice,Converter={StaticResource FtoSConverter}}"
+                                                   Grid.Row="0"
+                                                   HorizontalAlignment="Right"
+                                                   Grid.Column="4" />
+                                            <Label Content="Προκατ.:"
+                                                   Grid.Column="3"
+                                                   Grid.Row="1" />
+                                            <Label Content="{Binding Recieved,Converter={StaticResource FtoSConverter}}"
+                                                   Grid.Row="1"
+                                                   HorizontalAlignment="Right"
+                                                   Grid.Column="4" />
+                                            <Label Content="Υπόλοιπο:"
+                                                   Grid.Column="3"
+                                                   Grid.Row="2" />
+                                            <Label Content="{Binding Remaining,Converter={StaticResource FtoSConverter}}"
+                                                   Grid.Row="2"
+                                                   Foreground="{Binding Remaining, Converter={StaticResource BoolToRedGreenConverter}}"
+                                                   HorizontalAlignment="Right"
+                                                   Grid.Column="4" />
+                                            <!--Papers-->
+                                            <Label Content="Προφόρμα:"
+                                                   Grid.Row="0"
+                                                   Grid.Column="5" />
+                                            <Label Content="OXI"
+                                                   Grid.Row="0"
+                                                   HorizontalAlignment="Left"
+                                                   Grid.Column="6" />
+                                            <Label Content="Τιμολόγιο:"
+                                                   Grid.Column="5"
+                                                   Grid.Row="1" />
+                                            <Label Content="{Binding Reciept,Converter={StaticResource BoolToYesNoConverter}}"
+                                                   Grid.Row="1"
+                                                   FontWeight="Bold"
+                                                   Foreground="{Binding Reciept,Converter={StaticResource BoolToRedGreenConverter}}"
+                                                   HorizontalAlignment="Left"
+                                                   Grid.Column="6" />
+                                            <Label Content="Voucher:"
+                                                   Grid.Column="5"
+                                                   Grid.Row="2" />
+                                            <Label Content="OXI"
+                                                   Grid.Row="2"
+                                                   HorizontalAlignment="Left"
+                                                   Grid.Column="6" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </GroupBox>
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="3*" />
+                            <RowDefinition Height="7*" />
+                        </Grid.RowDefinitions>
+                        <GroupBox Header="Καταθέσεις"
+                                  Width="405">
+                            <!--<GroupBox.Style>
+                                <Style TargetType="GroupBox">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding BulkPayments.Count}"
+                                                     Value="0">
+                                            <Setter Property="Visibility"
+                                                    Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </GroupBox.Style>-->
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <ListView ItemsSource="{Binding BulkPayments}"
+                                          Background="LightGreen"
+                                          Margin="0 0 0 5"
+                                          SelectionMode="Single"
+                                          SelectionChanged="BulkPayments_SelectionChanged"
+                                          SelectedItem="{Binding SelectedBulkPayment}">
+                                    <!--<ListView.ItemContainerStyle>
                     <Style TargetType="{x:Type ListViewItem}">
                         <EventSetter Event="MouseDoubleClick"
                                      Handler="ListView_MouseDoubleClick" />
                     </Style>
                 </ListView.ItemContainerStyle>-->
-                        <ListView.Resources>
-                            <Style TargetType="{x:Type ListViewItem}">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="{x:Type ListViewItem}">
-                                            <Border x:Name="Bd"
-                                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                                    Background="{TemplateBinding Background}"
-                                                    Padding="{TemplateBinding Padding}"
-                                                    SnapsToDevicePixels="true">
-                                                <!--<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    <ListView.Resources>
+                                        <Style TargetType="{x:Type ListViewItem}">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                                        <Border x:Name="Bd"
+                                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                                Background="{TemplateBinding Background}"
+                                                                Padding="{TemplateBinding Padding}"
+                                                                SnapsToDevicePixels="true">
+                                                            <!--<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                           SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />-->
-                                                <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                            </Border>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsSelected"
-                                                         Value="True">
-                                                    <Setter Property="Background"
-                                                            TargetName="Bd"
-                                                            Value="{x:Static SystemColors.HighlightBrush}" />
-                                                </Trigger>
-                                                <!--<MultiTrigger>
+                                                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsSelected"
+                                                                     Value="True">
+                                                                <Setter Property="Background"
+                                                                        TargetName="Bd"
+                                                                        Value="{x:Static SystemColors.HighlightBrush}" />
+                                                            </Trigger>
+                                                            <!--<MultiTrigger>
                                             <MultiTrigger.Conditions>
                                                 <Condition Property="Selector.IsSelectionActive"
                                                            Value="True" />
@@ -577,213 +679,329 @@
                                                     TargetName="Bd"
                                                     Value="{x:Static SystemColors.HighlightBrush}" />
                                         </MultiTrigger>-->
-                                                <MultiDataTrigger>
-                                                    <MultiDataTrigger.Conditions>
-                                                        <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsMouseOver}"
-                                                                   Value="True" />
-                                                        <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsSelected}"
-                                                                   Value="False" />
-                                                    </MultiDataTrigger.Conditions>
-                                                    <Setter Property="Background"
-                                                            TargetName="Bd"
-                                                            Value="LightBlue" />
-                                                </MultiDataTrigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                                <Setter Property="IsSelected"
-                                        Value="{Binding Selected}" />
-                            </Style>
-                        </ListView.Resources>
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Border BorderBrush="Gray"
-                                        Margin="10 2 0 2"
-                                        BorderThickness="1">
-                                    <Grid Background="White">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="85" />
-                                            <ColumnDefinition Width="70" />
-                                            <ColumnDefinition Width="50" />
-                                            <ColumnDefinition Width="72" />
-                                            <ColumnDefinition Width="72" />
-                                            <ColumnDefinition Width="72" />
-                                        </Grid.ColumnDefinitions>
-                                        <Border BorderBrush="Gray"
-                                                BorderThickness="1 0 0 0"
-                                                HorizontalAlignment="Right"
-                                                Grid.Column="0"
-                                                Grid.RowSpan="5" />
-                                        <Border BorderBrush="Gray"
-                                                BorderThickness="2 0 0 0"
-                                                HorizontalAlignment="Right"
-                                                Grid.Column="1"
-                                                Grid.RowSpan="5" />
-                                        <Border BorderBrush="Gray"
-                                                BorderThickness="1 0 0 0"
-                                                HorizontalAlignment="Right"
-                                                Grid.Column="2"
-                                                Grid.RowSpan="5" />
-                                        <Label Content="Ημερομηνία:"
-                                               Grid.Row="0"
-                                               Grid.Column="0" />
-                                        <Label Content="{Binding Date,Converter={StaticResource DateTimeToString},ConverterParameter='dd/MM/yy'}"
-                                               Grid.Row="0"
-                                               HorizontalAlignment="Left"
-                                               Grid.Column="1" />
-                                        <Label Content="Ποσό::"
-                                               Grid.Column="2"
-                                               Grid.Row="0" />
-                                        <Label Content="{Binding Amount,Converter={StaticResource FtoSConverter}}"
-                                               Grid.Row="0"
-                                               HorizontalAlignment="Right"
-                                               Grid.Column="3" />
-                                        <Label Content="Τρόπος::"
-                                               Grid.Column="4"
-                                               Grid.Row="0" />
-                                        <Label Content="{Binding }"
-                                               Grid.Row="0"
-                                               HorizontalAlignment="Right"
-                                               Grid.Column="5" />
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </GroupBox>
-                <GroupBox Header="Πληρωμές"
-                          VerticalAlignment="Top"
-                          Grid.Row="1">
-                    <GroupBox.Style>
-                        <Style TargetType="GroupBox">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Payments.Count}"
-                                             Value="0">
-                                    <Setter Property="Visibility"
-                                            Value="Collapsed" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </GroupBox.Style>
-                    <ListView ItemsSource="{Binding Payments}"
-                              Background="LightGreen"
-                              SelectionChanged="ListView_SelectionChanged"
-                              SelectedItem="{Binding SelectedPayment}">
-                        <ListView.Resources>
-                            <Style TargetType="{x:Type ListViewItem}">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="{x:Type ListViewItem}">
-                                            <Border x:Name="Bd"
-                                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                                    Background="{TemplateBinding Background}"
-                                                    Padding="{TemplateBinding Padding}"
-                                                    SnapsToDevicePixels="true">
-                                                <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsMouseOver}"
+                                                                               Value="True" />
+                                                                    <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsSelected}"
+                                                                               Value="False" />
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Background"
+                                                                        TargetName="Bd"
+                                                                        Value="LightBlue" />
+                                                            </MultiDataTrigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="IsSelected"
+                                                    Value="{Binding Selected}" />
+                                        </Style>
+                                    </ListView.Resources>
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border BorderBrush="Gray"
+                                                    Margin="0 2"
+                                                    BorderThickness="1">
+                                                <Grid Background="White">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="78" />
+                                                        <ColumnDefinition Width="60" />
+                                                        <ColumnDefinition Width="43" />
+                                                        <ColumnDefinition Width="52" />
+                                                        <ColumnDefinition Width="53" />
+                                                        <ColumnDefinition Width="70" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Border BorderBrush="Gray"
+                                                            BorderThickness="1 0 0 0"
+                                                            HorizontalAlignment="Right"
+                                                            Grid.Column="1"
+                                                            Grid.RowSpan="5" />
+                                                    <Border BorderBrush="Gray"
+                                                            BorderThickness="1 0 0 0"
+                                                            HorizontalAlignment="Right"
+                                                            Grid.Column="3" />
+                                                    <Label Content="Ημερομηνία:"
+                                                           Grid.Column="0" />
+                                                    <Label Content="{Binding Date,Converter={StaticResource DateTimeToString},ConverterParameter='dd/MM/yy'}"
+                                                           Padding="0 5 10 5"
+                                                           HorizontalAlignment="Right"
+                                                           Grid.Column="1" />
+                                                    <Label Content="Ποσό:"
+                                                           Grid.Column="2" />
+                                                    <Label Content="{Binding Amount,Converter={StaticResource FtoSConverter}}"
+                                                           Padding="0 5 10 5"
+                                                           HorizontalAlignment="Right"
+                                                           Grid.Column="3" />
+                                                    <Label Content="Τρόπος:"
+                                                           Grid.Column="4" />
+                                                    <Label Content="{Binding PaymentMethod, Converter={StaticResource EnumConverter}}"
+                                                           Padding="0 5 10 5"
+                                                           HorizontalAlignment="Right"
+                                                           Grid.Column="5" />
+                                                </Grid>
                                             </Border>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsSelected"
-                                                         Value="True">
-                                                    <Setter Property="Background"
-                                                            TargetName="Bd"
-                                                            Value="{x:Static SystemColors.HighlightBrush}" />
-                                                </Trigger>
-                                                <MultiDataTrigger>
-                                                    <MultiDataTrigger.Conditions>
-                                                        <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsMouseOver}"
-                                                                   Value="True" />
-                                                        <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsSelected}"
-                                                                   Value="False" />
-                                                    </MultiDataTrigger.Conditions>
-                                                    <Setter Property="Background"
-                                                            TargetName="Bd"
-                                                            Value="LightBlue" />
-                                                </MultiDataTrigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                                <Setter Property="IsSelected"
-                                        Value="{Binding Selected}" />
-                            </Style>
-                        </ListView.Resources>
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Border BorderBrush="Gray"
-                                        Margin="10 2 0 2"
-                                        BorderThickness="1">
-                                    <Grid Background="White">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="85" />
-                                            <ColumnDefinition Width="70" />
-                                            <ColumnDefinition Width="50" />
-                                            <ColumnDefinition Width="72" />
-                                            <ColumnDefinition Width="72" />
-                                            <ColumnDefinition Width="72" />
-                                        </Grid.ColumnDefinitions>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                                <StackPanel Grid.Row="1"
+                                            Orientation="Horizontal"
+                                            HorizontalAlignment="Right">
+                                    <Label Content="Απόθεμα:"
+                                           Padding="0" />
+                                    <Label Content="{Binding Available}"
+                                           Padding="5 0"
+                                           FontWeight="Bold"
+                                           Foreground="Green"
+                                           ContentStringFormat="C2" />
+                                </StackPanel>
+                            </Grid>
+                        </GroupBox>
+                        <GroupBox Header="Πληρωμές"
+                                  Width="405"
+                                  MinHeight="200"
+                                  VerticalAlignment="Top"
+                                  Grid.Row="1">
+                            <!--<GroupBox.Style>
+                                <Style TargetType="GroupBox">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Payments.Count}"
+                                                     Value="0">
+                                            <Setter Property="Visibility"
+                                                    Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </GroupBox.Style>-->
+                            <ListView ItemsSource="{Binding Payments}"
+                                      Background="LightGreen"
+                                      SelectionMode="Single"
+                                      SelectionChanged="ListView_SelectionChanged"
+                                      SelectedItem="{Binding SelectedPayment}">
+                                <ListView.Resources>
+                                    <Style TargetType="{x:Type ListViewItem}">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                                    <Border x:Name="Bd"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                                            Background="{TemplateBinding Background}"
+                                                            Padding="{TemplateBinding Padding}"
+                                                            SnapsToDevicePixels="true">
+                                                        <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsSelected"
+                                                                 Value="True">
+                                                            <Setter Property="Background"
+                                                                    TargetName="Bd"
+                                                                    Value="{x:Static SystemColors.HighlightBrush}" />
+                                                        </Trigger>
+                                                        <MultiDataTrigger>
+                                                            <MultiDataTrigger.Conditions>
+                                                                <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsMouseOver}"
+                                                                           Value="True" />
+                                                                <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsSelected}"
+                                                                           Value="False" />
+                                                            </MultiDataTrigger.Conditions>
+                                                            <Setter Property="Background"
+                                                                    TargetName="Bd"
+                                                                    Value="LightBlue" />
+                                                        </MultiDataTrigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Property="IsSelected"
+                                                Value="{Binding Selected}" />
+                                    </Style>
+                                </ListView.Resources>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
                                         <Border BorderBrush="Gray"
-                                                BorderThickness="1 0 0 0"
-                                                HorizontalAlignment="Right"
-                                                Grid.Column="0"
-                                                Grid.RowSpan="5" />
-                                        <Border BorderBrush="Gray"
-                                                BorderThickness="2 0 0 0"
-                                                HorizontalAlignment="Right"
-                                                Grid.Column="1"
-                                                Grid.RowSpan="5" />
-                                        <Border BorderBrush="Gray"
-                                                BorderThickness="1 0 0 0"
-                                                HorizontalAlignment="Right"
-                                                Grid.Column="2"
-                                                Grid.RowSpan="5" />
-                                        <Label Content="Ημερομηνία:"
-                                               Grid.Row="0"
-                                               Grid.Column="0" />
-                                        <Label Content="{Binding Date,Converter={StaticResource DateTimeToString},ConverterParameter='dd/MM/yy'}"
-                                               Grid.Row="0"
-                                               HorizontalAlignment="Left"
-                                               Grid.Column="1" />
-                                        <Label Content="Ποσό::"
-                                               Grid.Column="2"
-                                               Grid.Row="0" />
-                                        <Label Content="{Binding Amount,Converter={StaticResource FtoSConverter}}"
-                                               Grid.Row="0"
-                                               HorizontalAlignment="Right"
-                                               Grid.Column="3" />
-                                        <Label Content="Τρόπος::"
-                                               Grid.Column="4"
-                                               Grid.Row="0" />
-                                        <Label Content="{Binding }"
-                                               Grid.Row="0"
-                                               HorizontalAlignment="Right"
-                                               Grid.Column="5" />
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </GroupBox>
+                                                Margin="0 2"
+                                                BorderThickness="1">
+                                            <Grid Background="White">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="78" />
+                                                    <ColumnDefinition Width="60" />
+                                                    <ColumnDefinition Width="43" />
+                                                    <ColumnDefinition Width="52" />
+                                                    <ColumnDefinition Width="53" />
+                                                    <ColumnDefinition Width="70" />
+                                                </Grid.ColumnDefinitions>
+                                                <Border BorderBrush="Gray"
+                                                        BorderThickness="1 0 0 0"
+                                                        HorizontalAlignment="Right"
+                                                        Grid.Column="1"
+                                                        Grid.RowSpan="5" />
+                                                <Border BorderBrush="Gray"
+                                                        BorderThickness="1 0 0 0"
+                                                        HorizontalAlignment="Right"
+                                                        Grid.Column="3" />
+                                                <Label Content="Ημερομηνία:"
+                                                       Grid.Column="0" />
+                                                <Label Content="{Binding Date,Converter={StaticResource DateTimeToString},ConverterParameter='dd/MM/yy'}"
+                                                       Padding="0 5 10 5"
+                                                       HorizontalAlignment="Right"
+                                                       Grid.Column="1" />
+                                                <Label Content="Ποσό:"
+                                                       Grid.Column="2" />
+                                                <Label Content="{Binding Amount,Converter={StaticResource FtoSConverter}}"
+                                                       Padding="0 5 10 5"
+                                                       HorizontalAlignment="Right"
+                                                       Grid.Column="3" />
+                                                <Label Content="Τρόπος:"
+                                                       Grid.Column="4" />
+                                                <Label Content="{Binding }"
+                                                       Padding="0 5 10 5"
+                                                       HorizontalAlignment="Right"
+                                                       Grid.Column="5" />
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </GroupBox>
+                    </Grid>
+                </Grid>
+                <StackPanel Orientation="Horizontal"
+                            Grid.Row="2">
+                    <Label Content="Net:" />
+                    <Label Content="{Binding Total}"
+                           ContentStringFormat="C2" />
+                    <Label Content="Προμήθεια:" />
+                    <Label Content="{Binding Commision}"
+                           Foreground="Blue"
+                           ContentStringFormat="C2" />
+                    <Label Content="Απόθεμα" />
+                    <Label Content="{Binding Available}"
+                           Foreground="Green"
+                           ContentStringFormat="C2" />
+                    <Label Content="Υπόλοιπο" />
+                    <Label Content="{Binding RemainingA}"
+                           Foreground="Red"
+                           ContentStringFormat="C2" />
+                </StackPanel>
             </Grid>
-        </Grid>
-        <StackPanel Orientation="Horizontal"
-                    Grid.Row="2">
-            <Label Content="Net:" />
-            <Label Content="{Binding Total}"
-                   ContentStringFormat="C2" />
-            <Label Content="Προμήθεια:" />
-            <Label Content="{Binding Commision}"
-                   Foreground="Blue"
-                   ContentStringFormat="C2" />
-            <Label Content="Απόθεμα" />
-            <Label Content="{Binding Available}"
-                   Foreground="Green"
-                   ContentStringFormat="C2" />
-            <Label Content="Υπόλοιπο" />
-            <Label Content="{Binding RemainingA}"
-                   Foreground="Red"
-                   ContentStringFormat="C2" />
-        </StackPanel>
-    </Grid>
+        </TabItem>
+        <TabItem Header="Καρτέλα Πωλήσεων">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Συνεργάτης:"
+                           VerticalAlignment="Center" />
+                    <ComboBox  Width="105"
+                               VerticalAlignment="Center"
+                               ItemsSource="{Binding Partners}"
+                               DisplayMemberPath="Name"
+                               IsEditable="True"
+                               SelectedIndex="{Binding PartnerIndex,UpdateSourceTrigger=PropertyChanged}" />
+                    <Label Content="Από:" />
+                    <DatePicker SelectedDate="{Binding SalesFrom}"
+                                Width="92"
+                                VerticalAlignment="Center"
+                                Margin="0 0 5 0" />
+                    <Button Content="Προβολή" VerticalAlignment="Center"
+                            Command="{Binding CreateSalesPreview_Command}" />
+                </StackPanel>
+                <Grid Grid.Row="1">
+                    <ScrollViewer>
+                        <ListView HorizontalAlignment="Left"
+                                  ItemsSource="{Binding SalesItems}">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="Focusable"
+                                            Value="false" />
+                                    <Setter Property="VerticalContentAlignment"
+                                            Value="Top" />
+                                    <Setter Property="HorizontalContentAlignment"
+                                            Value="Stretch" />
+                                    <Setter Property="BorderBrush"
+                                            Value="Gray" />
+                                    <Setter Property="BorderThickness"
+                                            Value="0 0 0 1" />
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.View>
+                                <GridView>
+                                    <GridView.Columns>
+                                        <GridViewColumn Header="Ημερομ."
+                                                        Width="60">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Date, Converter={StaticResource DateTimeToString}, ConverterParameter='dd/MM/yy'}"
+                                                               HorizontalAlignment="Center" />
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn Header="Τύπος Κίνησης"
+                                                        Width="90">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding CardType, Converter={StaticResource EnumConverter}}"
+                                                               HorizontalAlignment="Left" />
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn Header="Κωδικός"
+                                                        Width="70">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Number}"
+                                                               HorizontalAlignment="Left" />
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn Header="Περιγραφή"
+                                                        Width="250">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Description}"
+                                                               TextWrapping="Wrap"
+                                                               HorizontalAlignment="Left" />
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn Header="Ποσό"
+                                                        Width="80">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Cost, StringFormat=C2}"
+                                                               HorizontalAlignment="Right" />
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn Header="Χρέωση"
+                                                        Width="80">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Deposit, StringFormat=C2}"
+                                                               HorizontalAlignment="Right" />
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn Header="Υπόλοιπο"
+                                                        Width="80">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Remaining, StringFormat=C2}"
+                                                               HorizontalAlignment="Right" />
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                    </GridView.Columns>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </ScrollViewer>
+                </Grid >
+            </Grid>
+        </TabItem>
+        <TabItem Header="Καρτέλα Αγορών"></TabItem>
+    </TabControl>
 </UserControl>

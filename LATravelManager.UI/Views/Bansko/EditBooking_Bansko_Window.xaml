@@ -8,6 +8,7 @@
         xmlns:converters="clr-namespace:LATravelManager.UI.Converters"
         xmlns:helpers="clr-namespace:LATravelManager.UI.Helpers"
         xmlns:viewmodels="clr-namespace:LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko"
+        xmlns:people="clr-namespace:LATravelManager.Model.People;assembly=LATravelManager.Model"
         d:DataContext="{d:DesignInstance viewmodels:NewReservation_Bansko_ViewModel}"
         mc:Ignorable="d"
         Closing="Window_Closing"
@@ -191,6 +192,7 @@
                               HorizontalAlignment="Left"
                               AutoGenerateColumns="False"
                               CanUserAddRows="True"
+                              d:DesignSource="{d:DesignInstance Type={x:Type people:Customer}, CreateList=True}"
                               ItemsSource="{Binding BookingWr.Customers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                               SelectedItem="{Binding SelectedCustomer}">
                         <DataGrid.Resources>
@@ -207,7 +209,7 @@
                         </DataGrid.RowHeaderStyle>
                         <DataGrid.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="Διαγραφη"
+                                <MenuItem Header="Διαγραφή"
                                           Command="{Binding DeleteSelectedCustomersCommand}">
                                     <MenuItem.Icon>
                                         <Image MaxHeight="20"
@@ -665,7 +667,7 @@
                                       ItemsSource="{Binding BookingWr.Payments}">
                                 <ListView.Resources>
                                     <ContextMenu x:Key="ItemContextMenu">
-                                        <MenuItem Header="Διαγραφη"
+                                        <MenuItem Header="Διαγραφή"
                                                   Command="{Binding DataContext.DeletePaymentCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
                                             <MenuItem.Icon>
                                                 <Image MaxHeight="20"
@@ -683,6 +685,13 @@
                                 </ListView.Resources>
                                 <ListView.ItemContainerStyle>
                                     <Style TargetType="{x:Type ListViewItem}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsBulk}"
+                                                         Value="True">
+                                                <Setter Property="Background"
+                                                        Value="LightBlue" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
                                         <Setter Property="ContextMenu"
                                                 Value="{StaticResource ItemContextMenu}" />
                                     </Style>
@@ -1458,8 +1467,7 @@
                                     Command="{Binding SearchForCustomerCommand}">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock VerticalAlignment="center"
-                                               Margin="0 0 5 0">
-                                Προσθήκη Πελ.</TextBlock>
+                                               Margin="0 0 5 0">Προσθήκη Πελ.</TextBlock>
                                     <iconPacks:PackIconFontAwesome Kind="SearchSolid"
                                                                    VerticalAlignment="Center" />
                                 </StackPanel>
@@ -1568,7 +1576,7 @@
                                   ItemsSource="{Binding BookingWr.Reciepts}">
                             <ListView.Resources>
                                 <ContextMenu x:Key="ItemContextMenu">
-                                    <MenuItem Header="Διαγραφη"
+                                    <MenuItem Header="Διαγραφή"
                                               IsEnabled="False"
                                               Command="{Binding DataContext.DeletePaymentCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
                                         <MenuItem.Icon>
@@ -1610,7 +1618,8 @@
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
                                                 <TextBlock HorizontalAlignment="Stretch"
-                                                           Margin="5 0" Cursor="Hand"
+                                                           Margin="5 0"
+                                                           Cursor="Hand"
                                                            VerticalAlignment="Bottom">
                                                     <Hyperlink Command="{Binding DataContext.OpenFileCommand,RelativeSource={RelativeSource AncestorType=TabControl}}"
                                                                CommandParameter="{Binding}"

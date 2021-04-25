@@ -1,19 +1,16 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using GalaSoft.MvvmLight;
 using LATravelManager.Model;
-using LATravelManager.Model.DTOS;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.Lists;
 using LATravelManager.Model.Locations;
 using LATravelManager.Model.People;
 using LATravelManager.UI.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data.Entity;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace LATravelManager.UI.Helpers
 {
@@ -381,6 +378,8 @@ namespace LATravelManager.UI.Helpers
             }
         }
 
+        public Hotel Gr => Hotels.FirstOrDefault(h => h.Name == "GRAND ROYALE");
+
         public async Task LoadAsync()
         {
             Mouse.OverrideCursor = Cursors.Wait;
@@ -404,98 +403,11 @@ namespace LATravelManager.UI.Helpers
             Vehicles = new ObservableCollection<Vehicle>(await Context.GetAllAsync<Vehicle>());
             Leaders = new ObservableCollection<Leader>(await Context.GetAllAsync<Leader>());
             OptionalExcursions = new ObservableCollection<OptionalExcursion>(await Context.GetAllAsync<OptionalExcursion>(o => o.Date >= DateTime.Today));
-            //List<CompanyDto> t = await Context.Context.Companies.Where(c => !c.Disabled).Select(c => new CompanyDto { CompanyName = c.CompanyName, Id = c.Id }).ToListAsync();
 
             await Context.SaveAsync();
 
             Mouse.OverrideCursor = Cursors.Arrow;
-            //DateTime from = new DateTime(2019, 12, 18);
-            //DateTime to = new DateTime(2020, 01, 1);
-
-            //var t = Context.Context.BookingInfosPerDay.Where(i => i.Room.Hotel.Id == 24 && i.Room.RoomType.Id == 1 && i.Date >= from && i.Date <= to);
-
-            //foreach (BookingInfoPerDay item in t)
-            //{
-            //    Context.Delete(item);
-
-            //}
-            //await Context.SaveAsync();
-
-            //int counter = 0;
-            //IEnumerable<Booking> boo = await Context.GetAllBookingsAsync();
-            //foreach (var item in boo)
-            //{
-            //    if (item.Id == 4370)
-            //    {
-            //        foreach (var r in item.ReservationsInBooking)
-            //        {
-            //            foreach (var c in r.CustomersList)
-            //            {
-            //                if (counter < 28)
-            //                {
-            //                    c.Price = 0.1m;
-            //                    counter++;
-            //                }
-            //                else
-            //                    c.Price = 60;
-            //            }
-            //        }
-            //    }
-            //}
-            ////foreach (var b in boo)
-            //{
-            //    foreach (var r in b.ReservationsInBooking)
-            //    {
-            //        if (r.HB || (r.Room != null && r.Room.Hotel.Id == 39))
-            //        {
-            //            r.HB = true;
-            //            foreach (var c in r.CustomersList)
-            //            {
-            //                if (c.Board == 0)
-            //                {
-            //                c.Board = 1;
-            //                }
-
-            //            }
-
-            //        }
-            //    }
-            //}
-            //await Context.SaveAsync();
-
-            //booking await DoTempStuff();
-
-            //foreach (var e in Excursions)
-            //{
-            //    if (e.ExcursionType.Category != ExcursionTypeEnum.Personal && e.ExcursionType.Category != ExcursionTypeEnum.ThirdParty && !e.IncludesPlane && e.ExcursionDates.Any(ed => ed.CheckOut > DateTime.Today))
-            //    {
-            //        foreach (var s in StartingPlaces)
-            //        {
-            //            e.ExcursionTimes.Add(new ExcursionTime { StartingPlace = s });
-            //        }
-            //    }
-            //}
         }
-
-        //private async Task DoTempStuff()
-        //{
-        //    var allpartnersBookings = await Context.GetAllBookingsAsyncP();
-        //    var custs = allpartnersBookings.Select(r => new BookingWrapper(r)).Sum(t => t.Customers.Count);
-        //    foreach (var b in allpartnersBookings.Select(r => new BookingWrapper(r)))
-        //    {
-        //        b.CalculateRemainingAmount();
-        //        b.Calculating = true;
-        //        if (b.FullPrice >= 0 && b.Customers.Count > 0 && Math.Abs(b.FullPrice - b.Customers.Sum(i => i.Price)) > 0.30m)
-        //        {
-        //            decimal tmpPrice = Math.Round(b.FullPrice / b.Customers.Count, 2);
-        //            foreach (CustomerWrapper customer in b.Customers)
-        //                customer.Price = tmpPrice;
-        //        }
-        //        b.Calculating = false;
-        //    }
-
-        //    await Context.SaveAsync();
-        //}
 
         public async Task LoadPersonal()
         {

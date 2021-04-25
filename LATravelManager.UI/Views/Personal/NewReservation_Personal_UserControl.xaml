@@ -178,7 +178,7 @@
                         </DataGrid.Resources>
                         <DataGrid.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="Διαγραφη"
+                                <MenuItem Header="Διαγραφή"
                                           Command="{Binding DeleteSelectedCustomersCommand}">
                                     <MenuItem.Icon>
                                         <Image MaxHeight="20"
@@ -398,7 +398,7 @@
                                           ItemsSource="{Binding PersonalWr.Payments}">
                                     <ListView.Resources>
                                         <ContextMenu x:Key="ItemContextMenu">
-                                            <MenuItem Header="Διαγραφη"
+                                            <MenuItem Header="Διαγραφή"
                                                       Command="{Binding DataContext.DeletePaymentCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
                                                 <MenuItem.Icon>
                                                     <Image MaxHeight="20"
@@ -425,6 +425,13 @@
                                     </ListView.Resources>
                                     <ListView.ItemContainerStyle>
                                         <Style TargetType="{x:Type ListViewItem}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsBulk}"
+                                                             Value="True">
+                                                    <Setter Property="Background"
+                                                            Value="LightBlue" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
                                             <Setter Property="ContextMenu"
                                                     Value="{StaticResource ItemContextMenu}" />
                                         </Style>
@@ -457,7 +464,7 @@
                                           ItemsSource="{Binding PersonalWr.Reciepts}">
                                     <ListView.Resources>
                                         <ContextMenu x:Key="ItemContextMenu">
-                                            <MenuItem Header="Διαγραφη"
+                                            <MenuItem Header="Διαγραφή"
                                                       IsEnabled="False"
                                                       Command="{Binding DataContext.DeletePaymentCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
                                                 <MenuItem.Icon>

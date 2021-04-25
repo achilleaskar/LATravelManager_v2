@@ -54,10 +54,14 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Group
 
         #region Methods
 
-        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
+ 
+
+        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null, MyViewModelBase parent = null)
         {
             try
             {
+                Parent = parent;
+
                 if (id > 0)
                     GenericRepository = new GenericRepository();
                 if (SelectedExcursion != null || id > 0)

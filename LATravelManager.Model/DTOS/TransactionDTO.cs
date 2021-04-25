@@ -8,6 +8,6 @@ namespace LATravelManager.Model.DTOS
 {
     public class TransactionDTO
     {
-        public int Amount { get; set; }
+        public decimal Amount { get; set; }
     }
 }

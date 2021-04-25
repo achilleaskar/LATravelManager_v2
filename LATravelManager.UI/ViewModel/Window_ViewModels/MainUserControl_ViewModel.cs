@@ -485,7 +485,7 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
         #region Methods
 
-        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
+        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null, MyViewModelBase parent = null)
         {
             NavigationViewModel = new NavigationViewModel(this, MainViewModel);
             Templates = MainViewModel.BasicDataManager.ExcursionCategories;
@@ -515,9 +515,9 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             }
         }
 
-        public async Task<List<Notification>> LoadOptions(GenericRepository repository)
+        public async Task<List<Notification>> LoadOptions(GenericRepository repository, User user)
         {
-            List<Option> options = await repository.GetAllPendingOptions();
+            List<Option> options = await repository.GetAllPendingOptions(user);
             List<Notification> reply = new List<Notification>();
 
             if (options.Count > 0)
@@ -886,13 +886,13 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
             NotsRepository = new GenericRepository();
             List<Notification> nots = new List<Notification>();
-
-            nots.AddRange(await LoadOptions(NotsRepository));
-            nots.AddRange(await GetPersonalOptions(NotsRepository));
-            nots.AddRange(await GetPersonalCheckIns(NotsRepository));
-            nots.AddRange(await GetNonPayersGroup(NotsRepository));
-            nots.AddRange(await GetNonPayersPersonal(NotsRepository));
-            nots.AddRange(await GetNonPayersThirdParty(NotsRepository));
+            var user = StaticResources.User;
+            nots.AddRange(await LoadOptions(NotsRepository,user));
+            nots.AddRange(await GetPersonalOptions(NotsRepository,user));
+            nots.AddRange(await GetPersonalCheckIns(NotsRepository,user));
+            nots.AddRange(await GetNonPayersGroup(NotsRepository,user));
+            nots.AddRange(await GetNonPayersPersonal(NotsRepository,user));
+            nots.AddRange(await GetNonPayersThirdParty(NotsRepository,user));
 
             //foreach (var not in nots)
             //{
@@ -905,9 +905,9 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             Nots = new ObservableCollection<Notification>(nots);
         }
 
-        private async Task<IEnumerable<Notification>> GetNonPayersGroup(GenericRepository repository)
+        private async Task<IEnumerable<Notification>> GetNonPayersGroup(GenericRepository repository, User user)
         {
-            List<BookingWrapper> options = (await repository.GetAllNonPayersGroup()).Select(b => new BookingWrapper(b)).ToList();
+            List<BookingWrapper> options = (await repository.GetAllNonPayersGroup(user)).Select(b => new BookingWrapper(b)).ToList();
             List<Notification> reply = new List<Notification>();
 
             if (options.Count > 0)
@@ -940,9 +940,9 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             return reply;
         }
 
-        private async Task<IEnumerable<Notification>> GetNonPayersPersonal(GenericRepository repository)
+        private async Task<IEnumerable<Notification>> GetNonPayersPersonal(GenericRepository repository,User user)
         {
-            List<Personal_BookingWrapper> options = (await repository.GetAllNonPayersPersonal()).Select(b => new Personal_BookingWrapper(b)).ToList();
+            List<Personal_BookingWrapper> options = (await repository.GetAllNonPayersPersonal(user)).Select(b => new Personal_BookingWrapper(b)).ToList();
             List<Notification> reply = new List<Notification>();
 
             if (options.Count > 0)
@@ -973,9 +973,9 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             return reply;
         }
 
-        private async Task<IEnumerable<Notification>> GetNonPayersThirdParty(GenericRepository repository)
+        private async Task<IEnumerable<Notification>> GetNonPayersThirdParty(GenericRepository repository, User user)
         {
-            List<ThirdParty_Booking_Wrapper> options = (await repository.GetAllNonPayersThirdparty()).Select(b => new ThirdParty_Booking_Wrapper(b)).ToList();
+            List<ThirdParty_Booking_Wrapper> options = (await repository.GetAllNonPayersThirdparty(user)).Select(b => new ThirdParty_Booking_Wrapper(b)).ToList();
             List<Notification> reply = new List<Notification>();
 
             if (options.Count > 0)
@@ -1008,9 +1008,9 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             return reply;
         }
 
-        private async Task<IEnumerable<Notification>> GetPersonalCheckIns(GenericRepository repository)
+        private async Task<IEnumerable<Notification>> GetPersonalCheckIns(GenericRepository repository, User user)
         {
-            List<PlaneService> options = await repository.GetAllPlaneOptions();
+            List<PlaneService> options = await repository.GetAllPlaneOptions(user);
             List<Notification> reply = new List<Notification>();
 
             if (options.Count > 0)
@@ -1052,9 +1052,9 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             return reply;
         }
 
-        private async Task<IEnumerable<Notification>> GetPersonalOptions(GenericRepository repository)
+        private async Task<IEnumerable<Notification>> GetPersonalOptions(GenericRepository repository, User user)
         {
-            List<HotelService> options = await repository.GetAllPersonalOptions();
+            List<HotelService> options = await repository.GetAllPersonalOptions(user);
             List<Notification> reply = new List<Notification>();
 
             if (options.Count > 0)

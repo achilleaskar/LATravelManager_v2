@@ -18,10 +18,14 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko
 
         #region Methods
 
-        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
+ 
+
+        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null, MyViewModelBase parent = null)
         {
             try
             {
+                Parent = parent;
+
                 SelectedExcursion = new ExcursionWrapper(await GenericRepository.GetByIdAsync<Excursion>(2));
 
                 Model.BookingData.Booking booking = id > 0

@@ -17,6 +17,7 @@ using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
+using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 using Microsoft.Win32;
 
@@ -395,10 +396,12 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
             }
         }
 
-        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
+
+        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null, MyViewModelBase parent = null)
         {
             try
             {
+                Parent = parent;
                 if (id > 0)
                 {
                     GenericRepository = new GenericRepository();
@@ -625,8 +628,13 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
                 await GenericRepository.SaveAsync();
 
                 Payment = new Payment();
-                BookedMessage = "H κράτηση απόθηκέυτηκε επιτυχώς";
+                BookedMessage = "H κράτηση αποθηκεύτηκε επιτυχώς";
                 HasChanges = false;
+                if (Parent is Cards_ViewModel cvm)
+                {
+                    await cvm.Refresh(this);
+                }
+
                 Mouse.OverrideCursor = Cursors.Arrow;
             }
             catch (Exception ex)

@@ -9,9 +9,10 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         public bool IsLoaded { get; set; }
 
-        public abstract Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null);
+        public abstract Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null, MyViewModelBase parent = null);
 
         public abstract Task ReloadAsync();
+        public MyViewModelBase Parent { get; set; }
 
         public bool HasChanges
         {

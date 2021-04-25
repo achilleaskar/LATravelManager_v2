@@ -17,9 +17,6 @@
         <Binding Path="BindableProperty"
                  Source="{StaticResource MessageListener}" />
     </Window.IsEnabled>
-    <Window.Visibility>
-        <Binding Path="Visibility" />
-    </Window.Visibility>
     <Window.Resources>
         <DataTemplate DataType="{x:Type viewmodels:LoginViewModel}">
             <views:Login_UserControl />

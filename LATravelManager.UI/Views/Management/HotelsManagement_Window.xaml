@@ -139,7 +139,7 @@
                                             Binding="{Binding HotelCategory.Name}" />
                     </DataGrid.Columns>
                 </DataGrid>
-                <Button Content="Διαγραφη"
+                <Button Content="Διαγραφή"
                         Grid.Row="2"
                         HorizontalAlignment="Right"
                         Margin="5"

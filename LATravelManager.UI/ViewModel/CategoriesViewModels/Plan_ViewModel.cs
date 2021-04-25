@@ -454,7 +454,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
             return true;
         }
 
-        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
+        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null, MyViewModelBase parent = null)
         {
             Hotels = new ObservableCollection<Hotel>(MainViewModel.BasicDataManager.Hotels.Where(h => h.City.Id == ParentExcursionCategory.SelectedExcursion.Destinations[0].Id));
             RoomTypes = MainViewModel.BasicDataManager.RoomTypes;

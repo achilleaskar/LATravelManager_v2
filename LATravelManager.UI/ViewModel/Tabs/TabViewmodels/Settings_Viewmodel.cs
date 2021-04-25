@@ -11,7 +11,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         {
         }
 
-        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
+        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null, MyViewModelBase parent = null)
         {
             try
             {

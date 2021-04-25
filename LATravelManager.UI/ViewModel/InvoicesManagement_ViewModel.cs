@@ -16,6 +16,7 @@ using System.Data.Entity.Infrastructure;
 using System.IO;
 using System.IO.Packaging;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -48,7 +49,7 @@ namespace LATravelManager.UI.ViewModel
 
         private void SelectProperRecieptType()
         {
-            if (parameter is PlaneService || personal!=null && personal.Services.All(p=>p is PlaneService))
+            if (parameter is PlaneService || personal != null && personal.Services.All(p => p is PlaneService))
             {
                 RecieptType = RecieptTypeEnum.AirTicketsReciept;
             }
@@ -66,11 +67,10 @@ namespace LATravelManager.UI.ViewModel
         private readonly object parameter;
         private bool _CanChangeSerie;
         private bool _ChangesAfterPreviewCreated = true;
-        private ObservableCollection<City> _Cities;
-        private ObservableCollection<Company> _Companies;
+
         private ObservableCollection<CompanyActivity> _CompanyActivities;
         private string _CompanyError;
-        private ObservableCollection<Country> _Countries;
+
         private ObservableCollection<CustomerWrapper> _Customers;
         private Partner _Partner;
         private string _PaymentType;
@@ -488,7 +488,7 @@ namespace LATravelManager.UI.ViewModel
             return SelectedCompany != null && SelectedCompany.IsValidToPrint() && basicDataManager.HasChanges();
         }
 
-        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
+        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null, MyViewModelBase parent = null)
         {
             RecieptDate = DateTime.Today;
             if (Partner != null && Partner.CompanyInfoId.HasValue && Partner.CompanyInfoId > 0 && !Partner.Person)
@@ -532,7 +532,8 @@ namespace LATravelManager.UI.ViewModel
         public async Task PrintInvoice(Border printArea)
         {
             Mouse.OverrideCursor = Cursors.Wait;
-            string filename = @"\test";
+            string filename = @"\" + GetFileName(Reciept);
+            Reciept.RecieptDescription = GetRecieptDescription(Reciept);
             string subFolder = "\\" + GetSubFolder(Reciept);
             string tmpPath = GetPath(filename, "\\Invoices\\tmp", ".pdf", hidden: true);
             string finalPath = GetPath(filename, "\\Invoices" + subFolder, ".pdf");
@@ -577,6 +578,7 @@ namespace LATravelManager.UI.ViewModel
                         Reciept.FileName = file.Name;
                     }
                 }
+                Reciept.Date = DateTime.Now;
                 repository.Add(Reciept);
                 //if (booking != null)
                 //{
@@ -614,6 +616,15 @@ namespace LATravelManager.UI.ViewModel
                 Mouse.OverrideCursor = Cursors.Arrow;
             }
         }
+
+        private string GetRecieptDescription(Reciept reciept)
+        {
+            if (reciept.RecieptItems?.Count > 0)
+                return reciept.RecieptItems[0].Description;
+            return "";
+        }
+
+
 
         public override Task ReloadAsync()
         {
@@ -695,6 +706,23 @@ namespace LATravelManager.UI.ViewModel
         //    return SelectedCompany == null || (obj is City c && SelectedCompany != null && SelectedCompany.Country != null && c.Country.Id == SelectedCompany.Country.Id);
         //}
 
+        private string GetFileName(Reciept reciept)
+        {
+            var sb = new StringBuilder();
+            if (reciept.Company.CompanyName.Length > 20)
+                sb.Append(reciept.Company.CompanyName.Substring(0, 20));
+            else
+                sb.Append(reciept.Company.CompanyName);
+            sb.Append(reciept.Dates);
+
+            return ReplaceForbidenChars(sb.ToString());
+        }
+
+        private string ReplaceForbidenChars(string v)
+        {
+            return string.Join("_", v.Split(Path.GetInvalidFileNameChars()));
+        }
+
         private void CreateRecieptPreview()
         {
             if ((!IsPartners || (Partner != null && Partner.Person)) && SelectedCustomer != null)
@@ -702,7 +730,8 @@ namespace LATravelManager.UI.ViewModel
                 SelectedCompany = new Company
                 {
                     CompanyName = SelectedCustomer.FullName,
-                    Id = SelectedCustomer.Id
+                    Id = SelectedCustomer.Id,
+                    Name = SelectedCustomer.Surename
                 };
             }
 
@@ -714,7 +743,7 @@ namespace LATravelManager.UI.ViewModel
                 RecieptItem item = new RecieptItem
                 {
                     Amount = booking.FullPrice,
-                    Dates = booking.Dates,
+                    Dates = booking.DatesFull,
                     Description = booking.GetPacketDescription().TrimEnd('.'),
                     Names = booking.Names,
                     Pax = booking.Customers.Count,
@@ -746,7 +775,7 @@ namespace LATravelManager.UI.ViewModel
                         item = new RecieptItem
                         {
                             Amount = p.Amount,
-                            Dates = reservation.Dates,
+                            Dates = reservation.DatesWithYear,
                             Description = personal.GetPacketDescription().TrimEnd('.'),
                             Names = reservation.Names,
                             Pax = personal.CustomerWrappers.Count,
@@ -773,7 +802,7 @@ namespace LATravelManager.UI.ViewModel
                     item = new RecieptItem
                     {
                         Amount = personal.FullPrice,
-                        Dates = reservation.Dates,
+                        Dates = reservation.DatesWithYear,
                         Description = personal.GetPacketDescription().TrimEnd('.'),
                         Names = reservation.Names,
                         Pax = personal.CustomerWrappers.Count,

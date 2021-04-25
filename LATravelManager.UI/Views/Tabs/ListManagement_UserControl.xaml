@@ -496,7 +496,7 @@
                                                     Padding="1 0 2 0"
                                                     Height="22"
                                                     Command="{Binding ClearBusCommand}">
-                                                <iconPacks:PackIconModern Kind="ClearReflectHorizontal" />
+                                                <iconPacks:FontAwesome Kind="UserTimesSolid" />
                                             </Button>
                                             <Button VerticalAlignment="Center"
                                                     Margin="10 0 0 0"
@@ -504,7 +504,7 @@
                                                     Height="22"
                                                     CommandParameter="{Binding}"
                                                     Command="{Binding DataContext.RemoveBusCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}">
-                                                <iconPacks:PackIconModern Kind="Delete" />
+                                                <iconPacks:Material Kind="Delete" />
                                             </Button>
                                             <Button VerticalAlignment="Center"
                                                     Margin="10 0 0 0"

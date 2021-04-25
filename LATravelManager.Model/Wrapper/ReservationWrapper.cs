@@ -12,13 +12,11 @@ namespace LATravelManager.Model.Wrapper
 {
     public class ReservationWrapper : ModelWrapper<Reservation>
     {
-
         #region Constructors
 
         public ReservationWrapper() : this(new Reservation())
         {
         }
-
 
         public string CustNum => GetCustNum();
 
@@ -31,18 +29,15 @@ namespace LATravelManager.Model.Wrapper
             if (PersonalModel != null)
             {
                 return $"Πελάτες: ({PersonalModel.Customers.Count}Π)";
-
             }
             if (ThirdPartyModel != null)
             {
                 return $"Πελάτες: ({ThirdPartyModel.Customers.Count}Π)";
-
             }
             return "Πελάτες:";
         }
 
         private string _PartnerName;
-
 
         public string PartnerName
         {
@@ -81,6 +76,7 @@ namespace LATravelManager.Model.Wrapper
         #endregion Fields
 
         #region Properties
+
         public decimal Expenses => GetExpenses();
 
         public bool Hide { get; set; }
@@ -93,6 +89,7 @@ namespace LATravelManager.Model.Wrapper
             }
             return Booking.Transactions.Sum(t => t.Amount);
         }
+
         public ObservableCollection<Customer> AllCustomers => GetAllCustomers();
 
         public Booking Booking
@@ -245,7 +242,6 @@ namespace LATravelManager.Model.Wrapper
         {
             get
             {
-
                 if (ApiData != null)
                 {
                     return ApiData.BookingForSearchDto.Comment;
@@ -270,6 +266,7 @@ namespace LATravelManager.Model.Wrapper
         }
 
         public DateTime Createddate => GetCreatedDate();
+
         public List<Customer> CustomersList
         {
             get { return GetValue<List<Customer>>(); }
@@ -303,7 +300,8 @@ namespace LATravelManager.Model.Wrapper
         }
 
         public string Dates => CheckIn.ToString("dd/MM") + "-" + CheckOut.ToString("dd/MM");
-        public string DatesWithYear => CheckIn.ToString("dd/MM") + " - " + CheckOut.ToString("dd/MM yyyy");
+        public string DatesWithYear => CheckIn.ToString("dd/MM") + " - " + CheckOut.ToString("dd/MM/yyyy");
+
         public int DaysCount
         {
             get { return Nights + 1; }
@@ -406,6 +404,7 @@ namespace LATravelManager.Model.Wrapper
         }
 
         public decimal FullPrice { get; set; }
+
         public bool HB
         {
             get { return GetValue<bool>(); }
@@ -414,6 +413,7 @@ namespace LATravelManager.Model.Wrapper
 
         public string HBText => HB ? "HB" : "BB";
         public int Higher => GetHigher();
+
         public Hotel Hotel
         {
             get { return GetValue<Hotel>(); }
@@ -443,6 +443,7 @@ namespace LATravelManager.Model.Wrapper
         public string HotelName => GetHotelName();
         public string Locations => GetLocations();
         public string Names => GetNames();
+
         public int Nights
         {
             get { return (int)(CheckOut - CheckIn).TotalDays; }
@@ -468,6 +469,7 @@ namespace LATravelManager.Model.Wrapper
         }
 
         public int Number { get; set; }
+
         //public RoomType NoNameRoomType
         //{
         //    get { return GetValue<RoomType>(); }
@@ -521,7 +523,6 @@ namespace LATravelManager.Model.Wrapper
                     default:
                         PartnerName = "";
                         break;
-
                 }
                 return PartnerName;
             }
@@ -547,6 +548,7 @@ namespace LATravelManager.Model.Wrapper
         }
 
         public bool ProformaSent => GetProformaSent();
+
         public bool Reciept
         {
             get
@@ -577,6 +579,7 @@ namespace LATravelManager.Model.Wrapper
 
         public decimal Recieved { get; set; }
         public decimal Remaining { get; set; }
+
         public ReservationTypeEnum ReservationType
         {
             get { return GetValue<ReservationTypeEnum>(); }
@@ -612,6 +615,7 @@ namespace LATravelManager.Model.Wrapper
         public string RoomTypeNameByNum => GetRoomTypeNameByNum();
         public DateTime Starttime { get; set; }
         public string Tel => GetTel();
+
         public ThirdParty_Booking_Wrapper ThirdPartyModel
         {
             get
@@ -632,6 +636,7 @@ namespace LATravelManager.Model.Wrapper
         }
 
         public string To => GetDestination();
+
         public bool Transfer
         {
             get { return GetValue<bool>(); }
@@ -692,10 +697,7 @@ namespace LATravelManager.Model.Wrapper
 
         #endregion Properties
 
-
-
         private bool _Selected;
-
 
         public bool Selected
         {
@@ -715,6 +717,7 @@ namespace LATravelManager.Model.Wrapper
                 RaisePropertyChanged();
             }
         }
+
         #region Methods
 
         public void CalculateAmounts()
@@ -746,10 +749,9 @@ namespace LATravelManager.Model.Wrapper
                 Remaining = ThirdPartyModel.Remaining;
                 FullPrice = ThirdPartyModel.FullPrice;
             }
-            //else if (ExcursionType==ExcursionTypeEnum.Personal)
-            //{
-            //    PersonalModel.CalculateRemainingAmount();
-            //}
+            RaisePropertyChanged(nameof(Remaining));
+            RaisePropertyChanged(nameof(Recieved));
+            RaisePropertyChanged(nameof(FullPrice));
         }
 
         public bool Contains(string key, bool full = true, bool semi = false)
@@ -761,7 +763,6 @@ namespace LATravelManager.Model.Wrapper
             key = key.ToUpper();
             if (ApiData != null)
             {
-
                 if ((!string.IsNullOrEmpty(Comment) && Comment.ToUpper().Contains(key)) || (!string.IsNullOrEmpty(HotelName) && HotelName.ToUpper().Contains(key)) || (full && !string.IsNullOrEmpty(Partner) && Partner.ToUpper().Contains(key)))
                 {
                     return true;
@@ -1006,7 +1007,6 @@ namespace LATravelManager.Model.Wrapper
                     ReservationTypeEnum.Transfer => "TRANSFER",
                     ReservationTypeEnum.OneDay => "ONEDAY",
                     _ => ApiData.RoomType
-
                 };
             }
             if (PersonalModel != null)
@@ -1131,7 +1131,6 @@ namespace LATravelManager.Model.Wrapper
                     ReservationTypeEnum.Transfer => "TRANSFER",
                     ReservationTypeEnum.OneDay => "ONEDAY",
                     _ => ApiData.RoomType
-
                 };
             }
             string roomname = "";

@@ -399,7 +399,7 @@ namespace LATravelManager.UI.ViewModel.Management
             MessengerInstance.Send(new IsBusyChangedMessage(false));
         }
 
-        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
+        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null, MyViewModelBase parent = null)
         {
             Companies = new ObservableCollection<Company>((await BasicDataManager.Context.GetAllAsync<Company>(c => !c.Disabled)).OrderBy(c => c.CompanyName));
             CompanyActivities = new ObservableCollection<CompanyActivity>((await BasicDataManager.Context.GetAllAsync<CompanyActivity>()).OrderBy(a => a.Name));
@@ -554,6 +554,7 @@ namespace LATravelManager.UI.ViewModel.Management
                     SelectedSerie.DateStarted = DateTime.Today;
                     SelectedSerie.AgencyId = StaticResources.User.BaseLocation;
                     BasicDataManager.Add(SelectedSerie);
+                    Series.Add(SelectedSerie);
                     await BasicDataManager.SaveAsync();
                 }
                 else

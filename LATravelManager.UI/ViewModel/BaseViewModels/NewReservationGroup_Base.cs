@@ -1,4 +1,16 @@
-﻿using DocumentFormat.OpenXml.Packaging;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Data;
+using System.Windows.Input;
+using System.Windows.Media;
+using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using GalaSoft.MvvmLight.CommandWpf;
 using LATravelManager.Model;
@@ -14,41 +26,27 @@ using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.CategoriesViewModels;
+using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Views;
 using LATravelManager.UI.Views.Universal;
 using LATravelManager.UI.Wrapper;
 using Microsoft.Win32;
 using NuGet;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Data;
-using System.Windows.Input;
-using System.Windows.Media;
 
 namespace LATravelManager.UI.ViewModel.BaseViewModels
 {
     public class HotelWithRooms
     {
-
         #region Properties
 
         public List<RoomWrapper> Rooms { get; set; }
 
         #endregion Properties
-
     }
 
     public abstract class NewReservationGroup_Base : MyViewModelBaseAsync
     {
-
         #region Fields
 
         private readonly string[] ValidateRoomsProperties =
@@ -168,11 +166,11 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             ManagePartnersCommand = new RelayCommand(ManagePartners);
 
             SaveCommand = new RelayCommand(async () => await SaveAsync(), CanSave);
-            CheckOutCommand = new RelayCommand(() => { CheckOut(); }, CanCheckOut);
+            CheckOutCommand = new RelayCommand(() => { CheckOutCustomers(); }, CanCheckOut);
             PrintVoucherCommand = new RelayCommand(async () => await PrintVoucher(), CanPrintDoc);
             PrintContractCommand = new RelayCommand(PrintContract, CanPrintDoc);
             OpenFileCommand = new RelayCommand<Reciept>(async (obj) => await OpenRecieptFile(obj));
-            ReplaceFileCommand = new RelayCommand( ReplaceFile);
+            ReplaceFileCommand = new RelayCommand(ReplaceFile);
             Payment = new Payment();
 
             ToggleDisabilityCommand = new RelayCommand(ToggleDisability, CanToggleDisability);
@@ -183,11 +181,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             NewExtraService = new ExtraService();
         }
 
-
-
-
         private Reciept _SelectedReciept;
-
 
         public Reciept SelectedReciept
         {
@@ -210,7 +204,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         private void ReplaceFile()
         {
-            if (SelectedReciept==null)
+            if (SelectedReciept == null)
             {
                 return;
             }
@@ -1117,7 +1111,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
-        public override abstract Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null);
+        public override abstract Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null, MyViewModelBase parent = null);
 
         public override async Task ReloadAsync()
         {
@@ -1543,9 +1537,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                         IEnumerable<Cell> cells = sheet.Descendants<Cell>();
                         IEnumerable<Row> rows = sheet.Descendants<Row>();
 
-                        Console.WriteLine("Row count = {0}", rows.LongCount());
-                        Console.WriteLine("Cell count = {0}", cells.LongCount());
-
                         int i = 0;
                         int rowNum = 0;
                         CustomerWrapper tmpCustomer;
@@ -1942,7 +1933,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             return AreContexesFree;
         }
 
-        private void CheckOut(bool all = false)
+        private void CheckOutCustomers(bool all = false)
         {
             try
             {
@@ -2136,6 +2127,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             await vm.LoadAsync();
             MessengerInstance.Send(new OpenChildWindowCommand(new InvoicesManagementWindow(), vm));
         }
+
         private async Task OverBookHotelAsync()
         {
             try
@@ -2407,6 +2399,10 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 BookedMessage = "H κράτηση αποθηκεύτηκε επιτυχώς";
                 HasChanges = false;
                 MessengerInstance.Send(new ReservationChanged_Message(BookingWr.Model));
+                if (Parent is Cards_ViewModel cvm)
+                {
+                    await cvm.Refresh(this);
+                }
             }
             catch (Exception ex)
             {
@@ -2585,9 +2581,14 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             if (SelectedExcursionToChange != null && BookingWr.Excursion != null && SelectedExcursionToChange.Id != BookingWr.Excursion.Id)
             {
                 BookingWr.Excursion = await GenericRepository.GetFullExcursionByIdAsync(SelectedExcursionToChange.Id);
-                CheckOut(true);
+                CheckOutCustomers(true);
+                SelectedExcursion = new ExcursionWrapper(SelectedExcursionToChange);
+                Hotels = new ObservableCollection<Hotel>(BasicDataManager.Hotels.Where(h => h.City.Id == SelectedExcursion.Destinations[0].Id));
+                if (BookingWr.CheckIn < DateTime.Today)
+                {
+                    BookingWr.CheckIn = DateTime.Today;
+                }
             }
-            SelectedExcursion = new ExcursionWrapper(SelectedExcursionToChange);
             Mouse.OverrideCursor = Cursors.Arrow;
         }
 
@@ -2643,55 +2644,46 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         private void ValidateRoom(RoomWrapper room)
         {
-            int rating = 0;
             var before = room.PlanDailyInfo.FirstOrDefault(d => d.Date == BookingWr.CheckIn.AddDays(-1));
             var after = room.PlanDailyInfo.FirstOrDefault(d => d.Date == BookingWr.CheckOut);
             if (before == null || before.RoomState != RoomStateEnum.Available)
             {
-                rating++;
             }
             else if (before.RoomState == RoomStateEnum.Available)
             {
                 before = room.PlanDailyInfo.FirstOrDefault(d => d.Date == BookingWr.CheckIn.AddDays(-2));
                 if (before == null || before.RoomState != RoomStateEnum.Available)
                 {
-                    rating -= 4;
                 }
             }
             if (after == null || after.RoomState != RoomStateEnum.Available)
             {
-                rating++;
             }
             else if (after.RoomState == RoomStateEnum.Available)
             {
                 after = room.PlanDailyInfo.FirstOrDefault(d => d.Date == BookingWr.CheckOut.AddDays(1));
                 if (after == null || after.RoomState != RoomStateEnum.Available)
                 {
-                    rating -= 4;
                 }
             }
             room.Rating = ((before != null && before.RoomState != RoomStateEnum.Available) ? 1 : 0) + ((after != null && after.RoomState != RoomStateEnum.Available) ? 1 : 0);
         }
 
         #endregion Methods
-
     }
 
     public class RoomsInHotel
     {
-
         #region Properties
 
         public Hotel Hotel { get; set; }
         public List<RoomWrapper> Rooms { get; set; }
 
         #endregion Properties
-
     }
 
     public class RoomTypeWrapper
     {
-
         #region Properties
 
         public int AvailableRooms { get; set; }
@@ -2700,6 +2692,5 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         public RoomType RoomType { get; set; }
 
         #endregion Properties
-
     }
 }

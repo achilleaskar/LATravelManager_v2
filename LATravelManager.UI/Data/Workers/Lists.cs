@@ -678,7 +678,7 @@ namespace LATravelManager.UI.Data.Workers
         //            }
         //        }
         //    }
-        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
+        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null, MyViewModelBase parent = null)
         {
             GenericRepository = new GenericRepository();
             Hotels = new ObservableCollection<Hotel>(await GenericRepository.GetAllHotelsInCityAsync(Excursion.Destinations[0].Id));

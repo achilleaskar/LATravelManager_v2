@@ -28,6 +28,7 @@ namespace LATravelManager.Model.DTOS
 
         public bool OnlyStay { get; set; }
 
+        public int BookingId { get; set; }
 
         public Room Room { get; set; }
         public ReservationTypeEnum ReservationType { get; set; }
@@ -36,5 +37,6 @@ namespace LATravelManager.Model.DTOS
 
         public bool Transfer { get; set; }
         public int? HotelID { get; set; }
+        public int? RoomTypeId { get; set; }
     }
 }

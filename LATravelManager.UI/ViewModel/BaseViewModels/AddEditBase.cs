@@ -268,7 +268,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 //}
 
                 await BasicDataManager.Refresh();
-                await BasicDataManager.LoadAsync();
                 SelectedEntity = new TWrapper();
                 ReLoad();
                 ResultMessage = "Η ενημέρωση ολοκληρώθηκε!";

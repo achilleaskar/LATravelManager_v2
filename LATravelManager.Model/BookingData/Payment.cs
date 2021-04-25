@@ -16,31 +16,6 @@ namespace LATravelManager.Model.BookingData
         {
         }
 
-
-
-
-        private BulkPayment _BulkPayment;
-
-
-        public BulkPayment BulkPayment
-        {
-            get
-            {
-                return _BulkPayment;
-            }
-
-            set
-            {
-                if (_BulkPayment == value)
-                {
-                    return;
-                }
-
-                _BulkPayment = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public Payment(Payment p)
         {
             Amount = p.Amount;
@@ -55,16 +30,24 @@ namespace LATravelManager.Model.BookingData
         #region Fields
 
         private decimal _Amount;
-
         private Booking _Booking;
+        private BulkPayment _BulkPayment;
+
         private bool? _Checked;
+
         private string _Comment = string.Empty;
 
         private DateTime _Date;
 
         private bool _Outgoing;
+
+        private ReservationWrapper _Parent;
+
         private PaymentMethod _PaymentMethod;
+
         private SolidColorBrush _PColor;
+
+        private bool _Selected;
 
         private User _User;
 
@@ -72,14 +55,6 @@ namespace LATravelManager.Model.BookingData
 
         #region Properties
 
-        /// <summary>
-        /// Sets and gets the Amount property. Changes to that property's value raise the
-        /// PropertyChanged event.
-        /// </summary>
-        /// <summary>
-        /// Sets and gets the Price property. Changes to that property's value raise the
-        /// PropertyChanged event.
-        /// </summary>
         public decimal Amount
         {
             get
@@ -121,6 +96,27 @@ namespace LATravelManager.Model.BookingData
                 RaisePropertyChanged();
             }
         }
+
+        public BulkPayment BulkPayment
+        {
+            get
+            {
+                return _BulkPayment;
+            }
+
+            set
+            {
+                if (_BulkPayment == value)
+                {
+                    return;
+                }
+
+                _BulkPayment = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool IsBulk => BulkPayment != null;
 
         public bool? Checked
         {
@@ -297,6 +293,28 @@ namespace LATravelManager.Model.BookingData
             }
         }
 
+        [NotMapped]
+        public ReservationWrapper Parent
+        {
+            get
+            {
+                return _Parent;
+            }
+
+            set
+            {
+                if (_Parent == value)
+                {
+                    return;
+                }
+
+                _Parent = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string PartnerName => GetPartnerName();
+
         /// <summary>
         /// Sets and gets the PaymentMethod property. Changes to that property's value raise the
         /// PropertyChanged event.
@@ -347,6 +365,26 @@ namespace LATravelManager.Model.BookingData
 
         public Personal_Booking Personal_Booking { get; set; }
 
+        [NotMapped]
+        public bool Selected
+        {
+            get
+            {
+                return _Selected;
+            }
+
+            set
+            {
+                if (_Selected == value)
+                {
+                    return;
+                }
+
+                _Selected = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public ThirdParty_Booking ThirdParty_Booking { get; set; }
 
         /// <summary>
@@ -377,54 +415,6 @@ namespace LATravelManager.Model.BookingData
 
         #region Methods
 
-
-
-
-
-
-
-        private ReservationWrapper _Parent;
-
-        [NotMapped]
-        public ReservationWrapper Parent
-        {
-            get
-            {
-                return _Parent;
-            }
-
-            set
-            {
-                if (_Parent == value)
-                {
-                    return;
-                }
-
-                _Parent = value;
-                RaisePropertyChanged();
-            }
-        }
-        private bool _Selected;
-
-        [NotMapped]
-        public bool Selected
-        {
-            get
-            {
-                return _Selected;
-            }
-
-            set
-            {
-                if (_Selected == value)
-                {
-                    return;
-                }
-
-                _Selected = value;
-                RaisePropertyChanged();
-            }
-        }
         //        _AmountString = value;
         public string GetPaymentMethod()
         {
@@ -470,15 +460,11 @@ namespace LATravelManager.Model.BookingData
         //        }
         public override string ToString()
         {
-           return PaymentMethod.AsString(EnumFormat.Description);
+            return PaymentMethod.AsString(EnumFormat.Description);
         }
-
-
-        public string PartnerName => GetPartnerName();
 
         private string GetPartnerName()
         {
-
             if (Booking != null)
             {
                 if (Booking.Partner != null)
@@ -505,6 +491,7 @@ namespace LATravelManager.Model.BookingData
             }
             return "";
         }
+
         #endregion Methods
     }
 }

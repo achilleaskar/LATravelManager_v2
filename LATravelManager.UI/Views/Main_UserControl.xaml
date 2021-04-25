@@ -144,7 +144,7 @@
                                   SelectedItem="{Binding SelectedNot}">
                             <ListView.Resources>
                                 <ContextMenu x:Key="ItemContextMenu">
-                                    <MenuItem Header="Διαγραφη"
+                                    <MenuItem Header="Διαγραφή"
                                               Command="{Binding DataContext.NotIsOkCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}" />
                                 </ContextMenu>
                             </ListView.Resources>

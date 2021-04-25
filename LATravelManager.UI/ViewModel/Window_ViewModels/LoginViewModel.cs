@@ -20,7 +20,6 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
             PossibleUser = new User();
         }
 
-        public NotifyTaskCompletion<int> LoginStatus { get; private set; }
         private string _ErrorMessage;
         private bool _LoginFailed;
         private SecureString _PasswordSecureString;

@@ -1,13 +1,38 @@
-﻿using LATravelManager.Model.People;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using LATravelManager.Model.People;
 
 namespace LATravelManager.Model.BookingData
 {
     public class BulkPayment : BaseModel
     {
+        public BulkPayment()
+        {
+            Payments = new ObservableCollection<Payment>();
+        }
+        #region Fields
+
         private decimal _Amount;
+
+        private string _Comment;
+
+        private DateTime _Date;
+
+        private Partner _Partner;
+
+        private PaymentMethod _PaymentMethod;
+
+        private ObservableCollection<Payment> _Payments;
+
+        private bool _Selected;
+
+        #endregion Fields
+
+        #region Properties
+
+        public int? PartnerId { get; set; }
 
         public decimal Amount
         {
@@ -31,7 +56,24 @@ namespace LATravelManager.Model.BookingData
             }
         }
 
-        private DateTime _Date;
+        public string Comment
+        {
+            get
+            {
+                return _Comment;
+            }
+
+            set
+            {
+                if (_Comment == value)
+                {
+                    return;
+                }
+
+                _Comment = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public DateTime Date
         {
@@ -52,23 +94,21 @@ namespace LATravelManager.Model.BookingData
             }
         }
 
-        private string _Comment;
-
-        public string Comment
+        public Partner Partner
         {
             get
             {
-                return _Comment;
+                return _Partner;
             }
 
             set
             {
-                if (_Comment == value)
+                if (_Partner == value)
                 {
                     return;
                 }
 
-                _Comment = value;
+                _Partner = value;
                 RaisePropertyChanged();
             }
         }
@@ -92,31 +132,24 @@ namespace LATravelManager.Model.BookingData
             }
         }
 
-        private Partner _Partner;
-
-        public Partner Partner
+        public ObservableCollection<Payment> Payments
         {
             get
             {
-                return _Partner;
+                return _Payments;
             }
 
             set
             {
-                if (_Partner == value)
+                if (_Payments == value)
                 {
                     return;
                 }
 
-                _Partner = value;
+                _Payments = value;
                 RaisePropertyChanged();
             }
         }
-
-        private PaymentMethod _PaymentMethod;
-
-
-        private bool _Selected;
 
         [NotMapped]
         public bool Selected
@@ -138,31 +171,18 @@ namespace LATravelManager.Model.BookingData
             }
         }
 
+        public decimal Remaining => GetRemainign();
 
-
-
-        private ObservableCollection<Payment> _Payments;
-
-
-        public ObservableCollection<Payment> Payments
+        private decimal GetRemainign()
         {
-            get
+            decimal sum = 0;
+            foreach (var p in Payments)
             {
-                return _Payments;
+                sum += p.Amount;
             }
-
-            set
-            {
-                if (_Payments == value)
-                {
-                    return;
-                }
-
-                _Payments = value;
-                RaisePropertyChanged();
-            }
+            return Amount - sum;
         }
 
-
+        #endregion Properties
     }
 }

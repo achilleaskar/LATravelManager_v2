@@ -720,6 +720,13 @@
                                 </ListView.Resources>
                                 <ListView.ItemContainerStyle>
                                     <Style TargetType="{x:Type ListViewItem}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsBulk}"
+                                                         Value="True">
+                                                <Setter Property="Background"
+                                                        Value="LightBlue" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
                                         <Setter Property="ContextMenu"
                                                 Value="{StaticResource ItemContextMenu}" />
                                     </Style>

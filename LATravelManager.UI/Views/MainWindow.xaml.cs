@@ -11,8 +11,6 @@ namespace LATravelManager.UI.Views
     /// </summary>
     public partial class MainWindow : Window
     {
-        public GenericRepository StartingRepository;
-
         public MainWindow()
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;

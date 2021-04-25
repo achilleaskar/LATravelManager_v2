@@ -40,6 +40,7 @@ namespace LATravelManager.Model.Wrapper
         #region Fields
 
         public string Dates => CheckIn.ToString("dd/MM") + (CheckIn.Date != CheckOut.Date ? ("-" + CheckOut.ToString("dd/MM")) : "");
+        public string DatesFull => CheckIn.ToString("dd/MM") + (CheckIn.Date == CheckOut.Date || CheckIn.Year != CheckOut.Year ? CheckIn.ToString("yy") : "") + (CheckIn.Date != CheckOut.Date ? ("-" + CheckOut.ToString("dd/MM/yy")) : "");
 
 
         public ObservableCollection<Reciept> Reciepts
@@ -379,22 +380,6 @@ namespace LATravelManager.Model.Wrapper
                 if (Math.Abs(FullPrice - value) > 0.01m)
                     _FullPrice = value;
                 RaisePropertyChanged();
-                //if (IsPartners)
-                //{
-                //    if (Commision > 0)
-                //    {
-                //        NetPrice = Math.Round(FullPrice * (1 - (Commision / 100)), 2);
-                //    }
-                //    else if (Commision == 0)
-                //    {
-                //        NetPrice = FullPrice;
-                //    }
-                //    else
-                //    {
-                //        NetPrice = 0;
-                //    }
-                //}
-                // CalculateRemainingAmount();
             }
         }
 
@@ -1081,6 +1066,20 @@ namespace LATravelManager.Model.Wrapper
                 return "Επιτρεπόμενες μέρες επιστροφής μόνο Τετάρτη, Πέμπτη, Σάββατο και Κυριακή!";
             }
             return null;
+        }
+
+        public string GetNumber()
+        {
+            return "ΟΕ-" + Id;
+        }
+
+        public decimal GetAmountToPay()
+        {
+            if (IsPartners&& Partner!=null && !Partner.Person)
+            {
+                return NetPrice;
+            }
+            return FullPrice;
         }
 
         #endregion Methods

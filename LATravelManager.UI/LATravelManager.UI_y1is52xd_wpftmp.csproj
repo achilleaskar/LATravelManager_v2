@@ -1,0 +1,1031 @@
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')">
+  </Import>
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2B60FAA5-C679-40BD-A8CB-8DF107A7760B}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>LATravelManager.UI</RootNamespace>
+    <AssemblyName>LATravelManager</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <LangVersion>8.0</LangVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <TargetFrameworkProfile />
+    <PublishUrl>C:\PublishTest\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <InstallUrl>http://demo.gotoskiathos.com/latravel/</InstallUrl>
+    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
+    <WebPage>publish.htm</WebPage>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>DEDEF49B98B3A8A7D93D9E0B557F7D3EA8B1C2EE</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>LATravelManager.UI_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Converters\BoolToBorderColorConverter.cs" />
+    <Compile Include="Converters\BoolToRedGreenConverter.cs" />
+    <Compile Include="Converters\BoolToYesNoConverter.cs" />
+    <Compile Include="Converters\NumberWithStringFront.cs" />
+    <Compile Include="Converters\EmptyStringToZeroConverter.cs" />
+    <Compile Include="Converters\DateTimeToString.cs" />
+    <Compile Include="Converters\DayStateToContentConverter.cs" />
+    <Compile Include="Converters\EnumToStringConverter.cs" />
+    <Compile Include="Converters\EnumVisibilityConverter.cs" />
+    <Compile Include="Converters\FloadToStringValueConverter.cs" />
+    <Compile Include="Converters\GroupToContainsConverter.cs" />
+    <Compile Include="Converters\IsGroupConverter.cs" />
+    <Compile Include="Converters\NotCategoryConverter.cs" />
+    <Compile Include="Converters\RemainingToColorConverter.cs" />
+    <Compile Include="Converters\ReservationSelectorVisibilityConverter.cs" />
+    <Compile Include="Converters\ReturnsToDateConverter.cs" />
+    <Compile Include="Converters\RoomsLeftMultiBindingConverter.cs" />
+    <Compile Include="Converters\RoomsLeftToHotelsConverter.cs" />
+    <Compile Include="Converters\RoomsLeftToVisibilityConverter.cs" />
+    <Compile Include="Converters\RoomsLeftToVisibiliyConverter.cs" />
+    <Compile Include="Converters\RoomToColorConverter.cs" />
+    <Compile Include="Converters\RoomTypeToRoomsLeftConverter.cs" />
+    <Compile Include="Converters\SeatAvailableConverter.cs" />
+    <Compile Include="Converters\SeatToColorConverter.cs" />
+    <Compile Include="Converters\TimeSpanTODateTimeConverter.cs" />
+    <Compile Include="Converters\ToolTipVisibilityConverter.cs" />
+    <Compile Include="Data\Workers\Lists.cs" />
+    <Compile Include="ExcursionCategoryChangedMessage.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Helpers\AccessKeyScoper.cs" />
+    <Compile Include="Helpers\Actor.cs" />
+    <Compile Include="Helpers\AesOperation.cs" />
+    <Compile Include="Helpers\BasicDataManager.cs" />
+    <Compile Include="Helpers\BookingsPerDay.cs" />
+    <Compile Include="Helpers\CustomPhoneValidation.cs" />
+    <Compile Include="Helpers\DailyDepartureInfo.cs" />
+    <Compile Include="Helpers\EmailsManager.cs" />
+    <Compile Include="Helpers\EnumBindingSourceExtension.cs" />
+    <Compile Include="Converters\EnumConverter.cs" />
+    <Compile Include="Helpers\ExcursionComparer.cs" />
+    <Compile Include="Helpers\FilterableComboBox.cs" />
+    <Compile Include="Helpers\PaymentInfo.cs" />
+    <Compile Include="Message\ChangeChildViewModelMessage.cs" />
+    <Compile Include="Helpers\DocumentsManagement.cs" />
+    <Compile Include="Message\NotsChangedMessage.cs" />
+    <Compile Include="Message\PersonalCityChanged.cs" />
+    <Compile Include="Message\ReservationChanged_Message.cs" />
+    <Compile Include="Message\SelectedExcursionChangedMessage.cs" />
+    <Compile Include="NotifyTaskCompletion.cs" />
+    <Compile Include="ViewModel\BaseViewModels\AddEditBase.cs" />
+    <Compile Include="ViewModel\BaseViewModels\FiltersBaseClass.cs" />
+    <Compile Include="ViewModel\BaseViewModels\IViewModel.cs" />
+    <Compile Include="ViewModel\BaseViewModels\MyViewModelBase.cs" />
+    <Compile Include="ViewModel\BaseViewModels\NewReservationGroup_Base.cs" />
+    <Compile Include="ViewModel\CategoriesViewModels\Availabilities_ViewModel.cs" />
+    <Compile Include="ViewModel\CategoriesViewModels\Group\NewReservation_Group_ViewModel.cs" />
+    <Compile Include="ViewModel\CategoriesViewModels\Personal\NewReservation_Personal_ViewModel.cs" />
+    <Compile Include="ViewModel\CategoriesViewModels\Plan_ViewModel.cs" />
+    <Compile Include="ViewModel\CategoriesViewModels\Skiathos\NewReservation_Skiathos_ViewModel.cs" />
+    <Compile Include="ViewModel\CategoriesViewModels\ThirdParty\NewReservation_ThirdParty_VIewModel.cs" />
+    <Compile Include="ViewModel\CustomerSearch_ViewModel.cs" />
+    <Compile Include="ViewModel\InvoicesManagement_ViewModel.cs" />
+    <Compile Include="ViewModel\Management\LeadersManagement_ViewModel.cs" />
+    <Compile Include="ViewModel\Management\LoginDataManagement_ViewModel.cs" />
+    <Compile Include="ViewModel\Management\OptionalExcursions_Management.cs" />
+    <Compile Include="ViewModel\Management\TaxDataManagement_ViewModel.cs" />
+    <Compile Include="ViewModel\Management\VehiclesManagement_viewModel.cs" />
+    <Compile Include="ViewModel\Management\CitiesManagement_ViewModel.cs" />
+    <Compile Include="ViewModel\Management\CountriesManagement_ViewModel.cs" />
+    <Compile Include="ViewModel\Management\ExcursionsManagement_ViewModel.cs" />
+    <Compile Include="ViewModel\Management\HotelsManagement_ViewModel.cs" />
+    <Compile Include="ViewModel\Management\PartnerManagement_ViewModel.cs" />
+    <Compile Include="ViewModel\Management\UsersManagement_viewModel.cs" />
+    <Compile Include="ViewModel\Parents\GroupParent_ViewModel.cs" />
+    <Compile Include="MessageListener.cs" />
+    <Compile Include="Message\DeselectAllTabsMessage.cs" />
+    <Compile Include="Message\IsBusyChangedMessage.cs" />
+    <Compile Include="Message\ResetNavigationTabsMessage.cs" />
+    <Compile Include="Repositories\GenericRepository.cs" />
+    <Compile Include="Repositories\IGenericRepository.cs" />
+    <Compile Include="Security\PasswordHashing.cs" />
+    <Compile Include="Security\SecureStringManipulation.cs" />
+    <Compile Include="StartUp\Bootstrapper.cs" />
+    <Compile Include="ViewModel\BaseViewModels\BanskoChilds_BaseViewModel.cs" />
+    <Compile Include="ViewModel\BaseViewModels\ExcursionCategory_ViewModelBase.cs" />
+    <Compile Include="ViewModel\BaseViewModels\INavigationViewModel.cs" />
+    <Compile Include="ViewModel\BaseViewModels\IViewModelAsync.cs" />
+    <Compile Include="ViewModel\ServiceViewModels\Ferry_ViewModel.cs" />
+    <Compile Include="ViewModel\ServiceViewModels\GuideViewModel.cs" />
+    <Compile Include="ViewModel\ServiceViewModels\Hotel_ViewModel.cs" />
+    <Compile Include="ViewModel\ServiceViewModels\Optional_ViewModel.cs" />
+    <Compile Include="ViewModel\ServiceViewModels\Plane_ViewModel.cs" />
+    <Compile Include="ViewModel\ServiceViewModels\ServiceViewModel.cs" />
+    <Compile Include="ViewModel\ServiceViewModels\Transfer_ViewModel.cs" />
+    <Compile Include="ViewModel\Tabs\CardsTab.cs" />
+    <Compile Include="ViewModel\Tabs\EconomicData_Tab.cs" />
+    <Compile Include="ViewModel\Tabs\GlobalSearchTab.cs" />
+    <Compile Include="ViewModel\Tabs\ManagementTab.cs" />
+    <Compile Include="ViewModel\Tabs\PlanTab.cs" />
+    <Compile Include="ViewModel\Tabs\TabViewmodels\Cards_ViewModel.cs" />
+    <Compile Include="ViewModel\Tabs\TabViewmodels\ListManagement_ViewModel.cs" />
+    <Compile Include="ViewModel\Tabs\TabViewmodels\Management_ViewModel.cs" />
+    <Compile Include="ViewModel\Tabs\TabViewmodels\OptionalsManagement_ViewModel.cs" />
+    <Compile Include="ViewModel\Tabs\TabViewmodels\Remaining_ViewModel.cs" />
+    <Compile Include="ViewModel\Tabs\TabViewmodels\AddIncomeOutcome_ViewModel.cs" />
+    <Compile Include="ViewModel\Tabs\TabViewmodels\EconomicData_ViewModel.cs" />
+    <Compile Include="ViewModel\Tabs\TabViewmodels\GlobalEconomics_ViewModel.cs" />
+    <Compile Include="ViewModel\Tabs\TabViewmodels\GlobalSearch_ViewModel.cs" />
+    <Compile Include="ViewModel\Tabs\TabViewmodels\IncomesOutcomes_ViewModel.cs" />
+    <Compile Include="ViewModel\Tabs\TabViewmodels\Info_ViewModel.cs" />
+    <Compile Include="ViewModel\Tabs\TabViewmodels\PreviewIncomesOutcomes_ViewModel.cs" />
+    <Compile Include="ViewModel\Tabs\TabViewmodels\TotalEarns_ViewModel.cs" />
+    <Compile Include="ViewModel\Window_ViewModels\MainUserControl_ViewModel.cs" />
+    <Compile Include="ViewModel\BaseViewModels\MyViewModelBaseAsync.cs" />
+    <Compile Include="ViewModel\BaseViewModels\TabsBaseViewModel.cs" />
+    <Compile Include="ViewModel\Parents\BanskoParent_ViewModel.cs" />
+    <Compile Include="ViewModel\CategoriesViewModels\Bansko\NewReservation_Bansko_ViewModel.cs" />
+    <Compile Include="ViewModel\CategoriesViewModels\ChildViewModel.cs" />
+    <Compile Include="ViewModel\CategoriesViewModels\IChildViewModel.cs" />
+    <Compile Include="ViewModel\Parents\PersonalParent_ViewModel.cs" />
+    <Compile Include="ViewModel\Parents\SkiathosParent_ViewModel.cs" />
+    <Compile Include="ViewModel\Parents\ThirdPartyParent_ViewModel.cs" />
+    <Compile Include="ViewModel\Tabs\AddRoomsTab.cs" />
+    <Compile Include="ViewModel\Tabs\ListManagementTab.cs" />
+    <Compile Include="ViewModel\Tabs\MakeReservationTab.cs" />
+    <Compile Include="ViewModel\Tabs\MoveTab.cs" />
+    <Compile Include="ViewModel\Tabs\OptionalActivitiesTab.cs" />
+    <Compile Include="ViewModel\Tabs\SearchTab.cs" />
+    <Compile Include="ViewModel\Tabs\SettingsTab.cs" />
+    <Compile Include="ViewModel\Tabs\TabViewmodels\AddRooms_ViewModel.cs" />
+    <Compile Include="ViewModel\Tabs\TabViewmodels\Settings_Viewmodel.cs" />
+    <Compile Include="ViewModel\Window_ViewModels\LoginViewModel.cs" />
+    <Compile Include="ViewModel\Window_ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModel\BaseViewModels\NavigationViewModel.cs" />
+    <Compile Include="ViewModel\BaseViewModels\ViewModelLocator.cs" />
+    <Compile Include="Views\CustomerSearchWindow.xaml.cs">
+      <DependentUpon>CustomerSearchWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\InvoicesManagementWindow.xaml.cs">
+      <DependentUpon>InvoicesManagementWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Management\BusesManagement_Window.xaml.cs">
+      <DependentUpon>BusesManagement_Window.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Management\LeadersManagement_Widnow.xaml.cs">
+      <DependentUpon>LeadersManagement_Widnow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Management\LoginDataManagement_Window.xaml.cs">
+      <DependentUpon>LoginDataManagement_Window.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Management\OptionalExcursionsManagement_Window.xaml.cs">
+      <DependentUpon>OptionalExcursionsManagement_Window.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Management\TaxData_Management_Window.xaml.cs">
+      <DependentUpon>TaxData_Management_Window.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Personal\EditPersonalBooking_Window.xaml.cs">
+      <DependentUpon>EditPersonalBooking_Window.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Plan_UserControl.xaml.cs">
+      <DependentUpon>Plan_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Tabs\AddIncomeOutcome_UserControl.xaml.cs">
+      <DependentUpon>AddIncomeOutcome_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Tabs\AddRooms_UserControl.xaml.cs">
+      <DependentUpon>AddRooms_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Bansko\EditBooking_Bansko_Window.xaml.cs">
+      <DependentUpon>EditBooking_Bansko_Window.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Bansko\Lists_Bankso_UserControl.xaml.cs">
+      <DependentUpon>Lists_Bankso_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Bansko\MoveReservation_Bansko_UserControl.xaml.cs">
+      <DependentUpon>MoveReservation_Bansko_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Bansko\NewReservation_Bansko_UserControl.xaml.cs">
+      <DependentUpon>NewReservation_Bansko_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Bansko\OptionalActivities_Bansko_UserControl.xaml.cs">
+      <DependentUpon>OptionalActivities_Bansko_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Bansko_UserControl.xaml.cs">
+      <DependentUpon>Bansko_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\GroupExcursions_UserControl.xaml.cs">
+      <DependentUpon>GroupExcursions_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Group\NewReservation_Group_UserControl.xaml.cs">
+      <DependentUpon>NewReservation_Group_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Login_UserControl.xaml.cs">
+      <DependentUpon>Login_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Main_UserControl.xaml.cs">
+      <DependentUpon>Main_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Management\CitiesManagement_Window.xaml.cs">
+      <DependentUpon>CitiesManagement_Window.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Management\CountriesManagement_Window.xaml.cs">
+      <DependentUpon>CountriesManagement_Window.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Management\ExcursionsManagement_Window.xaml.cs">
+      <DependentUpon>ExcursionsManagement_Window.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Management\HotelsManagement_Window.xaml.cs">
+      <DependentUpon>HotelsManagement_Window.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Management\PartnersManagement_Window.xaml.cs">
+      <DependentUpon>PartnersManagement_Window.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Management\UsersManagement_Window.xaml.cs">
+      <DependentUpon>UsersManagement_Window.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\NavigationSide_UserControl.xaml.cs">
+      <DependentUpon>NavigationSide_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Personal\NewReservation_Personal_UserControl.xaml.cs">
+      <DependentUpon>NewReservation_Personal_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Personal_UserControl.xaml.cs">
+      <DependentUpon>Personal_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Services\Previews\FerryService_Preview.xaml.cs">
+      <DependentUpon>FerryService_Preview.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Services\Previews\GuideService_Preview.xaml.cs">
+      <DependentUpon>GuideService_Preview.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Services\Previews\HotelService_Preview.xaml.cs">
+      <DependentUpon>HotelService_Preview.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Services\Previews\OptionalService_Preview.xaml.cs">
+      <DependentUpon>OptionalService_Preview.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Services\Previews\PlaneService_Preview.xaml.cs">
+      <DependentUpon>PlaneService_Preview.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Services\Previews\TransferService_Preview.xaml.cs">
+      <DependentUpon>TransferService_Preview.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Services\TransferService_UserControl.xaml.cs">
+      <DependentUpon>TransferService_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Services\FerryService_UserControl.xaml.cs">
+      <DependentUpon>FerryService_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Services\GuideService_UserControl.xaml.cs">
+      <DependentUpon>GuideService_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Services\HotelService_UserControl.xaml.cs">
+      <DependentUpon>HotelService_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Services\OptionalService_UserControl.xaml.cs">
+      <DependentUpon>OptionalService_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Services\PlaneService_UserControl.xaml.cs">
+      <DependentUpon>PlaneService_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Skiathos\NewReservation_Skiathos_UserControl.xaml.cs">
+      <DependentUpon>NewReservation_Skiathos_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Skiathos_UserControl.xaml.cs">
+      <DependentUpon>Skiathos_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Tabs\Cards_UserControl.xaml.cs">
+      <DependentUpon>Cards_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Tabs\EconomicData_UserControl.xaml.cs">
+      <DependentUpon>EconomicData_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Tabs\GlobalEconomics_UserControl.xaml.cs">
+      <DependentUpon>GlobalEconomics_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Tabs\GlobalSearch_UserControl.xaml.cs">
+      <DependentUpon>GlobalSearch_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Tabs\IncomesOutcomesPreview_UserControl.xaml.cs">
+      <DependentUpon>IncomesOutcomesPreview_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Tabs\IncomesOutcomes_UserControl.xaml.cs">
+      <DependentUpon>IncomesOutcomes_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Tabs\InfoTab_UserControl.xaml.cs">
+      <DependentUpon>InfoTab_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AttachedProperties\PasswordBoxMVVMAttachedProperties.cs" />
+    <Compile Include="Converters\BrushColorConverter.cs" />
+    <Compile Include="Converters\DictionaryToCategoryConverter.cs" />
+    <Compile Include="Converters\SelectedIndexToForegroundConverter.cs" />
+    <Compile Include="Converters\TabSizeConverter.cs" />
+    <Compile Include="Converters\UserToVisdibilityConverter.cs" />
+    <Compile Include="Data\Workers\RoomsManager.cs" />
+    <Compile Include="Helpers\BindingProxy.cs" />
+    <Compile Include="Helpers\Definitions.cs" />
+    <Compile Include="Helpers\DisplayNameHelper.cs" />
+    <Compile Include="Helpers\NewReservationHelper.cs" />
+    <Compile Include="Helpers\RowDataInfoValidationRule.cs" />
+    <Compile Include="Helpers\SearchBookingsHelper.cs" />
+    <Compile Include="Helpers\StaticResources.cs" />
+    <Compile Include="Views\Tabs\ListManagement_UserControl.xaml.cs">
+      <DependentUpon>ListManagement_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Tabs\Management_UserControl.xaml.cs">
+      <DependentUpon>Management_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Tabs\OptionalsManagement_UserControl.xaml.cs">
+      <DependentUpon>OptionalsManagement_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Tabs\Remaining_UserControl.xaml.cs">
+      <DependentUpon>Remaining_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Tabs\TotalEarns_UserControl.xaml.cs">
+      <DependentUpon>TotalEarns_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Tabs\UserPaymentsInfo_UserControl.xaml.cs">
+      <DependentUpon>UserPaymentsInfo_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ThirdPartyUserControl.xaml.cs">
+      <DependentUpon>ThirdPartyUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ThirdParty\Edit_ThirdParty_Booking_Window.xaml.cs">
+      <DependentUpon>Edit_ThirdParty_Booking_Window.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ThirdParty\NewReservation_ThirdParty_UserControl.xaml.cs">
+      <DependentUpon>NewReservation_ThirdParty_UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Universal\Availabilities_Window.xaml.cs">
+      <DependentUpon>Availabilities_Window.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Message\OpenChildWindowCommand.cs" />
+    <Compile Include="Message\SelectedTabChangedMessage.cs" />
+    <Compile Include="Message\SetNaviGationTabMessage.cs" />
+    <Compile Include="Message\ShowExceptionMessage_Message.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include=".editorconfig" />
+    <None Include="LATravelManager.UI_TemporaryKey.pfx" />
+    <None Include="log4net.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="package.nuspec" />
+    <None Include="Properties\app.manifest" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Sources\group\Voucher_afirmo_larissa.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\group\Voucher_afirmo_thess.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\group\Voucher_enfirmo_larissas.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\group\Voucher_enfirmo_thess.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\dimos.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\letter.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\proairetikon.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\protypo kratiseon.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\protypo_theseis.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\protypo_leoforeia.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\reciept.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\reciept_larisa.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\test.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\01_latravel_logo1.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\gobansko.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\gotoskiathos.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data\Lookups\" />
+    <Folder Include="Data\Repositories\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LATravelManager.DataAccess\LATravelManager.DataAccess.csproj">
+      <Project>{55666d1d-eec1-481a-ab05-5ee49c7e29ab}</Project>
+      <Name>LATravelManager.DataAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LATravelManager.Model\LATravelManager.Model.csproj">
+      <Project>{c98afcad-18b7-4072-999f-e285382bafc1}</Project>
+      <Name>LATravelManager.Model</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Sources\airports.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Sources\VoucherImages\102.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\VoucherImages\103.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\VoucherImages\104.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\VoucherImages\105.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\VoucherImages\106.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\VoucherImages\107.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\VoucherImages\108.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\VoucherImages\109.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\VoucherImages\110.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\VoucherImages\111.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\VoucherImages\112.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\VoucherImages\113.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\VoucherImages\114.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\VoucherImages\115.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\VoucherImages\116.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\VoucherImages\118.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\VoucherImages\119.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\VoucherImages\120.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\VoucherImages\121.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\VoucherImages\129.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\VoucherImages\130.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\VoucherImages\131.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\VoucherImages\amfiliki.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\VoucherImages\angela.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\VoucherImages\butterfly.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\VoucherImages\elite.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sources\VoucherImages\sea view.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Sources\VoucherImages\bansko_general.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Autofac">
+      <Version>6.1.0</Version>
+    </PackageReference>
+    <PackageReference Include="AutoMapper">
+      <Version>10.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Autoupdater.NET.Official">
+      <Version>1.6.4</Version>
+    </PackageReference>
+    <PackageReference Include="DocumentFormat.OpenXml">
+      <Version>2.12.3</Version>
+    </PackageReference>
+    <PackageReference Include="EntityFramework">
+      <Version>6.4.4</Version>
+    </PackageReference>
+    <PackageReference Include="Expression.Blend.Sdk">
+      <Version>1.0.2</Version>
+    </PackageReference>
+    <PackageReference Include="Extended.Wpf.Toolkit">
+      <Version>4.0.2</Version>
+    </PackageReference>
+    <PackageReference Include="Google.Protobuf">
+      <Version>3.15.3</Version>
+    </PackageReference>
+    <PackageReference Include="iTextSharp">
+      <Version>5.5.13.2</Version>
+    </PackageReference>
+    <PackageReference Include="MahApps.Metro">
+      <Version>2.4.3</Version>
+    </PackageReference>
+    <PackageReference Include="MahApps.Metro.IconPacks">
+      <Version>4.8.0</Version>
+    </PackageReference>
+    <PackageReference Include="MaterialDesignColors">
+      <Version>2.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CSharp">
+      <Version>4.7.0</Version>
+    </PackageReference>
+    <PackageReference Include="MvvmLight">
+      <Version>5.4.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>12.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="Notifications.Wpf">
+      <Version>0.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="NuGet.CommandLine">
+      <Version>5.8.1</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="PdfSharp">
+      <Version>1.50.5147</Version>
+    </PackageReference>
+    <PackageReference Include="PdfSharp.Xps">
+      <Version>1.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="Portable.BouncyCastle">
+      <Version>1.8.10</Version>
+    </PackageReference>
+    <PackageReference Include="squirrel.windows">
+      <Version>2.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="System.ValueTuple">
+      <Version>4.5.0</Version>
+    </PackageReference>
+    <PackageReference Include="THEFilteredComboBox">
+      <Version>1.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="WPFTextBoxAutoComplete">
+      <Version>1.0.5</Version>
+    </PackageReference>
+    <PackageReference Include="Z.EntityFramework.Plus.EF6">
+      <Version>5.1.19</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="AfterBuild" Condition=" '$(Configuration)' == 'Release'">
+    <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
+      <Output TaskParameter="Assemblies" ItemName="myAssemblyInfo" />
+    </GetAssemblyIdentity>
+    <Exec Command="nuget pack MyApp.nuspec -Version %(myAssemblyInfo.Version) -Properties Configuration=Release -OutputDirectory $(OutDir) -BasePath $(OutDir)" />
+    <Exec Command="squirrel --releasify $(OutDir)LATravelManager.$([System.Version]::Parse(%(myAssemblyInfo.Version)).ToString(3)).nupkg  --no-msi" />
+  </Target>
+  <ItemGroup>
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\autofac\6.1.0\lib\netstandard2.0\Autofac.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\automapper\10.1.1\lib\net461\AutoMapper.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\autoupdater.net.official\1.6.4\lib\net45\AutoUpdater.NET.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\portable.bouncycastle\1.8.10\lib\net40\BouncyCastle.Crypto.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\commonservicelocator\2.0.6\lib\net47\CommonServiceLocator.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\controlzex\4.4.0\lib\net462\ControlzEx.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\deltacompressiondotnet\1.1.0\lib\net20\DeltaCompressionDotNet.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\deltacompressiondotnet\1.1.0\lib\net20\DeltaCompressionDotNet.MsDelta.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\deltacompressiondotnet\1.1.0\lib\net20\DeltaCompressionDotNet.PatchApi.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\documentformat.openxml\2.12.3\lib\net46\DocumentFormat.OpenXml.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\entityframework\6.4.4\lib\net45\EntityFramework.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\entityframework\6.4.4\lib\net45\EntityFramework.SqlServer.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\enums.net\4.0.0\lib\net45\Enums.NET.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\epplus\4.5.3.3\lib\net40\EPPlus.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\thefilteredcombobox\1.0.0\lib\net35\FilteredComboBox.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mvvmlightlibs\5.4.1.1\lib\net45\GalaSoft.MvvmLight.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mvvmlightlibs\5.4.1.1\lib\net45\GalaSoft.MvvmLight.Extras.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mvvmlightlibs\5.4.1.1\lib\net45\GalaSoft.MvvmLight.Platform.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\google.protobuf\3.15.3\lib\net45\Google.Protobuf.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\efinteractiveviews\1.1.0\lib\net45\InteractivePreGeneratedViews.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\itextsharp\5.5.13.2\lib\itextsharp.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\k4os.compression.lz4\1.1.11\lib\net46\K4os.Compression.LZ4.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\k4os.compression.lz4.streams\1.1.11\lib\net46\K4os.Compression.LZ4.Streams.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\k4os.hash.xxhash\1.0.6\lib\net46\K4os.Hash.xxHash.dll" />
+    <ReferencePath Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.DataAccess\bin\Release\LATravelManager.DataAccess.dll" />
+    <ReferencePath Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.Model\bin\Release\LATravelManager.Model.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro\2.4.3\lib\net47\MahApps.Metro.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.BootstrapIcons.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.BoxIcons.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.Codicons.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.Core.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.Entypo.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.EvaIcons.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.FeatherIcons.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.FileIcons.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.Fontaudio.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.FontAwesome.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.ForkAwesome.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.Ionicons.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.JamIcons.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.Material.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.MaterialDesign.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.MaterialLight.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.Microns.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.Modern.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.Octicons.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.PicolIcons.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.PixelartIcons.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.RadixIcons.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.RemixIcon.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.RPGAwesome.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.SimpleIcons.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.Typicons.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.Unicons.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.VaadinIcons.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.WeatherIcons.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mahapps.metro.iconpacks\4.8.0\lib\net47\MahApps.Metro.IconPacks.Zondicons.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\materialdesigncolors\2.0.0\lib\net452\MaterialDesignColors.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\microsoft.bcl.asyncinterfaces\1.1.0\ref\net461\Microsoft.Bcl.AsyncInterfaces.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Microsoft.Build.Utilities.v4.0.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Microsoft.CSharp.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\microsoft.xaml.behaviors.wpf\1.1.19\lib\net45\Microsoft.Xaml.Behaviors.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mono.cecil\0.11.2\lib\net40\Mono.Cecil.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mono.cecil\0.11.2\lib\net40\Mono.Cecil.Mdb.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mono.cecil\0.11.2\lib\net40\Mono.Cecil.Pdb.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mono.cecil\0.11.2\lib\net40\Mono.Cecil.Rocks.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\mscorlib.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mysql.data\8.0.23\lib\net452\MySql.Data.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mysql.data.entityframework\8.0.23\lib\net452\MySql.Data.EntityFramework.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\newtonsoft.json\12.0.3\lib\net45\Newtonsoft.Json.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\notifications.wpf\0.1.1\lib\net461\Notifications.Wpf.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\squirrel.windows\2.0.1\lib\Net45\NuGet.Squirrel.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\pdfsharp.xps\1.0.0\lib\PdfSharp-WPF.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\pdfsharp\1.50.5147\lib\net20\PdfSharp.Charting.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\pdfsharp\1.50.5147\lib\net20\PdfSharp.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\pdfsharp.xps\1.0.0\lib\PdfSharp.Xps.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\PresentationCore.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\PresentationFramework.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\ReachFramework.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\ssh.net\2020.0.0-beta1\lib\net40\Renci.SshNet.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\sharpcompress\0.17.1\lib\net45\SharpCompress.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\squirrel.windows\2.0.1\lib\Net45\Squirrel.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\system.buffers\4.5.1\ref\net45\System.Buffers.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.ComponentModel.Composition.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.ComponentModel.Composition.Registration.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.ComponentModel.DataAnnotations.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.ComponentModel.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Configuration.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Configuration.Install.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Core.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Data.DataSetExtensions.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Data.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\system.diagnostics.diagnosticsource\4.7.1\lib\net46\System.Diagnostics.DiagnosticSource.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Drawing.Design.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Drawing.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.IO.Compression.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Management.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\system.memory\4.5.4\lib\net461\System.Memory.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Net.Http.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Numerics.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\system.numerics.vectors\4.5.0\ref\net46\System.Numerics.Vectors.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Printing.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\system.runtime.compilerservices.unsafe\5.0.0\ref\net461\System.Runtime.CompilerServices.Unsafe.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Runtime.Serialization.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Security.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\system.threading.tasks.extensions\4.5.2\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Transactions.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\system.valuetuple\4.5.0\ref\net47\System.ValueTuple.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Web.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Web.Extensions.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mvvmlightlibs\5.4.1.1\lib\net45\System.Windows.Interactivity.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Xaml.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Xml.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Xml.Linq.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mysql.data\8.0.23\lib\net452\Ubiety.Dns.Core.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\WindowsBase.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\wpftextboxautocomplete\1.0.5\lib\net40\WPFTextBoxAutoComplete.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\extended.wpf.toolkit\4.0.2\lib\net40\Xceed.Wpf.AvalonDock.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\extended.wpf.toolkit\4.0.2\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\extended.wpf.toolkit\4.0.2\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\extended.wpf.toolkit\4.0.2\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\extended.wpf.toolkit\4.0.2\lib\net40\Xceed.Wpf.Toolkit.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\z.entityframework.extensions\5.1.19\lib\net45\Z.EntityFramework.Extensions.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\z.entityframework.plus.ef6\5.1.19\lib\net45\Z.EntityFramework.Plus.EF6.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\z.expressions.eval\4.0.32\lib\net45\Z.Expressions.Eval.dll" />
+    <ReferencePath Include="C:\Users\achil\.nuget\packages\mysql.data\8.0.23\lib\net452\Zstandard.Net.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\Microsoft.Win32.Primitives.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\netstandard.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.AppContext.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Collections.Concurrent.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Collections.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Collections.NonGeneric.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Collections.Specialized.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.ComponentModel.Annotations.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.ComponentModel.EventBasedAsync.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.ComponentModel.Primitives.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.ComponentModel.TypeConverter.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Console.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Data.Common.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Diagnostics.Contracts.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Diagnostics.Debug.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Diagnostics.FileVersionInfo.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Diagnostics.Process.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Diagnostics.StackTrace.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Diagnostics.TextWriterTraceListener.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Diagnostics.Tools.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Diagnostics.TraceSource.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Drawing.Primitives.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Dynamic.Runtime.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Globalization.Calendars.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Globalization.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Globalization.Extensions.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.IO.Compression.ZipFile.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.IO.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.IO.FileSystem.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.IO.FileSystem.DriveInfo.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.IO.FileSystem.Primitives.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.IO.FileSystem.Watcher.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.IO.IsolatedStorage.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.IO.MemoryMappedFiles.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.IO.Pipes.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.IO.UnmanagedMemoryStream.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Linq.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Linq.Expressions.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Linq.Parallel.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Linq.Queryable.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Net.Http.Rtc.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Net.NameResolution.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Net.NetworkInformation.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Net.Ping.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Net.Primitives.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Net.Requests.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Net.Security.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Net.Sockets.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Net.WebHeaderCollection.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Net.WebSockets.Client.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Net.WebSockets.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.ObjectModel.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Reflection.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Reflection.Emit.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Reflection.Emit.ILGeneration.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Reflection.Emit.Lightweight.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Reflection.Extensions.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Reflection.Primitives.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Resources.Reader.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Resources.ResourceManager.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Resources.Writer.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Runtime.CompilerServices.VisualC.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Runtime.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Runtime.Extensions.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Runtime.Handles.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Runtime.InteropServices.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Runtime.InteropServices.RuntimeInformation.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Runtime.InteropServices.WindowsRuntime.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Runtime.Numerics.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Runtime.Serialization.Formatters.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Runtime.Serialization.Json.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Runtime.Serialization.Primitives.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Runtime.Serialization.Xml.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Security.Claims.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Security.Cryptography.Algorithms.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Security.Cryptography.Csp.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Security.Cryptography.Encoding.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Security.Cryptography.Primitives.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Security.Cryptography.X509Certificates.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Security.Principal.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Security.SecureString.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.ServiceModel.Duplex.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.ServiceModel.Http.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.ServiceModel.NetTcp.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.ServiceModel.Primitives.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.ServiceModel.Security.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Text.Encoding.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Text.Encoding.Extensions.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Text.RegularExpressions.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Threading.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Threading.Overlapped.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Threading.Tasks.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Threading.Tasks.Parallel.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Threading.Thread.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Threading.ThreadPool.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Threading.Timer.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Xml.ReaderWriter.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Xml.XDocument.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Xml.XmlDocument.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Xml.XmlSerializer.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Xml.XPath.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\Facades\System.Xml.XPath.XDocument.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\CustomerSearchWindow.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\InvoicesManagementWindow.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Management\BusesManagement_Window.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Management\LeadersManagement_Widnow.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Management\LoginDataManagement_Window.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Management\OptionalExcursionsManagement_Window.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Management\TaxData_Management_Window.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Personal\EditPersonalBooking_Window.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Plan_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Tabs\AddIncomeOutcome_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Tabs\AddRooms_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Bansko\EditBooking_Bansko_Window.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Bansko\Lists_Bankso_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Bansko\MoveReservation_Bansko_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Bansko\NewReservation_Bansko_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Bansko\OptionalActivities_Bansko_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Bansko_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\GroupExcursions_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Group\NewReservation_Group_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Login_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\MainWindow.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Main_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Management\CitiesManagement_Window.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Management\CountriesManagement_Window.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Management\ExcursionsManagement_Window.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Management\HotelsManagement_Window.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Management\PartnersManagement_Window.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Management\UsersManagement_Window.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\NavigationSide_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Personal\NewReservation_Personal_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Personal_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Services\Previews\FerryService_Preview.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Services\Previews\GuideService_Preview.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Services\Previews\HotelService_Preview.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Services\Previews\OptionalService_Preview.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Services\Previews\PlaneService_Preview.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Services\Previews\TransferService_Preview.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Services\TransferService_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Services\FerryService_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Services\GuideService_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Services\HotelService_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Services\OptionalService_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Services\PlaneService_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Skiathos\NewReservation_Skiathos_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Skiathos_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Tabs\Cards_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Tabs\EconomicData_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Tabs\GlobalEconomics_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Tabs\GlobalSearch_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Tabs\IncomesOutcomesPreview_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Tabs\IncomesOutcomes_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Tabs\InfoTab_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Tabs\ListManagement_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Tabs\Management_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Tabs\OptionalsManagement_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Tabs\Remaining_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Tabs\TotalEarns_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Tabs\UserPaymentsInfo_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\ThirdPartyUserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\ThirdParty\Edit_ThirdParty_Booking_Window.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\ThirdParty\NewReservation_ThirdParty_UserControl.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\Views\Universal\Availabilities_Window.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\App.g.cs" />
+    <Compile Include="C:\Users\achil\source\repos\LATravelManager_v2\LATravelManager.UI\obj\Release\GeneratedInternalTypeHelper.g.cs" />
+  </ItemGroup>
+</Project>

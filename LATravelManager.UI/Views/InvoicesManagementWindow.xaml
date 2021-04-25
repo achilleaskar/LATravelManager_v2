@@ -18,6 +18,7 @@
     <!--950-->
     <Window.Resources>
         <converters:EnumConverter x:Key="EnumConverter" />
+        <converters:NumberWithStringFront x:Key="NumberWithStringFront" />
         <converters:DateTimeToString x:Key="DateTimeToString" />
         <converters:FloadToStringValueConverter x:Key="FloadToStringValueConverter" />
     </Window.Resources>
@@ -534,8 +535,9 @@
                                                                            Grid.Row="1"
                                                                            Grid.Column="1"
                                                                            HorizontalAlignment="Center" />
-                                                                <TextBox Text="{Binding Pax,StringFormat= Άτομα / Pax: {0}}"
+                                                                <TextBox Text="{Binding Pax,ConverterParameter='Άτομα / Pax: ',Converter={StaticResource NumberWithStringFront}}"
                                                                          Grid.Row="1"
+                                                                         BorderBrush="Transparent"
                                                                          Grid.Column="2"
                                                                          HorizontalAlignment="Center" />
                                                                 <TextBox Text="{Binding Extra}"

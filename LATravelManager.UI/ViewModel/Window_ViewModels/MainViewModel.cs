@@ -1,10 +1,8 @@
 ﻿using System.Threading.Tasks;
 using System.Windows;
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Messaging;
 using LATravelManager.Model.People;
 using LATravelManager.UI.Helpers;
-using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 
 namespace LATravelManager.UI.ViewModel.Window_ViewModels
@@ -15,8 +13,6 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
 
         public MainViewModel()
         {
-            Visibility = Visibility.Hidden;
-            Messenger.Default.Register<ChangeVisibilityMessage>(this, msg => { Visibility = msg.Visible ? Visibility.Visible : Visibility.Collapsed; });
         }
 
         public async Task ChangeViewModel()
@@ -39,8 +35,6 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
         #region Fields
 
         private ViewModelBase _SelectedViewmodel;
-
-        private Visibility _Visibility;
 
         #endregion Fields
 
@@ -75,25 +69,6 @@ namespace LATravelManager.UI.ViewModel.Window_ViewModels
                 }
 
                 _SelectedViewmodel = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public Visibility Visibility
-        {
-            get
-            {
-                return _Visibility;
-            }
-
-            set
-            {
-                if (_Visibility == value)
-                {
-                    return;
-                }
-
-                _Visibility = value;
                 RaisePropertyChanged();
             }
         }

@@ -194,7 +194,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         #region Methods
 
-        public async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
+        public async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null, MyViewModelBase parent = null)
         {
             await Task.Delay(0);
         }

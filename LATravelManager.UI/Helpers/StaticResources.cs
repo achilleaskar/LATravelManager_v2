@@ -1,19 +1,31 @@
-﻿using LATravelManager.Model.BookingData;
-using LATravelManager.Model.Locations;
-using LATravelManager.Model.People;
-using LATravelManager.UI.Repositories;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Data.Entity;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Windows;
+using LATravelManager.Model.BookingData;
+using LATravelManager.Model.Locations;
+using LATravelManager.Model.People;
+using LATravelManager.UI.Repositories;
 
 namespace LATravelManager.UI.Helpers
 {
     public static class StaticResources
     {
         #region Properties
+
+        public static void ReloadNavigationProperty<TEntity, TElement>(
+       this DbContext context,
+       TEntity entity,
+       Expression<Func<TEntity, ICollection<TElement>>> navigationProperty)
+       where TEntity : class
+       where TElement : class
+        {
+            context.Entry(entity).Collection<TElement>(navigationProperty).Query();
+        }
 
         public static string[] AgesList { get; set; } = { "<1", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18+" };
 

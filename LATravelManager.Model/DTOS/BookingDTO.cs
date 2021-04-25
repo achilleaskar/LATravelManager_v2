@@ -46,9 +46,11 @@ namespace LATravelManager.Model.DTOS
         public bool SecondDepart { get; set; }
 
         public User User { get; set; }
+        public int? UserId { get; set; }
         public ExcursionCategory ExcursionType { get; set; }
         public DateTime CheckIn { get; set; }
         public DateTime CheckOut { get; set; }
+        public int? PartnerId { get; set; }
 
         #endregion Properties
     }

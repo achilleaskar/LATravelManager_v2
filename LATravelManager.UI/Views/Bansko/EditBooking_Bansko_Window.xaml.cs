@@ -6,6 +6,8 @@ using LATravelManager.Model.Hotels;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Bansko;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Group;
+using LATravelManager.UI.ViewModel.CategoriesViewModels.Skiathos;
+using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
 
 namespace LATravelManager.UI.Views.Bansko
 {
@@ -135,6 +137,7 @@ namespace LATravelManager.UI.Views.Bansko
                 }
                 else
                     a.GenericRepository.RollBack();
+               
             }
             else if (DataContext is NewReservation_Group_ViewModel b && b.HasChanges)
             {
@@ -145,6 +148,18 @@ namespace LATravelManager.UI.Views.Bansko
                 }
                 else
                     b.GenericRepository.RollBack();
+             
+            }
+            else if (DataContext is NewReservation_Skiathos_ViewModel c && c.HasChanges)
+            {
+                MessageBoxResult result = MessageBox.Show("Υπάρχουν μη αποθηκευμένες αλλαγές, θέλετε σίγουρα να κλείσετε?", "Προσοχή", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (result == MessageBoxResult.No)
+                {
+                    e.Cancel = true;
+                }
+                else
+                    c.GenericRepository.RollBack();
+               
             }
             Helpers.StaticResources.Close(this);
         }

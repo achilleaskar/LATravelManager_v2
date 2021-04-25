@@ -14,6 +14,8 @@ using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.Wrapper;
 
+namespace LATravelManager.UI.Helpers
+{
 public class NewReservationHelper : ViewModelBase
 {
     #region Constructors
@@ -379,4 +381,5 @@ public class NewReservationHelper : ViewModelBase
     //}
 
     #endregion Methods
+}
 }

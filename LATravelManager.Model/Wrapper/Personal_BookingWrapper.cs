@@ -749,6 +749,20 @@ namespace LATravelManager.Model.Wrapper
             CalculateRemainingAmount();
         }
 
+        public string GetNumber()
+        {
+            return "ΑΠ-" + Id;
+        }
+
+        public decimal GetAmountToPay()
+        {
+            if (IsPartners && Partner != null && !Partner.Person)
+            {
+                return NetPrice;
+            }
+            return FullPrice;
+        }
+
         #endregion Methods
     }
 }

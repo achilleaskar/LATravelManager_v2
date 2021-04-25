@@ -47,6 +47,17 @@ namespace LATravelManager.Model
         LastDay
     };
 
+
+    public enum CardTypeEnum
+    {
+        [Description("Παραστατικό")]
+        Reciept,
+        [Description("Κράτηση")]
+        Booking,
+        [Description("Πληρωμή")]
+        Deposit
+    };
+
     [TypeConverter(typeof(EnumDescriptionTypeConverter))]
     public enum RecieptTypeEnum
     {

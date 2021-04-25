@@ -1,5 +1,6 @@
 ﻿using LATravelManager.Model.BookingData;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace LATravelManager.Model.People
@@ -18,6 +19,7 @@ namespace LATravelManager.Model.People
         public bool Person { get; set; }
 
         public List<Booking> Bookings { get; set; }
+        public ObservableCollection<BulkPayment> BulkPayments { get; set; }
         public string Note { get; set; }
 
         [Required]

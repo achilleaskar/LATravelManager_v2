@@ -13,6 +13,7 @@ using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.ServiceViewModels;
+using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Views;
 using Microsoft.Win32;
@@ -653,10 +654,13 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 
         #region Methods
 
-        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null)
+
+
+        public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null, MyViewModelBase parent = null)
         {
             try
             {
+                Parent = parent;
                 if (id > 0)
                 {
                     GenericRepository = new GenericRepository();
@@ -953,8 +957,13 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
 
                 await GenericRepository.SaveAsync();
 
+                if (Parent is Cards_ViewModel cvm)
+                {
+                    await cvm.Refresh(this);
+                }
+
                 Payment = new Payment();
-                BookedMessage = "H κράτηση απόθηκέυτηκε επιτυχώς";
+                BookedMessage = "H κράτηση αποθηκεύτηκε επιτυχώς";
                 HasChanges = false;
             }
             catch (Exception ex)

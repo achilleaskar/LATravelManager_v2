@@ -127,7 +127,7 @@
                         <MenuItem Header="Ακύρωσε"
                                   Command="{Binding DataContext.RecievedMoneyCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
                                   CommandParameter="4" />
-                        <MenuItem Header="Διαγραφη"
+                        <MenuItem Header="Διαγραφή"
                                   Command="{Binding DataContext.DeleteOptionalCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
                                   CommandParameter="{Binding}" />
                     </ContextMenu>

@@ -146,7 +146,7 @@
                         </DataGrid.Resources>
                         <DataGrid.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="Διαγραφη"
+                                <MenuItem Header="Διαγραφή"
                                           Command="{Binding DeleteSelectedCustomersCommand}">
                                     <MenuItem.Icon>
                                         <Image MaxHeight="20"
@@ -375,7 +375,7 @@
                                       ItemsSource="{Binding ThirdPartyWr.Payments}">
                                 <ListView.Resources>
                                     <ContextMenu x:Key="ItemContextMenu">
-                                        <MenuItem Header="Διαγραφη"
+                                        <MenuItem Header="Διαγραφή"
                                                   Visibility="{Binding Converter={StaticResource UserToVisibilityConverter},ConverterParameter=1,  Mode=OneWay}"
                                                   Command="{Binding DataContext.DeletePaymentCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
                                             <MenuItem.Icon>
@@ -394,6 +394,13 @@
                                 </ListView.Resources>
                                 <ListView.ItemContainerStyle>
                                     <Style TargetType="{x:Type ListViewItem}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsBulk}"
+                                                         Value="True">
+                                                <Setter Property="Background"
+                                                        Value="LightBlue" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
                                         <Setter Property="ContextMenu"
                                                 Value="{StaticResource ItemContextMenu}" />
                                     </Style>
