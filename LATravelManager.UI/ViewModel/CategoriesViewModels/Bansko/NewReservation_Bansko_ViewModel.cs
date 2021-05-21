@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Pricing.Invoices;
 using LATravelManager.UI.Message;
-using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
 using LATravelManager.UI.Wrapper;

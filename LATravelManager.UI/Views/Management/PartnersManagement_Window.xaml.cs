@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using LATravelManager.UI.ViewModel.Management;
 
 namespace LATravelManager.UI.Views.Management

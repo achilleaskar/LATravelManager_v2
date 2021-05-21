@@ -380,7 +380,7 @@ namespace LATravelManager.UI.Helpers
 
         public Hotel Gr => Hotels.FirstOrDefault(h => h.Name == "GRAND ROYALE");
 
-        public async Task LoadAsync()
+        public async Task LoadAsync(bool datesFull = false)
         {
             Mouse.OverrideCursor = Cursors.Wait;
             Hotels = new ObservableCollection<Hotel>(await Context.GetAllHotelsAsync<Hotel>());
@@ -391,10 +391,14 @@ namespace LATravelManager.UI.Helpers
             StaticResources.StartingPlaces = StartingPlaces;
             Users = new ObservableCollection<User>(await Context.GetAllUsersAsyncSortedByUserName());
             ExcursionCategories = new ObservableCollection<ExcursionCategory>((await Context.GetAllAsync<ExcursionCategory>()).OrderBy(e => e.IndexNum));
+            if (datesFull)
+                await Context.GetAllAsync<ExcursionDate>();
+            else
+                await Context.GetAllAsync<ExcursionDate>(d => d.CheckOut >= DateTime.Now);
             Excursions = new ObservableCollection<Excursion>((await Context.GetAllExcursionsAsync()).OrderBy(ex => ex, new ExcursionComparer()));
             foreach (Excursion excursion in Excursions.Where(e => e.ExcursionDates.Any(ed => ed.CheckOut >= DateTime.Today)))
             {
-                excursion.ExcursionDates = new ObservableCollection<ExcursionDate>(excursion.ExcursionDates.OrderBy(t => t.CheckIn));
+                excursion.ExcursionDates = new ObservableCollection<ExcursionDate>(excursion.ExcursionDates.Where(d => d.CheckOut >= DateTime.Today).OrderBy(t => t.CheckIn));
             }
             Partners = new ObservableCollection<Partner>(await Context.GetAllAsyncSortedByName<Partner>());
             HotelCategories = new ObservableCollection<HotelCategory>(await Context.GetAllAsync<HotelCategory>());
@@ -423,10 +427,10 @@ namespace LATravelManager.UI.Helpers
             Airlines = new ObservableCollection<Airline>(await Context.GetAllAsyncSortedByName<Airline>());
         }
 
-        public async Task Refresh()
+        public async Task Refresh(bool datesFull = false)
         {
             Context = new GenericRepository();
-            await LoadAsync();
+            await LoadAsync(datesFull);
         }
 
         internal void Add<TEntity>(TEntity model) where TEntity : BaseModel, new()

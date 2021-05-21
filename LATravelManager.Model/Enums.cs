@@ -72,7 +72,9 @@ namespace LATravelManager.Model
         [Description("Ακυρωτικό Τιμολόγιο")]
         CancelationInvoice = 4,
         [Description("Πιστωτικό Τιμολόγιο")]
-        CreditInvoice = 5
+        CreditInvoice = 5,
+        [Description("Προφόρμα")]
+        Proforma = 6
     };
 
     [TypeConverter(typeof(EnumDescriptionTypeConverter))]

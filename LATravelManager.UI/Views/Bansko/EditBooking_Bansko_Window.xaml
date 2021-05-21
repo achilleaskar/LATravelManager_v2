@@ -192,7 +192,6 @@
                               HorizontalAlignment="Left"
                               AutoGenerateColumns="False"
                               CanUserAddRows="True"
-                              d:DesignSource="{d:DesignInstance Type={x:Type people:Customer}, CreateList=True}"
                               ItemsSource="{Binding BookingWr.Customers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                               SelectedItem="{Binding SelectedCustomer}">
                         <DataGrid.Resources>

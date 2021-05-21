@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Windows.Documents;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.Lists;
 using LATravelManager.Model.Locations;

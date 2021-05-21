@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Text;
 using System.Windows;
 using System.Windows.Data;
 
@@ -28,24 +29,43 @@ namespace LATravelManager.UI.Converters
                         firstDot -= 3;
                     }
                 }
-                if (parameter is string s1 && s1[0] == '0')
-                    return s;
+                if (parameter is string s1)
+                    if (s1[0] == '0')
+                        return s;
+                    else
+                        return s + " " + s1;
                 return s + " €";
             }
-            if (value is int v)
-            {
-                return v + " €";
-            }
             return "error";
-            //return decimalValue > 0 ? decimalValue.ToString() + " €" : "0 €";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
                 return DependencyProperty.UnsetValue;
-            string strValue = (value as string).Replace(".", "").Replace(',', '.').Replace("€", "").Replace(" ", "");
-            if (!string.IsNullOrEmpty(strValue) && !strValue.EndsWith(".0") && strValue[strValue.Length - 1] != '.' && decimal.TryParse(strValue, NumberStyles.Any, new CultureInfo("en-US"), out var tmpdecimal))
+            string strValue;
+            if (parameter is string s && s[0] != '0')
+            {
+                strValue = (value as string).Replace(s, "").Replace(" ", "");
+            }
+            else
+                strValue = (value as string).Replace("€", "").Replace(" ", "");
+            if (strValue.EndsWith(".") || strValue.EndsWith(","))
+
+                return DependencyProperty.UnsetValue;
+            int lastsindexofdot = strValue.LastIndexOf('.');
+            if (lastsindexofdot > 0 && strValue.Length - lastsindexofdot <= 3)
+            {
+                StringBuilder sb = new StringBuilder(strValue);
+                sb[lastsindexofdot] = '~';
+                sb = sb.Replace(".", "").Replace(',', '.').Replace('~', '.');
+                strValue = sb.ToString();
+            }
+            else
+            {
+                strValue = strValue.Replace(".", "").Replace(',', '.').Replace("€", "").Replace(" ", "");
+            }
+            if (!string.IsNullOrEmpty(strValue) && !strValue.EndsWith(".0") && decimal.TryParse(strValue, NumberStyles.Any, new CultureInfo("en-US"), out var tmpdecimal))
             {
                 return decimal.Round(tmpdecimal, 2);
             }

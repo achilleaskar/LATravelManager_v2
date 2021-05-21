@@ -1,5 +1,4 @@
 ﻿using GalaSoft.MvvmLight;
-using LATravelManager.UI.ViewModel.BaseViewModels;
 using System.Windows;
 
 namespace LATravelManager.UI.Message

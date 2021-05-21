@@ -81,7 +81,7 @@ namespace LATravelManager.UI.Repositories
             Context = new MainDatabase();
             if (Nochanges == true)
                 Context.Configuration.AutoDetectChangesEnabled = false;
-            Context.Database.Log = Console.Write;
+            // Context.Database.Log = Console.Write;
             IsContextAvailable = true;
             this.mainViewModel = mainViewModel;
 
@@ -280,11 +280,18 @@ namespace LATravelManager.UI.Repositories
         public async Task<IEnumerable<Excursion>> GetAllExcursionsAsync()
         {
             DateTime t = DateTime.Today.AddYears(-1);
+            var tw = await Context.Excursions
+                 .Where(e => e.ExcursionDates.Any(c => c.CheckOut > t))
+                .Select(e => new
+                {
+                    e = e.ExcursionDates.OrderByDescending(c => c.CheckIn).Take(1)
+                }).ToListAsync();
+
             return await RunTask(Context.Set<Excursion>()
                 .Where(e => e.ExcursionDates.Any(c => c.CheckOut > t))
                 .Include(c => c.Destinations.Select(d => d.Country))
+                //.Include(c => c.ExcursionDates)
                 .Include(c => c.ExcursionType)
-                .Include(c => c.ExcursionDates)
                 .ToListAsync);
         }
 

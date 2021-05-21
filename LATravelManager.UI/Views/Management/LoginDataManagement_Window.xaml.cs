@@ -1,5 +1,8 @@
 ﻿using LATravelManager.UI.ViewModel.Management;
+using System.Diagnostics;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 
 namespace LATravelManager.UI.Views.Management
@@ -16,6 +19,10 @@ namespace LATravelManager.UI.Views.Management
 
         private void DataGridCell_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            if (sender is DataGridCell dgc && dgc.Content is TextBlock tb)
+            {
+                Clipboard.SetText(tb.Text);
+            }
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

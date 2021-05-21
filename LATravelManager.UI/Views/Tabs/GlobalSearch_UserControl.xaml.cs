@@ -1,11 +1,6 @@
 ﻿using LATravelManager.UI.Helpers;
 using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
-using System;
-using System.Data;
-using System.Diagnostics;
 using System.IO;
-using System.Text;
-using System.Web.UI;
 using System.Windows.Controls;
 
 namespace LATravelManager.UI.Views.Tabs

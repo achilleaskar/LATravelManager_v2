@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using LATravelManager.UI.Helpers;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.CategoriesViewModels;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Skiathos;

@@ -5,7 +5,6 @@ using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Repositories;
 using NuGet;
-using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;

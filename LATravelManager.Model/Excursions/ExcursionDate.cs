@@ -28,6 +28,31 @@ namespace LATravelManager.Model.Excursions
 
         #endregion Fields
 
+
+
+
+        private Excursion _Excursion;
+
+
+        public Excursion Excursion
+        {
+            get
+            {
+                return _Excursion;
+            }
+
+            set
+            {
+                if (_Excursion == value)
+                {
+                    return;
+                }
+
+                _Excursion = value;
+                RaisePropertyChanged();
+            }
+        }
+
         private bool _Night = true;
 
         public bool NightStart

@@ -54,7 +54,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             nameof(BookingWr),nameof(Payment)
         };
 
-        private bool _All = true;
+        private bool _All;
 
         private ObservableCollection<HotelWrapper> _AvailableHotels;
 
@@ -161,7 +161,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
             DoubleClickRoomTypeCommand = new RelayCommand(ExpandRooms, CanExpand);
             SearchForCustomerCommand = new RelayCommand(SearchForCustomer);
-            OpenInvoicesWindowCommand = new RelayCommand(async () => await OpenInvoicesWindow());
+            OpenInvoicesWindowCommand = new RelayCommand(async () => await OpenInvoicesWindow(), canOpenInvoiceWindow);
 
             ManagePartnersCommand = new RelayCommand(ManagePartners);
 
@@ -179,6 +179,11 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             SelectedUserIndex = -1;
             Emails = new ObservableCollection<Email>();
             NewExtraService = new ExtraService();
+        }
+
+        private bool canOpenInvoiceWindow()
+        {
+            return BookingWr != null && BookingWr.Id > 0;
         }
 
         private Reciept _SelectedReciept;
@@ -375,6 +380,10 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 RaisePropertyChanged();
             }
         }
+
+
+
+
 
         public RelayCommand<Reciept> OpenFileCommand { get; set; }
         public RelayCommand ReplaceFileCommand { get; set; }
@@ -1422,6 +1431,14 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             Emails = (BookingWr.IsPartners && BookingWr.Partner != null && BookingWr.Partner.Emails != null && BookingWr.Partner.Emails.Any()) ? new ObservableCollection<Email>(BookingWr.Partner.Emails.Split(',').Select(e => new Email(e))) : new ObservableCollection<Email>();
             if (oldCusts != null)
                 BookingWr.Customers.AddRange(oldCusts);
+
+            if (BookingWr?.Excursion?.FixedDates == true)
+            {
+                if (BookingWr.CheckOut >= DateTime.Now)
+                    BookingWr.ExcursionDatesFiltered = BookingWr.Excursion.ExcursionDates;
+                else
+                    BookingWr.ExcursionDatesFiltered = new ObservableCollection<ExcursionDate>(BookingWr.Excursion.ExcursionDates.Where(r => r.CheckOut >= DateTime.Today).OrderBy(t => t.CheckIn));
+            }
         }
 
         protected async Task ResetAllRefreshableDataASync(bool makeNew = false)
@@ -1765,6 +1782,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 return false;
             }
 
+            ErrorsInCanAddReservationToRoom = "";
             return true;
         }
 
@@ -1789,6 +1807,8 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             {
                 return false;
             }
+            ErrorsInCanAddReservationToRoom = "";
+
             return true;
         }
 
@@ -1896,6 +1916,9 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             {
                 return false;
             }
+
+            ErrorsInCanAddReservationToRoom = "";
+
             return true;
         }
 
@@ -1906,7 +1929,13 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             {
                 return false;
             }
-            return AreBookingDataValid && ValidateReservations() == null;
+
+            if (!AreBookingDataValid)
+            {
+                return false;
+            }
+            ErrorsInDatagrid = ValidateReservations();
+            return ErrorsInDatagrid == null;
         }
 
         private bool CanShowAltairnatives()
@@ -2019,7 +2048,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 Payment = new Payment();
                 BookedMessage = string.Empty;
                 HB = false;
-                All = true;
                 OnlyStay = false;
                 SelectedUserIndex = Users.IndexOf(Users.Where(x => x.Id == StaticResources.User.Id).FirstOrDefault());
                 SelectedPartnerIndex = -1;
@@ -2634,7 +2662,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 {
                     return "Παρακαλώ τοποθετήστε όλους τους πελάτες σε δωμάτια";
                 }
-                if (BookingWr.NetPrice == 0 && customer.Price == 0)
+                if ((BookingWr.IsPartners && BookingWr.NetPrice == 0) || (!BookingWr.IsPartners && customer.Price == 0))
                 {
                     return "Δεν έχετε ορίσει τιμή";
                 }

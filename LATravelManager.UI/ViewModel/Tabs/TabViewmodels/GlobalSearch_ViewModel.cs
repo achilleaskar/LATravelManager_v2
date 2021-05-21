@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using GalaSoft.MvvmLight.CommandWpf;
+﻿using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
 using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
@@ -77,7 +76,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
                 var x = await Context.GetAllCitiesAsyncSortedByName();
 
-                List<Personal_BookingWrapper> bookings = new List<Personal_BookingWrapper>();
+                var bookings = new List<Personal_BookingWrapper>();
 
                 foreach (ReservationWrapper r in CollectionViewSource.GetDefaultView(FilteredReservations))
                 {
@@ -813,14 +812,11 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         public void CountCustomers()
         {
-            if (People == null)
-            {
-                People = new ObservableCollection<string>();
-            }
+            People ??= new ObservableCollection<string>();
             People.Clear();
             Dictionary<string, int> dict = new Dictionary<string, int>();
             Dictionary<string, int> dict2 = new Dictionary<string, int>();
-            int count, counter = 0;
+            int counter = 0;
             HashSet<Booking> bookings = new HashSet<Booking>();
             HashSet<Personal_BookingWrapper> personal_Bookings = new HashSet<Personal_BookingWrapper>();
             HashSet<ThirdParty_Booking_Wrapper> third_party_Bookings = new HashSet<ThirdParty_Booking_Wrapper>();
@@ -839,7 +835,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                     third_party_Bookings.Add(rw.ThirdPartyModel);
                 }
 
-                count = 0;
+                var count = 0;
                 counter += rw.CustomersList.Count;
                 switch (rw.CustomersList.Count)
                 {
@@ -866,9 +862,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                     case 5:
                         dict.TryGetValue("5Bed", out count);
                         dict["5Bed"] = count + 1;
-                        break;
-
-                    default:
                         break;
                 }
                 try
@@ -973,29 +966,28 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         public async Task PrintBusLists()
         {
-            var buses = await Context.GetAllBusesAsync((ExcursionsCollectionView.CurrentItem as Excursion).Id, EnableCheckInFilter ? CheckIn : new DateTime(), EnableCheckOutFilter ? CheckOut : new DateTime(), true);
-            var x = await Context.GetAllCitiesAsyncSortedByName();
-
-            foreach (var b in buses)
+            if (ExcursionsCollectionView != null)
             {
-                List<Booking> bookings = new List<Booking>();
+                var buses = await Context.GetAllBusesAsync(((Excursion) ExcursionsCollectionView.CurrentItem).Id, EnableCheckInFilter ? CheckIn : new DateTime(), EnableCheckOutFilter ? CheckOut : new DateTime(), true);
+                await Context.GetAllCitiesAsyncSortedByName();
 
-                foreach (var c in b.Customers)
+                foreach (var b in buses)
                 {
-                    if (c.Reservation.Booking != null && !bookings.Contains(c.Reservation.Booking))
+                    List<Booking> bookings = new List<Booking>();
+
+                    foreach (var c in b.Customers)
                     {
-                        bookings.Add(c.Reservation.Booking);
+                        if (c.Reservation.Booking != null && !bookings.Contains(c.Reservation.Booking))
+                        {
+                            bookings.Add(c.Reservation.Booking);
+                        }
                     }
-                }
-                int coutner = 0;
 
-                foreach (Booking b1 in bookings)
-                {
-                    coutner += b1.ReservationsInBooking.Count;
-                }
+                    foreach (Booking b1 in bookings)
+                    {
+                    }
 
-                using (DocumentsManagement vm = new DocumentsManagement(new GenericRepository()))
-                {
+                    using DocumentsManagement vm = new DocumentsManagement(new GenericRepository());
                     if (b.Excursion.Id != 2)
                         await vm.PrintList(bookings, CheckIn, b.Going ? new DateTime() : b.TimeReturn, true, b, true);
                     await vm.PrintList(bookings, CheckIn, b.Going ? new DateTime() : b.TimeReturn, EnableCheckInFilter, b, false);

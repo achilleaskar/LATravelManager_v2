@@ -8,6 +8,17 @@ namespace LATravelManager.UI.Helpers
     {
         public int Compare(Excursion y, Excursion x)
         {
+
+            if (x.ExcursionDates.Count == 0 || y.ExcursionDates.Count == 0)
+            {
+                if (x.Id > y.Id)
+                    return -1;
+                else if (x.Id == y.Id)
+                    return 0;
+                else
+                    return 1;
+
+            }
             DateTime xStart = x.ExcursionDates[0].CheckIn, yStart = y.ExcursionDates[0].CheckIn;
 
             foreach (ExcursionDate d in x.ExcursionDates)

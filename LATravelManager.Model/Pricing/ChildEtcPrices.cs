@@ -1,6 +1,4 @@
-﻿using LATravelManager.Model.Hotels;
-
-namespace LATravelManager.Model.Pricing
+﻿namespace LATravelManager.Model.Pricing
 {
     public class ChildEtcPrices : BaseModel
     {

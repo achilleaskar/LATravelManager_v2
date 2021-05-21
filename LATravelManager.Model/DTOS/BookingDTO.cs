@@ -2,7 +2,6 @@
 using LATravelManager.Model.People;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace LATravelManager.Model.DTOS
 {

@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using LATravelManager.UI.Message;
-using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.Tabs;
 using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
 using LATravelManager.UI.ViewModel.Window_ViewModels;

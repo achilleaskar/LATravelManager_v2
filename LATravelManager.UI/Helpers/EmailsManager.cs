@@ -6,9 +6,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using LATravelManager.Model.People;
 using LATravelManager.Model.Wrapper;
 
 namespace LATravelManager.UI.Helpers

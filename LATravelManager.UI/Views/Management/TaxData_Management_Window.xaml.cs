@@ -1,6 +1,4 @@
-﻿using LATravelManager.Model.People;
-using LATravelManager.UI.Helpers;
-using LATravelManager.UI.ViewModel.Management;
+﻿using LATravelManager.UI.ViewModel.Management;
 using System.Windows;
 using System.Windows.Controls;
 

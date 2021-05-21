@@ -9,7 +9,6 @@ using LATravelManager.Model.Hotels;
 using LATravelManager.Model.People;
 using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Data.Workers;
-using LATravelManager.UI.Helpers;
 using LATravelManager.UI.Message;
 using LATravelManager.UI.Repositories;
 using LATravelManager.UI.Wrapper;

@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.People;
 
@@ -24,6 +21,54 @@ namespace LATravelManager.Model.Pricing.Invoices
         public User User { get; set; }
 
 
+
+
+        private decimal _Discount;
+
+        [NotMapped]
+        public decimal Discount
+        {
+            get
+            {
+                return _Discount;
+            }
+
+            set
+            {
+                if (_Discount == value)
+                {
+                    return;
+                }
+
+                _Discount = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
+
+
+        private decimal _FinalAmount;
+
+        [NotMapped]
+        public decimal FinalAmount
+        {
+            get
+            {
+                return _FinalAmount;
+            }
+
+            set
+            {
+                if (_FinalAmount == value)
+                {
+                    return;
+                }
+
+                _FinalAmount = value;
+                RaisePropertyChanged();
+            }
+        }
 
         private decimal _Total;
 

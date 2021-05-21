@@ -722,6 +722,10 @@ namespace LATravelManager.Model.Wrapper
 
         public void CalculateAmounts()
         {
+            if (Booking?.Id==1258)
+            {
+                
+            }
             if (ApiData != null)
             {
                 return;

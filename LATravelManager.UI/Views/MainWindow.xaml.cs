@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net;
 using System.Windows;
-using LATravelManager.UI.Repositories;
 using Squirrel;
 
 namespace LATravelManager.UI.Views

@@ -110,7 +110,8 @@
                    Grid.Row="6"
                    Visibility="{Binding ServiceAmmountVisible, Converter={StaticResource booleanToVisibilityConverter}}" />
             <TextBox Grid.Row="6"
-                     Grid.Column="1" VerticalAlignment="Center"
+                     Grid.Column="1"
+                     VerticalAlignment="Center"
                      Text="{Binding ServiceAmmount, Converter={StaticResource FloadToStringValueConverter},UpdateSourceTrigger=PropertyChanged}"
                      Visibility="{Binding ServiceAmmountVisible, Converter={StaticResource booleanToVisibilityConverter}}" />
             <Button Content="Προεπισκόπηση"
@@ -155,7 +156,9 @@
                                                 <Setter Property="Template">
                                                     <Setter.Value>
                                                         <ControlTemplate TargetType="{x:Type TextBox}">
-                                                            <TextBlock Text="{TemplateBinding Text}" />
+                                                            <TextBlock Text="{TemplateBinding Text}"
+                                                                       TextWrapping="Wrap"
+                                                                       MaxHeight="250" />
                                                         </ControlTemplate>
                                                     </Setter.Value>
                                                 </Setter>
@@ -189,9 +192,23 @@
                                     </Grid.Resources>
                                     <Image Source="/Sources/logo.png"
                                            Width="300"
+                                           Visibility="{Binding IsNotProforma, Converter={StaticResource booleanToVisibilityConverter}}"
                                            Margin="0 25 0 15"
                                            VerticalAlignment="Top"
                                            HorizontalAlignment="Center" />
+                                    <StackPanel Orientation="Horizontal"
+                                                HorizontalAlignment="Right"
+                                                Visibility="{Binding IsProforma, Converter={StaticResource booleanToVisibilityConverter}}">
+                                        <TextBlock Text="Proforma Invoice"
+                                                   HorizontalAlignment="Center"
+                                                   FontSize="30"
+                                                   VerticalAlignment="Center" />
+                                        <Image Source="/Sources/logoProf.png"
+                                               Height="160"
+                                               Margin="0 -15 0 -5"
+                                               VerticalAlignment="Bottom"
+                                               HorizontalAlignment="Center" />
+                                    </StackPanel>
                                     <StackPanel HorizontalAlignment="Left">
                                         <TextBlock Text="LA TRAVEL" />
                                         <TextBlock Text="ΔΗΜΗΤΡΗΣ ΠΑΠΑΓΕΩΡΓΙΟΥ ΚΑΙ ΣΙΑ Ε.Ε." />
@@ -203,7 +220,8 @@
                                         <TextBlock Text="Web site : www.latravel.gr" />
                                         <TextBlock Text="ΑΦΜ: 801252307, ΔΟΥ: Δ' Θεσσαλονίκης" />
                                     </StackPanel>
-                                    <StackPanel HorizontalAlignment="Right">
+                                    <StackPanel HorizontalAlignment="Right"
+                                                Visibility="{Binding IsNotProforma, Converter={StaticResource booleanToVisibilityConverter}}">
                                         <StackPanel.Resources>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="HorizontalAlignment"
@@ -407,6 +425,7 @@
                                                 BorderThickness="1 0 1 1"
                                                 Grid.Row="1">
                                             <TextBlock Text="{Binding PaymentType}"
+                                                       Visibility="{Binding IsNotProforma, Converter={StaticResource booleanToVisibilityConverter}}"
                                                        HorizontalAlignment="Center"
                                                        VerticalAlignment="Center" />
                                         </Border>
@@ -544,7 +563,10 @@
                                                                          Grid.ColumnSpan="3"
                                                                          Grid.Row="2" />
                                                                 <TextBox Text="{Binding Names}"
+                                                                         TextWrapping="Wrap"
+                                                                         HorizontalAlignment="Stretch"
                                                                          Grid.ColumnSpan="3"
+                                                                         MaxHeight="250"
                                                                          Grid.Row="3" />
                                                             </Grid>
                                                         </Border>
@@ -559,14 +581,14 @@
                                                                 Background="White"
                                                                 BorderThickness="1"
                                                                 Grid.Column="2">
-                                                            <TextBlock Text="0,00"
+                                                            <TextBlock Text="{Binding Discount,StringFormat=N2}"
                                                                        HorizontalAlignment="Center" />
                                                         </Border>
                                                         <Border BorderBrush="Gray"
                                                                 Background="White"
                                                                 BorderThickness="0 1 1 1"
                                                                 Grid.Column="3">
-                                                            <TextBlock Text="{Binding Amount,StringFormat=N2}"
+                                                            <TextBlock Text="{Binding FinalAmount,StringFormat=N2}"
                                                                        HorizontalAlignment="Center" />
                                                         </Border>
                                                     </Grid>
@@ -638,7 +660,7 @@
                                                        HorizontalAlignment="Right" />
                                             <TextBlock Text="0,00 €"
                                                        HorizontalAlignment="Right" />
-                                            <TextBlock Text="0,00 €"
+                                            <TextBlock Text="{Binding Reciept.Discount,StringFormat=C2}"
                                                        HorizontalAlignment="Right" />
                                         </StackPanel>
                                     </Border>
@@ -650,7 +672,7 @@
                                     <Label Grid.Row="2"
                                            Grid.Column="3"
                                            BorderThickness="0 1 1 0"
-                                           Content="{Binding Reciept.Total}"
+                                           Content="{Binding Reciept.FinalAmount,StringFormat=C2}"
                                            ContentStringFormat="C2"
                                            HorizontalContentAlignment="Right" />
                                     <Border Grid.ColumnSpan="4"

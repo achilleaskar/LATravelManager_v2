@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using AutoUpdaterDotNET;
 using System.Windows.Input;
 using LATravelManager.UI.Helpers;
 using LATravelManager.UI.ViewModel.Window_ViewModels;

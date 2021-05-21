@@ -24,6 +24,12 @@
                   Margin="5"
                   SelectedItem="{Binding SelectedLoginData}"
                   AutoGenerateColumns="False">
+            <DataGrid.CellStyle>
+                <Style TargetType="DataGridCell">
+                    <EventSetter Event="PreviewMouseDown"
+                                 Handler="DataGridCell_MouseLeftButtonUp" />
+                </Style>
+            </DataGrid.CellStyle>
             <DataGrid.Resources>
                 <Style TargetType="{x:Type DataGridCell}">
                     <EventSetter Event="MouseLeftButtonUp"

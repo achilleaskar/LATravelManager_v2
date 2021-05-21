@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Personal;
-using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
 
 namespace LATravelManager.UI.Views.Personal
 {

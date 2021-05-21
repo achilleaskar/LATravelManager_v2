@@ -1167,6 +1167,9 @@
                     <Button Content="Καθαρισμός"
                             Margin="5,5,5,0"
                             Command="{Binding ClearBookingCommand}" />
+                     <Button Content="Τιμολόγιο"
+                                    Margin="5,5,5,0"
+                                    Command="{Binding OpenInvoicesWindowCommand}" />
                     <Button Margin="5,5,5,0"
                             Command="{Binding SearchForCustomerCommand}">
                         <StackPanel Orientation="Horizontal">

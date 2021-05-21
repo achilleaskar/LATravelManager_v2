@@ -1,16 +1,4 @@
-﻿using GalaSoft.MvvmLight.CommandWpf;
-using LATravelManager.Model;
-using LATravelManager.Model.BookingData;
-using LATravelManager.Model.Locations;
-using LATravelManager.Model.People;
-using LATravelManager.Model.Pricing.Invoices;
-using LATravelManager.Model.Services;
-using LATravelManager.Model.Wrapper;
-using LATravelManager.UI.Helpers;
-using LATravelManager.UI.Message;
-using LATravelManager.UI.Repositories;
-using LATravelManager.UI.ViewModel.BaseViewModels;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Data.Entity.Infrastructure;
 using System.IO;
@@ -24,6 +12,17 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Xps;
 using System.Windows.Xps.Packaging;
+using GalaSoft.MvvmLight.CommandWpf;
+using LATravelManager.Model;
+using LATravelManager.Model.BookingData;
+using LATravelManager.Model.People;
+using LATravelManager.Model.Pricing.Invoices;
+using LATravelManager.Model.Services;
+using LATravelManager.Model.Wrapper;
+using LATravelManager.UI.Helpers;
+using LATravelManager.UI.Message;
+using LATravelManager.UI.Repositories;
+using LATravelManager.UI.ViewModel.BaseViewModels;
 
 namespace LATravelManager.UI.ViewModel
 {
@@ -47,41 +46,46 @@ namespace LATravelManager.UI.ViewModel
             SetPartner();
         }
 
-        private void SelectProperRecieptType()
-        {
-            if (parameter is PlaneService || personal != null && personal.Services.All(p => p is PlaneService))
-            {
-                RecieptType = RecieptTypeEnum.AirTicketsReciept;
-            }
-        }
-
         #endregion Constructors
 
         #region Fields
 
         private readonly BasicDataManager basicDataManager;
         private readonly BookingWrapper booking;
+        private readonly object parameter;
         private readonly Personal_BookingWrapper personal;
         private readonly GenericRepository repository;
         private readonly ThirdParty_Booking_Wrapper thirdParty;
-        private readonly object parameter;
         private bool _CanChangeSerie;
         private bool _ChangesAfterPreviewCreated = true;
-
         private ObservableCollection<CompanyActivity> _CompanyActivities;
         private string _CompanyError;
-
         private ObservableCollection<CustomerWrapper> _Customers;
+        private bool _IsNotProforma;
+
+        private bool _IsProforma;
+
         private Partner _Partner;
+
         private string _PaymentType;
+
         private Reciept _Reciept;
+
         private DateTime _RecieptDate;
+
         private RecieptTypeEnum? _RecieptType;
+
         private Company _SelectedCompany;
+
         private CustomerWrapper _SelectedCustomer;
+
         private RecieptSeries _SelectedSerie;
+
         private ObservableCollection<RecieptSeries> _Series;
+
         private CollectionView _SeriesCV;
+
+        private decimal _ServiceAmmount;
 
         #endregion Fields
 
@@ -125,27 +129,6 @@ namespace LATravelManager.UI.ViewModel
             }
         }
 
-        //public ObservableCollection<City> Cities
-        //{
-        //    get
-        //    {
-        //        return _Cities;
-        //    }
-
-        //    set
-        //    {
-        //        if (_Cities == value)
-        //        {
-        //            return;
-        //        }
-
-        //        _Cities = value;
-        //        RaisePropertyChanged();
-        //    }
-        //}
-
-        //public CollectionView CitiesCV { get; set; }
-
         public ObservableCollection<CompanyActivity> CompanyActivities
         {
             get
@@ -165,6 +148,7 @@ namespace LATravelManager.UI.ViewModel
             }
         }
 
+        //public CollectionView CitiesCV { get; set; }
         public string CompanyError
         {
             get
@@ -184,27 +168,12 @@ namespace LATravelManager.UI.ViewModel
             }
         }
 
-        //public ObservableCollection<Country> Countries
-        //{
-        //    get
-        //    {
-        //        return _Countries;
-        //    }
-
-        //    set
-        //    {
-        //        if (_Countries == value)
-        //        {
-        //            return;
-        //        }
+        public RelayCommand CreateRecieptPreviewCommand { get; set; }
 
         //        _Countries = value;
         //        RaisePropertyChanged();
         //    }
         //}
-
-        public RelayCommand CreateRecieptPreviewCommand { get; set; }
-
         public ObservableCollection<CustomerWrapper> Customers
         {
             get
@@ -224,10 +193,76 @@ namespace LATravelManager.UI.ViewModel
             }
         }
 
+        //    set
+        //    {
+        //        if (_Countries == value)
+        //        {
+        //            return;
+        //        }
         public RelayCommand GetAllCompaniesCommand { get; set; }
+
+        public bool IsNotProforma
+        {
+            get
+            {
+                return _IsNotProforma;
+            }
+
+            set
+            {
+                if (_IsNotProforma == value)
+                {
+                    return;
+                }
+
+                _IsNotProforma = value;
+                RaisePropertyChanged();
+            }
+        }
+        //        _Cities = value;
+        //        RaisePropertyChanged();
+        //    }
+        //}
+        //public ObservableCollection<Country> Countries
+        //{
+        //    get
+        //    {
+        //        return _Countries;
+        //    }
         public bool IsPartners => Partner != null;
+
+        public bool IsProforma
+        {
+            get
+            {
+                return _IsProforma;
+            }
+
+            set
+            {
+                if (_IsProforma == value)
+                {
+                    return;
+                }
+
+                _IsProforma = value;
+                RaisePropertyChanged();
+            }
+        }
+        //    set
+        //    {
+        //        if (_Cities == value)
+        //        {
+        //            return;
+        //        }
         public DateTime MaxDate { get; set; } = DateTime.Today;
 
+        //public ObservableCollection<City> Cities
+        //{
+        //    get
+        //    {
+        //        return _Cities;
+        //    }
         public Partner Partner
         {
             get
@@ -338,6 +373,8 @@ namespace LATravelManager.UI.ViewModel
                         CanChangeSerie = true;
                     }
                 }
+                IsProforma = value == RecieptTypeEnum.Proforma;
+                IsNotProforma = !IsProforma;
                 ChangesAfterPreviewCreated = true;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(PrintEnabled));
@@ -451,8 +488,35 @@ namespace LATravelManager.UI.ViewModel
             }
         }
 
+        //internal void UpdateCities()
+        //{
+        //    CitiesCV.Refresh();
+        //}
+        public decimal ServiceAmmount
+        {
+            get
+            {
+                return _ServiceAmmount;
+            }
+
+            set
+            {
+                if (_ServiceAmmount == value)
+                {
+                    return;
+                }
+
+                _ServiceAmmount = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool ServiceAmmountVisible => parameter is Service;
+
         public bool ShowCustomers => !IsPartners || (Partner != null && Partner.Person);
+
         public bool ShowPartner => IsPartners && (Partner == null || !Partner.Person);
+
         public Visibility TaxDetailsVisibility { get; set; }
 
         #endregion Properties
@@ -617,15 +681,6 @@ namespace LATravelManager.UI.ViewModel
             }
         }
 
-        private string GetRecieptDescription(Reciept reciept)
-        {
-            if (reciept.RecieptItems?.Count > 0)
-                return reciept.RecieptItems[0].Description;
-            return "";
-        }
-
-
-
         public override Task ReloadAsync()
         {
             throw new NotImplementedException("Μη ολοκληρωμένη λειτουργία");
@@ -640,38 +695,6 @@ namespace LATravelManager.UI.ViewModel
         {
             return IsPartners ? Visibility.Visible : Visibility.Collapsed;
         }
-
-        //internal void UpdateCities()
-        //{
-        //    CitiesCV.Refresh();
-        //}
-
-
-
-
-        private decimal _ServiceAmmount;
-
-
-        public decimal ServiceAmmount
-        {
-            get
-            {
-                return _ServiceAmmount;
-            }
-
-            set
-            {
-                if (_ServiceAmmount == value)
-                {
-                    return;
-                }
-
-                _ServiceAmmount = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public bool ServiceAmmountVisible => parameter is Service;
 
         private bool CanCreatePreview()
         {
@@ -701,28 +724,6 @@ namespace LATravelManager.UI.ViewModel
             return true;
         }
 
-        //private bool CitiesFilter(object obj)
-        //{
-        //    return SelectedCompany == null || (obj is City c && SelectedCompany != null && SelectedCompany.Country != null && c.Country.Id == SelectedCompany.Country.Id);
-        //}
-
-        private string GetFileName(Reciept reciept)
-        {
-            var sb = new StringBuilder();
-            if (reciept.Company.CompanyName.Length > 20)
-                sb.Append(reciept.Company.CompanyName.Substring(0, 20));
-            else
-                sb.Append(reciept.Company.CompanyName);
-            sb.Append(reciept.Dates);
-
-            return ReplaceForbidenChars(sb.ToString());
-        }
-
-        private string ReplaceForbidenChars(string v)
-        {
-            return string.Join("_", v.Split(Path.GetInvalidFileNameChars()));
-        }
-
         private void CreateRecieptPreview()
         {
             if ((!IsPartners || (Partner != null && Partner.Person)) && SelectedCustomer != null)
@@ -744,7 +745,9 @@ namespace LATravelManager.UI.ViewModel
                 {
                     Amount = booking.FullPrice,
                     Dates = booking.DatesFull,
-                    Description = booking.GetPacketDescription().TrimEnd('.'),
+                    Discount = booking.IsPartners ? booking.FullPrice - booking.NetPrice : 0,
+                    FinalAmount = booking.IsPartners ? booking.NetPrice : booking.FullPrice,
+                    Description = booking.GetPacketDescriptionForReciept().TrimEnd('.'),
                     Names = booking.Names,
                     Pax = booking.Customers.Count,
                     ReservationId = booking.Id
@@ -753,13 +756,17 @@ namespace LATravelManager.UI.ViewModel
                 if (parameter != null && parameter is Payment p)
                 {
                     item.Amount = p.Amount;
+                    item.Discount = 0;
+                    item.FinalAmount = item.Amount - item.Discount;
                 }
                 Reciept.RecieptItems.Add(item);
 
                 foreach (var Ritem in Reciept.RecieptItems)
                 {
                     Reciept.Total += Ritem.Amount;
+                    Reciept.Discount += Ritem.Discount;
                 }
+                Reciept.FinalAmount = Reciept.Total - Reciept.Discount;
             }
             else if (personal != null)
             {
@@ -779,7 +786,9 @@ namespace LATravelManager.UI.ViewModel
                             Description = personal.GetPacketDescription().TrimEnd('.'),
                             Names = reservation.Names,
                             Pax = personal.CustomerWrappers.Count,
-                            ReservationId = personal.Id
+                            ReservationId = personal.Id,
+                            Discount = 0,
+                            FinalAmount = p.Amount
                         };
                     }
                     else if (parameter is Service s)
@@ -791,14 +800,14 @@ namespace LATravelManager.UI.ViewModel
                             Description = s.GetDescription(),
                             Names = reservation.Names,
                             Pax = personal.CustomerWrappers.Count,
-                            ReservationId = s.Id
+                            ReservationId = s.Id,
+                            Discount = 0,
+                            FinalAmount = ServiceAmmount
                         };
                     }
-
                 }
                 if (item == null)
                 {
-
                     item = new RecieptItem
                     {
                         Amount = personal.FullPrice,
@@ -806,7 +815,9 @@ namespace LATravelManager.UI.ViewModel
                         Description = personal.GetPacketDescription().TrimEnd('.'),
                         Names = reservation.Names,
                         Pax = personal.CustomerWrappers.Count,
-                        ReservationId = personal.Id
+                        ReservationId = personal.Id,
+                        Discount = 0,
+                        FinalAmount = personal.FullPrice
                     };
                 }
                 Reciept.RecieptItems.Add(item);
@@ -814,11 +825,23 @@ namespace LATravelManager.UI.ViewModel
                 foreach (var Ritem in Reciept.RecieptItems)
                 {
                     Reciept.Total += Ritem.Amount;
+                    Reciept.Discount += Ritem.Discount;
                 }
+                Reciept.FinalAmount = Reciept.Total - Reciept.Discount;
             }
             else if (thirdParty != null)
             {
                 throw new NotImplementedException("Μη ολοκληρωμένη λειτουργία");
+            }
+
+            if (RecieptType==RecieptTypeEnum.CreditInvoice)
+            {
+                foreach (var item in Reciept.RecieptItems)
+                {
+                    item.FinalAmount*=-1;
+                }
+
+                Reciept.FinalAmount*=-1;
             }
 
             ChangesAfterPreviewCreated = false;
@@ -830,6 +853,25 @@ namespace LATravelManager.UI.ViewModel
             Mouse.OverrideCursor = Cursors.Wait;
             //Companies = new ObservableCollection<Company>((await repository.GetAllAsync<Company>(c => !c.Disabled)).OrderBy(c => c.CompanyName));
             Mouse.OverrideCursor = Cursors.Arrow;
+        }
+
+        private string GetFileName(Reciept reciept)
+        {
+            var sb = new StringBuilder();
+            if (reciept.Company.CompanyName.Length > 20)
+                sb.Append(reciept.Company.CompanyName.Substring(0, 20));
+            else
+                sb.Append(reciept.Company.CompanyName);
+            sb.Append(reciept.Dates);
+
+            return ReplaceForbidenChars(sb.ToString());
+        }
+
+        private string GetRecieptDescription(Reciept reciept)
+        {
+            if (reciept.RecieptItems?.Count > 0)
+                return reciept.RecieptItems[0].Description;
+            return "";
         }
 
         private string GetSubFolder(Reciept reciept)
@@ -858,6 +900,22 @@ namespace LATravelManager.UI.ViewModel
             return "Error";
         }
 
+        //private bool CitiesFilter(object obj)
+        //{
+        //    return SelectedCompany == null || (obj is City c && SelectedCompany != null && SelectedCompany.Country != null && c.Country.Id == SelectedCompany.Country.Id);
+        //}
+        private string ReplaceForbidenChars(string v)
+        {
+            return string.Join("_", v.Split(Path.GetInvalidFileNameChars()));
+        }
+
+        private void SelectProperRecieptType()
+        {
+            if (parameter is PlaneService || personal != null && personal.Services.All(p => p is PlaneService))
+            {
+                RecieptType = RecieptTypeEnum.AirTicketsReciept;
+            }
+        }
         private bool SeriesFilter(object obj)
         {
             return RecieptType != null && obj is RecieptSeries s && s.RecieptType == RecieptType;
@@ -880,5 +938,6 @@ namespace LATravelManager.UI.ViewModel
         }
 
         #endregion Methods
+
     }
 }

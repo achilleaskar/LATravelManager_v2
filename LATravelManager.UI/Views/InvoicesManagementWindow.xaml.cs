@@ -1,11 +1,5 @@
 ﻿using LATravelManager.UI.ViewModel;
-using System;
-using System.IO;
-using System.IO.Packaging;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Xps;
-using System.Windows.Xps.Packaging;
 
 namespace LATravelManager.UI.Views
 {

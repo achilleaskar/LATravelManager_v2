@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight.CommandWpf;
-using LATravelManager.UI.Helpers;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.CategoriesViewModels;
 using LATravelManager.UI.ViewModel.CategoriesViewModels.Group;

@@ -20,6 +20,29 @@ namespace LATravelManager.Model.Wrapper
 
         #region Constructors
 
+
+        private ObservableCollection<ExcursionDate> _ExcursionDatesFiltered;
+
+
+        public ObservableCollection<ExcursionDate> ExcursionDatesFiltered
+        {
+            get
+            {
+                return _ExcursionDatesFiltered;
+            }
+
+            set
+            {
+                if (_ExcursionDatesFiltered == value)
+                {
+                    return;
+                }
+
+                _ExcursionDatesFiltered = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public BookingWrapper() : this(new Booking())
         {
         }
@@ -587,7 +610,10 @@ namespace LATravelManager.Model.Wrapper
                 return;
             decimal total = 0;
             int extra = 0;
+            if (Id == 1258)
+            {
 
+            }
             _Recieved = 0;
 
             foreach (var p in Payments)
@@ -690,6 +716,19 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
+        public string GetPacketDescriptionForReciept()
+        {
+            if (Excursion != null)
+            {
+                return $"ΕΚΔΡΟΜΗ ΓΙΑ {Excursion.Destinations[0].Name} / {GetHotels()}";
+            }
+            else
+            {
+                return "ERROR";
+            }
+        }
+
+
         public string ValidateBooking()
         {
             PhoneMissing = true;
@@ -743,7 +782,7 @@ namespace LATravelManager.Model.Wrapper
             }
             else if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                if (Customers.Count > 1)
+                if (Customers.Count > 1 && Loaded)
                 {
                     if (Math.Abs(Customers[Customers.Count - 1].Price) < 0.001m)
                     {
@@ -815,7 +854,7 @@ namespace LATravelManager.Model.Wrapper
                 }
                 else if (hotels[0] == "NO NAME")
                 {
-                    return "ΧΩΡΙΣ ΕΠΙΛΟΓΗ ΣΥΓΚΕΚΡΙΜΕΝΟΥ ΚΑΤΑΛΥΜΑΤΟΣ";
+                    return "ΕΝΟΙΚΙΑΖΟΜΕΝΑ ΔΩΜΑΤΙΑ";
                 }
                 else if (hotels[0] == "ONEDAY")
                 {
@@ -988,7 +1027,10 @@ namespace LATravelManager.Model.Wrapper
             }
             if (Id == 0)
             {
-                Commision = 10;
+                if (Excursion?.Id == 29)
+                    Commision = 12;
+                else
+                    Commision = 10;
             }
             Loaded = true;
             CalculateRemainingAmount();
@@ -1040,9 +1082,21 @@ namespace LATravelManager.Model.Wrapper
             {
                 return "Η επιλεγμένη ημερομηνία έναρξης έχει παρέλθει.";
             }
-            if ((CheckIn.DayOfWeek == DayOfWeek.Monday || CheckIn.DayOfWeek == DayOfWeek.Tuesday || CheckIn.DayOfWeek == DayOfWeek.Friday) && !FreeDatesBool)
+            if (CheckIn.Date >= new DateTime(2020, 7, 17) && CheckIn.Date <= new DateTime(2020, 8, 25))
             {
-                return "Επιτρεπόμενες μέρες αναχώρησης μόνο Τετάρτη, Πέμπτη, Σάββατο και Κυριακή!";
+                //high
+                if ((CheckIn.DayOfWeek == DayOfWeek.Tuesday || CheckIn.DayOfWeek == DayOfWeek.Friday || CheckIn.DayOfWeek == DayOfWeek.Saturday) && !FreeDatesBool)
+                {
+                    return "Προσοχή: Επιτρεπόμενες μέρες αναχώρησης μόνο Πέμπτη, Παρασκευή και Κυριακή!";
+                }
+            }
+            else if (CheckIn.Date >= new DateTime(2020, 6, 1) && CheckIn.Date <= new DateTime(2020, 9, 19))
+            {
+                //low
+                if ((CheckIn.DayOfWeek == DayOfWeek.Monday || CheckIn.DayOfWeek == DayOfWeek.Tuesday || CheckIn.DayOfWeek == DayOfWeek.Wednesday || CheckIn.DayOfWeek == DayOfWeek.Saturday) && !FreeDatesBool)
+                {
+                    return "Προσοχή: Επιτρεπόμενες μέρες αναχώρησης μόνο Τετάρτη, Πέμπτη, Κυριακή και Δευτέρα!";
+                }
             }
             return null;
         }
@@ -1061,9 +1115,21 @@ namespace LATravelManager.Model.Wrapper
             //{
             //    return "Η ημερομηνία επιστροφής δεν΄μπορεί να είναι η ίδια με την ημερομηνία έναρξης.";
             //}
-            if ((CheckOut.DayOfWeek == DayOfWeek.Monday || CheckOut.DayOfWeek == DayOfWeek.Tuesday || CheckOut.DayOfWeek == DayOfWeek.Friday) && !FreeDatesBool)
+            if (CheckOut.Date >= new DateTime(2020, 7, 17) && CheckOut.Date <= new DateTime(2020, 8, 25))
             {
-                return "Επιτρεπόμενες μέρες επιστροφής μόνο Τετάρτη, Πέμπτη, Σάββατο και Κυριακή!";
+                //high
+                if ((CheckOut.DayOfWeek == DayOfWeek.Tuesday || CheckOut.DayOfWeek == DayOfWeek.Friday || CheckOut.DayOfWeek == DayOfWeek.Saturday) && !FreeDatesBool)
+                {
+                    return "Προσοχή: Επιτρεπόμενες μέρες επιστροφής μόνο Πέμπτη, Παρασκευή και Κυριακή!";
+                }
+            }
+            else if (CheckOut.Date >= new DateTime(2020, 6, 1) && CheckOut.Date <= new DateTime(2020, 9, 19))
+            {
+                //low
+                if ((CheckOut.DayOfWeek == DayOfWeek.Monday || CheckOut.DayOfWeek == DayOfWeek.Tuesday || CheckOut.DayOfWeek == DayOfWeek.Wednesday || CheckOut.DayOfWeek == DayOfWeek.Saturday) && !FreeDatesBool)
+                {
+                    return "Προσοχή: Επιτρεπόμενες μέρες επιστροφής μόνο Τετάρτη, Πέμπτη, Κυριακή και Δευτέρα!";
+                }
             }
             return null;
         }
@@ -1075,7 +1141,7 @@ namespace LATravelManager.Model.Wrapper
 
         public decimal GetAmountToPay()
         {
-            if (IsPartners&& Partner!=null && !Partner.Person)
+            if (IsPartners && Partner != null && !Partner.Person)
             {
                 return NetPrice;
             }

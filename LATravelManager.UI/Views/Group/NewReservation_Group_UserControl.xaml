@@ -280,7 +280,7 @@
                                 <StackPanel Visibility="{Binding BookingWr.IsGroup,Converter={StaticResource booleanToVisibilityConverter}}">
                                     <Label Content="Ημερομηνίες:"
                                            Padding="0" />
-                                    <ComboBox ItemsSource="{Binding BookingWr.Excursion.ExcursionDates}"
+                                    <ComboBox ItemsSource="{Binding BookingWr.ExcursionDatesFiltered}"
                                               Width="130"
                                               VerticalAlignment="Center"
                                               SelectedItem="{Binding BookingWr.ExcursionDate}" />

@@ -1,7 +1,5 @@
-﻿using System.Linq;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Input;
-using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
 
 namespace LATravelManager.UI.Views.Tabs
