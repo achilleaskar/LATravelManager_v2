@@ -360,6 +360,14 @@
     <Compile Include="Migrations\202104041749312_userid1.designer.cs">
       <DependentUpon>202104041749312_userid1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202107071130030_resConfirmed.cs" />
+    <Compile Include="Migrations\202107071130030_resConfirmed.designer.cs">
+      <DependentUpon>202107071130030_resConfirmed.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202107071155530_test.cs" />
+    <Compile Include="Migrations\202107071155530_test.designer.cs">
+      <DependentUpon>202107071155530_test.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\ContextConfiguration.cs" />
     <Compile Include="MainDataBase.cs" />
     <Compile Include="Migrations\Configuration.cs" />
@@ -610,6 +618,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202104041749312_userid1.resx">
       <DependentUpon>202104041749312_userid1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202107071130030_resConfirmed.resx">
+      <DependentUpon>202107071130030_resConfirmed.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202107071155530_test.resx">
+      <DependentUpon>202107071155530_test.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

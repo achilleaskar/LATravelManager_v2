@@ -18,9 +18,9 @@ namespace LATravelManager.UI.Converters
             }
             if (values[1] is AvailabilitiesList al)
             {
-                al.RoomTYpesLeft.TryGetValue(roomTypeId, out freeRooms);
+                //al.RoomTYpesLeft.TryGetValue(roomTypeId, out freeRooms);
             }
-            return (freeRooms > 0);
+            return freeRooms > 0;
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

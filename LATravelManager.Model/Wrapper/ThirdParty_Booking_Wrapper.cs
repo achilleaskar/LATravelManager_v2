@@ -190,6 +190,9 @@ namespace LATravelManager.Model.Wrapper
             set { SetValue(value); }
         }
 
+
+        public string DatesFull => CheckIn.ToString("dd/MM") + (CheckIn.Date == CheckOut.Date || CheckIn.Year != CheckOut.Year ? CheckIn.ToString("yy") : "") + (CheckIn.Date != CheckOut.Date ? ("-" + CheckOut.ToString("dd/MM/yy")) : "");
+
         public decimal FullPrice
         {
             get

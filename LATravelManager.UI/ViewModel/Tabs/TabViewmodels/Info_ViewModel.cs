@@ -457,7 +457,11 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             {
                 foreach (ExcursionDate datePair in SelectedFilterExcursion.ExcursionDates)
                 {
-                    dayDeparture = new DailyDepartureInfo(Context, SelectedFilterExcursion.Id) { ExcursionDate = datePair, PerCityDepartureList = new ObservableCollection<CityDepartureInfo>() };
+                    dayDeparture = new DailyDepartureInfo(Context, SelectedFilterExcursion.Id)
+                    {
+                        ExcursionDate = datePair,
+                        PerCityDepartureList = new ObservableCollection<CityDepartureInfo>()
+                    };
 
                     foreach (Booking b in Bookings)
                     {
@@ -532,7 +536,11 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             {
                 while (tmpDate <= ToDepartureInfo)
                 {
-                    dayDeparture = new DailyDepartureInfo(Context, SelectedFilterExcursion.Id) { Date = tmpDate, PerCityDepartureList = new ObservableCollection<CityDepartureInfo>() };
+                    dayDeparture = new DailyDepartureInfo(Context, SelectedFilterExcursion.Id)
+                    {
+                        Date = tmpDate,
+                        PerCityDepartureList = new ObservableCollection<CityDepartureInfo>()
+                    };
 
                     foreach (Booking b in Bookings)
                     {
@@ -544,7 +552,12 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                                 dayDeparture = AllDaysDeparturesList.FirstOrDefault(d => d.Date == b.CheckIn && d.SecondDepart == b.SecondDepart);
                                 if (dayDeparture == null)
                                 {
-                                    dayDeparture = new DailyDepartureInfo(Context, SelectedFilterExcursion.Id) { Date = tmpDate, PerCityDepartureList = new ObservableCollection<CityDepartureInfo>(), SecondDepart = b.SecondDepart };
+                                    dayDeparture = new DailyDepartureInfo(Context, SelectedFilterExcursion.Id)
+                                    {
+                                        Date = tmpDate,
+                                        PerCityDepartureList = new ObservableCollection<CityDepartureInfo>(),
+                                        SecondDepart = b.SecondDepart
+                                    };
                                     AllDaysDeparturesList.Add(dayDeparture);
                                 }
                             }
@@ -554,16 +567,22 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                                     cityDepartureInfo = dayDeparture.PerCityDepartureList.FirstOrDefault(p => p.City == customer.StartingPlace);
                                     if (cityDepartureInfo == null)
                                     {
-                                        dayDeparture.PerCityDepartureList.Add(new CityDepartureInfo { City = customer.StartingPlace });
+                                        dayDeparture.PerCityDepartureList.Add(new CityDepartureInfo
+                                        {
+                                            City = customer.StartingPlace
+                                        });
                                         cityDepartureInfo = dayDeparture.PerCityDepartureList[dayDeparture.PerCityDepartureList.Count - 1];
                                     }
-                                    if (!r.OnlyStay && ((SelectedFilterExcursion.IncludesShip && customer.CustomerHasShipIndex < 2) || (SelectedFilterExcursion.IncludesBus && customer.CustomerHasBusIndex < 2)))
+                                    if (!r.OnlyStay && ((SelectedFilterExcursion.IncludesShip && customer.CustomerHasShipIndex < 2)
+                                        || (SelectedFilterExcursion.IncludesBus && customer.CustomerHasBusIndex < 2)))
                                     {
-                                        if (SelectedFilterExcursion.IncludesShip && SelectedFilterExcursion.IncludesBus && customer.CustomerHasShipIndex > 1)
+                                        if (SelectedFilterExcursion.IncludesShip && SelectedFilterExcursion.IncludesBus
+                                            && customer.CustomerHasShipIndex > 1)
                                         {
                                             cityDepartureInfo.OnlyBusGo++;
                                         }
-                                        else if (SelectedFilterExcursion.IncludesShip && SelectedFilterExcursion.IncludesBus && customer.CustomerHasBusIndex > 1)
+                                        else if (SelectedFilterExcursion.IncludesShip && SelectedFilterExcursion.IncludesBus
+                                            && customer.CustomerHasBusIndex > 1)
                                         {
                                             cityDepartureInfo.OnlyShipGo++;
                                         }
@@ -597,13 +616,16 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                                         dayDeparture.PerCityDepartureList.Add(new CityDepartureInfo { City = customer.ReturningPlace });
                                         cityDepartureInfo = dayDeparture.PerCityDepartureList[dayDeparture.PerCityDepartureList.Count - 1];
                                     }
-                                    if (!r.OnlyStay && ((SelectedFilterExcursion.IncludesShip && (customer.CustomerHasShipIndex == 0 || customer.CustomerHasShipIndex == 2)) || (SelectedFilterExcursion.IncludesBus && (customer.CustomerHasBusIndex == 0 || customer.CustomerHasBusIndex == 2))))
+                                    if (!r.OnlyStay && ((SelectedFilterExcursion.IncludesShip && (customer.CustomerHasShipIndex == 0
+                                        || customer.CustomerHasShipIndex == 2)) || (SelectedFilterExcursion.IncludesBus && (customer.CustomerHasBusIndex == 0 || customer.CustomerHasBusIndex == 2))))
                                     {
-                                        if (SelectedFilterExcursion.IncludesShip && SelectedFilterExcursion.IncludesBus && (customer.CustomerHasShipIndex == 1 || customer.CustomerHasShipIndex == 3))
+                                        if (SelectedFilterExcursion.IncludesShip && SelectedFilterExcursion.IncludesBus
+                                            && (customer.CustomerHasShipIndex == 1 || customer.CustomerHasShipIndex == 3))
                                         {
                                             cityDepartureInfo.OnlyBusReturn++;
                                         }
-                                        else if (SelectedFilterExcursion.IncludesShip && SelectedFilterExcursion.IncludesBus && (customer.CustomerHasBusIndex == 1 || customer.CustomerHasBusIndex == 3))
+                                        else if (SelectedFilterExcursion.IncludesShip && SelectedFilterExcursion.IncludesBus
+                                            && (customer.CustomerHasBusIndex == 1 || customer.CustomerHasBusIndex == 3))
                                         {
                                             cityDepartureInfo.OnlyShipReturn++;
                                         }
@@ -704,8 +726,8 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         public CultureInfo cultureInfoe = new CultureInfo("el-GR");
         public DateTimeFormatInfo dateTimeInfo;
 
-        public string GoName =>dateTimeInfo.GetDayName(DayGo);
-        public string ReturnName =>dateTimeInfo.GetDayName(DayReturn);
+        public string GoName => dateTimeInfo.GetDayName(DayGo);
+        public string ReturnName => dateTimeInfo.GetDayName(DayReturn);
         public override string ToString()
         {
             return $"{DayGo}-{DayReturn} : {Count}";

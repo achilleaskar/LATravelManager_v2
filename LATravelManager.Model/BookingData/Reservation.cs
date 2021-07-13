@@ -16,6 +16,8 @@ namespace LATravelManager.Model.BookingData
         [NotMapped]
         public string LastCustomers { get; set; }
 
+        public bool Confirmed { get; set; }
+
         [NotMapped]
         public string LastRoomtype { get; set; }
 

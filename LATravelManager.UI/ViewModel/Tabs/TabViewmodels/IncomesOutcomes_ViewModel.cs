@@ -6,13 +6,25 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {
     public class IncomesOutcomes_ViewModel : MyViewModelBase
     {
+        #region Constructors
+
         public IncomesOutcomes_ViewModel(MainViewModel mainViewModel)
         {
             MainViewModel = mainViewModel;
             Load();
         }
 
+        #endregion Constructors
+
+        #region Fields
+
         private AddIncomeOutcome_ViewModel _AddIncomeOutcome_ViewModel;
+
+        private PreviewIncomesOutcomes_ViewModel _PreviewIncomesOutcomes_ViewModel;
+
+        #endregion Fields
+
+        #region Properties
 
         public AddIncomeOutcome_ViewModel AddIncomeOutcome_ViewModel
         {
@@ -32,8 +44,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 RaisePropertyChanged();
             }
         }
-
-        private PreviewIncomesOutcomes_ViewModel _PreviewIncomesOutcomes_ViewModel;
+        public MainViewModel MainViewModel { get; }
 
         public PreviewIncomesOutcomes_ViewModel PreviewIncomesOutcomes_ViewModel
         {
@@ -54,7 +65,9 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             }
         }
 
-        public MainViewModel MainViewModel { get; }
+        #endregion Properties
+
+        #region Methods
 
         public override void Load(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
@@ -66,5 +79,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         {
             throw new NotImplementedException();
         }
+
+        #endregion Methods
     }
 }

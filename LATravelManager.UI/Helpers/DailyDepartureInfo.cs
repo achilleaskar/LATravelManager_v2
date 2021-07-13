@@ -153,7 +153,7 @@ namespace LATravelManager.UI.Helpers
         }
 
         //public bool CanPrintLists => ArePrintDataValid;
-        public string Dates => ExcursionDate != null ? ExcursionDate.CheckIn.ToString("dd") + "-" + ExcursionDate.CheckOut.ToString("dd/MM") : (Date.ToString("dddd dd/MM") + (SecondDepart ? " Δέυτ." : ""));
+        public string Dates => ExcursionDate != null ? ExcursionDate.CheckIn.ToString("dd") + "-" + ExcursionDate.CheckOut.ToString("dd/MM") : (Date.ToString("dddd dd/MM") + (SecondDepart ? " Β' Αναχώρηση" : ""));
 
         public int SelectedGo, SelectedReturn, TotalGo, TotalReturn;
 

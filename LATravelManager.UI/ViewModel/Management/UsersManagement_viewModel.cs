@@ -165,7 +165,7 @@ namespace LATravelManager.UI.ViewModel.Management
 
         public override void ReLoad(int id = 0, MyViewModelBaseAsync previousViewModel = null)
         {
-            MainCollection = new ObservableCollection<UserWrapper>((BasicDataManager.Users).Select(u => new UserWrapper(u)));
+            MainCollection = new ObservableCollection<UserWrapper>(BasicDataManager.Users.Select(u => new UserWrapper(u)));
             BaseLocations = new ObservableCollection<StartingPlace>(BasicDataManager.StartingPlaces);
         }
 

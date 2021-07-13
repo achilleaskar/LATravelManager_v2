@@ -324,7 +324,7 @@ namespace LATravelManager.UI.Wrapper
         public bool CanFit(ReservationWrapper reservationWr)
         {
             int NumOfSelectedCustomers = reservationWr.CustomersList.Count;
-            return ((RoomType.MinCapacity <= NumOfSelectedCustomers && RoomType.MaxCapacity >= NumOfSelectedCustomers) || (NumOfSelectedCustomers == 1 && RoomType.MaxCapacity == 2));
+            return (RoomType.MinCapacity <= NumOfSelectedCustomers && RoomType.MaxCapacity >= NumOfSelectedCustomers) || (NumOfSelectedCustomers == 1 && RoomType.MaxCapacity == 2);
         }
 
         public bool MakeNoNameReservation(ReservationWrapper reservationWr)
@@ -332,9 +332,9 @@ namespace LATravelManager.UI.Wrapper
             DateTime tmpDate = reservationWr.CheckIn;
             int dayNum = 0;
             if (reservationWr.Room != null)
-                (new RoomWrapper(reservationWr.Room)).CancelReservation(reservationWr);
+                new RoomWrapper(reservationWr.Room).CancelReservation(reservationWr);
             if (reservationWr.NoNameRoom != null)
-                (new RoomWrapper(reservationWr.NoNameRoom)).CancelReservation(reservationWr);
+                new RoomWrapper(reservationWr.NoNameRoom).CancelReservation(reservationWr);
             reservationWr.NoNameRoom = Model;
             PlanDailyInfo tmpPlanInfo = null;
             RoomStateEnum roomState = RoomStateEnum.MovableNoName;
@@ -399,8 +399,13 @@ namespace LATravelManager.UI.Wrapper
                         if (tmpDate == reservationWr.CheckIn)
                         {
                             tmpPlanInfo.DayState = DayStateEnum.FirstDay;
-                            //tmpPlanInfo.Text = dayNum.ToString();
+                            tmpPlanInfo.Text = "d1";
                         }
+                        //else if (tmpDate == reservationWr.CheckOut)
+                        //{
+                        //    tmpPlanInfo.DayState = DayStateEnum.LastDay;
+                        //    tmpPlanInfo.Text = "d" + dayNum.ToString();
+                        //}
                     }
                     else
                     {

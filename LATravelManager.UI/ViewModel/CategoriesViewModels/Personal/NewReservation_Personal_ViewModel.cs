@@ -35,7 +35,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
         public RelayCommand SearchForCustomerCommand { get; set; }
         private async Task OpenInvoicesWindow(object obj)
         {
-            InvoicesManagement_ViewModel vm = new InvoicesManagement_ViewModel(BasicDataManager, personal: PersonalWr, parameter: obj);
+            InvoicesManagement_ViewModel vm = new InvoicesManagement_ViewModel(BasicDataManager,GenericRepository, personal: PersonalWr, parameter: obj);
             await vm.LoadAsync();
             MessengerInstance.Send(new OpenChildWindowCommand(new InvoicesManagementWindow(), vm));
         }
@@ -648,7 +648,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.Personal
             }
         }
 
-        private bool AreContexesFree => (BasicDataManager != null && BasicDataManager.IsContextAvailable) && (GenericRepository != null && GenericRepository.IsContextAvailable);
+        private bool AreContexesFree => BasicDataManager != null && BasicDataManager.IsContextAvailable && GenericRepository != null && GenericRepository.IsContextAvailable;
 
         #endregion Properties
 

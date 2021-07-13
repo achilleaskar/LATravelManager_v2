@@ -28,6 +28,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 {
     public class AddIncomeOutcome_ViewModel : MyViewModelBase
     {
+
         #region Constructors
 
         public AddIncomeOutcome_ViewModel(MainViewModel mainViewModel)
@@ -40,20 +41,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             ClearTransactionCommand = new RelayCommand(ClearTransaction, CanClearTransaction);
             CopyTransactionCommand = new RelayCommand(CopyTransaction, CanCopyTransaction);
             Load();
-        }
-
-        private bool CanCopyTransaction()
-        {
-            return Transaction.Id > 0;
-        }
-
-        private void CopyTransaction()
-        {
-            Transaction = (Transaction)Transaction.Clone();
-            Transaction.Id = 0;
-            Transaction.RaisePropertyChanged("Saved");
-            Transaction.Amount = 0;
-            Transaction.Description = "";
         }
 
         #endregion Constructors
@@ -77,6 +64,8 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         private int _Idword;
 
         private string _Keyword;
+
+        private Bus _SelectedBus;
 
         private Excursion _SelectedExcursion;
 
@@ -129,7 +118,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         }
 
         public RelayCommand ClearTransactionCommand { get; set; }
-        public RelayCommand CopyTransactionCommand { get; set; }
 
         public bool Completed
         {
@@ -152,6 +140,8 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         }
 
         public GenericRepository Context { get; private set; }
+
+        public RelayCommand CopyTransactionCommand { get; set; }
 
         public RelayCommand EditBookingCommand { get; set; }
 
@@ -291,6 +281,25 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
 
         public RelayCommand SearchForReservationsCommand { get; set; }
 
+        public Bus SelectedBus
+        {
+            get
+            {
+                return _SelectedBus;
+            }
+
+            set
+            {
+                if (_SelectedBus == value)
+                {
+                    return;
+                }
+
+                _SelectedBus = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public Excursion SelectedExcursion
         {
             get
@@ -384,6 +393,11 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             return true;
         }
 
+        private bool CanCopyTransaction()
+        {
+            return Transaction.Id > 0;
+        }
+
         private bool CanEditBooking()
         {
             return SelectedReservation != null;
@@ -426,6 +440,14 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             SelectedReservation = null;
         }
 
+        private void CopyTransaction()
+        {
+            Transaction = (Transaction)Transaction.Clone();
+            Transaction.Id = 0;
+            Transaction.RaisePropertyChanged("Saved");
+            Transaction.Amount = 0;
+            Transaction.Description = "";
+        }
         private bool CustomerExcursionsFilter(object item)
         {
             Excursion excursion = item as Excursion;
@@ -495,28 +517,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             await Context.SaveAsync();
             Transaction.RaisePropertyChanged("Saved");
         }
-
-        private Bus _SelectedBus;
-
-        public Bus SelectedBus
-        {
-            get
-            {
-                return _SelectedBus;
-            }
-
-            set
-            {
-                if (_SelectedBus == value)
-                {
-                    return;
-                }
-
-                _SelectedBus = value;
-                RaisePropertyChanged();
-            }
-        }
-
         private async Task SearchForReservations()
         {
             try
@@ -565,5 +565,6 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
         }
 
         #endregion Methods
+
     }
 }

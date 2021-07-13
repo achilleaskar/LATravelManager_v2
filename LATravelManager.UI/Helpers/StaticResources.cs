@@ -250,7 +250,7 @@ namespace LATravelManager.UI.Helpers
             if (field != null)
             {
                 object dependentValue = field.GetValue(validationContext.ObjectInstance, null);
-                if ((dependentValue == null && TargetValue == null) || (dependentValue.Equals(TargetValue)))
+                if ((dependentValue == null && TargetValue == null) || dependentValue.Equals(TargetValue))
                 {
                     if (!_innerAttribute.IsValid(value))
                     {

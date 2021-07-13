@@ -667,6 +667,7 @@
                                 <ListView.Resources>
                                     <ContextMenu x:Key="ItemContextMenu">
                                         <MenuItem Header="Διαγραφή"
+                                                  Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
                                                   Command="{Binding DataContext.DeletePaymentCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
                                             <MenuItem.Icon>
                                                 <Image MaxHeight="20"
@@ -675,6 +676,15 @@
                                         </MenuItem>
                                         <MenuItem Header="Εκτ. Απόδειξης"
                                                   Command="{Binding DataContext.PrintRecieptCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
+                                            <MenuItem.Icon>
+                                                <Image MaxHeight="20"
+                                                       Stretch="Fill" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="Εκτ. Τιμολογίου"
+                                                  Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
+                                                  CommandParameter="{Binding}"
+                                                  Command="{Binding DataContext.OpenInvoicesWindowCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
                                             <MenuItem.Icon>
                                                 <Image MaxHeight="20"
                                                        Stretch="Fill" />
@@ -1064,18 +1074,27 @@
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header="Ξενοδοχείο"
-                                                        Width="120"
+                                                        Width="115"
                                                         DisplayMemberBinding="{Binding Hotel.Name}" />
-                                        <GridViewColumn Header="Τύπος Δωματίου"
-                                                        Width="120"
-                                                        DisplayMemberBinding="{Binding RoomType.Name}" />
+                                        <!--<GridViewColumn Header="Τύπος Δωματίου"
+                                                        Width="100"
+                                                        DisplayMemberBinding="{Binding RoomType.Name}" />-->
                                         <GridViewColumn Header="Σημείωση"
-                                                        Width="120"
+                                                        Width="65"
                                                         DisplayMemberBinding="{Binding Note}">
                                             <GridViewColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <TextBlock Text="{Binding Note}"
                                                                Foreground="{Binding Converter={StaticResource BrushColorConverter}}" />
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn Header="Σημείωση"
+                                                        Width="170">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding LocalNote}"
+                                                               Foreground="Blue" />
                                                 </DataTemplate>
                                             </GridViewColumn.CellTemplate>
                                         </GridViewColumn>
@@ -1104,12 +1123,12 @@
                                                                                    VerticalAlignment="Top"
                                                                                    Foreground="Black"
                                                                                    FontSize="16" />
-                                                                        <TextBlock Foreground="Black"
+                                                                        <!--<TextBlock Foreground="Black"
                                                                                    Margin="10 0"
                                                                                    FontSize="14"
                                                                                    TextWrapping="Wrap"
                                                                                    Width="310"
-                                                                                   VerticalAlignment="Center" />
+                                                                                   VerticalAlignment="Center" />-->
                                                                         <!--Text="{Binding Converter={StaticResource RoomsLeftToHotelsConverter}}"-->
                                                                         <!--Visibility="{Binding Converter={StaticResource RoomsHotelsToVisibilityConverter}}"-->
                                                                         <!--
@@ -1339,9 +1358,9 @@
                                     <TextBox Width="50"
                                              VerticalAlignment="Center"
                                              HorizontalAlignment="Left"
-                                             Text="{Binding BookingWr.FIxedCommision,UpdateSourceTrigger=PropertyChanged}"
+                                             Text="{Binding BookingWr.FIxedCommision,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource FtoSConverter},ConverterParameter='0'}"
                                              Margin="0,0,0,5"
-                                             Visibility="{Binding BookingWr.Partner.People}" />
+                                             Visibility="{Binding BookingWr.Partner.Person}" />
                                 </StackPanel>
                                 <TextBlock Text="Νet τιμή:"
                                            Grid.Row="2"

@@ -1,4 +1,6 @@
-﻿using LATravelManager.Model;
+﻿using System.Data.Entity;
+using System.Data.Entity.ModelConfiguration.Conventions;
+using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
 using LATravelManager.Model.Excursions;
 using LATravelManager.Model.Hotels;
@@ -9,8 +11,6 @@ using LATravelManager.Model.Plan;
 using LATravelManager.Model.Pricing.Invoices;
 using LATravelManager.Model.Security;
 using LATravelManager.Model.Services;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration.Conventions;
 
 namespace LATravelManager.DataAccess
 {
@@ -21,8 +21,8 @@ namespace LATravelManager.DataAccess
     {
         #region Constructors
 
-        //public MainDatabase() : base(normal)
-        public MainDatabase() : base(Properties.Settings.Default.IsTest ? test : normal)
+        public MainDatabase() : base(normal)
+        //public MainDatabase() : base(Properties.Settings.Default.IsTest ? test : normal)
         //public MainDatabase() : base("Server=localhost;Database=readmore_achill2;pooling=true;Uid=root;Pwd=Tr6981001676;Convert Zero Datetime=True;  default command timeout=3600;SslMode=none;TreatTinyAsBoolean=true;")
         {
             Configuration.ValidateOnSaveEnabled = false;

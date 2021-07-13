@@ -42,7 +42,7 @@ namespace LATravelManager.UI.Views
         {
             if (DataContext is InvoicesManagement_ViewModel u)
             {
-                await u.PrintInvoice(printArea);
+                await u.PrintInvoice(printArea,scrollviewer);
                 
             }
 

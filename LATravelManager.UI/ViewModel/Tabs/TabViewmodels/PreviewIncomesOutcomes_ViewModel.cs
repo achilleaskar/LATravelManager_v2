@@ -426,13 +426,13 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             Mouse.OverrideCursor = Cursors.Wait;
             Context = new GenericRepository();
 
-            FilteredTransactions = new ObservableCollection<Transaction>((await Context.GetAllTransactionsFiltered(
+            FilteredTransactions = new ObservableCollection<Transaction>(await Context.GetAllTransactionsFiltered(
                 transaction: Transaction.FiltersEnabled ? Transaction : null,
                 excursion: (ExcursionsCollectionView.CurrentItem != null && ExcursionsCollectionView.CurrentItem is Excursion e && e.Id > 0) ? e : null,
                 bus: (BusesCollectionView.CurrentItem != null && BusesCollectionView.CurrentItem is Bus b && b.Id > 0) ? b : null,
                 from: EnableFromFilter ? (DateTime?)From : null,
                 to: EnableToFilter ? (DateTime?)To : null,
-                user: UserIndexFilter > 0 ? Users[UserIndexFilter - 1] : null)));
+                user: UserIndexFilter > 0 ? Users[UserIndexFilter - 1] : null));
 
             decimal incomes = 0;
             decimal outcomes = 0;

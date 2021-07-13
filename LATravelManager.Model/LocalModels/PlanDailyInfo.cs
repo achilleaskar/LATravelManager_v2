@@ -2,6 +2,7 @@
 using System.Windows.Media;
 using LATravelManager.Model.Wrapper;
 using LATravelManager.UI.Wrapper;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 
 namespace LATravelManager.Model.LocalModels
 {
@@ -15,8 +16,10 @@ namespace LATravelManager.Model.LocalModels
         private bool _IsDateSelected;
         private ReservationWrapper _Reservation;
         private RoomWrapper _Room;
-
         private RoomTypeEnum _RoomTypeEnm;
+
+
+        public SolidColorBrush Foreground => !string.IsNullOrEmpty(Text) && Reservation != null && Reservation.Confirmed ? new SolidColorBrush(Colors.Blue) : new SolidColorBrush(Colors.Black);
 
         public RoomTypeEnum RoomTypeEnm
         {
@@ -205,7 +208,7 @@ namespace LATravelManager.Model.LocalModels
                             else if (RoomTypeEnm == RoomTypeEnum.Booking)
                                 CellColor = new SolidColorBrush(Colors.Blue);
                             else
-                                CellColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#72e600"));
+                                CellColor = (SolidColorBrush)new BrushConverter().ConvertFrom("#72e600");
                             Text = " ";
                             break;
 

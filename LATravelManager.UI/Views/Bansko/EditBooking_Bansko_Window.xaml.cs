@@ -135,8 +135,10 @@ namespace LATravelManager.UI.Views.Bansko
                     e.Cancel = true;
                 }
                 else
+                {
                     a.GenericRepository.RollBack();
-               
+                    Helpers.StaticResources.Close(this);
+                }
             }
             else if (DataContext is NewReservation_Group_ViewModel b && b.HasChanges)
             {
@@ -146,8 +148,10 @@ namespace LATravelManager.UI.Views.Bansko
                     e.Cancel = true;
                 }
                 else
+                {
                     b.GenericRepository.RollBack();
-             
+                    Helpers.StaticResources.Close(this);
+                }
             }
             else if (DataContext is NewReservation_Skiathos_ViewModel c && c.HasChanges)
             {
@@ -157,10 +161,15 @@ namespace LATravelManager.UI.Views.Bansko
                     e.Cancel = true;
                 }
                 else
+                {
                     c.GenericRepository.RollBack();
-               
+                    Helpers.StaticResources.Close(this);
+                }
             }
-            Helpers.StaticResources.Close(this);
+            else
+            {
+                Helpers.StaticResources.Close(this);
+            }
         }
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)

@@ -75,7 +75,7 @@ namespace LATravelManager.UI.ViewModel.Management
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
 
-                MainCollection = new ObservableCollection<PartnerWrapper>((BasicDataManager.Partners).Select(p => new PartnerWrapper(p)));
+                MainCollection = new ObservableCollection<PartnerWrapper>(BasicDataManager.Partners.Select(p => new PartnerWrapper(p)));
 
             }
             catch (Exception ex)

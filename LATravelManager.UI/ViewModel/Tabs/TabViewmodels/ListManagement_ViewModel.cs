@@ -1024,7 +1024,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                 {
                     if (c.Reservation.Booking.Id == SelectedCustomer.Reservation.Booking.Id && c.BusGo == null && c.BusReturn == null)
                     {
-                        c.Selected = (obj == 1);
+                        c.Selected = obj == 1;
                     }
                 }
                 ManualAll = false;
@@ -1037,7 +1037,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             if (cust is CustomerWrapper customer)
             {
                 List<Seat> seats = new List<Seat>();
-                for (int i = 0; i < (new BookingWrapper(customer.Reservation.Booking)).Customers.Count; i++)
+                for (int i = 0; i < new BookingWrapper(customer.Reservation.Booking).Customers.Count; i++)
                 {
                     Seat seat = SelectedBus.GetSeat(StartSeat + i, false);
                     if (seat != null && seat.Customer == null)
@@ -1051,7 +1051,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                     }
                 }
                 int counter = 0;
-                foreach (var c in (new BookingWrapper(customer.Reservation.Booking)).Customers)
+                foreach (var c in new BookingWrapper(customer.Reservation.Booking).Customers)
                 {
                     seats[counter].Customer = c;
                     Customers.Where(v => v.Id == c.Id).FirstOrDefault().SeatNum = seats[counter].Number;
@@ -1069,7 +1069,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             if (cust is CustomerWrapper customer)
             {
                 List<Seat> seats = new List<Seat>();
-                for (int i = 0; i < (new BookingWrapper(customer.Reservation.Booking)).Customers.Count; i++)
+                for (int i = 0; i < new BookingWrapper(customer.Reservation.Booking).Customers.Count; i++)
                 {
                     Seat seat = SelectedBus.GetSeat(StartSeatRet + i, true);
                     if (seat != null && seat.Customer == null)
@@ -1083,7 +1083,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                     }
                 }
                 int counter = 0;
-                foreach (var c in (new BookingWrapper(customer.Reservation.Booking)).Customers)
+                foreach (var c in new BookingWrapper(customer.Reservation.Booking).Customers)
                 {
                     seats[counter].Customer = c;
                     // c.SeatNumRet = seats[counter].Number;
@@ -1112,7 +1112,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                         {
                             if (Hotels.Where(h => h.Name == r.HotelName.TrimEnd(new[] { '*' })).FirstOrDefault().Selected &&
                                 Cities.Where(s => s.Name == c.StartingPlace).FirstOrDefault().Selected &&
-                                ((!b.DifferentDates || c.CheckIn == CheckInDate)) && (!NoBus || (c.BusGo == null && c.BusReturn == null)) && b.SecondDepart == SecondDepart && c.CustomerHasBusIndex < 2)
+                                (!b.DifferentDates || c.CheckIn == CheckInDate) && (!NoBus || (c.BusGo == null && c.BusReturn == null)) && b.SecondDepart == SecondDepart && c.CustomerHasBusIndex < 2)
                             {
                                 Customers.Add(c);
                                 c.PropertyChanged += C_PropertyChanged;
@@ -1133,7 +1133,7 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
                         {
                             if (Hotels.Where(h => h.Name == r.HotelName.TrimEnd(new[] { '*' })).FirstOrDefault().Selected &&
                                 Cities.Where(s => s.Name == c.ReturningPlace).FirstOrDefault().Selected &&
-                                ((!b.DifferentDates || c.CheckOut == CheckInDate)) && (!NoBus || (c.BusGo == null && c.BusReturn == null)) && c.CustomerHasBusIndex % 2 == 0)
+                                (!b.DifferentDates || c.CheckOut == CheckInDate) && (!NoBus || (c.BusGo == null && c.BusReturn == null)) && c.CustomerHasBusIndex % 2 == 0)
                             {
                                 Customers.Add(c);
                                 c.PropertyChanged += C_PropertyChanged;
@@ -1230,11 +1230,11 @@ namespace LATravelManager.UI.ViewModel.Tabs.TabViewmodels
             Context = new GenericRepository();
             // AllBookings = (Context.GetAllBookingsForLists(SelectedExcursion.Id, SelectedDate.CheckIn, DepartmentIndexBookingFilter)).Select(b => new BookingWrapper(b)).ToList();
             if (!CheckOut)
-                AllBookings = (Context.GetAllBookingsForLists(SelectedExcursion.Id, CheckInDate, DepartmentIndexBookingFilter)).Select(b => new BookingWrapper(b)).ToList();
+                AllBookings = Context.GetAllBookingsForLists(SelectedExcursion.Id, CheckInDate, DepartmentIndexBookingFilter).Select(b => new BookingWrapper(b)).ToList();
             else
-                AllBookings = (Context.GetAllBookingsForLists(SelectedExcursion.Id, CheckInDate, DepartmentIndexBookingFilter, true)).Select(b => new BookingWrapper(b)).ToList();
+                AllBookings = Context.GetAllBookingsForLists(SelectedExcursion.Id, CheckInDate, DepartmentIndexBookingFilter, true).Select(b => new BookingWrapper(b)).ToList();
 
-            Buses = new ObservableCollection<Bus>((Context.GetAllBuses(SelectedExcursion.Id, CheckInDate, CheckOut)));
+            Buses = new ObservableCollection<Bus>(Context.GetAllBuses(SelectedExcursion.Id, CheckInDate, CheckOut));
             //Buses = new ObservableCollection<Bus>((Context.GetAllBuses(SelectedExcursion.Id, SelectedDate.CheckIn)));
             Leaders = new ObservableCollection<Leader>((await Context.GetAllAsync<Leader>()).OrderBy(o => o.Name));
             Hotels.Clear();

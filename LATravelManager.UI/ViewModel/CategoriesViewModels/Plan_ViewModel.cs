@@ -48,9 +48,32 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
             AddRoomThisDayCommand = new RelayCommand<PlanDailyInfo>(async (obj) => { await AddThisDay(obj); }, CanAddThisDay);
             MoveFromCommand = new RelayCommand<PlanDailyInfo>((obj) => { MoveFrom(obj); }, CanMoveFrom);
             MoveToCommand = new RelayCommand<PlanDailyInfo>(async (obj) => await MoveTo(obj));
+            ToggleConfirmedCommand = new RelayCommand<PlanDailyInfo>(async (obj) => await ToggleConfirmed(obj));
             AddAllotmentRoomThisDayCommand = new RelayCommand<PlanDailyInfo>(async (obj) => { await AddAllotmentThisDay(obj); }, CanAddAllotmentRoomThisDay);
             AddBookingRoomThisDayCommand = new RelayCommand<PlanDailyInfo>(async (obj) => { await AddBookingThisDay(obj); }, CanAddBookingRoomThisDay);
             MessengerInstance.Register<SelectedExcursionChangedMessage>(this, exc => { SelectedExcursionChanged(exc.SelectedExcursion); });
+        }
+
+        private async Task ToggleConfirmed(PlanDailyInfo obj)
+        {
+            if (obj.Reservation != null && obj.Reservation.ReservationType == ReservationTypeEnum.Normal)
+            {
+                obj.Reservation.Confirmed = !obj.Reservation.Confirmed;
+                await Context.SaveAsync();
+                if (!string.IsNullOrWhiteSpace(obj.Text))
+                {
+                    obj.RaisePropertyChanged(null);
+                }
+                else
+                    foreach (var h in obj.Room.PlanDailyInfo)
+                    {
+                        if (h.Reservation == obj.Reservation && obj.Text != null)
+                        {
+                            h.RaisePropertyChanged(null);
+                            break;
+                        }
+                    }
+            }
         }
 
         private ReservationWrapper _TmpReservation;
@@ -178,6 +201,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
         public RelayCommand<PlanDailyInfo> AddRoomThisDayCommand { get; set; }
         public RelayCommand<PlanDailyInfo> MoveFromCommand { get; set; }
         public RelayCommand<PlanDailyInfo> MoveToCommand { get; set; }
+        public RelayCommand<PlanDailyInfo> ToggleConfirmedCommand { get; set; }
 
         public RelayCommand<PlanDailyInfo> CancelRoomThisDayCommand { get; set; }
 
@@ -657,6 +681,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
             //   obj.Room.DailyBookingInfo.Add(new BookingInfoPerDay { Date = obj.Date, RoomTypeEnm = RoomTypeEnum.Available });
             await Context.SaveAsync();
 
+            obj.RoomTypeEnm = RoomTypeEnum.Available;
             obj.RoomState = RoomStateEnum.Available;
         }
 
@@ -734,7 +759,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
             }
 
             FilteredPlanList = new ObservableCollection<HotelWrapper>(await RoomsManager.GetAllAvailableRooms(From, To.AddDays(1), ParentExcursionCategory.SelectedExcursion, true,
-                selectedRoomType: ((SelectedRoomTypeIndex > 0) ? RoomTypes[SelectedRoomTypeIndex - 1] : null),
+                selectedRoomType: (SelectedRoomTypeIndex > 0) ? RoomTypes[SelectedRoomTypeIndex - 1] : null,
                 selectedHotel: (SelectedHotelIndex > 0) ? Hotels[SelectedHotelIndex - 1] : null,
                 PeopleCount));
 

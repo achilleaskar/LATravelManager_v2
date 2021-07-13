@@ -206,7 +206,7 @@ namespace LATravelManager.UI.Data.Workers
                     }
                 }
 
-                List<Room> rooms = (await GenericRepository.GetAllRoomsInCityAsync(MinDay, MaxDay, excursionfilter.Destinations[0].Id));
+                List<Room> rooms = await GenericRepository.GetAllRoomsInCityAsync(MinDay, MaxDay, excursionfilter.Destinations[0].Id);
                 foreach (var r in rooms)
                 {
                     if (r.RoomType.freeRooms > 0)
@@ -235,7 +235,7 @@ namespace LATravelManager.UI.Data.Workers
                         City = hotel.City,
                         HotelCategory = hotel.HotelCategory,
                         Tel = hotel.Tel,
-                        NoName=hotel.NoName
+                        NoName = hotel.NoName
 
                     };
                     foreach (Room room in hotel.Rooms)
@@ -929,6 +929,11 @@ namespace LATravelManager.UI.Data.Workers
                                   }
                           });
                       });
+            });
+
+            Parallel.ForEach(NonamesList, noName =>
+            {
+                noName.AvailableRooms = noName.AvailableRooms.OrderBy(r => r.RoomType.MaxCapacity).ToList();
             });
         }
 

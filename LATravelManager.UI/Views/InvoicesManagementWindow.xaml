@@ -11,7 +11,7 @@
         d:DataContext="{d:DesignInstance viewmodels:InvoicesManagement_ViewModel}"
         WindowStartupLocation="CenterScreen"
         Title="Δημιουργία Παραστατικού"
-        Height="950"
+        Height="900"
         Language="el-GR"
         Closing="Window_Closing"
         SizeToContent="Width">
@@ -33,6 +33,7 @@
                 <ColumnDefinition Width="180" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -107,27 +108,31 @@
                         DisplayDateStart="{Binding SelectedSerie.LastPrint}"
                         Grid.Column="1" />
             <Label Content="Ποσό:"
-                   Grid.Row="6"
-                   Visibility="{Binding ServiceAmmountVisible, Converter={StaticResource booleanToVisibilityConverter}}" />
+                   Grid.Row="6" />
             <TextBox Grid.Row="6"
                      Grid.Column="1"
                      VerticalAlignment="Center"
-                     Text="{Binding ServiceAmmount, Converter={StaticResource FloadToStringValueConverter},UpdateSourceTrigger=PropertyChanged}"
-                     Visibility="{Binding ServiceAmmountVisible, Converter={StaticResource booleanToVisibilityConverter}}" />
+                     Text="{Binding ServiceAmmount, Converter={StaticResource FloadToStringValueConverter},UpdateSourceTrigger=PropertyChanged}" />
+            <Label Content="Έκπτωση:"
+                   Grid.Row="7" />
+            <TextBox Grid.Row="7"
+                     Grid.Column="1"
+                     VerticalAlignment="Center"
+                     Text="{Binding DiscountAmount, Converter={StaticResource FloadToStringValueConverter},UpdateSourceTrigger=PropertyChanged}" />
             <Button Content="Προεπισκόπηση"
-                    Grid.Row="7"
+                    Grid.Row="8"
                     Command="{Binding CreateRecieptPreviewCommand}"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Margin="5" />
             <Button Content="Εκτύπωση"
-                    Grid.Row="7"
+                    Grid.Row="8"
                     Click="Button_Click"
                     IsEnabled="{Binding PrintEnabled}"
                     Grid.Column="1"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center" />
-            <TextBlock Grid.Row="8"
+            <TextBlock Grid.Row="9"
                        Grid.ColumnSpan="2"
                        TextWrapping="Wrap"
                        Width="270"
@@ -140,6 +145,7 @@
                 <Border>
                     <ScrollViewer Padding="15 10 10 10"
                                   FontSize="11"
+                                  Name="scrollviewer"
                                   Background="LightGray">
                         <Border Background="White"
                                 VerticalAlignment="Top"
@@ -475,7 +481,7 @@
                                            BorderThickness="1"
                                            Grid.Column="2"
                                            FontSize="10"
-                                           Content="Φ.Π.Α. / VAT" />
+                                           Content="ΕΚΠΤΩΣΗ" />
                                     <Label BorderBrush="Black"
                                            BorderThickness="0 1 1 1"
                                            Grid.Column="3"

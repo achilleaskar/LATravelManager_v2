@@ -138,6 +138,7 @@
     <Compile Include="Converters\RoomsLeftToVisibilityConverter.cs" />
     <Compile Include="Converters\RoomsLeftToVisibiliyConverter.cs" />
     <Compile Include="Converters\RoomToColorConverter.cs" />
+    <Compile Include="Converters\RoomTypeToLocalNoteConverter.cs" />
     <Compile Include="Converters\RoomTypeToRoomsLeftConverter.cs" />
     <Compile Include="Converters\SeatAvailableConverter.cs" />
     <Compile Include="Converters\SeatToColorConverter.cs" />

@@ -565,7 +565,7 @@ namespace LATravelManager.Model.Wrapper
             return null;
         }
 
-        internal string GetDestinations()
+        public string GetDestinations()
         {
             StringBuilder sb = new StringBuilder();
             string hotels = string.Empty, planes = string.Empty, ferrys = string.Empty, guides = string.Empty, transfers = string.Empty, optionals = string.Empty;

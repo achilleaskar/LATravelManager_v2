@@ -95,6 +95,15 @@
                                         Padding="5,2" />
                             </StackPanel>
                         </Border>
+                        <Button VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Height="22"
+                                Width="22"
+                                Margin="5 0"
+                                Command="{Binding CleanFiltersCommand}">
+                            <iconPacks:PackIconFontAwesome Kind="BroomSolid"
+                                                           VerticalAlignment="Center" />
+                        </Button>
                     </StackPanel>
                 </StackPanel>
             </Border>
@@ -370,6 +379,11 @@
                               Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
                               IsChecked="{Binding Remaining}" />
                 </StackPanel>
+                <Button Content="Ακυρωμένες"
+                        VerticalAlignment="Bottom"
+                        Margin="5,0"
+                        Click="Button_Click"
+                        Command="{Binding ShowCanceled}" />
                 <Button Content="RoomingLists"
                         Margin="5,0"
                         VerticalAlignment="Bottom"
@@ -401,27 +415,23 @@
                         Command="{Binding PrintListRetCommand}" />
                 <Button Content="Bus Lists"
                         VerticalAlignment="Bottom"
+                        Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"
                         Margin="5,0"
                         Command="{Binding PrintBusListsCommand}" />
                 <!--<Button Content="Theseis"
                         VerticalAlignment="Bottom"
                         Margin="5,0"
                         Command="{Binding PrintTheseisCommand}" />-->
-                <Button Content="Ακυρωμένες"
-                        VerticalAlignment="Bottom"
-                        Margin="5,0"
-                        Click="Button_Click"
-                        Command="{Binding ShowCanceled}" />
                 <Button Content="Test"
                         VerticalAlignment="Bottom"
                         Margin="5,0"
                         Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}"
-                        Click="Button_Click_2"/>
+                        Click="Button_Click_2" />
                 <Button Content="Dimos"
                         VerticalAlignment="Bottom"
                         Margin="5,0"
                         Visibility="{Binding ConverterParameter=1, Converter={StaticResource UserToVisibilityConverter}}"
-                        Command="{Binding PrintDimosListsCommand}"/>
+                        Command="{Binding PrintDimosListsCommand}" />
                 <Button Content="Sent Vchrs"
                         VerticalAlignment="Bottom"
                         Visibility="{Binding ConverterParameter=2, Converter={StaticResource UserToVisibilityConverter}}"

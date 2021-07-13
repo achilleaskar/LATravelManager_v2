@@ -167,9 +167,9 @@ namespace LATravelManager.Model.Services
                 }
 
                 _TimeGo = value;
-                if (_TimeGo > TimeReturn)
+                if (_TimeGo.Date > TimeReturn.Date)
                 {
-                    TimeReturn = _TimeGo.AddDays(3);
+                    TimeReturn = _TimeGo;
                 }
                 RaisePropertyChanged();
             }
@@ -190,9 +190,9 @@ namespace LATravelManager.Model.Services
                 }
 
                 _TimeReturn = value;
-                if (_TimeReturn < TimeGo && TimeGo.Year > 100 && TimeReturn.Year > 100)
+                if (_TimeReturn.Date < TimeGo.Date && TimeGo.Year > 100 && TimeReturn.Year > 100)
                 {
-                    TimeGo = TimeReturn.AddDays(-3);
+                    TimeGo = _TimeReturn;
                 }
                 RaisePropertyChanged();
             }

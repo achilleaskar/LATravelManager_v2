@@ -61,7 +61,7 @@ namespace LATravelManager.UI.Helpers
                         myWorksheet.Cells["C" + lineNum].Value = c.Customer.Surename;
                         myWorksheet.Cells["D" + lineNum].Value = !string.IsNullOrEmpty(c.Customer.Tel) && !c.Customer.Tel.StartsWith("000") ? c.Customer.Tel : "";
                         myWorksheet.Cells["E" + lineNum].Value = c.Leader.Name.Length > 12 ? c.Leader.Name.Substring(0, 12) : c.Leader.Name;
-                        myWorksheet.Cells["F" + lineNum].Value = (new ReservationWrapper(c.Customer.Reservation)).HotelName;
+                        myWorksheet.Cells["F" + lineNum].Value = new ReservationWrapper(c.Customer.Reservation).HotelName;
                         myWorksheet.Cells["G" + lineNum].Value = c.PaymentType == PaymentType.NotPaid ? c.Cost.ToString() : "";
 
                         lineNum++;
@@ -374,19 +374,19 @@ namespace LATravelManager.UI.Helpers
                         //    PrintVoucher(reservation, out string dir);
                         //}
                         lineNum--;
-                        modelTable = myWorksheet.Cells["C3:C" + (lineNum)];
+                        modelTable = myWorksheet.Cells["C3:C" + lineNum];
                         modelTable.Style.Border.Top.Style = ExcelBorderStyle.Thin;
                         modelTable.Style.Border.Left.Style = ExcelBorderStyle.Thin;
                         modelTable.Style.Border.Right.Style = ExcelBorderStyle.Thin;
                         modelTable.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
 
-                        modelTable = myWorksheet.Cells["E4:E" + (lineNum)];
+                        modelTable = myWorksheet.Cells["E4:E" + lineNum];
                         modelTable.Style.Border.Top.Style = ExcelBorderStyle.Thin;
                         modelTable.Style.Border.Left.Style = ExcelBorderStyle.Thin;
                         modelTable.Style.Border.Right.Style = ExcelBorderStyle.Thin;
                         modelTable.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
 
-                        modelTable = myWorksheet.Cells["G4:G" + (lineNum)];
+                        modelTable = myWorksheet.Cells["G4:G" + lineNum];
                         modelTable.Style.Border.Top.Style = ExcelBorderStyle.Thin;
                         modelTable.Style.Border.Left.Style = ExcelBorderStyle.Thin;
                         modelTable.Style.Border.Right.Style = ExcelBorderStyle.Thin;
@@ -512,7 +512,7 @@ namespace LATravelManager.UI.Helpers
 
                 try
                 {
-                    string LetterFilename = string.Format(@"\{0}_{1}_{2}_{3}_Letter.docx", (resWrapper.CustomersList.OrderBy(cc => cc.Id)).ToList()[0].Surename, resWrapper.HotelName.TrimEnd(new[] { '*', '/' }), resWrapper.RoomTypeNameByNum, resWrapper.Id);
+                    string LetterFilename = string.Format(@"\{0}_{1}_{2}_{3}_Letter.docx", resWrapper.CustomersList.OrderBy(cc => cc.Id).ToList()[0].Surename, resWrapper.HotelName.TrimEnd(new[] { '*', '/' }), resWrapper.RoomTypeNameByNum, resWrapper.Id);
                     Directory.CreateDirectory(outputpath + @"\Letters");
                     folderNameVouchers = CreateFolder(resWrapper.CheckIn, @"\Letters\", booking.Excursion.Name);
 
@@ -583,7 +583,7 @@ namespace LATravelManager.UI.Helpers
             await PrintVouchers(bookings, send);
         }
 
-        public async Task PrintVouchers(List<BookingWrapper> bookings, bool send)
+        public async Task PrintVouchers(List<BookingWrapper> bookings, bool send, List<Bus> buses = null)
         {
             string outputpath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
             EmailsManager mailManager = new EmailsManager();
@@ -632,11 +632,11 @@ namespace LATravelManager.UI.Helpers
                         string VoucherFilename;
                         if (booking.IsPartners)
                         {
-                            VoucherFilename = string.Format(@"\{0}_{1}_{2}_{3}_{4}_Voucher.docx", (resWrapper.CustomersList.OrderBy(cc => cc.Id)).ToList()[0].Surename, resWrapper.HotelName, resWrapper.RoomTypeNameByNum, booking.Partner.Name, resWrapper.Id);
+                            VoucherFilename = string.Format(@"\{0}_{1}_{2}_{3}_{4}_Voucher.docx", resWrapper.CustomersList.OrderBy(cc => cc.Id).ToList()[0].Surename, resWrapper.HotelName, resWrapper.RoomTypeNameByNum, booking.Partner.Name, resWrapper.Id);
                         }
                         else
                         {
-                            VoucherFilename = string.Format(@"\{0}_{1}_{2}_{3}_Voucher.docx", (resWrapper.CustomersList.OrderBy(cc => cc.Id)).ToList()[0].Surename, resWrapper.HotelName, resWrapper.RoomTypeNameByNum, resWrapper.Id);
+                            VoucherFilename = string.Format(@"\{0}_{1}_{2}_{3}_Voucher.docx", resWrapper.CustomersList.OrderBy(cc => cc.Id).ToList()[0].Surename, resWrapper.HotelName, resWrapper.RoomTypeNameByNum, resWrapper.Id);
                         }
                         Directory.CreateDirectory(outputpath + @"\Vouchers");
                         folderNameVouchers = CreateFolder(resWrapper.CheckIn, @"\Vouchers\", booking.Excursion.Name);
@@ -647,7 +647,7 @@ namespace LATravelManager.UI.Helpers
                         {
                         }
                         else
-                            await CreateWordVoucher(folderNameVouchers + VoucherFilename, resWrapper, booking, send);
+                            await CreateWordVoucher(folderNameVouchers + VoucherFilename, resWrapper, booking, send, buses);
                     }
                     catch (Exception ex)
                     {
@@ -785,7 +785,7 @@ namespace LATravelManager.UI.Helpers
                 myWorksheet.Cells["H4"].Value = "";
                 myWorksheet.Cells["I4"].Value = "";
                 myWorksheet.Cells["J4"].Value = "";
-                modelTable = myWorksheet.Cells["G4:JA" + (lineNum)];
+                modelTable = myWorksheet.Cells["G4:JA" + lineNum];
                 modelTable.Style.Border.Top.Style = ExcelBorderStyle.None;
                 modelTable.Style.Border.Left.Style = ExcelBorderStyle.None;
                 modelTable.Style.Border.Right.Style = ExcelBorderStyle.None;
@@ -1049,20 +1049,20 @@ namespace LATravelManager.UI.Helpers
                     return;
                 }
                 lineNum--;
-                modelTable = myWorksheet.Cells["A5:A" + (lineNum)];
+                modelTable = myWorksheet.Cells["A5:A" + lineNum];
                 modelTable.Style.Border.Top.Style = ExcelBorderStyle.Thin;
                 modelTable.Style.Border.Left.Style = ExcelBorderStyle.Thin;
                 modelTable.Style.Border.Right.Style = ExcelBorderStyle.Thin;
                 modelTable.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
 
-                modelTable = myWorksheet.Cells["C5:D" + (lineNum)];
+                modelTable = myWorksheet.Cells["C5:D" + lineNum];
                 modelTable.Style.Border.Top.Style = ExcelBorderStyle.Thin;
                 modelTable.Style.Border.Left.Style = ExcelBorderStyle.Thin;
                 modelTable.Style.Border.Right.Style = ExcelBorderStyle.Thin;
                 modelTable.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
                 if (!borderonly)
                 {
-                    modelTable = myWorksheet.Cells["F5:H" + (lineNum)];
+                    modelTable = myWorksheet.Cells["F5:H" + lineNum];
                     modelTable.Style.Border.Top.Style = ExcelBorderStyle.Thin;
                     modelTable.Style.Border.Left.Style = ExcelBorderStyle.Thin;
                     modelTable.Style.Border.Right.Style = ExcelBorderStyle.Thin;
@@ -1070,7 +1070,7 @@ namespace LATravelManager.UI.Helpers
                 }
                 else
                 {
-                    modelTable = myWorksheet.Cells["E5:F" + (lineNum)];
+                    modelTable = myWorksheet.Cells["E5:F" + lineNum];
                     modelTable.Style.Border.Top.Style = ExcelBorderStyle.Thin;
                     modelTable.Style.Border.Left.Style = ExcelBorderStyle.Thin;
                     modelTable.Style.Border.Right.Style = ExcelBorderStyle.Thin;
@@ -1553,7 +1553,7 @@ namespace LATravelManager.UI.Helpers
             string fileName = @"Sources\letter.docx";
 
             File.Copy(fileName, saveAs, true);
-            Customer c = (reservationWr.CustomersList.OrderBy(cc => cc.Id)).ToList()[0];
+            Customer c = reservationWr.CustomersList.OrderBy(cc => cc.Id).ToList()[0];
 
             using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(saveAs, true))
             {
@@ -1583,7 +1583,7 @@ namespace LATravelManager.UI.Helpers
             }
         }
 
-        private async Task<string> CreateWordVoucher(string saveAs, ReservationWrapper reservationWr, BookingWrapper booking, bool send)
+        private async Task<string> CreateWordVoucher(string saveAs, ReservationWrapper reservationWr, BookingWrapper booking, bool send, List<Bus> buses)
         {
             string fileName = "";
 
@@ -1622,8 +1622,30 @@ namespace LATravelManager.UI.Helpers
             {
                 customerStartingPlace = place.StartingPlace;
             }
-            Bus bus;
-            bus = c.BusGo ?? new Bus { Leader = new Leader { Name = "", Tel = "" } };
+            Bus bus = null;
+            if (c.BusGo != null)
+            {
+                bus = c.BusGo;
+            }
+            else if (buses != null && buses.Count > 0)
+            {
+                foreach (var b in buses)
+                {
+                    foreach (var cu in b.Customers)
+                    {
+                        if (cu.Id == c.Id && cu.BusGo != null)
+                        {
+                            bus = cu.BusGo;
+                            goto End;
+                        }
+                    }
+                }
+            }
+        End:
+            if (bus == null)
+            {
+                bus = new Bus { Leader = new Leader { Name = "", Tel = "" } };
+            }
 
             if (customerStartingPlace == null || customerStartingPlace.Id == 19)
             {
@@ -1671,6 +1693,7 @@ namespace LATravelManager.UI.Helpers
                     }
                     var time = booking.Excursion.Destinations[0].ExcursionTimes.Any(s => s.StartingPlace.Id == customerStartingPlace.Id) ? booking.Excursion.Destinations[0].ExcursionTimes.Where(s => s.StartingPlace.Id == customerStartingPlace.Id).FirstOrDefault().Time : new TimeSpan(999);
                     bool after12 = time.Ticks != 999 && booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Group && booking.ExcursionDate != null && booking.ExcursionDate.NightStart && time.Hours < 5;
+                    bool before12 = time.Ticks != 999 && booking.Excursion.ExcursionType.Category == ExcursionTypeEnum.Group && booking.ExcursionDate != null && !booking.ExcursionDate.NightStart && time.Hours > 17;
                     // var imagePath = AppDomain.CurrentDomain.BaseDirectory + @"VoucherImages\";
                     Regex regexText = new Regex("regexorderno");
                     docText = regexText.Replace(docText, reservationWr.Booking.Id.ToString());
@@ -1687,7 +1710,7 @@ namespace LATravelManager.UI.Helpers
                     regexText = new Regex("regexcity");
                     docText = regexText.Replace(docText, booking.Excursion.Destinations[0].Name);
                     regexText = new Regex("regextel");
-                    docText = regexText.Replace(docText, (reservationWr.GetHotelTel()));
+                    docText = regexText.Replace(docText, reservationWr.GetHotelTel());
                     regexText = new Regex("regexnames");
                     docText = regexText.Replace(docText, reservationWr.Names);
                     regexText = new Regex("regexcheckin");
@@ -1703,11 +1726,11 @@ namespace LATravelManager.UI.Helpers
                     regexText = new Regex("zdates");
                     docText = regexText.Replace(docText, reservationWr.Dates);
                     regexText = new Regex("regexstart");//
-                    docText = regexText.Replace(docText, after12 ? reservationWr.CheckIn.AddDays(1).ToString("dd/MM/yyyy") : startDate.ToString("dd/MM/yyyy"));
+                    docText = regexText.Replace(docText, after12 ? reservationWr.CheckIn.AddDays(1).ToString("dd/MM/yyyy") : before12 ? reservationWr.CheckIn.AddDays(-1).ToString("dd/MM/yyyy") : startDate.ToString("dd/MM/yyyy"));
                     regexText = new Regex("zreturntime");
                     docText = regexText.Replace(docText, reservationWr.ExcursionType == ExcursionTypeEnum.Skiathos ? "16:00" : booking.Excursion.Destinations[0].Id == 9 ? "09:00" : "12:00");
                     regexText = new Regex("zdate");//
-                    docText = regexText.Replace(docText, after12 ? reservationWr.CheckIn.AddDays(1).ToString("dd/MM") : startDate.ToString("dd/MM"));
+                    docText = regexText.Replace(docText, after12 ? reservationWr.CheckIn.AddDays(1).ToString("dd/MM") : before12 ? reservationWr.CheckIn.AddDays(-1).ToString("dd/MM/yyyy") : startDate.ToString("dd/MM"));
                     regexText = new Regex("zlocation");
                     docText = regexText.Replace(docText, reservationWr.CustomersList[0].StartingPlace);
                     regexText = new Regex("ztime");

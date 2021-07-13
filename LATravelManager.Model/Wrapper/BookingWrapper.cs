@@ -17,12 +17,9 @@ namespace LATravelManager.Model.Wrapper
 {
     public class BookingWrapper : ModelWrapper<Booking>
     {
-
         #region Constructors
 
-
         private ObservableCollection<ExcursionDate> _ExcursionDatesFiltered;
-
 
         public ObservableCollection<ExcursionDate> ExcursionDatesFiltered
         {
@@ -65,13 +62,11 @@ namespace LATravelManager.Model.Wrapper
         public string Dates => CheckIn.ToString("dd/MM") + (CheckIn.Date != CheckOut.Date ? ("-" + CheckOut.ToString("dd/MM")) : "");
         public string DatesFull => CheckIn.ToString("dd/MM") + (CheckIn.Date == CheckOut.Date || CheckIn.Year != CheckOut.Year ? CheckIn.ToString("yy") : "") + (CheckIn.Date != CheckOut.Date ? ("-" + CheckOut.ToString("dd/MM/yy")) : "");
 
-
         public ObservableCollection<Reciept> Reciepts
         {
             get { return GetValue<ObservableCollection<Reciept>>(); }
             set { SetValue(value); }
         }
-
 
         public bool PhoneMissing;
 
@@ -115,6 +110,7 @@ namespace LATravelManager.Model.Wrapper
         {
             get { return GetValue<ObservableCollection<ChangeInBooking>>(); }
         }
+
         public ObservableCollection<Transaction> Transactions
         {
             get { return GetValue<ObservableCollection<Transaction>>(); }
@@ -192,7 +188,10 @@ namespace LATravelManager.Model.Wrapper
                 {
                     SetValue(value);
                     NetPrice = Math.Round(FullPrice - (FullPrice - Extras) * Commision / 100, 2);
-                    FIxedCommision = FullPrice - NetPrice;
+                    if (!ChangingFixedCommision)
+                    {
+                        FIxedCommision = FullPrice - NetPrice;
+                    }
                     CalculateRemainingAmount();
                 }
             }
@@ -347,6 +346,8 @@ namespace LATravelManager.Model.Wrapper
             get { return GetValue<ObservableCollection<ExtraService>>(); }
         }
 
+        public bool ChangingFixedCommision { get; set; }
+
         public decimal FIxedCommision
         {
             get
@@ -363,8 +364,11 @@ namespace LATravelManager.Model.Wrapper
 
                 if (Math.Abs(value - _FIxedCommision) >= 0.01m)
                 {
+                    ChangingFixedCommision = true;
                     _FIxedCommision = Math.Round(value, 2);
                     Commision = Math.Round(_FIxedCommision * 100 / (FullPrice - Extras), 2);
+                    ChangingFixedCommision = false;
+
                 }
                 RaisePropertyChanged();
             }
@@ -485,7 +489,7 @@ namespace LATravelManager.Model.Wrapper
                 if (Math.Abs(NetPrice - value) > 0.01m)
                 {
                     SetValue(value);
-                    if (FullPrice - Extras > 0)
+                    if (FullPrice - Extras > 0 && !ChangingFixedCommision)
                     {
                         Commision = 100 * (FullPrice - NetPrice) / (FullPrice - Extras);
                         // Commision = 100 * (FullPrice - NetPrice) / FullPrice;
@@ -500,6 +504,7 @@ namespace LATravelManager.Model.Wrapper
         {
             get { return $"{(int)(CheckOut - CheckIn).TotalDays} νύχτες"; }
         }
+
         public Partner Partner
         {
             get { return GetValue<Partner>(); }
@@ -612,7 +617,6 @@ namespace LATravelManager.Model.Wrapper
             int extra = 0;
             if (Id == 1258)
             {
-
             }
             _Recieved = 0;
 
@@ -644,17 +648,16 @@ namespace LATravelManager.Model.Wrapper
                 if (Partner != null && Partner.Person)
                 {
                     Remaining = FullPrice - Recieved;
-                    if (FullPrice > 0 && Commision > 0 && NetPrice > 0 && FIxedCommision == 0)
+                    if (FullPrice > 0 && Commision > 0 && NetPrice > 0 && FIxedCommision == 0&&!ChangingFixedCommision)
                         FIxedCommision = FullPrice - NetPrice;
                 }
                 else
                     Remaining = NetPrice - Recieved;
-                if (Commision > 0 && FullPrice > 0)
+                if (Commision > 0 && FullPrice > 0&&!ChangingFixedCommision)
                     FIxedCommision = FullPrice - NetPrice;
             }
             else
                 Remaining = FullPrice - Recieved;
-
         }
 
         public bool Contains(string key)
@@ -720,7 +723,7 @@ namespace LATravelManager.Model.Wrapper
         {
             if (Excursion != null)
             {
-                return $"ΕΚΔΡΟΜΗ ΓΙΑ {Excursion.Destinations[0].Name} / {GetHotels()}";
+                return $"ΕΚΔΡΟΜΗ ΓΙΑ {Excursion.Destinations[0].Name} / {GetHotelsForReciept()}";
             }
             else
             {
@@ -728,6 +731,63 @@ namespace LATravelManager.Model.Wrapper
             }
         }
 
+        private object GetHotelsForReciept()
+        {
+            List<string> hotels = new List<string>();
+            foreach (var res in ReservationsInBooking)
+            {
+                if (res.Room != null && !hotels.Any(x => x == res.Room.Hotel.Name))
+                {
+                    hotels.Add(res.Room.RoomType.Name + " στο " + res.Room.Hotel.Name);
+                }
+                if ((res.ReservationType == ReservationTypeEnum.Noname || res.ReservationType == ReservationTypeEnum.Overbooked) && res.Hotel != null && !hotels.Any(x => x == res.Hotel.Name))
+                {
+                    hotels.Add(new ReservationWrapper(res).GetNoNameType().Replace("(NN)", "") + " στο " + res.Hotel.Name);
+                }
+                if (res.ReservationType == ReservationTypeEnum.Noname && !hotels.Any(x => x == "ΕΝΟΙΚΙΑΖΟΜΕΝΑ ΔΩΜΑΤΙΑ"))
+                {
+                    hotels.Add(new ReservationWrapper(res).GetNoNameType().Replace("(NN)", "") + " σε " + "ΕΝΟΙΚΙΑΖΟΜΕΝΑ ΔΩΜΑΤΙΑ");
+                }
+                if (res.ReservationType == ReservationTypeEnum.Transfer && !hotels.Any(x => x == "TRANSFER"))
+                {
+                    hotels.Add("TRANSFER");
+                }
+                if (res.ReservationType == ReservationTypeEnum.OneDay && !hotels.Any(x => x == "ONEDAY"))
+                {
+                    hotels.Add("ONEDAY");
+                }
+            }
+            if (hotels.Count == 1)
+            {
+                if (hotels[0] == "TRANSFER")
+                {
+                    return "ΜΟΝΟ ΜΕΤΑΦΟΡΑ";
+                }
+                else if (hotels[0] == "NO NAME")
+                {
+                    return "ΕΝΟΙΚΙΑΖΟΜΕΝΑ ΔΩΜΑΤΙΑ";
+                }
+                else if (hotels[0] == "ONEDAY")
+                {
+                    return "ΗΜΕΡΗΣΙΑ ΕΚΔΡΟΜΗ";
+                }
+                else
+                {
+                    return "ΜΕ ΔΙΑΜΟΝΗ ΣΕ " + hotels[0];
+                }
+            }
+            else if (hotels.Count > 1)
+            {
+                var t = hotels.GroupBy(r => r);
+
+                var tr = "ΜΕ ΔΙΑΜΟΝΗ " + string.Join(", ", t.Select(r => r.Count() + "x" + r.Key));
+                return tr;
+            }
+            else
+            {
+                return "ERROR";
+            }
+        }
 
         public string ValidateBooking()
         {
@@ -820,6 +880,7 @@ namespace LATravelManager.Model.Wrapper
         {
             CalculateRemainingAmount();
         }
+
         private string GetHotels()
         {
             List<string> hotels = new List<string>();
@@ -1078,24 +1139,25 @@ namespace LATravelManager.Model.Wrapper
 
         private string ValidateFromDatetime()
         {
+            var thisYear = DateTime.Today.Year;
             if (CheckIn < DateTime.Now.AddDays(-1) && !FreeDatesBool)
             {
                 return "Η επιλεγμένη ημερομηνία έναρξης έχει παρέλθει.";
             }
-            if (CheckIn.Date >= new DateTime(2020, 7, 17) && CheckIn.Date <= new DateTime(2020, 8, 25))
+            if (CheckIn.Date >= new DateTime(thisYear, 7, 17) && CheckIn.Date <= new DateTime(thisYear, 8, 25))
             {
                 //high
                 if ((CheckIn.DayOfWeek == DayOfWeek.Tuesday || CheckIn.DayOfWeek == DayOfWeek.Friday || CheckIn.DayOfWeek == DayOfWeek.Saturday) && !FreeDatesBool)
                 {
-                    return "Προσοχή: Επιτρεπόμενες μέρες αναχώρησης μόνο Πέμπτη, Παρασκευή και Κυριακή!";
+                    return "Προσοχή: Επιτρεπόμενες μέρες αναχώρησης μόνο Τετάρτη, Πέμπτη, Κυριακή και Δευτέρα!";
                 }
             }
-            else if (CheckIn.Date >= new DateTime(2020, 6, 1) && CheckIn.Date <= new DateTime(2020, 9, 19))
+            else if (CheckIn.Date >= new DateTime(thisYear, 6, 1) && CheckIn.Date <= new DateTime(thisYear, 9, 19))
             {
                 //low
                 if ((CheckIn.DayOfWeek == DayOfWeek.Monday || CheckIn.DayOfWeek == DayOfWeek.Tuesday || CheckIn.DayOfWeek == DayOfWeek.Wednesday || CheckIn.DayOfWeek == DayOfWeek.Saturday) && !FreeDatesBool)
                 {
-                    return "Προσοχή: Επιτρεπόμενες μέρες αναχώρησης μόνο Τετάρτη, Πέμπτη, Κυριακή και Δευτέρα!";
+                    return "Προσοχή: Επιτρεπόμενες μέρες αναχώρησης μόνο Πέμπτη, Παρασκευή και Κυριακή!";
                 }
             }
             return null;
@@ -1103,6 +1165,8 @@ namespace LATravelManager.Model.Wrapper
 
         private string ValidateToDatetime()
         {
+            var thisYear = DateTime.Today.Year;
+
             if (CheckOut < DateTime.Now)
             {
                 return "Η επιλεγμένη ημερομηνία επιστροφής έχει παρέλθει!";
@@ -1115,20 +1179,20 @@ namespace LATravelManager.Model.Wrapper
             //{
             //    return "Η ημερομηνία επιστροφής δεν΄μπορεί να είναι η ίδια με την ημερομηνία έναρξης.";
             //}
-            if (CheckOut.Date >= new DateTime(2020, 7, 17) && CheckOut.Date <= new DateTime(2020, 8, 25))
+            if (CheckOut.Date >= new DateTime(thisYear, 7, 17) && CheckOut.Date <= new DateTime(thisYear, 8, 25))
             {
                 //high
                 if ((CheckOut.DayOfWeek == DayOfWeek.Tuesday || CheckOut.DayOfWeek == DayOfWeek.Friday || CheckOut.DayOfWeek == DayOfWeek.Saturday) && !FreeDatesBool)
                 {
-                    return "Προσοχή: Επιτρεπόμενες μέρες επιστροφής μόνο Πέμπτη, Παρασκευή και Κυριακή!";
+                    return "Προσοχή: Επιτρεπόμενες μέρες επιστροφής μόνο Τετάρτη, Πέμπτη, Κυριακή και Δευτέρα!";
                 }
             }
-            else if (CheckOut.Date >= new DateTime(2020, 6, 1) && CheckOut.Date <= new DateTime(2020, 9, 19))
+            else if (CheckOut.Date >= new DateTime(thisYear, 6, 1) && CheckOut.Date <= new DateTime(thisYear, 9, 19))
             {
                 //low
                 if ((CheckOut.DayOfWeek == DayOfWeek.Monday || CheckOut.DayOfWeek == DayOfWeek.Tuesday || CheckOut.DayOfWeek == DayOfWeek.Wednesday || CheckOut.DayOfWeek == DayOfWeek.Saturday) && !FreeDatesBool)
                 {
-                    return "Προσοχή: Επιτρεπόμενες μέρες επιστροφής μόνο Τετάρτη, Πέμπτη, Κυριακή και Δευτέρα!";
+                    return "Προσοχή: Επιτρεπόμενες μέρες επιστροφής μόνο Πέμπτη, Παρασκευή και Κυριακή!";
                 }
             }
             return null;
@@ -1149,6 +1213,5 @@ namespace LATravelManager.Model.Wrapper
         }
 
         #endregion Methods
-
     }
 }

@@ -161,7 +161,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
             DoubleClickRoomTypeCommand = new RelayCommand(ExpandRooms, CanExpand);
             SearchForCustomerCommand = new RelayCommand(SearchForCustomer);
-            OpenInvoicesWindowCommand = new RelayCommand(async () => await OpenInvoicesWindow(), canOpenInvoiceWindow);
+            OpenInvoicesWindowCommand = new RelayCommand<object>(async (obj) => await OpenInvoicesWindow(obj), canOpenInvoiceWindow);
 
             ManagePartnersCommand = new RelayCommand(ManagePartners);
 
@@ -181,7 +181,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             NewExtraService = new ExtraService();
         }
 
-        private bool canOpenInvoiceWindow()
+        private bool canOpenInvoiceWindow(object obj)
         {
             return BookingWr != null && BookingWr.Id > 0;
         }
@@ -380,10 +380,6 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 RaisePropertyChanged();
             }
         }
-
-
-
-
 
         public RelayCommand<Reciept> OpenFileCommand { get; set; }
         public RelayCommand ReplaceFileCommand { get; set; }
@@ -731,7 +727,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
-        public RelayCommand OpenInvoicesWindowCommand { get; set; }
+        public RelayCommand<object> OpenInvoicesWindowCommand { get; set; }
 
         public RelayCommand OverBookHotelCommand { get; set; }
 
@@ -1084,7 +1080,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
             }
         }
 
-        private bool AreContexesFree => (BasicDataManager != null && BasicDataManager.IsContextAvailable) && (GenericRepository != null && GenericRepository.IsContextAvailable);
+        private bool AreContexesFree => BasicDataManager != null && BasicDataManager.IsContextAvailable && GenericRepository != null && GenericRepository.IsContextAvailable;
 
         #endregion Properties
 
@@ -1150,9 +1146,9 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
                 RoomsManager = new RoomsManager();
                 if (BookingWr.ExcursionDate != null && BookingWr.ExcursionDate.NightStart)
-                    AvailableHotels = new ObservableCollection<HotelWrapper>((await RoomsManager.GetAllAvailableRooms(BookingWr.CheckIn.AddDays(1), BookingWr.CheckOut, SelectedExcursion, false, unSavedBooking: BookingWr.Model)));
+                    AvailableHotels = new ObservableCollection<HotelWrapper>(await RoomsManager.GetAllAvailableRooms(BookingWr.CheckIn.AddDays(1), BookingWr.CheckOut, SelectedExcursion, false, unSavedBooking: BookingWr.Model));
                 else
-                    AvailableHotels = new ObservableCollection<HotelWrapper>((await RoomsManager.GetAllAvailableRooms(BookingWr.CheckIn, BookingWr.CheckOut, SelectedExcursion, false, unSavedBooking: BookingWr.Model)));
+                    AvailableHotels = new ObservableCollection<HotelWrapper>(await RoomsManager.GetAllAvailableRooms(BookingWr.CheckIn, BookingWr.CheckOut, SelectedExcursion, false, unSavedBooking: BookingWr.Model));
 
                 FilteredRoomList = new ObservableCollection<RoomWrapper>();
                 List<HotelWithRooms> tmplist = new List<HotelWithRooms>();
@@ -1182,16 +1178,16 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                                 break;
                             }
                             addThis &= (day.RoomState == RoomStateEnum.Available
-                                || day.RoomState == RoomStateEnum.MovableNoName) &&
+                                || day.RoomState == RoomStateEnum.MovableNoName
+                                || day.RoomState == RoomStateEnum.Allotment) &&
                                 ((BookingWr.ExcursionDate != null && BookingWr.ExcursionDate.NightStart && (BookingWr.CheckOut - BookingWr.CheckIn).TotalDays - 1 >= day.MinimumStay) ||
                                 ((BookingWr.ExcursionDate == null || !BookingWr.ExcursionDate.NightStart) && (BookingWr.CheckOut - BookingWr.CheckIn).TotalDays >= day.MinimumStay));
-                            //|| pi.RoomState == RoomStateEnum.Allotment;
                             isfree &= day.RoomState == RoomStateEnum.Available;
 
-                            //if (room.PlanDailyInfo[i].IsAllotment)
-                            //{
-                            //    allotmentDays++;
-                            //}
+                            if (day.RoomState == RoomStateEnum.Allotment)
+                            {
+                                allotmentDays++;
+                            }
                         }
                         if (isfree)
                         {
@@ -1246,7 +1242,11 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 {
                     foreach (var room in item.Rooms)
                     {
-                        if (!room.Hotel.NoName || (rooms.Where(r => r.Hotel == room.Hotel && r.RoomType == room.RoomType).Count() < room.RoomType.freeRooms))
+                        if (!string.IsNullOrEmpty(room.LocalNote))
+                        {
+                            rooms.Add(room);
+                        }
+                        else if (!room.Hotel.NoName || (rooms.Where(r => r.Hotel == room.Hotel && r.RoomType == room.RoomType).Count() < room.RoomType.freeRooms))
                         {
                             rooms.Add(room);
                             RoomTypesCount.Add(room.RoomType);
@@ -1863,7 +1863,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 {
                     if (AreBookingDataValid)
                     {
-                        if ((SelectedCustomer != null || All))
+                        if (SelectedCustomer != null || All)
                         {
                             if (AreContexesFree)
                             {
@@ -2149,9 +2149,9 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
         {
         }
 
-        private async Task OpenInvoicesWindow()
+        private async Task OpenInvoicesWindow(object obj)
         {
-            InvoicesManagement_ViewModel vm = new InvoicesManagement_ViewModel(BasicDataManager, booking: BookingWr);
+            InvoicesManagement_ViewModel vm = new InvoicesManagement_ViewModel(BasicDataManager, GenericRepository, booking: BookingWr, parameter: obj);
             await vm.LoadAsync();
             MessengerInstance.Send(new OpenChildWindowCommand(new InvoicesManagementWindow(), vm));
         }
@@ -2253,13 +2253,13 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                 MessengerInstance.Send(new IsBusyChangedMessage(true));
 
                 NewReservationHelper.PutCustomersInRoomAsync(BookingWr, new RoomWrapper(await GenericRepository.GetRoomById(SelectedRoom.Id)), All, OnlyStay, HB);
-                if (All)
+                if (BookingWr.ReservationsInBooking.Sum(r => r.CustomersList.Count) < BookingWr.Customers.Count)
                 {
-                    FilteredRoomList.Clear();
+                    ShowFilteredRoomsCommand.Execute(false);
                 }
                 else
                 {
-                    ShowFilteredRoomsCommand.Execute(false);
+                    FilteredRoomList.Clear();
                 }
                 SaveCommand.RaiseCanExecuteChanged();
             }
@@ -2444,7 +2444,8 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         private void ShowAlernatives()
         {
-            var vm = new Availabilities_ViewModel(AvailableHotels, BookingWr.CheckIn, BookingWr.CheckOut, (SelectedRoomTypeIndex == 0 ? null : RoomTypes[SelectedRoomTypeIndex - 1]), (SelectedHotelIndex == 0 ? null : Hotels[SelectedHotelIndex - 1]));
+            var vm = new Availabilities_ViewModel(AvailableHotels, BookingWr.CheckIn, BookingWr.CheckOut, 
+                SelectedRoomTypeIndex == 0 ? null : RoomTypes[SelectedRoomTypeIndex - 1], SelectedHotelIndex == 0 ? null : Hotels[SelectedHotelIndex - 1]);
             Availabilities_Window window = new Availabilities_Window
             {
                 DataContext = vm
@@ -2596,7 +2597,7 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
                             break;
                     }
                 }
-                if (toReturn.Any(c1 => (c1 < 'A' && c1 > 'Z') && c1 != ' ' && c1 != '_' && c1 != '-'))
+                if (toReturn.Any(c1 => c1 < 'A' && c1 > 'Z' && c1 != ' ' && c1 != '_' && c1 != '-'))
                 {
                 }
             }
@@ -2672,6 +2673,11 @@ namespace LATravelManager.UI.ViewModel.BaseViewModels
 
         private void ValidateRoom(RoomWrapper room)
         {
+            //if (!string.IsNullOrEmpty(room.LocalNote))
+            //{
+            //    room.Rating=0;
+            //    return;
+            //}
             var before = room.PlanDailyInfo.FirstOrDefault(d => d.Date == BookingWr.CheckIn.AddDays(-1));
             var after = room.PlanDailyInfo.FirstOrDefault(d => d.Date == BookingWr.CheckOut);
             if (before == null || before.RoomState != RoomStateEnum.Available)

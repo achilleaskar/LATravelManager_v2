@@ -116,10 +116,10 @@
                     <Label Content="Allotment"
                            Background="DeepSkyBlue"
                            HorizontalContentAlignment="Center" />
-                    <Label Content="NONAME με εναλακτικες"
+                    <Label Content="NONAME με εναλλακτικές"
                            Background="Yellow"
                            HorizontalContentAlignment="Center" />
-                    <Label Content="NONAME χωρίς εναλακτικες"
+                    <Label Content="NONAME χωρίς εναλλακτικές"
                            Background="Orange"
                            HorizontalContentAlignment="Center" />
                     <Label Content="Κλεισμένα"
@@ -399,6 +399,9 @@
                                                                                 <MenuItem Header="Τοποθέτηση"
                                                                                           CommandParameter="{Binding }"
                                                                                           Command="{Binding Source={StaticResource Proxy}, Path=Data.MoveToCommand}" />
+                                                                                <MenuItem Header="Επιβεβ. Ναί/Όχι"
+                                                                                          CommandParameter="{Binding }"
+                                                                                          Command="{Binding Source={StaticResource Proxy}, Path=Data.ToggleConfirmedCommand}" />
                                                                             </ContextMenu>
                                                                         </DataTemplate.Resources>
                                                                         <Button Background="{Binding CellColor, UpdateSourceTrigger=PropertyChanged}"
@@ -406,6 +409,8 @@
                                                                                 Width="22"
                                                                                 MouseDoubleClick="Button_MouseDoubleClick"
                                                                                 Content="{Binding Text}"
+                                                                                FontWeight="Bold"
+                                                                                Foreground="{Binding Foreground}"
                                                                                 ContextMenu="{StaticResource PlanContextMenu}"
                                                                                 ToolTipService.IsEnabled="{Binding Reservation,Converter={StaticResource ToolTipVis}}">
                                                                             <!--<Button Background="{Binding CellColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"

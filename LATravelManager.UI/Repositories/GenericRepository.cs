@@ -258,7 +258,7 @@ namespace LATravelManager.UI.Repositories
 
         public async Task<IEnumerable<Customer>> GetAllCustomersAsync(DateTime date)
         {
-            return await RunTask(Context.Customers.Where(c => (!c.Reservation.Booking.DifferentDates && c.Reservation.Booking.CheckIn <= date && c.Reservation.Booking.CheckOut >= date) || (c.Reservation.Booking.DifferentDates && c.CheckIn <= date && c.CheckOut >= date) && c.Reservation.Booking.Excursion.Destinations.Any(t => t.Id == 2))
+            return await RunTask(Context.Customers.Where(c => (!c.Reservation.Booking.DifferentDates && c.Reservation.Booking.CheckIn <= date && c.Reservation.Booking.CheckOut >= date) || c.Reservation.Booking.DifferentDates && c.CheckIn <= date && c.CheckOut >= date && c.Reservation.Booking.Excursion.Destinations.Any(t => t.Id == 2))
                 .Include(r => r.Reservation)
                 .Include(r => r.Reservation.Booking)
                 .Include(r => r.Reservation.Hotel)
@@ -341,10 +341,10 @@ namespace LATravelManager.UI.Repositories
             try
             {
                 return await RunTask(Context.Bookings
-                    .Where(o => (o.CheckIn >= DateTime.Today && (user.Level < 3 || o.User.Id == user.Id) &&
+                    .Where(o => o.CheckIn >= DateTime.Today && (user.Level < 3 || o.User.Id == user.Id) &&
                     o.User.BaseLocation == user.BaseLocation &&
                     ((DbFunctions.DiffDays(DateTime.Today, o.CreatedDate) >= 5 && !o.Payments.Any(p => p.Amount > 0)) ||
-                       DbFunctions.DiffDays(o.CheckIn, o.CreatedDate) <= 5)) && o.Disabled == false)
+                       DbFunctions.DiffDays(o.CheckIn, o.CreatedDate) <= 5) && o.Disabled == false)
                            .Include(x => x.ReservationsInBooking.Select(t => t.CustomersList))
                            .Include(x => x.Payments)
                            .Include(x => x.ExtraServices)
@@ -606,7 +606,7 @@ namespace LATravelManager.UI.Repositories
 
         public bool IsAnyInRoom(int roomId)
         {
-            return (Context.Set<Reservation>().Where(re => re.Room.Id == roomId).ToList()).Count > 0;
+            return Context.Set<Reservation>().Where(re => re.Room.Id == roomId).ToList().Count > 0;
         }
 
         public void RemoveById<TEntity>(int id) where TEntity : BaseModel
@@ -919,21 +919,23 @@ namespace LATravelManager.UI.Repositories
             DateTime to = checkIn.AddDays(5);
             if (!strict)
             {
-                return await RunTask(Context.Set<Bus>().Where(b => ((id == 0 || b.Excursion.Id == id) && (((b.TimeGo >= from && b.TimeGo <= to)) || ((b.TimeReturn >= from && b.TimeReturn <= to)))))
-                  .Include(f => f.Excursion)
-                  //.Include(f => f.Customers)
-                  .Include(f => f.Leader)
-                  .Include(f => f.Vehicle)
-                  .ToListAsync);
+                return await RunTask(Context.Set<Bus>().Where(b => (id == 0 || b.Excursion.Id == id) && (b.TimeGo >= from && b.TimeGo <= to || b.TimeReturn >= from && b.TimeReturn <= to))
+                    .Include(f => f.Customers)
+                    .Include(f => f.Customers.Select(c => c.Reservation).Select(c => c.Booking))
+                    .Include(f => f.Customers.Select(c => c.Reservation.Room.Hotel))
+                    .Include(f => f.Leader)
+                    .Include(f => f.Vehicle)
+                    .ToListAsync);
             }
             else
             {
-                return await RunTask(Context.Set<Bus>().Where(b => ((id == 0 || b.Excursion.Id == id) && ((checkIn.Year > 2000 && b.TimeGo == checkIn) || (checkout.Year > 2000 && b.TimeReturn == checkout))))
-                  .Include(f => f.Excursion)
-                  //.Include(f => f.Customers)
-                  .Include(f => f.Leader)
-                  .Include(f => f.Vehicle)
-                  .ToListAsync);
+                return await RunTask(Context.Set<Bus>().Where(b => (id == 0 || b.Excursion.Id == id) && ((checkIn.Year > 2000 && b.TimeGo == checkIn) || (checkout.Year > 2000 && b.TimeReturn == checkout)))
+                    .Include(f => f.Customers)
+                    .Include(f => f.Customers.Select(c => c.Reservation).Select(c => c.Booking))
+                    .Include(f => f.Customers.Select(c => c.Reservation.Room.Hotel))
+                    .Include(f => f.Leader)
+                    .Include(f => f.Vehicle)
+                    .ToListAsync);
             }
         }
 
@@ -1050,7 +1052,7 @@ namespace LATravelManager.UI.Repositories
            (!onlyPartners || c.IsPartners) &&
            (userId == 0 || c.User.Id == userId) &&
            (partnerId == 0 || c.Partner.Id == partnerId) &&
-           (remainingPar == 0 || (byCheckIn && c.Services.Any(s => s.TimeGo >= checkin) && c.Services.Any(s => s.TimeGo <= checkout) || (!byCheckIn && c.CreatedDate >= checkin && c.CreatedDate <= checkout))) &&
+           (remainingPar == 0 || byCheckIn && c.Services.Any(s => s.TimeGo >= checkin) && c.Services.Any(s => s.TimeGo <= checkout) || (!byCheckIn && c.CreatedDate >= checkin && c.CreatedDate <= checkout)) &&
            (completed || c.Services.Any(s => s.TimeReturn >= DateTime.Today)) &&
            (baselocation == 0 || c.User.BaseLocation == baselocation) &&
            ((id > 0 && c.Id == id) || (id == 0 && (common || (c.IsPartners && c.Partner.Name.StartsWith(keyword)) || c.Customers.Any(p => p.Name.StartsWith(keyword) || p.Surename.StartsWith(keyword) || p.Tel.StartsWith(keyword))))))
@@ -1068,9 +1070,9 @@ namespace LATravelManager.UI.Repositories
             {
                 return new List<RecieptBase>();
             }
-            return (await RunTask(Context.Reciepts.Where(b => b.CompanyId == companyId)
+            return await RunTask(Context.Reciepts.Where(b => b.CompanyId == companyId)
                 .ProjectTo<RecieptBase>(mapper.ConfigurationProvider)
-                .ToListAsync));
+                .ToListAsync);
         }
 
         internal async Task<List<Reservation>> GetAllRemainingReservationsFiltered(int excursionId, int userId, int category, int par = 0, DateTime checkin = new DateTime(), DateTime checkout = new DateTime())
@@ -1183,13 +1185,19 @@ namespace LATravelManager.UI.Repositories
                     NoNameRoomType = r.NoNameRoomType,
                     CustomersList = r.CustomersList.Select(cu => new CustomerDTO
                     {
+                        Id = cu.Id,
                         CheckIn = cu.CheckIn,
                         CheckOut = cu.CheckOut,
                         StartingPlace = cu.StartingPlace,
+                        ReturningPlace = cu.ReturningPlace,
                         Name = cu.Name,
                         Surename = cu.Surename,
                         Tel = cu.Tel,
-                        Price = cu.Price
+                        Price = cu.Price,
+                        CustomerHasBusIndex = cu.CustomerHasBusIndex,
+                        CustomerHasPlaneIndex = cu.CustomerHasPlaneIndex,
+                        CustomerHasShipIndex = cu.CustomerHasShipIndex,
+
                     }).ToList()
                 })
                   .ToListAsync, 50);
@@ -1210,7 +1218,9 @@ namespace LATravelManager.UI.Repositories
             var hotels = BasicDataManager.Hotels.Select(h => new Hotel
             {
                 Name = h.Name,
-                Id = h.Id
+                Id = h.Id,
+                Tel = h.Tel,
+                Address = h.Address
             });
             var roomtypes = BasicDataManager.RoomTypes.Select(h => new RoomType
             {
@@ -1226,7 +1236,8 @@ namespace LATravelManager.UI.Repositories
             var partners = BasicDataManager.Partners.Select(h => new Partner
             {
                 Name = h.Name,
-                Id = h.Id
+                Id = h.Id,
+                Person=h.Person
             });
 
             foreach (var bo in b)
@@ -1749,21 +1760,21 @@ namespace LATravelManager.UI.Repositories
                             break;
 
                         case nameof(Customer.Age):
-                            sb.Append($"Ηλικία  του '{c}' από '{((int)original)}' σε '{c.Age}', ");
+                            sb.Append($"Ηλικία  του '{c}' από '{(int)original}' σε '{c.Age}', ");
                             break;
 
                         case nameof(Customer.CheckIn):
                             if (c.Reservation.Booking.DifferentDates)
-                                sb.Append($"CheckIn  του '{c}' από '{((DateTime)original)}' σε '{c.CheckIn}', ");
+                                sb.Append($"CheckIn  του '{c}' από '{(DateTime)original}' σε '{c.CheckIn}', ");
                             break;
 
                         case nameof(Customer.CheckOut):
                             if (c.Reservation.Booking.DifferentDates)
-                                sb.Append($"CheckIn  του '{c}' από '{((DateTime)original)}' σε '{c.CheckOut}', ");
+                                sb.Append($"CheckIn  του '{c}' από '{(DateTime)original}' σε '{c.CheckOut}', ");
                             break;
 
                         case nameof(Customer.CustomerHasBusIndex):
-                            sb.Append($"Λεωφορείο  του '{c}' από '{((int)original)}' σε '{c.CustomerHasBusIndex}', ");
+                            sb.Append($"Λεωφορείο  του '{c}' από '{(int)original}' σε '{c.CustomerHasBusIndex}', ");
                             break;
 
                         case nameof(Customer.Board):
@@ -1771,15 +1782,15 @@ namespace LATravelManager.UI.Repositories
                             break;
 
                         case nameof(Customer.CustomerHasPlaneIndex):
-                            sb.Append($"Αεροπλάνο  του '{c}' από '{((int)original)}' σε '{c.CustomerHasPlaneIndex}', ");
+                            sb.Append($"Αεροπλάνο  του '{c}' από '{(int)original}' σε '{c.CustomerHasPlaneIndex}', ");
                             break;
 
                         case nameof(Customer.CustomerHasShipIndex):
-                            sb.Append($"Πλοίο  του '{c}' από '{((int)original)}' σε '{c.CustomerHasShipIndex}', ");
+                            sb.Append($"Πλοίο  του '{c}' από '{(int)original}' σε '{c.CustomerHasShipIndex}', ");
                             break;
 
                         case nameof(Customer.DeserveDiscount):
-                            sb.Append($"Πάσο  του '{c}' από '{((int)original)}' σε '{c.DeserveDiscount}', ");
+                            sb.Append($"Πάσο  του '{c}' από '{(int)original}' σε '{c.DeserveDiscount}', ");
                             break;
 
                         case nameof(Customer.DOB):
@@ -1788,11 +1799,11 @@ namespace LATravelManager.UI.Repositories
                             break;
 
                         case nameof(Customer.Email):
-                            sb.Append($"Email  του '{c}' από '{((string)original)}' σε '{c.Email}', ");
+                            sb.Append($"Email  του '{c}' από '{(string)original}' σε '{c.Email}', ");
                             break;
 
                         case nameof(Customer.PassportNum):
-                            sb.Append($"Αρ.Ταυτότητας  του '{c}' από '{((string)original)}' σε '{c.PassportNum}', ");
+                            sb.Append($"Αρ.Ταυτότητας  του '{c}' από '{(string)original}' σε '{c.PassportNum}', ");
                             break;
 
                         case nameof(Customer.Price):
@@ -1801,15 +1812,15 @@ namespace LATravelManager.UI.Repositories
                             break;
 
                         case nameof(Customer.ReturningPlace):
-                            sb.Append($"Σημείο επιστροφής του '{c}' από '{((string)original)}' σε '{c.ReturningPlace}', ");
+                            sb.Append($"Σημείο επιστροφής του '{c}' από '{(string)original}' σε '{c.ReturningPlace}', ");
                             break;
 
                         case nameof(Customer.StartingPlace):
-                            sb.Append($"Σημείο αναχώρησης του '{c}' από '{((string)original)}' σε '{c.StartingPlace}', ");
+                            sb.Append($"Σημείο αναχώρησης του '{c}' από '{(string)original}' σε '{c.StartingPlace}', ");
                             break;
 
                         case nameof(Customer.Tel):
-                            sb.Append($"Τηλέφωνο του '{c}' από '{((string)original)}' σε '{(c.Tel ?? "")}', ");
+                            sb.Append($"Τηλέφωνο του '{c}' από '{(string)original}' σε '{c.Tel ?? ""}', ");
                             break;
                     }
                 }

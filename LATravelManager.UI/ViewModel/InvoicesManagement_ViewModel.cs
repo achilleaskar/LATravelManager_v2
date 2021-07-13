@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.IO;
 using System.IO.Packaging;
@@ -30,20 +31,44 @@ namespace LATravelManager.UI.ViewModel
     {
         #region Constructors
 
-        public InvoicesManagement_ViewModel(BasicDataManager basicDataManager, BookingWrapper booking = null,
+        public InvoicesManagement_ViewModel(BasicDataManager basicDataManager, GenericRepository genericRepository, BookingWrapper booking = null,
             Personal_BookingWrapper personal = null, ThirdParty_Booking_Wrapper thirdParty = null, object parameter = null)
         {
             this.basicDataManager = basicDataManager;
-            this.repository = basicDataManager.Context;
+            this.genericRepository = genericRepository;
+            repository = basicDataManager.Context;
             this.booking = booking;
             this.personal = personal;
             this.thirdParty = thirdParty;
             this.parameter = parameter;
-            GetAllCompaniesCommand = new RelayCommand(async () => await GetAllCompaniesAsync(), true);
             CreateRecieptPreviewCommand = new RelayCommand(CreateRecieptPreview, CanCreatePreview);
             SaveChangesCommand = new RelayCommand(async () => { await repository.SaveAsync(); }, CanSaveChanges);
 
-            SetPartner();
+            if (parameter != null && parameter is Payment p)
+            {
+                ServiceAmmount = p.Amount;
+                DiscountAmount = 0;
+            }
+            else if (parameter != null && parameter is Service s)
+            {
+                ServiceAmmount = s.NetPrice;
+                DiscountAmount = 0;
+            }
+            else if (booking != null)
+            {
+                ServiceAmmount = booking.FullPrice;
+                DiscountAmount = booking.IsPartners ? booking.FullPrice - booking.NetPrice : 0;
+            }
+            else if (personal != null)
+            {
+                ServiceAmmount = personal.FullPrice;
+                DiscountAmount = 0;
+            }
+            else if (thirdParty != null)
+            {
+                ServiceAmmount = thirdParty.FullPrice;
+                DiscountAmount = 0;
+            }
         }
 
         #endregion Constructors
@@ -52,6 +77,7 @@ namespace LATravelManager.UI.ViewModel
 
         private readonly BasicDataManager basicDataManager;
         private readonly BookingWrapper booking;
+        private readonly GenericRepository genericRepository;
         private readonly object parameter;
         private readonly Personal_BookingWrapper personal;
         private readonly GenericRepository repository;
@@ -61,6 +87,7 @@ namespace LATravelManager.UI.ViewModel
         private ObservableCollection<CompanyActivity> _CompanyActivities;
         private string _CompanyError;
         private ObservableCollection<CustomerWrapper> _Customers;
+        private decimal _DiscountAmount;
         private bool _IsNotProforma;
 
         private bool _IsProforma;
@@ -193,12 +220,25 @@ namespace LATravelManager.UI.ViewModel
             }
         }
 
-        //    set
-        //    {
-        //        if (_Countries == value)
-        //        {
-        //            return;
-        //        }
+        public decimal DiscountAmount
+        {
+            get
+            {
+                return _DiscountAmount;
+            }
+
+            set
+            {
+                if (_DiscountAmount == value)
+                {
+                    return;
+                }
+
+                _DiscountAmount = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public RelayCommand GetAllCompaniesCommand { get; set; }
 
         public bool IsNotProforma
@@ -219,16 +259,7 @@ namespace LATravelManager.UI.ViewModel
                 RaisePropertyChanged();
             }
         }
-        //        _Cities = value;
-        //        RaisePropertyChanged();
-        //    }
-        //}
-        //public ObservableCollection<Country> Countries
-        //{
-        //    get
-        //    {
-        //        return _Countries;
-        //    }
+
         public bool IsPartners => Partner != null;
 
         public bool IsProforma
@@ -249,20 +280,9 @@ namespace LATravelManager.UI.ViewModel
                 RaisePropertyChanged();
             }
         }
-        //    set
-        //    {
-        //        if (_Cities == value)
-        //        {
-        //            return;
-        //        }
+
         public DateTime MaxDate { get; set; } = DateTime.Today;
 
-        //public ObservableCollection<City> Cities
-        //{
-        //    get
-        //    {
-        //        return _Cities;
-        //    }
         public Partner Partner
         {
             get
@@ -488,10 +508,6 @@ namespace LATravelManager.UI.ViewModel
             }
         }
 
-        //internal void UpdateCities()
-        //{
-        //    CitiesCV.Refresh();
-        //}
         public decimal ServiceAmmount
         {
             get
@@ -510,8 +526,6 @@ namespace LATravelManager.UI.ViewModel
                 RaisePropertyChanged();
             }
         }
-
-        public bool ServiceAmmountVisible => parameter is Service;
 
         public bool ShowCustomers => !IsPartners || (Partner != null && Partner.Person);
 
@@ -552,8 +566,49 @@ namespace LATravelManager.UI.ViewModel
             return SelectedCompany != null && SelectedCompany.IsValidToPrint() && basicDataManager.HasChanges();
         }
 
+        public string GetDestinationAndDate()
+        {
+            if (booking?.Excursion?.Destinations.Any() == true)
+            {
+                return booking.Excursion.Destinations[0].Name + "_" + booking.CheckIn.ToString("dd.MM");
+            }
+            else if (personal != null)
+            {
+                return personal.GetDestinations() + "_" + personal.Start.ToString("dd.MM");
+            }
+            else if (thirdParty != null)
+            {
+                return thirdParty.City + "_" + thirdParty.CheckIn.ToString("dd.MM");
+            }
+            return "error";
+        }
+
+        public string GetFirstSurName()
+        {
+            if (SelectedCustomer != null)
+            {
+                return SelectedCustomer.Surename;
+            }
+            else if (booking?.Customers?.Any() == true)
+            {
+                return booking.Customers[0].Surename;
+            }
+            else if (personal?.Customers?.Any() == true)
+            {
+                return personal.Customers.First().Surename;
+            }
+            else if (thirdParty?.Customers?.Any() == true)
+            {
+                return thirdParty.Customers.First().Surename;
+            }
+
+            return "error";
+        }
+
         public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null, MyViewModelBase parent = null)
         {
+            await SetPartner();
+
             RecieptDate = DateTime.Today;
             if (Partner != null && Partner.CompanyInfoId.HasValue && Partner.CompanyInfoId > 0 && !Partner.Person)
             {
@@ -574,6 +629,10 @@ namespace LATravelManager.UI.ViewModel
                 {
                     Customers = personal.CustomerWrappers;
                 }
+                else if (thirdParty != null)
+                {
+                    Customers = thirdParty.CustomerWrappers;
+                }
                 else
                 {
                     throw new NotImplementedException("Μη ολοκληρωμένη λειτουργία");
@@ -593,10 +652,13 @@ namespace LATravelManager.UI.ViewModel
             SelectProperRecieptType();
         }
 
-        public async Task PrintInvoice(Border printArea)
+        public async Task PrintInvoice(Border printArea, ScrollViewer scrollviewer)
         {
             Mouse.OverrideCursor = Cursors.Wait;
-            string filename = @"\" + GetFileName(Reciept);
+            scrollviewer.ScrollToHome();
+            ChangesAfterPreviewCreated = true;
+            RaisePropertyChanged(nameof(PrintEnabled));
+            string filename = @"\" + GetFileName();
             Reciept.RecieptDescription = GetRecieptDescription(Reciept);
             string subFolder = "\\" + GetSubFolder(Reciept);
             string tmpPath = GetPath(filename, "\\Invoices\\tmp", ".pdf", hidden: true);
@@ -619,7 +681,14 @@ namespace LATravelManager.UI.ViewModel
                 {
                     throw new NullReferenceException("Σφάλμα κατα την εκτύπωση του τιμολογίου. Δοκιμάστε ξανα.");
                 }
-                Reciept.Company = null;
+                if (IsPartners && Reciept.Company != null)
+                {
+                    Reciept.Company = await repository.GetByIdAsync<Company>(Reciept.Company.Id);
+                }
+                else
+                {
+                    Reciept.Company = null;//await repository.GetByIdAsync<Company>(Reciept.Company.Id);
+                }
                 MemoryStream lMemoryStream = new MemoryStream();
                 Package package = Package.Open(lMemoryStream, FileMode.Create);
                 XpsDocument doc = new XpsDocument(package);
@@ -644,14 +713,39 @@ namespace LATravelManager.UI.ViewModel
                 }
                 Reciept.Date = DateTime.Now;
                 repository.Add(Reciept);
-                //if (booking != null)
-                //{
-                //    booking.Reciept = true;
-                //}
-                //else if (personal != null)
-                //{
-                //    personal.Reciept = true;
-                //}
+
+                if (booking != null && Reciept.RecieptType == RecieptTypeEnum.Proforma)
+                {
+                    var proformas = booking.Reciepts?.Where(r => r.RecieptType == RecieptTypeEnum.Proforma && r.BookingId == booking.Id).ToList();  // await repository.Context.Reciepts.Where(r => r.BookingId == booking.Id).ToListAsync();
+                    while (proformas?.Any() == true)
+                    {
+                        //genericRepository.Context.Entry(proformas.First()).State = EntityState.Detached;
+                        genericRepository.Delete(proformas.First());
+                        proformas.Remove(proformas.First());
+                    }
+                }
+                else if (personal != null && Reciept.RecieptType == RecieptTypeEnum.Proforma)
+                {
+                    var proformas = personal.Reciepts?.Where(r => r.RecieptType == RecieptTypeEnum.Proforma && r.Personal_BookingId == personal.Id && r.Id > 0).ToList();
+                    // var proformas = await repository.Context.Reciepts.Where(r => r.Personal_BookingId == personal.Id).ToListAsync();
+                    while (proformas?.Any() == true)
+                    {
+                        //genericRepository.Context.Entry(proformas.First()).State = EntityState.Detached;
+                        genericRepository.Delete(proformas.First());
+                        proformas.Remove(proformas.First());
+                    }
+                }
+                else if (thirdParty != null && Reciept.RecieptType == RecieptTypeEnum.Proforma)
+                {
+                    var proformas = thirdParty.Reciepts?.Where(r => r.RecieptType == RecieptTypeEnum.Proforma && r.ThirdParty_BookingId == thirdParty.Id && r.Id > 0).ToList();
+                    while (proformas?.Any() == true)
+                    {
+                        //genericRepository.Context.Entry(proformas.First()).State = EntityState.Detached;
+                        genericRepository.Delete(proformas.First());
+                        proformas.Remove(proformas.First());
+                    }
+                }
+
                 await repository.SaveAsync();
                 transaction.Commit();
 
@@ -677,6 +771,21 @@ namespace LATravelManager.UI.ViewModel
             }
             finally
             {
+                await genericRepository.SaveAsync();
+
+                if (booking != null)
+                {
+                    booking.Reciepts = new ObservableCollection<Reciept>(await genericRepository.Context.Reciepts.Where(r => r.BookingId == booking.Id).ToListAsync());
+                }
+                else if (personal != null)
+                {
+                    personal.Reciepts = new ObservableCollection<Reciept>(await genericRepository.Context.Reciepts.Where(r => r.Personal_BookingId == personal.Id).ToListAsync());
+                }
+                else if (thirdParty != null)
+                {
+                    thirdParty.Reciepts = new ObservableCollection<Reciept>(await genericRepository.Context.Reciepts.Where(r => r.ThirdParty_BookingId == thirdParty.Id).ToListAsync());
+                }
+
                 Mouse.OverrideCursor = Cursors.Arrow;
             }
         }
@@ -739,26 +848,27 @@ namespace LATravelManager.UI.ViewModel
             Reciept = new Reciept { Company = SelectedCompany, RecieptType = RecieptType.Value, Series = SelectedSerie, Date = RecieptDate };
             if (booking != null)
             {
-                Reciept = new Reciept { Company = SelectedCompany, RecieptType = RecieptType.Value, Series = SelectedSerie, Date = RecieptDate, BookingId = booking.Model.Id };
+                Reciept = new Reciept
+                {
+                    Company = SelectedCompany,
+                    RecieptType = RecieptType.Value,
+                    Series = SelectedSerie,
+                    Date = RecieptDate,
+                    BookingId = booking.Model.Id
+                };
 
                 RecieptItem item = new RecieptItem
                 {
-                    Amount = booking.FullPrice,
+                    Amount = ServiceAmmount,
                     Dates = booking.DatesFull,
-                    Discount = booking.IsPartners ? booking.FullPrice - booking.NetPrice : 0,
-                    FinalAmount = booking.IsPartners ? booking.NetPrice : booking.FullPrice,
+                    Discount = DiscountAmount,
+                    FinalAmount = ServiceAmmount - DiscountAmount,
                     Description = booking.GetPacketDescriptionForReciept().TrimEnd('.'),
                     Names = booking.Names,
                     Pax = booking.Customers.Count,
                     ReservationId = booking.Id
                 };
 
-                if (parameter != null && parameter is Payment p)
-                {
-                    item.Amount = p.Amount;
-                    item.Discount = 0;
-                    item.FinalAmount = item.Amount - item.Discount;
-                }
                 Reciept.RecieptItems.Add(item);
 
                 foreach (var Ritem in Reciept.RecieptItems)
@@ -771,7 +881,14 @@ namespace LATravelManager.UI.ViewModel
             else if (personal != null)
             {
                 var reservation = new ReservationWrapper { Id = personal.Id, PersonalModel = personal, CustomersList = personal.Customers.ToList(), CreatedDate = personal.CreatedDate };
-                Reciept = new Reciept { Company = SelectedCompany, RecieptType = RecieptType.Value, Series = SelectedSerie, Date = RecieptDate, Personal_BookingId = personal.Model.Id };
+                Reciept = new Reciept
+                {
+                    Company = SelectedCompany,
+                    RecieptType = RecieptType.Value,
+                    Series = SelectedSerie,
+                    Date = RecieptDate,
+                    Personal_BookingId = personal.Model.Id
+                };
 
                 RecieptItem item = null;
 
@@ -781,14 +898,14 @@ namespace LATravelManager.UI.ViewModel
                     {
                         item = new RecieptItem
                         {
-                            Amount = p.Amount,
+                            Amount = ServiceAmmount,
                             Dates = reservation.DatesWithYear,
                             Description = personal.GetPacketDescription().TrimEnd('.'),
                             Names = reservation.Names,
                             Pax = personal.CustomerWrappers.Count,
                             ReservationId = personal.Id,
-                            Discount = 0,
-                            FinalAmount = p.Amount
+                            Discount = DiscountAmount,
+                            FinalAmount = ServiceAmmount - DiscountAmount
                         };
                     }
                     else if (parameter is Service s)
@@ -801,8 +918,8 @@ namespace LATravelManager.UI.ViewModel
                             Names = reservation.Names,
                             Pax = personal.CustomerWrappers.Count,
                             ReservationId = s.Id,
-                            Discount = 0,
-                            FinalAmount = ServiceAmmount
+                            Discount = DiscountAmount,
+                            FinalAmount = ServiceAmmount - DiscountAmount
                         };
                     }
                 }
@@ -810,14 +927,14 @@ namespace LATravelManager.UI.ViewModel
                 {
                     item = new RecieptItem
                     {
-                        Amount = personal.FullPrice,
+                        Amount = ServiceAmmount,
                         Dates = reservation.DatesWithYear,
                         Description = personal.GetPacketDescription().TrimEnd('.'),
                         Names = reservation.Names,
                         Pax = personal.CustomerWrappers.Count,
                         ReservationId = personal.Id,
-                        Discount = 0,
-                        FinalAmount = personal.FullPrice
+                        Discount = DiscountAmount,
+                        FinalAmount = ServiceAmmount - DiscountAmount
                     };
                 }
                 Reciept.RecieptItems.Add(item);
@@ -831,47 +948,100 @@ namespace LATravelManager.UI.ViewModel
             }
             else if (thirdParty != null)
             {
-                throw new NotImplementedException("Μη ολοκληρωμένη λειτουργία");
+                Reciept = new Reciept
+                {
+                    Company = SelectedCompany,
+                    RecieptType = RecieptType.Value,
+                    Series = SelectedSerie,
+                    Date = RecieptDate,
+                    ThirdParty_BookingId = thirdParty.Model.Id
+                };
+
+                RecieptItem item = new RecieptItem
+                {
+                    Amount = ServiceAmmount,
+                    Dates = thirdParty.DatesFull,
+                    Discount = DiscountAmount,//thirdParty.IsPartners ? thirdParty.FullPrice - thirdParty.NetPrice : 0,
+                    FinalAmount = ServiceAmmount - DiscountAmount, //thirdParty.IsPartners ? booking.NetPrice : booking.FullPrice,
+                    Description = thirdParty.Description,
+                    Names = thirdParty.Names,
+                    Pax = thirdParty.Customers.Count,
+                    ReservationId = thirdParty.Id
+                };
+
+                if (parameter != null && parameter is Payment p)
+                {
+                    item.Amount = ServiceAmmount;
+                    item.Discount = DiscountAmount;
+                    item.FinalAmount = ServiceAmmount - DiscountAmount;
+                }
+                Reciept.RecieptItems.Add(item);
+
+                foreach (var Ritem in Reciept.RecieptItems)
+                {
+                    Reciept.Total += Ritem.Amount;
+                    Reciept.Discount += Ritem.Discount;
+                }
+                Reciept.FinalAmount = Reciept.Total - Reciept.Discount;
             }
 
-            if (RecieptType==RecieptTypeEnum.CreditInvoice)
+            if (RecieptType == RecieptTypeEnum.CreditInvoice)
             {
                 foreach (var item in Reciept.RecieptItems)
                 {
-                    item.FinalAmount*=-1;
+                    item.FinalAmount *= -1;
                 }
 
-                Reciept.FinalAmount*=-1;
+                Reciept.FinalAmount *= -1;
             }
 
             ChangesAfterPreviewCreated = false;
             RaisePropertyChanged(nameof(PrintEnabled));
         }
 
-        private async Task GetAllCompaniesAsync()
+        private string GetEster(Reciept reciept)
         {
-            Mouse.OverrideCursor = Cursors.Wait;
-            //Companies = new ObservableCollection<Company>((await repository.GetAllAsync<Company>(c => !c.Disabled)).OrderBy(c => c.CompanyName));
-            Mouse.OverrideCursor = Cursors.Arrow;
+            string mainFolder = "";
+            switch ((reciept.Date.Month - 1) / 3)
+            {
+                case 0:
+                    mainFolder = "Α_Ιαν-Μαρτ";
+                    break;
+
+                case 1:
+                    mainFolder = "Β_Απρ-Ιούν";
+                    break;
+
+                case 2:
+                    mainFolder = "Γ_Ιουλ-Σεπτ";
+                    break;
+
+                case 3:
+                    mainFolder = "Δ_Οκτ-Δεκ";
+                    break;
+
+                default:
+                    mainFolder = "error";
+                    break;
+            }
+
+            return mainFolder + " " + reciept.Date.ToString("yy") + "\\";
         }
 
-        private string GetFileName(Reciept reciept)
+        private string GetFileName()
         {
             var sb = new StringBuilder();
-            if (reciept.Company.CompanyName.Length > 20)
-                sb.Append(reciept.Company.CompanyName.Substring(0, 20));
-            else
-                sb.Append(reciept.Company.CompanyName);
-            sb.Append(reciept.Dates);
+            sb.Append(GetFirstSurName() + "_");
+            if (IsPartners && Partner != null)
+                sb.Append(Partner.Name + "_");
+            sb.Append(GetDestinationAndDate());
 
             return ReplaceForbidenChars(sb.ToString());
         }
 
         private string GetRecieptDescription(Reciept reciept)
         {
-            if (reciept.RecieptItems?.Count > 0)
-                return reciept.RecieptItems[0].Description;
-            return "";
+            return reciept.RecieptItems?.Count > 0 ? reciept.RecieptItems[0].Description : "";
         }
 
         private string GetSubFolder(Reciept reciept)
@@ -879,25 +1049,29 @@ namespace LATravelManager.UI.ViewModel
             switch (reciept.RecieptType)
             {
                 case RecieptTypeEnum.ServiceReciept:
-                    return "ΑΠΥ";
+                    return GetEster(reciept) + "ΑΠΥ";
 
                 case RecieptTypeEnum.ServiceInvoice:
-                    return "ΤΠΥ";
+                    return GetEster(reciept) + "ΤΠΥ";
 
                 case RecieptTypeEnum.AirTicketsReciept:
-                    return "ΑΠΕ";
+                    return GetEster(reciept) + "ΑΠΕ";
 
                 case RecieptTypeEnum.FerryTicketsReciept:
-                    return "ΑΠΑ";
+                    return GetEster(reciept) + "ΑΠΑ";
 
                 case RecieptTypeEnum.CancelationInvoice:
-                    return "Ακυρωμένα";
+                    return GetEster(reciept) + "Ακυρωμένα";
 
                 case RecieptTypeEnum.CreditInvoice:
-                    return "Πιστωτικά";
-            }
+                    return GetEster(reciept) + "Πιστωτικά";
 
-            return "Error";
+                case RecieptTypeEnum.Proforma:
+                    return "Προφόρμες";
+
+                default:
+                    return "Error";
+            }
         }
 
         //private bool CitiesFilter(object obj)
@@ -916,28 +1090,28 @@ namespace LATravelManager.UI.ViewModel
                 RecieptType = RecieptTypeEnum.AirTicketsReciept;
             }
         }
+
         private bool SeriesFilter(object obj)
         {
             return RecieptType != null && obj is RecieptSeries s && s.RecieptType == RecieptType;
         }
 
-        private void SetPartner()
+        private async Task SetPartner()
         {
             if (booking != null && booking.IsPartners && booking.Partner != null)
             {
-                Partner = booking.Partner;
+                Partner = await repository.GetByIdAsync<Partner>(booking.Partner.Id);
             }
             else if (personal != null && personal.IsPartners && personal.Partner != null)
             {
-                Partner = personal.Partner;
+                Partner = await repository.GetByIdAsync<Partner>(personal.Id);
             }
             else if (thirdParty != null && thirdParty.IsPartners && thirdParty.BuyerPartner != null)
             {
-                Partner = thirdParty.BuyerPartner;
+                Partner = await repository.GetByIdAsync<Partner>(thirdParty.Partner.Id);
             }
         }
 
         #endregion Methods
-
     }
 }

@@ -11,7 +11,7 @@ namespace LATravelManager.UI.Converters
         {
             var item = value as CollectionViewGroup;
             var freeRooms = (item.Name as RoomType).freeRooms;
-            return (freeRooms > 0);
+            return freeRooms > 0;
         }
 
         public object ConvertBack(object value, Type targetTypes, object parameter, CultureInfo culture) => throw new NotImplementedException();

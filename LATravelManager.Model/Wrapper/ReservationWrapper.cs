@@ -98,6 +98,12 @@ namespace LATravelManager.Model.Wrapper
             set { SetValue(value); }
         }
 
+        public bool Confirmed
+        {
+            get { return GetValue<bool>(); }
+            set { SetValue(value); }
+        }
+
         public BookingWrapper BookingWrapper
         {
             get
@@ -722,9 +728,8 @@ namespace LATravelManager.Model.Wrapper
 
         public void CalculateAmounts()
         {
-            if (Booking?.Id==1258)
+            if (Booking?.Id == 1258)
             {
-                
             }
             if (ApiData != null)
             {
@@ -1032,7 +1037,7 @@ namespace LATravelManager.Model.Wrapper
                 switch (ReservationType)
                 {
                     case ReservationTypeEnum.Normal:
-                        return Room != null ? Room.Hotel.Name : "";
+                        return Room?.Hotel != null ? Room.Hotel.Name : "";
 
                     case ReservationTypeEnum.Noname:
                         return "NO NAME";

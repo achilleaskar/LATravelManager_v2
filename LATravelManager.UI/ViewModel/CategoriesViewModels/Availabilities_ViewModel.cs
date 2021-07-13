@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
 using GalaSoft.MvvmLight;
 using LATravelManager.Model;
 using LATravelManager.Model.Hotels;
 using LATravelManager.Model.LocalModels;
+using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.Wrapper;
 
 namespace LATravelManager.UI.ViewModel.CategoriesViewModels
@@ -118,8 +120,8 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
                         break;
                     }
                     tmpCheckOut = tmpCheckin.AddDays(daysCount - minus);
-                    if ((tmpCheckin.DayOfWeek == DayOfWeek.Wednesday || tmpCheckin.DayOfWeek == DayOfWeek.Thursday || tmpCheckin.DayOfWeek == DayOfWeek.Saturday || tmpCheckin.DayOfWeek == DayOfWeek.Sunday) &&
-                        (tmpCheckOut.DayOfWeek == DayOfWeek.Wednesday || tmpCheckOut.DayOfWeek == DayOfWeek.Thursday || tmpCheckOut.DayOfWeek == DayOfWeek.Saturday || tmpCheckOut.DayOfWeek == DayOfWeek.Sunday))
+                    if ((tmpCheckin.DayOfWeek == DayOfWeek.Wednesday || tmpCheckin.DayOfWeek == DayOfWeek.Thursday || tmpCheckin.DayOfWeek == DayOfWeek.Sunday || tmpCheckin.DayOfWeek == DayOfWeek.Monday) &&
+                        (tmpCheckOut.DayOfWeek == DayOfWeek.Wednesday || tmpCheckOut.DayOfWeek == DayOfWeek.Thursday || tmpCheckOut.DayOfWeek == DayOfWeek.Sunday || tmpCheckOut.DayOfWeek == DayOfWeek.Monday))
                     {
                         Pairs.Insert(0, new Pair(tmpCheckin, tmpCheckin.AddDays(daysCount - minus)));
                         counter++;
@@ -137,26 +139,25 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
                         break;
                     }
                     tmpCheckOut = tmpCheckin.AddDays(daysCount - minus);
-                    if ((tmpCheckin.DayOfWeek == DayOfWeek.Wednesday || tmpCheckin.DayOfWeek == DayOfWeek.Thursday || tmpCheckin.DayOfWeek == DayOfWeek.Saturday || tmpCheckin.DayOfWeek == DayOfWeek.Sunday) &&
-                        (tmpCheckOut.DayOfWeek == DayOfWeek.Wednesday || tmpCheckOut.DayOfWeek == DayOfWeek.Thursday || tmpCheckOut.DayOfWeek == DayOfWeek.Saturday || tmpCheckOut.DayOfWeek == DayOfWeek.Sunday))
+                    if ((tmpCheckin.DayOfWeek == DayOfWeek.Wednesday || tmpCheckin.DayOfWeek == DayOfWeek.Thursday || tmpCheckin.DayOfWeek == DayOfWeek.Sunday || tmpCheckin.DayOfWeek == DayOfWeek.Monday) &&
+                        (tmpCheckOut.DayOfWeek == DayOfWeek.Wednesday || tmpCheckOut.DayOfWeek == DayOfWeek.Thursday || tmpCheckOut.DayOfWeek == DayOfWeek.Sunday || tmpCheckOut.DayOfWeek == DayOfWeek.Monday))
                     {
                         Pairs.Add(new Pair(tmpCheckin, tmpCheckin.AddDays(daysCount - minus)));
                         counter++;
                     }
                 }
 
-                List<RoomWrapper> tmplist;
-
                 foreach (var pair in Pairs)
                 {
-                    IDictionary<int, int> RoomTYpesLeft = new Dictionary<int, int>();
-
-                    tmplist = new List<RoomWrapper>();
+                    List<HotelWithRooms> tmplist = new List<HotelWithRooms>();
+                    HotelWithRooms hotelwr;
                     int allotmentDays = 0;
                     bool addThis, isfree;
 
                     foreach (HotelWrapper hotel in AvailableHotels)
                     {
+                        hotelwr = new HotelWithRooms { Rooms = new List<RoomWrapper>() };
+
                         foreach (RoomWrapper room in hotel.RoomWrappers)
                         {
                             allotmentDays = 0;
@@ -172,27 +173,23 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
                                 {
                                     break;
                                 }
-                                addThis &= pi.RoomState == RoomStateEnum.Available
-                                    || pi.RoomState == RoomStateEnum.MovableNoName;
-                                //|| pi.RoomState == RoomStateEnum.Allotment;
+                                addThis &= (pi.RoomState == RoomStateEnum.Available || pi.RoomState == RoomStateEnum.MovableNoName ||
+                                    pi.RoomState == RoomStateEnum.Allotment) && ((pair.CheckOut - pair.CheckIn).TotalDays - 1 >= pi.MinimumStay);
+
                                 isfree &= pi.RoomState == RoomStateEnum.Available;
 
-                                //if (room.PlanDailyInfo[i].IsAllotment)
-                                //{
-                                //    allotmentDays++;
-                                //}
+                                if (pi.RoomState == RoomStateEnum.Allotment)
+                                {
+                                    allotmentDays++;
+                                }
                             }
+
                             if (isfree)
                             {
-                                if (RoomTYpesLeft.ContainsKey(room.RoomType.Id))
-                                {
-                                    RoomTYpesLeft.TryGetValue(room.RoomType.Id, out int currentcount);
-                                    RoomTYpesLeft[room.RoomType.Id] = currentcount + 1;
-                                }
+                                if (hotel.NoName)
+                                    room.RoomType.freeRooms++;
                                 else
-                                {
-                                    RoomTYpesLeft.Add(room.RoomType.Id, 1);
-                                }
+                                    room.RoomType.Named++;
                             }
                             addThis &= (SelectedHotel == null || hotel.Id == SelectedHotel.Id) && (SelectedRoomType == null || room.RoomType.Id == SelectedRoomType.Id);
 
@@ -204,7 +201,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
                                     if (room.PlanDailyInfo.Count != allotmentDays)
                                     {
                                         //room.IsAllotment = true;
-                                        room.LocalNote = "Allotment" + ((allotmentDays == 1) ? " η 1 μέρα" : (" οι " + allotmentDays + " ημέρες."));
+                                        room.LocalNote = "Allotment" + ((allotmentDays == 1) ? " η 1 μέρα" : (" οι " + allotmentDays + " ημέρες"));
                                     }
                                     else
                                     {
@@ -218,13 +215,72 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
                                     room.LocalNote = "";
                                 }
 
-                                tmplist.Add(room);
+                                hotelwr.Rooms.Add(room);
+                                ValidateRoom(room, pair);
+                            }
+                        }
+                        if (hotelwr.Rooms.Count > 0)
+                        {
+                            tmplist.Add(hotelwr);
+                        }
+                    }
+
+                    List<RoomWrapper> rooms = new List<RoomWrapper>();
+
+                    foreach (var item in tmplist)
+                    {
+                        foreach (var room in item.Rooms)
+                        {
+                            if (!string.IsNullOrEmpty(room.LocalNote))
+                            {
+                                rooms.Add(room);
+                            }
+                            else if (!room.Hotel.NoName || (rooms.Where(r => r.Hotel == room.Hotel && r.RoomType == room.RoomType).Count() < room.RoomType.freeRooms))
+                            {
+                                rooms.Add(room);
                             }
                         }
                     }
-                    lists.Add(new AvailabilitiesList { Dates = pair, IsMain = (pair.CheckIn == CheckIn && pair.CheckOut == CheckOut), Rooms = new ObservableCollection<RoomWrapper>(tmplist.OrderBy(f => f.RoomType.MinCapacity).ToList()), RoomTYpesLeft = RoomTYpesLeft });
+
+                    lists.Add(new AvailabilitiesList { Dates = pair, IsMain = pair.CheckIn == CheckIn && pair.CheckOut == CheckOut, Rooms = new ObservableCollection<RoomWrapper>(rooms.OrderBy(f => f.Hotel.Name).ThenBy(t => t.RoomType.MaxCapacity).ThenByDescending(r => r.Rating).ToList()) });
+                }
+                foreach (var item in lists)
+                {
+                    item.SetUp();
                 }
             }
+        }
+
+        private void ValidateRoom(RoomWrapper room, Pair pair)
+        {
+            //if (!string.IsNullOrEmpty(room.LocalNote))
+            //{
+            //    room.Rating=0;
+            //    return;
+            //}
+            var before = room.PlanDailyInfo.FirstOrDefault(d => d.Date == pair.CheckIn.AddDays(-1));
+            var after = room.PlanDailyInfo.FirstOrDefault(d => d.Date == pair.CheckOut);
+            if (before == null || before.RoomState != RoomStateEnum.Available)
+            {
+            }
+            else if (before.RoomState == RoomStateEnum.Available)
+            {
+                before = room.PlanDailyInfo.FirstOrDefault(d => d.Date == pair.CheckIn.AddDays(-2));
+                if (before == null || before.RoomState != RoomStateEnum.Available)
+                {
+                }
+            }
+            if (after == null || after.RoomState != RoomStateEnum.Available)
+            {
+            }
+            else if (after.RoomState == RoomStateEnum.Available)
+            {
+                after = room.PlanDailyInfo.FirstOrDefault(d => d.Date == pair.CheckOut.AddDays(1));
+                if (after == null || after.RoomState != RoomStateEnum.Available)
+                {
+                }
+            }
+            room.Rating = ((before != null && before.RoomState != RoomStateEnum.Available) ? 1 : 0) + ((after != null && after.RoomState != RoomStateEnum.Available) ? 1 : 0);
         }
 
         #endregion Methods
@@ -238,32 +294,39 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
 
         #endregion Fields
 
-        #region Properties
-
-        private IDictionary<int, int> _RoomTYpesLeft;
-
-        public IDictionary<int, int> RoomTYpesLeft
+        public void SetUp()
         {
-            get
-            {
-                return _RoomTYpesLeft;
-            }
-
-            set
-            {
-                if (_RoomTYpesLeft == value)
-                {
-                    return;
-                }
-
-                _RoomTYpesLeft = value;
-                RaisePropertyChanged();
-            }
+            RoomsCv = (CollectionViewSource.GetDefaultView(Rooms));
+            RoomsCv.GroupDescriptions.Add(new PropertyGroupDescription("Hotel"));
+            RoomsCv.GroupDescriptions.Add(new PropertyGroupDescription("RoomType"));
         }
+
+        #region Properties
 
         private readonly IDictionary<int, string> dict = new Dictionary<int, string>();
         public Pair Dates { get; set; }
         public bool IsMain { get; set; }
+
+        private ICollectionView _RoomsCv;
+
+        public ICollectionView RoomsCv
+        {
+            get
+            {
+                return _RoomsCv;
+            }
+
+            set
+            {
+                if (_RoomsCv == value)
+                {
+                    return;
+                }
+
+                _RoomsCv = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public ObservableCollection<RoomWrapper> Rooms
         {
@@ -280,8 +343,6 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
                 }
 
                 _Rooms = value;
-                CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(Rooms);
-                view.GroupDescriptions.Add(new PropertyGroupDescription(nameof(RoomType)));
             }
         }
 
@@ -311,7 +372,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels
 
         public override string ToString()
         {
-            return $"{CheckIn:ddd dd/MM -} {CheckOut:ddd dd/MM}({((CheckOut - CheckIn).TotalDays)} νύχτες)";
+            return $"{CheckIn:ddd dd/MM -} {CheckOut:ddd dd/MM}({(CheckOut - CheckIn).TotalDays} νύχτες)";
         }
 
         #endregion Methods

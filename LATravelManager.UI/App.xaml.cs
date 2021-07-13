@@ -37,7 +37,7 @@ namespace LATravelManager.UI
 
         private static void SelectivelyHandleMouseButton(object sender, MouseButtonEventArgs e)
         {
-            TextBox textbox = (sender as TextBox);
+            TextBox textbox = sender as TextBox;
             if (textbox != null && !textbox.IsKeyboardFocusWithin)
             {
                 if (e.OriginalSource.GetType().Name == "TextBoxView")

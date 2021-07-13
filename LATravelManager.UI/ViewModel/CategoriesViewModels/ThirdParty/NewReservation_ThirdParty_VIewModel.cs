@@ -19,6 +19,7 @@ using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.BaseViewModels;
 using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
 using LATravelManager.UI.ViewModel.Window_ViewModels;
+using LATravelManager.UI.Views;
 using Microsoft.Win32;
 
 namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
@@ -38,6 +39,11 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
             OpenFileCommand = new RelayCommand(OpenFile, CanOpenFile);
             PrintRecieptCommand = new RelayCommand(PrintReciept);
 
+            OpenRecieptCommand = new RelayCommand<Reciept>(async (obj) => await OpenRecieptFile(obj));
+            ReplaceFileCommand = new RelayCommand(ReplaceFile);
+
+            OpenInvoicesWindowCommand = new RelayCommand<object>(async (obj) => await OpenInvoicesWindow(obj), CanOpenInvoiceWindow);
+
             DeleteSelectedCustomersCommand = new RelayCommand(DeleteSelectedCustomers, CanDeleteCustomers);
             UpdateAllCommand = new RelayCommand(async () => { await UpdateAll(); }, CanUpdateAll);
 
@@ -48,43 +54,19 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
             ToggleDisabilityCommand = new RelayCommand(ToggleDisability, CanToggleDisability);
         }
 
-        public DocumentsManagement DocumentsManagement { get; set; }
-
-        private void PrintReciept()
+        private async Task OpenRecieptFile(Reciept Reciept)
         {
-            if (SelectedCustomer == null)
-            {
-                MessageBox.Show("Παρακαλώ επιλέξτε πελάτη");
-                return;
-            }
-            if (DocumentsManagement == null)
-            {
-                DocumentsManagement = new DocumentsManagement(GenericRepository);
-            }
-            DocumentsManagement.PrintPaymentsReciept(SelectedPayment, SelectedCustomer.Model);
-        }
+            Mouse.OverrideCursor = Cursors.Wait;
 
-        public RelayCommand PrintRecieptCommand { get; set; }
+            string outputpath = Path.GetTempPath();
 
-        public RelayCommand ToggleDisabilityCommand { get; set; }
+            Directory.CreateDirectory(outputpath + @"\Παραστατικά");
+            string path = GetPath(Reciept.FileName, outputpath + @"\Παραστατικά\");
+            File.WriteAllBytes(path, Reciept.Content);
 
-        private void ToggleDisability()
-        {
-            if (ThirdPartyWr.Disabled)
-            {
-                ThirdPartyWr.Disabled = false;
-            }
-            else
-            {
-                ThirdPartyWr.DisableDate = DateTime.Now;
-                ThirdPartyWr.DisabledBy = GenericRepository.GetById<User>(StaticResources.User.Id);
-                ThirdPartyWr.Disabled = true;
-            }
-        }
+            Mouse.OverrideCursor = Cursors.Arrow;
 
-        private bool CanToggleDisability()
-        {
-            return ThirdPartyWr != null && ThirdPartyWr.Id > 0 && !string.IsNullOrEmpty(ThirdPartyWr.CancelReason);
+            Process.Start(path);
         }
 
         #endregion Constructors
@@ -109,6 +91,8 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
         private int _SelectedPartnerIndex;
 
         private Payment _SelectedPayment;
+
+        private Reciept _SelectedReciept;
 
         private int _SelectedUserIndex;
 
@@ -165,6 +149,8 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
 
         public RelayCommand DeleteSelectedCustomersCommand { get; }
 
+        public DocumentsManagement DocumentsManagement { get; set; }
+
         public string ErrorsInDatagrid
         {
             get
@@ -184,9 +170,13 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
             }
         }
 
+        public GenericRepository GenericRepository { get; private set; }
+
         public MainViewModel MainViewModel { get; }
 
         public RelayCommand OpenFileCommand { get; }
+
+        public RelayCommand<object> OpenInvoicesWindowCommand { get; set; }
 
         public ObservableCollection<Partner> Partners
         {
@@ -225,6 +215,10 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
                 RaisePropertyChanged();
             }
         }
+
+        public RelayCommand PrintRecieptCommand { get; set; }
+
+        public RelayCommand ReplaceFileCommand { get; set; }
 
         public RelayCommand SaveCommand { get; }
 
@@ -284,6 +278,25 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
             }
         }
 
+        public Reciept SelectedReciept
+        {
+            get
+            {
+                return _SelectedReciept;
+            }
+
+            set
+            {
+                if (_SelectedReciept == value)
+                {
+                    return;
+                }
+
+                _SelectedReciept = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public int SelectedUserIndex
         {
             get
@@ -305,8 +318,6 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
             }
         }
 
-        public GenericRepository GenericRepository { get; private set; }
-
         public ThirdParty_Booking_Wrapper ThirdPartyWr
         {
             get
@@ -326,6 +337,8 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
                 RaisePropertyChanged();
             }
         }
+
+        public RelayCommand ToggleDisabilityCommand { get; set; }
 
         public RelayCommand UpdateAllCommand { get; set; }
 
@@ -347,7 +360,7 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
             }
         }
 
-        private bool AreContexesFree => (BasicDataManager != null && BasicDataManager.IsContextAvailable) && (GenericRepository != null && GenericRepository.IsContextAvailable);
+        private bool AreContexesFree => BasicDataManager != null && BasicDataManager.IsContextAvailable && GenericRepository != null && GenericRepository.IsContextAvailable;
 
         #endregion Properties
 
@@ -395,7 +408,6 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
                 MessengerInstance.Send(new ShowExceptionMessage_Message("Καπόιοι πελάτες δεν διαγράφηκαν επειδή συμμετέχουν σε κράτηση. Παλακαλώ κάντε τους CheckOut και δοκιμάστε ξανά!"));
             }
         }
-
 
         public override async Task LoadAsync(int id = 0, MyViewModelBaseAsync previousViewModel = null, MyViewModelBase parent = null)
         {
@@ -460,6 +472,11 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
             return ThirdPartyWr != null && ThirdPartyWr.File != null && ThirdPartyWr.File.Content != null;
         }
 
+        private bool CanOpenInvoiceWindow(object obj)
+        {
+            return ThirdPartyWr != null && ThirdPartyWr.Id > 0;
+        }
+
         private bool CanSave()
         {
             if (ThirdPartyWr == null || (!HasChanges && Payment.Amount == 0) || !AreContexesFree)
@@ -467,6 +484,11 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
                 return false;
             }
             return AreBookingDataValid;
+        }
+
+        private bool CanToggleDisability()
+        {
+            return ThirdPartyWr != null && ThirdPartyWr.Id > 0 && !string.IsNullOrEmpty(ThirdPartyWr.CancelReason);
         }
 
         private bool CanUpdateAll()
@@ -548,6 +570,11 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
             }
         }
 
+        public RelayCommand<Reciept> OpenRecieptCommand { get; set; }
+
+
+
+
         private void OpenFile()
         {
             Mouse.OverrideCursor = Cursors.Wait;
@@ -561,6 +588,61 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
             Mouse.OverrideCursor = Cursors.Arrow;
 
             Process.Start(path);
+        }
+
+        private async Task OpenInvoicesWindow(object obj)
+        {
+            InvoicesManagement_ViewModel vm = new InvoicesManagement_ViewModel(BasicDataManager, GenericRepository, thirdParty: ThirdPartyWr, parameter: obj);
+            await vm.LoadAsync();
+            MessengerInstance.Send(new OpenChildWindowCommand(new InvoicesManagementWindow(), vm));
+        }
+
+        private void PrintReciept()
+        {
+            if (SelectedCustomer == null)
+            {
+                MessageBox.Show("Παρακαλώ επιλέξτε πελάτη");
+                return;
+            }
+            if (DocumentsManagement == null)
+            {
+                DocumentsManagement = new DocumentsManagement(GenericRepository);
+            }
+            DocumentsManagement.PrintPaymentsReciept(SelectedPayment, SelectedCustomer.Model);
+        }
+
+        private void ReplaceFile()
+        {
+            if (SelectedReciept == null)
+            {
+                return;
+            }
+            OpenFileDialog dlg = new OpenFileDialog
+            {
+                //FileName = "Document", // Default file name
+                //DefaultExt = ".pdf", // Default file extension
+                Filter = "All files (*.*)|*.*" // Filter files by extension
+            };
+            // Show open file dialog box
+            bool? result = dlg.ShowDialog();
+
+            // Process open file dialog box results
+            if (result == true)
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                // Open document
+                string fileName = dlg.FileName;
+                using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    FileInfo file = new FileInfo(fileName);
+                    if (file.Exists)
+                    {
+                        SelectedReciept.Content = File.ReadAllBytes(fileName);
+                        SelectedReciept.FileName = file.Name;
+                    }
+                }
+                Mouse.OverrideCursor = Cursors.Arrow;
+            }
         }
 
         private async Task ResetAllRefreshableDataASync(bool makeNew = false)
@@ -644,6 +726,20 @@ namespace LATravelManager.UI.ViewModel.CategoriesViewModels.ThirdParty
             finally
             {
                 MessengerInstance.Send(new IsBusyChangedMessage(false));
+            }
+        }
+
+        private void ToggleDisability()
+        {
+            if (ThirdPartyWr.Disabled)
+            {
+                ThirdPartyWr.Disabled = false;
+            }
+            else
+            {
+                ThirdPartyWr.DisableDate = DateTime.Now;
+                ThirdPartyWr.DisabledBy = GenericRepository.GetById<User>(StaticResources.User.Id);
+                ThirdPartyWr.Disabled = true;
             }
         }
 

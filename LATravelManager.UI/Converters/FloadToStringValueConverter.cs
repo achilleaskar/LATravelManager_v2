@@ -36,6 +36,10 @@ namespace LATravelManager.UI.Converters
                         return s + " " + s1;
                 return s + " €";
             }
+            else if (value is int intValue)
+            {
+                return intValue + " €";
+            }
             return "error";
         }
 
