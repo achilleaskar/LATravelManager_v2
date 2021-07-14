@@ -18,7 +18,9 @@ namespace LATravelManager.UI.Converters
                 int indexofcomma = s.IndexOf(',');
                 if (indexofcomma <= 0)
                 {
-                    indexofcomma = s.Length;
+                    indexofcomma = s.IndexOf('.');
+                    if (indexofcomma <= 0)
+                        indexofcomma = s.Length;
                 }
                 if (indexofcomma > 3)
                 {

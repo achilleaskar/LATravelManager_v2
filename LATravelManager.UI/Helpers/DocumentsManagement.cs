@@ -1,4 +1,14 @@
-﻿using DocumentFormat.OpenXml.Packaging;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
+using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using LATravelManager.Model;
 using LATravelManager.Model.BookingData;
@@ -12,16 +22,6 @@ using LATravelManager.UI.Repositories;
 using LATravelManager.UI.ViewModel.Tabs.TabViewmodels;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
 using DW = DocumentFormat.OpenXml.Drawing.Wordprocessing;
 using PIC = DocumentFormat.OpenXml.Drawing.Pictures;
 using TEST = DocumentFormat.OpenXml.Drawing;
@@ -501,10 +501,10 @@ namespace LATravelManager.UI.Helpers
                 {
                     MessageBox.Show("Error");
                 }
-                else if (resWrapper.ReservationType == ReservationTypeEnum.Transfer)
-                {
-                    continue;
-                }
+                //else if (resWrapper.ReservationType == ReservationTypeEnum.Transfer)
+                //{
+                //    continue;
+                //}
                 //else if (res.ReservationType == Reservation.ReservationTypeEnum.Overbooked)
                 //{
                 //    MessageBox.Show("Παρακαλώ τοποθετήστε τα OVER");
@@ -608,15 +608,15 @@ namespace LATravelManager.UI.Helpers
                         MessageBox.Show("Error");
                         continue;
                     }
-                    else if (res.ReservationType == ReservationTypeEnum.Transfer)
-                    {
-                        if (!Tranmess)
-                        {
-                            MessageBox.Show("Η κράτηση είναι TRANSFER");
-                            Tranmess = true;
-                        }
-                        continue;
-                    }
+                    //else if (res.ReservationType == ReservationTypeEnum.Transfer)
+                    //{
+                    //    if (!Tranmess)
+                    //    {
+                    //        MessageBox.Show("Η κράτηση είναι TRANSFER");
+                    //        Tranmess = true;
+                    //    }
+                    //    continue;
+                    //}
                     else if (res.ReservationType == ReservationTypeEnum.OneDay)
                     {
                         if (!OneDaymess)
@@ -1326,13 +1326,14 @@ namespace LATravelManager.UI.Helpers
                 //{
                 //    MessageBox.Show("Παρακαλώ τοποθετήστε τα OVER");
                 //}
-                if (res.ReservationType == ReservationTypeEnum.Transfer && !Tranmess)
-                {
-                    MessageBox.Show("Η κράτηση είναι TRANSFER");
-                    Tranmess = true;
-                    return;
-                }
-                else if (res.ReservationType == ReservationTypeEnum.OneDay)
+                //if (res.ReservationType == ReservationTypeEnum.Transfer && !Tranmess)
+                //{
+                //    MessageBox.Show("Η κράτηση είναι TRANSFER");
+                //    Tranmess = true;
+                //    return;
+                //}
+                //else
+                if (res.ReservationType == ReservationTypeEnum.OneDay)
                 {
                     MessageBox.Show("Η κράτηση είναι Μονοήμερη");
                     return;
@@ -1570,8 +1571,11 @@ namespace LATravelManager.UI.Helpers
                 regexText = new Regex("destination");
                 docText = regexText.Replace(docText, booking.Excursion.Destinations[0].Name);
                 regexText = new Regex("hotelnroomtype");
-                string tel = reservationWr.GetHotelTel();
-                docText = regexText.Replace(docText, reservationWr.HotelName + "-" + reservationWr.RoomTypeNameByNum + (!string.IsNullOrEmpty(tel) ? "(" + tel + ")" : ""));
+                if (reservationWr.ReservationType != ReservationTypeEnum.Transfer)
+                {
+                    string tel = reservationWr.GetHotelTel();
+                    docText = regexText.Replace(docText, reservationWr.HotelName + "-" + reservationWr.RoomTypeNameByNum + (!string.IsNullOrEmpty(tel) ? "(" + tel + ")" : ""));
+                }
 
                 using (StreamWriter sw = new StreamWriter(wordDoc.MainDocumentPart.GetStream(FileMode.Create)))
                 {
@@ -1702,7 +1706,7 @@ namespace LATravelManager.UI.Helpers
                     regexText = new Regex("regexdate");
                     docText = regexText.Replace(docText, DateTime.Today.ToString("dd/MM/yyyy"));
                     regexText = new Regex("regexhotel");
-                    docText = regexText.Replace(docText, booking.Excursion.Destinations[0].Id == 19 ? "Tiara(Προύσα), Mustafa(Προκόπι), Lion(Κωνσταντινούπολη)" : reservationWr.HotelName);
+                    docText = regexText.Replace(docText, reservationWr.HotelName);
                     regexText = new Regex("regexaddress");
                     docText = regexText.Replace(docText, reservationWr.Room == null || string.IsNullOrEmpty(reservationWr.Room.Hotel.Address) ? reservationWr.Hotel != null ? reservationWr.Hotel.Address ?? "" : "" : reservationWr.Room.Hotel.Address);
                     regexText = new Regex("regexagency");
